@@ -23,6 +23,9 @@ class Point{
 		}
 		return this._materials[color]
 	}
+	set color(color){
+		this.mesh.material = this.getFromMaterialCache(color);
+	}
 }
 
 Point.prototype._materials = {};

@@ -5,20 +5,21 @@ function Threeasy_setup(){
 		near: .1,
 		far: 10000,
 
-		type: 'perspective',
+		//type: 'perspective',
 		fov: 60,
 		aspect: 1,
-
+/*
 		// type: 'orthographic',
 		left: -1,
 		right: 1,
 		bottom: -1,
-		top: 1,
+		top: 1,*/
 	  });
 
 	this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
+	//this.camera = new THREE.OrthographicCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
 
-	this.camera.position.set(0, 0, 5);
+	this.camera.position.set(0, 0, 10);
 	this.camera.lookAt(new THREE.Vector3(0,0,0));
 
 

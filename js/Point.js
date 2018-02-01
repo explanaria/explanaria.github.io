@@ -7,9 +7,14 @@ class Point{
 
 		this.x = options.x || 0;
 		this.y = options.y || 0;
+		this.z = options.z || 0;
+
+		let width = options.width || 1;
 
 		let color = options.color || 0x777777;
-		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(options.width || 1, 8, 6),this.getFromMaterialCache(color));
+		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(width/2, 8, 6),this.getFromMaterialCache(color));
+
+		this.mesh.position.set(this.x,this.y,this.z);
 		three.scene.add(this.mesh);
 	}
 	getFromMaterialCache(color){

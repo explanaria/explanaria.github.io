@@ -82,3 +82,14 @@ List of complaints about mathbox:
 
 4) It should be easy fr someone to write 'return x*x' and see it happen.
 
+I like the expr: function(){} way of defining functions. There are two competing ways to do it: the mathbox way of using emit(), and return.
+
+Emit(): 
+	*Easy to carry through multiple arguments
+	* Number of dimensions of output is unknown
+		* This may be a good thing 
+
+Return: 
+	*Hard to return multiple arguments without creating an extra array per return call, which may cause performance overhead
+		*Either return [a,b,c] or return new TwoDimensionalPoint(a,b) will be needed
+	*Easy to verify dimensions of output and complain if different

@@ -1,28 +1,48 @@
 class PointOutput{
-	constructor(options){
+	constructor(options = {}){
 		/*input: Transformation
 			width: number
 		*/
 
 		this.width = options.width || 1;
+		this.color = options.color || 0x55aa55;
+
 
 		this.points = [];
+
+		this.numCallsPerActivation = 0; //should always be equal to this.points.length
+
+		this.parent = null;
 	}
-	expr(x,y,z){
-		let point = this.getPoint(i);
-		point.x = x;
-		point.y = y;
-		point.z = z;
-	}
-	getPoint(i){
-		if(i > this.points.length){
-			this.points.push(new Point({width: this.width});
+	_onAdd(){ //should be called when this is .add()ed to something
+
+		//climb up parent hierarchy to find the Area
+		let root = this;
+		while(root.parent !== null){
+			root = root.parent;
+		}
+
+		this.numCallsPerActivation = root.numCallsPerActivation;
+
+		for(var i=0;i<this.numCallsPerActivation;i++){
+			this.getPoint(i).mesh.visible = false; //instantiate the point
 		}
 	}
+	expr(i, t, x, y, z){
+		//it's assumed i will go from 0 to this.numCallsPerActivation, since this should only be called from an Area.
+		var point = this.getPoint(i);
+		if(x)point.x = x;
+		if(y)point.y = y;
+		if(z)point.z = z;
+		point.mesh.visible = true;
+	}
+	getPoint(i){
+		if(i >= this.points.length){
+			this.points.push(new Point({width: this.width,color:this.color}));
+		}
+		return this.points[i];
+	}
 }
-
-Point.prototype._points = {};
-
 
 /*
 Problem now:
@@ -33,6 +53,9 @@ Problem now:
 	Reading the mathbox articles, it looks like mathbox solved this problem by declaring a width variable equal to that thing, and then secretly having emit() control one big floating point array. That gets you speed, as arrays can be GPU-offloaded.
 
 I guess the big thing I want from mathbox is to error when a thing with three channels is sent to a vector. Is this time for joy.js? I think so.
+
+-
+There are 3 things that need to be defined for any visualization to work: domain, transformation, and range/output. However, the output needs to know how many times the transformation will be evaluated, to know about its result, and that's the job of the domain. So a domain needs to connect to a range somehow. timesCombining the domain and the transformation, like mathbox does.
 
 */
 

@@ -16,7 +16,7 @@ function Threeasy_setup(){
 		top: 1,*/
 	  });
 
-	this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
+	this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10000000 );
 	//this.camera = new THREE.OrthographicCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
 
 	this.camera.position.set(0, 0, 10);
@@ -63,12 +63,15 @@ function Threeasy_setup(){
 	*/
 
 	window.addEventListener('load', this.onPageLoad.bind(this), false);
+
+	this.clock = new THREE.Clock();
 }
 
 Threeasy_setup.prototype.onPageLoad = function() {
 	console.log("Loaded!");
 	document.body.appendChild( this.container );
 	this.prev_timestep = performance.now();
+	this.clock.start();
 	this.render(this.prev_timestep);
 }
 
@@ -98,11 +101,10 @@ Threeasy_setup.prototype.onWindowResize= function() {
 }
 Threeasy_setup.prototype.listeners = []; //update event listeners
 Threeasy_setup.prototype.render = function(timestep){
-	var delta = timestep - this.prev_timestep;
+	var delta = this.clock.getDelta();
 	//get timestep
-	//rend.rend()
 	for(var i=0;i<this.listeners.length;i++){
-		this.listeners[i](delta);
+		this.listeners[i]({"t":this.clock.elapsedTime,"delta":delta});
 	}
 
 	this.renderer.render( this.scene, this.camera );
@@ -112,6 +114,8 @@ Threeasy_setup.prototype.render = function(timestep){
 }
 Threeasy_setup.prototype.on = function(event_name, func){
 	//event_name = "update". Registers an event listener.
+	//each listener will be called with an object consisting of:
+	//	{t: <current time in s>, "delta": <delta, in ms>}
 	if(event_name == "update"){ 
 		this.listeners.push(func);
 	}

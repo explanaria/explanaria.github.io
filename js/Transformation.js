@@ -1,5 +1,6 @@
 "use strict";
 
+//var y = new Transformation({expr: function(...a){console.log(...a)}});
 
 class Transformation{
 	constructor(options){
@@ -10,14 +11,19 @@ class Transformation{
 		this._expr = options.expr;
 
 		this.children = [];
+		this.parent = null;
 	}
 	add(thing){
 		this.children.push(thing);
+		thing.parent = this;
+		if(thing._onAdd)thing._onAdd();
 	}
 	expr(...coordinates){
-		let result = this._expr(...coordinates);
+		let result = this._expr(...coordinates);;
+		if(result.constructor !== Array)result = [result];
+
 		for(var i=0;i<this.children.length;i++){
-			this.children[i].expr(...result)
+			this.children[i].expr(coordinates[0],coordinates[1], ...result)
 		}
 	}
 }

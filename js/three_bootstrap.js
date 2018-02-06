@@ -1,5 +1,6 @@
-function Threeasy_setup(){
+function Threeasy_Setup(autostart = true){
 	this.prev_timestep = 0;
+	this.autostart = autostart;
 
 	this.camera = new THREE.OrthographicCamera({
 		near: .1,
@@ -67,56 +68,134 @@ function Threeasy_setup(){
 	this.clock = new THREE.Clock();
 }
 
-Threeasy_setup.prototype.onPageLoad = function() {
-	console.log("Loaded!");
+Threeasy_Setup.prototype.onPageLoad = function() {
+	console.log("Threeasy_Setup loaded!");
 	document.body.appendChild( this.container );
+
+	if(this.autostart){
+		this.start();
+	}
+}
+Threeasy_Setup.prototype.start = function(){
 	this.prev_timestep = performance.now();
 	this.clock.start();
 	this.render(this.prev_timestep);
 }
 
-Threeasy_setup.prototype.onMouseDown = function() {
+Threeasy_Setup.prototype.onMouseDown = function() {
 	this.isMouseDown = true;
 }
-Threeasy_setup.prototype.onMouseUp= function() {
+Threeasy_Setup.prototype.onMouseUp= function() {
 	this.isMouseDown = false;
 }
-Threeasy_setup.prototype.onPointerRestricted= function() {
+Threeasy_Setup.prototype.onPointerRestricted= function() {
 	var pointerLockElement = renderer.domElement;
 	if ( pointerLockElement && typeof(pointerLockElement.requestPointerLock) === 'function' ) {
 		pointerLockElement.requestPointerLock();
 	}
 }
-Threeasy_setup.prototype.onPointerUnrestricted= function() {
+Threeasy_Setup.prototype.onPointerUnrestricted= function() {
 	var currentPointerLockElement = document.pointerLockElement;
 	var expectedPointerLockElement = renderer.domElement;
 	if ( currentPointerLockElement && currentPointerLockElement === expectedPointerLockElement && typeof(document.exitPointerLock) === 'function' ) {
 		document.exitPointerLock();
 	}
 }
-Threeasy_setup.prototype.onWindowResize= function() {
+Threeasy_Setup.prototype.onWindowResize= function() {
 	this.camera.aspect = window.innerWidth / window.innerHeight;
 	this.camera.updateProjectionMatrix();
 	this.renderer.setSize( window.innerWidth, window.innerHeight );
 }
-Threeasy_setup.prototype.listeners = []; //update event listeners
-Threeasy_setup.prototype.render = function(timestep){
+Threeasy_Setup.prototype.listeners = {"update": [],"render":[]}; //update event listeners
+Threeasy_Setup.prototype.render = function(timestep){
 	var delta = this.clock.getDelta();
 	//get timestep
-	for(var i=0;i<this.listeners.length;i++){
-		this.listeners[i]({"t":this.clock.elapsedTime,"delta":delta});
+	for(var i=0;i<this.listeners["update"].length;i++){
+		this.listeners["update"][i]({"t":this.clock.elapsedTime,"delta":delta});
 	}
 
 	this.renderer.render( this.scene, this.camera );
 
+	for(var i=0;i<this.listeners["render"].length;i++){
+		this.listeners["render"][i]();
+	}
+
 	this.prev_timestep = timestep;
 	window.requestAnimationFrame(this.render.bind(this));
 }
-Threeasy_setup.prototype.on = function(event_name, func){
+Threeasy_Setup.prototype.on = function(event_name, func){
 	//event_name = "update". Registers an event listener.
 	//each listener will be called with an object consisting of:
 	//	{t: <current time in s>, "delta": <delta, in ms>}
+	// an update event fires before a render. a render event fires post-render.
 	if(event_name == "update"){ 
-		this.listeners.push(func);
+		this.listeners["update"].push(func);
+	}
+	if(event_name == "render"){ 
+		this.listeners["render"].push(func);
+	}
+}
+
+class Threeasy_Recorder extends Threeasy_Setup{
+	//based on http://www.tysoncadenhead.com/blog/exporting-canvas-animation-to-mov/ to record an animation
+	//when done,     ffmpeg -r 60 -framerate 60 -i ./frame-%d.png -vcodec libx264 -pix_fmt yuv420p -crf:v 0 video.mp4
+	//then, add the yuv420p pixels (which for some reason isn't done by the prev command) by:
+	// ffmpeg -i video.mp4 -vcodec libx264 -pix_fmt yuv420p -strict -2 -acodec aac output.mp4
+	//check with ffmpeg -i output.mp4
+
+	constructor(autostart, fps=30, length = 5){
+		/* fps is evident, autostart is a boolean (by default, true), and length is in s.*/
+		super(autostart);
+		this.fps = fps;
+		this.elapsedTime = 0;
+		this.frameCount = fps * length;
+		this.frames_rendered = 0;
+
+		this.socket = io.connect('http://localhost:3000');
+	}
+	start(){
+		//make a recording sign
+		this.recording_icon = document.createElement("div");
+		this.recording_icon.style.width="20px"
+		this.recording_icon.style.height="20px"
+		this.recording_icon.style.position = 'absolute';
+		this.recording_icon.style.top = '20px';
+		this.recording_icon.style.left = '20px';
+		this.recording_icon.style.borderRadius = '10px';
+		this.recording_icon.style.backgroundColor = 'red';
+		document.body.appendChild(this.recording_icon);
+
+
+		this.render();
+	}
+	render(timestep){
+		var delta = 1/this.fps;
+		//get timestep
+		for(var i=0;i<this.listeners["update"].length;i++){
+			this.listeners["update"][i]({"t":this.elapsedTime,"delta":delta});
+		}
+
+		this.renderer.render( this.scene, this.camera );
+
+		for(var i=0;i<this.listeners["render"].length;i++){
+			this.listeners["render"][i]();
+		}
+
+		this.record_frame();
+
+		this.elapsedTime += delta;
+		window.requestAnimationFrame(this.render.bind(this));
+	}
+	record_frame(){
+		let current_frame = document.querySelector('canvas').toDataURL();
+        this.socket.emit('render-frame', {
+        	frame: this.frames_rendered++,
+        	file: current_frame
+        });
+		if(this.frames_rendered>this.frameCount){
+			this.render = null; //hacky way of stopping the rendering
+			this.recording_icon.style.display = "none";
+			alert("All done!\nFiles outputted to output_images if this was run via node."); //blocks last frame
+		}
 	}
 }

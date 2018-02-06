@@ -1,0 +1,9 @@
+{
+  "name": "abcdtransform-gifsaver",
+  "version": "0.0.1",
+  "description": "A program to save gifs from abcdtransform",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^2.0.4"
+  }
+}

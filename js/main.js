@@ -1,24 +1,10 @@
-var three = new Threeasy_setup();
+var three = new Threeasy_Recorder(true, 60,15);
 
-/*
-points = [];
-
-for(var x=-10;x<10;x++){
-	for(var y=-10;y<10;y++){
-		let pt = new Point({x:x, y:y, width:0.3})
-
-		if(x == 0 || y == 0)pt.color = 0xff0000;
-
-		points.push(pt);
-	}
-} 
-*/
 console.log("Loaded.");
-
 
 var x = new Area({bounds: [[-5,5],[-5,5]]});
 var square = new Transformation({'expr': (i,t,x,y) => [Math.cos((t+i))+5*Math.sin((t+i)/20),Math.sin(t+i)*Math.cos(2*(t+i))]});
-var square2 = new Transformation({'expr': (i,t,x,y) => [x+Math.cos(2*t),y+Math.sin(2*t)]});
+var square2 = new Transformation({'expr': (i,t,x,y) => [(y+5)*Math.cos(x/5+(t+i/302)/4*Math.PI),(y+5)*Math.sin(x/5+(t+i/302)/3*Math.PI)]});
 var output = new PointOutput({width:0.2});
 
 x.add(new PointOutput({width: 0.2, color:0xcccccc})); // grid
@@ -30,3 +16,7 @@ square2.add(output);
 three.on("update",function(time){
 	x.activate(time.t);
 });
+
+//todo: make a new GraphedFunction class that lets you do
+// area.then({expr: (i,t,x)=>[x,x*x]}).then({expr: (i,t,x,y)=>[x*Math.cos(y)],[x*Math.sin(y)]}).pointOutput({width:0.2});
+// or something like that. I think that might be a bit simpler.

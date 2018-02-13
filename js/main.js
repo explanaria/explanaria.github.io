@@ -15,19 +15,18 @@ three.on("update",function(time){
 	area.activate(time.t);
 });
 
-var anim = new Animation(id, {'expr': (i,t,x,y) => [x,y+Math.sin(t),x*x+4*y*y*y]});
+async function animate(){
 
+	await delay(1000);
+	TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(t),x*x+y*y*y]});
 
-//var anim = new Animation(output, {'color': 0xffffff}); // works (albeit not on THREE.Color()s)
+	//var anim = new Animation(output, {'color': 0xffffff}); // works (albeit not on THREE.Color()s)
 
-window.setTimeout(function(){
+	await delay(4000);
+	TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),0]})
 
-	var anim = new Animation(id, {'expr': (i,t,x,y) => [x,Math.sin(x),0]})
+	await delay(4000);
+	TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),Math.cos(x+t)]})
 
-},2000);
-
-window.setTimeout(function(){
-
-	var anim = new Animation(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),Math.cos(x+t)]})
-
-},4000);
+}
+animate();

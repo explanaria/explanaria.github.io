@@ -61,7 +61,7 @@ class Area{
 	}
 	_callAllChildren(...coordinates){
 		for(var i=0;i<this.children.length;i++){
-			this.children[i].expr(...coordinates)
+			this.children[i].evaluateSelf(...coordinates)
 		}
 	}
 

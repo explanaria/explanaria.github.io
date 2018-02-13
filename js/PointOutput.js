@@ -28,12 +28,12 @@ class PointOutput{
 			this.getPoint(i).mesh.visible = false; //instantiate the point
 		}
 	}
-	expr(i, t, x, y, z){
+	evaluateSelf(i, t, x, y, z){
 		//it's assumed i will go from 0 to this.numCallsPerActivation, since this should only be called from an Area.
 		var point = this.getPoint(i);
-		if(x)point.x = x;
-		if(y)point.y = y;
-		if(z)point.z = z;
+		if(x !== undefined)point.x = x;
+		if(y !== undefined)point.y = y;
+		if(z !== undefined)point.z = z;
 		point.mesh.visible = true;
 	}
 	getPoint(i){

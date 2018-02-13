@@ -8,7 +8,7 @@ class Transformation{
 		assertPropExists(options, "expr"); // a multidimensional array
 		assertType(options.expr, Function);
 
-		this._expr = options.expr;
+		this.expr = options.expr;
 
 		this.children = [];
 		this.parent = null;
@@ -18,20 +18,14 @@ class Transformation{
 		thing.parent = this;
 		if(thing._onAdd)thing._onAdd();
 	}
-	_exprEvaluation(...coordinates){
+	evaluateSelf(...coordinates){
 		//evaluate this Transformation's _expr, and broadcast the result to all children.
-		let result = this._expr(...coordinates);
+		let result = this.expr(...coordinates);
 		if(result.constructor !== Array)result = [result];
 
 		for(var i=0;i<this.children.length;i++){
-			this.children[i].expr(coordinates[0],coordinates[1], ...result)
+			this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result)
 		}
-	}
-	get expr(){
-		return this._exprEvaluation;
-	}
-	set expr(func){
-		this._expr = func;
 	}
 }
 

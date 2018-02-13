@@ -46,7 +46,7 @@ class Animation{
 		}else if(isFunction(toValue) && isFunction(fromValue)){
 			
 			//encapsulate percentage
-			this.target[propertyName] = function(...coords){return percentage*toValue(...coords) + (1-percentage)*fromValue(...coords)};
+			this.target[propertyName] = function(...coords){return vectorAdd(multiplyScalar(percentage,toValue(...coords)),multiplyScalar(1-percentage,fromValue(...coords)))};
 			return;
 		}else{
 			console.error("Animation class cannot yet handle transitioning between things that aren't numbers or functions!");
@@ -54,8 +54,8 @@ class Animation{
 
 	}
 	end(){
-		for(var i in this.toValues){
-			this.target[i] = this.toValues[i];
+		for(var prop in this.toValues){
+			this.target[prop] = this.toValues[prop];
 		}
 		three.removeEventListener("update",this._updateCallback);
 	}

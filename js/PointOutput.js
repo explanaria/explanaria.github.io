@@ -5,7 +5,7 @@ class PointOutput{
 		*/
 
 		this.width = options.width || 1;
-		this.color = options.color || 0x55aa55;
+		this._color = options.color || 0x55aa55;
 
 
 		this.points = [];
@@ -38,9 +38,18 @@ class PointOutput{
 	}
 	getPoint(i){
 		if(i >= this.points.length){
-			this.points.push(new Point({width: this.width,color:this.color}));
+			this.points.push(new Point({width: this.width,color:this._color}));
 		}
 		return this.points[i];
+	}
+	set color(color){
+		for(var i=0;i<this.points.length;i++){
+			this.getPoint(i).color = color;
+		}
+		this._color = color;
+	}
+	get color(){
+		return this._color;
 	}
 }
 

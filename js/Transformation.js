@@ -18,13 +18,20 @@ class Transformation{
 		thing.parent = this;
 		if(thing._onAdd)thing._onAdd();
 	}
-	expr(...coordinates){
-		let result = this._expr(...coordinates);;
+	_exprEvaluation(...coordinates){
+		//evaluate this Transformation's _expr, and broadcast the result to all children.
+		let result = this._expr(...coordinates);
 		if(result.constructor !== Array)result = [result];
 
 		for(var i=0;i<this.children.length;i++){
 			this.children[i].expr(coordinates[0],coordinates[1], ...result)
 		}
+	}
+	get expr(){
+		return this._exprEvaluation;
+	}
+	set expr(func){
+		this._expr = func;
 	}
 }
 

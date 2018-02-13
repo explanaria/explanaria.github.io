@@ -1,6 +1,9 @@
 function isArray(x){
 	return x.constructor === Array;
 }
+function isFunction(x){
+	return x.constructor === Function;
+}
 
 function assert(thing){
 	//A function to check if something is true and halt otherwise in a callbackable way.

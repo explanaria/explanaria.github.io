@@ -124,15 +124,29 @@ Threeasy_Setup.prototype.render = function(timestep){
 	window.requestAnimationFrame(this.render.bind(this));
 }
 Threeasy_Setup.prototype.on = function(event_name, func){
-	//event_name = "update". Registers an event listener.
+	//Registers an event listener.
 	//each listener will be called with an object consisting of:
 	//	{t: <current time in s>, "delta": <delta, in ms>}
 	// an update event fires before a render. a render event fires post-render.
 	if(event_name == "update"){ 
 		this.listeners["update"].push(func);
-	}
-	if(event_name == "render"){ 
+	}else if(event_name == "render"){ 
 		this.listeners["render"].push(func);
+	}else{
+		console.error("Invalid event name!")
+	}
+}
+Threeasy_Setup.prototype.removeEventListener = function(event_name, func){
+	//Unregisters an event listener, undoing an Threeasy_setup.on() event listener.
+	//the naming scheme might not be the best here.
+	if(event_name == "update"){ 
+		let index = this.listeners["update"].indexOf(func);
+		this.listeners["update"].splice(index,1);
+	} else if(event_name == "render"){ 
+		let index = this.listeners["render"].indexOf(func);
+		this.listeners["render"].splice(index,1);
+	}else{
+		console.error("Nonexistent event name!")
 	}
 }
 

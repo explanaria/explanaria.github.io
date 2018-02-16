@@ -1,4 +1,5 @@
 var three = new Threeasy_Setup(true, 60,15);
+var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 console.log("Loaded.");
 
@@ -13,6 +14,7 @@ id.add(output);
 
 three.on("update",function(time){
 	area.activate(time.t);
+	controls.update();
 });
 
 async function animate(){

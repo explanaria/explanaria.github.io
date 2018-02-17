@@ -1,0 +1,8 @@
+#gui { position: absolute; top: 50px; left: 0px }
+body{ 
+	background: #dddddd;
+    margin: 0;
+    padding: 0;
+    border: 0;
+	overflow: hidden; /* oh fine */
+}

@@ -1,5 +1,5 @@
 class Animation{
-	constructor(target, toValues){
+	constructor(target, toValues, duration){
 		assertType(toValues, Object);
 
 		this.toValues = toValues;
@@ -18,7 +18,7 @@ class Animation{
 		}
 
 
-		this.duration = 1; //in s
+		this.duration = duration === undefined ? 1 : duration; //in s
 		this.elapsedTime = 0;
 
 		this._updateCallback = this.update.bind(this)
@@ -39,19 +39,30 @@ class Animation{
 		}
 	}
 	interpolate(percentage, propertyName, fromValue, toValue){
+		let t = this.interpolationFunction(percentage);
+
 		var newValue = null;
 		if(typeof(toValue) === "number" && typeof(fromValue) === "number"){
-			this.target[propertyName] = percentage*toValue + (1-percentage)*fromValue;
+			this.target[propertyName] = t*toValue + (1-t)*fromValue;
 			return;
 		}else if(isFunction(toValue) && isFunction(fromValue)){
 			
 			//encapsulate percentage
-			this.target[propertyName] = function(...coords){return vectorAdd(multiplyScalar(percentage,toValue(...coords)),multiplyScalar(1-percentage,fromValue(...coords)))};
+			this.target[propertyName] = function(...coords){return vectorAdd(multiplyScalar(t,toValue(...coords)),multiplyScalar(1-t,fromValue(...coords)))};
 			return;
 		}else{
 			console.error("Animation class cannot yet handle transitioning between things that aren't numbers or functions!");
 		}
 
+	}
+	interpolationFunction(x){
+		return this.cosineInterpolation(x);
+	}
+	cosineInterpolation(x){
+		return (1-Math.cos(x*Math.PI))/2;
+	}
+	linearInterpolation(x){
+		return x;
 	}
 	end(){
 		for(var prop in this.toValues){

@@ -43,7 +43,7 @@ class Area{
 			for(var i=0;i<this.numItems;i++){
 				let c1 = this.bounds[0][0] + (this.bounds[0][1]-this.bounds[0][0])*(i/this.numItems);
 				let index = i;
-				this._callAllChildren(index,t,c1);
+				this._callAllChildren(index,t,c1,0,0,0);
 			}
 		}else if(this.numDimensions == 2){
 			//this can be reduced into a fancy recursion technique over the first index of this.bounds, I know it
@@ -52,7 +52,7 @@ class Area{
 					let c1 = this.bounds[0][0] + (this.bounds[0][1]-this.bounds[0][0])*(i/this.numItems);
 					let c2 = this.bounds[1][0] + (this.bounds[1][1]-this.bounds[1][0])*(j/this.numItems);
 					let index = i*this.numItems + j;
-					this._callAllChildren(index,t,c1,c2);
+					this._callAllChildren(index,t,c1,c2,0,0);
 				}
 			}
 		}else{

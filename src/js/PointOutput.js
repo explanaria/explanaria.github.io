@@ -4,8 +4,8 @@ class PointOutput{
 			width: number
 		*/
 
-		this.width = options.width || 1;
-		this._color = options.color || 0x55aa55;
+		this.width = options.width !== undefined ? options.width : 1;
+		this._color = options.color !== undefined ? options.color : 0x55aa55;
 
 
 		this.points = [];

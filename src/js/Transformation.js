@@ -27,6 +27,9 @@ class Transformation{
 			this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result)
 		}
 	}
+	clone(){
+		return new Transformation({expr: this.expr});
+	}
 }
 
 

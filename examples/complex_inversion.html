@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - 1/z</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/socket.io.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../src/js/typechecks.js"></script>
+  <script src="../src/js/constants.js"></script>
+  <script src="../src/js/math.js"></script>
+  <script src="../src/js/Point.js"></script>
+  <script src="../src/js/PointOutput.js"></script>
+  <script src="../src/js/ComplexPoint.js"></script>
+  <script src="../src/js/Animation.js"></script>
+  <script src="../src/js/asyncDelayFunctions.js"></script>
+  <script src="../src/js/Area.js"></script>
+  <script src="../src/js/Transformation.js"></script>
+  <script src="../src/js/three_bootstrap.js"></script>
+
+  <link type="text/css" href="../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <style>
+		#label{
+font-size: 42px; 
+		font-family: 'klavika-web','Klavika Web Basic',sans-serif; 
+		position:absolute; bottom:10%; 
+		text-align:center; width: 100%; 
+		pointer-events: none; 
+		text-shadow:
+			-3px -2px 0px rgb(255, 255, 255),
+			-3px  2px 0px rgb(255, 255, 255),
+			 3px  2px 0px rgb(255, 255, 255),
+			 3px -2px 0px rgb(255, 255, 255),
+
+			-2px -3px 0px rgb(255, 255, 255),
+			-2px  3px 0px rgb(255, 255, 255),
+			 2px  3px 0px rgb(255, 255, 255),
+			 2px -3px 0px rgb(255, 255, 255),
+
+			-1px -2px 1px rgb(255, 255, 255),
+			-2px -1px 1px rgb(255, 255, 255),
+			-1px  2px 1px rgb(255, 255, 255),
+			-2px  1px 1px rgb(255, 255, 255),
+			 1px  2px 1px rgb(255, 255, 255),
+			 2px  1px 1px rgb(255, 255, 255),
+			 1px -2px 1px rgb(255, 255, 255),
+			 2px -1px 1px rgb(255, 255, 255);
+		}
+  </style>
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Setup(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.z = 4;
+
+	console.log("Loaded.");
+
+	var area = new Area({bounds: [[0.01,5],[0,2*Math.PI]]});
+	var transformation = new Transformation({'expr': (i,t,r,theta) => [r,theta,0]});
+	var applyCylindricalCoords = new Transformation({'expr': (i,t,r,theta,z) => [r*Math.cos(theta),r*Math.sin(theta),z]});
+	var postCartesianTransform = new Transformation({'expr': (i,t,x,y,z) => [x,y,z]});
+	var output = new PointOutput({width:0.2});
+
+	var unitcircle = new Area({bounds: [[0,2*Math.PI]], numItems: 40});
+	var toCartesian = new Transformation({'expr': (i,t,theta) => [1*Math.cos(theta),1*Math.sin(theta)]});
+	unitcircle.add(toCartesian);
+	toCartesian.add(new PointOutput({width:0.1, color: 0x000000}));
+
+	/*
+	var axis = new Area({bounds: [[-5,5]], numItems: 40});
+	axis.add(new PointOutput({width:0.1, color: 0x000000}));
+
+	var axis2 = new Area({bounds: [[0,0],[-5,5]], numItems: 40}); //this is a rather silly way to get a y-axis.
+	axis2.add(new PointOutput({width:0.1, color: 0x000000}));*/
+
+	area.add(transformation); //transformation -> output
+	transformation.add(applyCylindricalCoords);
+	applyCylindricalCoords.add(postCartesianTransform);
+	postCartesianTransform.add(output);
+
+	three.on("update",function(time){
+		area.activate(time.t);
+		unitcircle.activate(time.t);
+		//axis.activate(time.t);
+		//axis2.activate(time.t);
+		//controls.update();
+
+		//three.camera.lookAt(new THREE.Vector3())
+	});
+
+	async function animate(){
+
+		await delay(1000);
+		TransitionTo(postCartesianTransform, {'expr': (i,t,x,y,z) => [x,-y,z]});
+
+		await delay(2000);
+
+		//to THE THIRD DIMENSION
+		TransitionTo(three.camera.position, {'x':0,'y':-8,'z':2})
+		TransitionTo(three.camera.rotation, {'x':1.325,'y':0,'z':0})
+
+		await delay(1500);
+
+		//to the Riemann sphere!
+		TransitionTo(transformation, {'expr': (i,t,r,theta) => [2*r/(r*r+1), theta, (r*r-1)/(r*r+1)]})
+		await delay(2000);
+		//and back again, completing the transformation
+		TransitionTo(transformation, {'expr': (i,t,r,theta,z) => [1/r, theta, 0]})
+
+		await delay(2000);
+		TransitionTo(three.camera.position, {'x':0,'y':0,'z':4})
+		TransitionTo(three.camera.rotation, {'x':0,'y':0,'z':0})
+
+		await delay(2000);
+
+	}
+	animate();
+  </script>
+	<div id="label" class="label">
+		f(z) = 1/z
+	</div>
+</body>
+</html>

@@ -5,8 +5,8 @@ class Point{
 			width: number
 		*/
 
-		let width = options.width || 1;
-		let color = options.color || 0x777777;
+		let width = options.width === undefined ? 1 : options.width
+		let color = options.color === undefined ? 0x777777 : options.color;
 
 		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(width/2, 8, 6),this.getFromMaterialCache(color));
 

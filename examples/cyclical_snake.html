@@ -26,6 +26,7 @@
 <body>
   <script>
 	var three = new Threeasy_Setup(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	console.log("Loaded.");
 
@@ -42,6 +43,7 @@
 
 	three.on("update",function(time){
 		x.activate(time.t);
+		controls.update();
 	});
   </script>
 </body>

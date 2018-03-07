@@ -1,12 +1,13 @@
 "use strict";
 
 //Usage: var y = new Transformation({expr: function(...a){console.log(...a)}});
+var EXP = EXP || {};
 
-class Transformation{
+EXP.Transformation = class Transformation{
 	constructor(options){
 	
-		assertPropExists(options, "expr"); // a function that returns a multidimensional array
-		assertType(options.expr, Function);
+		EXP.Utils.assertPropExists(options, "expr"); // a function that returns a multidimensional array
+		EXP.Utils.assertType(options.expr, Function);
 
 		this.expr = options.expr;
 
@@ -38,8 +39,7 @@ class Transformation{
 		}
 	}
 	clone(){
-		//doesn't return children for now
-		return new Transformation({expr: this.expr});
+		return new EXP.Transformation({expr: this.expr});
 	}
 }
 
@@ -48,8 +48,8 @@ class Transformation{
 
 //testing code
 function testTransformation(){
-	var x = new Area({bounds: [[-10,10]]});
-	var y = new Transformation({'expr': (x) => console.log(x*x)});
+	var x = new EXP.Area({bounds: [[-10,10]]});
+	var y = new EXP.Transformation({'expr': (x) => console.log(x*x)});
 	x.add(y);
 	x.activate();
 }

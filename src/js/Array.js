@@ -9,8 +9,8 @@ EXP.Array = class Array{
 			[10,10]]
 		})*/
 
-		assertPropExists(options, "data"); // a multidimensional array
-		assertType(options.data, Array);
+		EXP.Utils.assertPropExists(options, "data"); // a multidimensional array
+		EXP.Utils.assertType(options.data, Array);
 		this.numDimensions = options.data[0].length;
 
 		assert(options.data[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
@@ -64,7 +64,7 @@ EXP.Array = class Array{
 //testing code
 function testArray(){
 	var x = new EXP.Array({data: [[0,1],[0,1]]});
-	var y = new Transformation({expr: function(...a){console.log(...a); return [2]}});
+	var y = new EXP.Transformation({expr: function(...a){console.log(...a); return [2]}});
 	x.add(y);
 	x.activate(512);
 }

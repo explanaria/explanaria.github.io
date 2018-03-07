@@ -1,16 +1,18 @@
-class Animation{
+var EXP = EXP || {};
+
+EXP.Animation = class Animation{
 	constructor(target, toValues, duration){
-		assertType(toValues, Object);
+		EXP.Utils.assertType(toValues, Object);
 
 		this.toValues = toValues;
 		this.target = target;	
 
 		this.fromValues = {};
 		for(var property in this.toValues){
-			assertPropExists(this.target, property);
+			EXP.Utils.assertPropExists(this.target, property);
 
 			//copy property, making sure to store the correct 'this'
-			if(isFunction(this.target[property])){
+			if(EXP.Utils.isFunction(this.target[property])){
 				this.fromValues[property] = this.target[property].bind(this.target);
 			}else{
 				this.fromValues[property] = this.target[property];
@@ -45,7 +47,7 @@ class Animation{
 		if(typeof(toValue) === "number" && typeof(fromValue) === "number"){
 			this.target[propertyName] = t*toValue + (1-t)*fromValue;
 			return;
-		}else if(isFunction(toValue) && isFunction(fromValue)){
+		}else if(EXP.Utils.isFunction(toValue) && EXP.Utils.isFunction(fromValue)){
 			
 			//encapsulate percentage
 			this.target[propertyName] = function(...coords){return vectorAdd(multiplyScalar(t,toValue(...coords)),multiplyScalar(1-t,fromValue(...coords)))};
@@ -72,6 +74,7 @@ class Animation{
 	}
 }
 
+//todo: put this into a Director class so that it can have an undo stack
 function TransitionTo(target, toValues, durationMS){
-	var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000);
+	var animation = new EXP.Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000);
 }

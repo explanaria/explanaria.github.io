@@ -1,4 +1,6 @@
-class LineOutput{
+var EXP = EXP || {};
+
+EXP.LineOutput = class LineOutput{
 	constructor(options = {}){
 		/*input: Transformation
 			width: number
@@ -80,8 +82,6 @@ class LineOutput{
 		positionAttribute.array = this._vertices;
 		this.vertices = vertices;
 		positionAttribute.needsUpdate = true;
-		//big bug here: if this.numCallsPerActivation ever goes down, unwanted points will remain
-		//todo: fix
 	}
 	evaluateSelf(i, t, x, y, z){
 		//it's assumed i will go from 0 to this.numCallsPerActivation, since this should only be called from an Area.

@@ -1,28 +1,33 @@
-function isArray(x){
-	return x.constructor === Array;
-}
-function isFunction(x){
-	return x.constructor === Function;
-}
+var EXP = EXP || {};
 
-function assert(thing){
-	//A function to check if something is true and halt otherwise in a callbackable way.
-	if(!thing){
-		console.error("ERROR!");
+EXP.Utils = class Utils{
+
+	static isArray(x){
+		return x.constructor === Array;
 	}
-}
-
-function assertType(thing, type){
-	//A function to check if something is true and halt otherwise in a callbackable way.
-	if(!thing.constructor === type){
-		console.error("ERROR! Something not of type"+type);
+	static isFunction(x){
+		return x.constructor === Function;
 	}
-}
+
+	static assert(thing){
+		//A function to check if something is true and halt otherwise in a callbackable way.
+		if(!thing){
+			console.error("ERROR!");
+		}
+	}
+
+	static assertType(thing, type){
+		//A function to check if something is true and halt otherwise in a callbackable way.
+		if(!thing.constructor === type){
+			console.error("ERROR! Something not of type"+type);
+		}
+	}
 
 
-function assertPropExists(thing, name){
-	if(!(name in thing)){
-		console.error("ERROR! "+name+" not present in required property")
+	static assertPropExists(thing, name){
+		if(!(name in thing)){
+			console.error("ERROR! "+name+" not present in required property")
+		}
 	}
 }
 

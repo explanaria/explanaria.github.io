@@ -1,6 +1,7 @@
 "use strict";
+var EXP = EXP || {};
 
-class Area{
+EXP.Area = class Area{
 	constructor(options){
 
 		/*var axes = new THINGNAME.Area({
@@ -11,12 +12,12 @@ class Area{
 
 
 	
-		assertPropExists(options, "bounds"); // a multidimensional array
-		assertType(options.bounds, Array);
-		assertType(options.bounds[0], Array); // it MUST be multidimensional
+		EXP.Utils.assertPropExists(options, "bounds"); // a multidimensional array
+		EXP.Utils.assertType(options.bounds, Array);
+		EXP.Utils.assertType(options.bounds[0], Array); // it MUST be multidimensional
 		this.numDimensions = options.bounds.length;
 
-		assert(options.bounds[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
+		EXP.Utils.assert(options.bounds[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
 
 		this.bounds = options.bounds;
 
@@ -92,8 +93,8 @@ class Area{
 
 //testing code
 function testArea(){
-	var x = new Area({bounds: [[0,1],[0,1]]});
-	var y = new Transformation({expr: function(...a){console.log(...a)}});
+	var x = new EXP.Area({bounds: [[0,1],[0,1]]});
+	var y = new EXP.Transformation({expr: function(...a){console.log(...a)}});
 	x.add(y);
 	x.activate();
 }

@@ -1,4 +1,6 @@
-class PointOutput{
+var EXP = EXP || {};
+
+EXP.PointOutput = class PointOutput{
 	constructor(options = {}){
 		/*input: Transformation
 			width: number
@@ -42,7 +44,7 @@ class PointOutput{
 	}
 	getPoint(i){
 		if(i >= this.points.length){
-			this.points.push(new Point({width: this.width,color:this._color}));
+			this.points.push(new EXP.Point({width: this.width,color:this._color}));
 		}
 		return this.points[i];
 	}
@@ -69,28 +71,11 @@ class PointOutput{
 	}
 }
 
-/*
-Problem now:
-	PointOutput needs to know how many Point()s to make so it can call each one sequentially. Also, how does it know when a rendering loop starts and stops?
-
-	I suppose that means it needs to connect to the original Area and read its numItems, and use numItems * numDimensions.
-
-	Reading the mathbox articles, it looks like mathbox solved this problem by declaring a width variable equal to that thing, and then secretly having emit() control one big floating point array. That gets you speed, as arrays can be GPU-offloaded.
-
-I guess the big thing I want from mathbox is to error when a thing with three channels is sent to a vector. Is this time for joy.js? I think so.
-
--
-There are 3 things that need to be defined for any visualization to work: domain, transformation, and range/output. However, the output needs to know how many times the transformation will be evaluated, to know about its result, and that's the job of the domain. So a domain needs to connect to a range somehow. timesCombining the domain and the transformation, like mathbox does.
-
-*/
-
-
-
 //testing code
 function testPoint(){
-	var x = new Area({bounds: [[-10,10]]});
-	var y = new Transformation({'expr': (x) => x*x});
-	var y = new PointOutput();
+	var x = new EXP.Area({bounds: [[-10,10]]});
+	var y = new EXP.Transformation({'expr': (x) => x*x});
+	var y = new EXP.PointOutput();
 	x.add(y);
 	y.add(z);
 	x.activate();

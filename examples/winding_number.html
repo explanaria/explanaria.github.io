@@ -32,30 +32,30 @@
 
 	console.log("Loaded.");
 
-	var area = new Area({bounds: [[-5,5],[-5,5]]});
-	area.add(new PointOutput({width: 0.2, color:0xcccccc}));
+	var area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
+	area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc}));
 
 	//curve
-	var a2 = new Area({bounds: [[0,2*Math.PI]], numItems: 300});
-	var id = new Transformation({'expr': (i,t,x) => [0,0,0]});
-	var t2 = new Transformation({'expr': (i,t,x,y) => [x,y,0]});
-	var output = new PointOutput({width:0.2});
+	var a2 = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 300});
+	var id = new EXP.Transformation({'expr': (i,t,x) => [0,0,0]});
+	var t2 = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
+	var output = new EXP.PointOutput({width:0.2});
 
 	a2.add(id).add(t2).add(output);
 
 	var params = {angleOffset: 0.3};
 
 	//line to show intersection
-	var a3 = new Area({bounds: [[0,5]], numItems: 20});
-	var line = new Transformation({'expr': (i,t,r) => [0]});
+	var a3 = new EXP.Area({bounds: [[0,5]], numItems: 20});
+	var line = new EXP.Transformation({'expr': (i,t,r) => [0]});
 	a3.add(line)
-		.add(new Transformation({'expr': (i,t,r) => [r*Math.cos(params.angleOffset), r*Math.sin(params.angleOffset)]}))
-		.add(new LineOutput({width:5, color:0x9999ff}));
+		.add(new EXP.Transformation({'expr': (i,t,r) => [r*Math.cos(params.angleOffset), r*Math.sin(params.angleOffset)]}))
+		.add(new EXP.LineOutput({width:5, color:0x9999ff}));
 
 	//intersection points
-	var intersectionPts = new Area({bounds: [[0,2*Math.PI*6]],numItems: 7});
-	var goToIntersection = new Transformation({expr: (i,t,theta) => [radius(theta+params.angleOffset)*Math.cos(theta+params.angleOffset), radius(theta+params.angleOffset)*Math.sin(theta+params.angleOffset)]})
-	var intersectionOutput = new PointOutput({width:0.4, color:0x5555ff});
+	var intersectionPts = new EXP.Area({bounds: [[0,2*Math.PI*6]],numItems: 7});
+	var goToIntersection = new EXP.Transformation({expr: (i,t,theta) => [radius(theta+params.angleOffset)*Math.cos(theta+params.angleOffset), radius(theta+params.angleOffset)*Math.sin(theta+params.angleOffset)]})
+	var intersectionOutput = new EXP.PointOutput({width:0.4, color:0x5555ff});
 	intersectionPts.add(goToIntersection)
 		.add(intersectionOutput);
 	intersectionOutput.opacity = 0; //prepare fade-in
@@ -79,9 +79,9 @@
 		await delay(1000);
 
 		TransitionTo(t2, {'expr': (i,t,x,y) => [Math.cos(x*6+t*3)*radius(x*6+t*3),Math.sin(x*6+t*3)*radius(x*6+t*3),0]});
-		await delay(8000);
+		await delay(4000);
 
-		t2.add(new LineOutput({}));
+		t2.add(new EXP.LineOutput({}));
 		TransitionTo(id, {'expr': (i,t,x,y) => [x,y,0]},3000);
 		await delay(5000);
 

@@ -30,11 +30,11 @@
 
 	console.log("Loaded.");
 
-	var area = new Area({bounds: [[-5,5],[-5,5]]});
-	var id = new Transformation({'expr': (i,t,x,y) => [x,y,0]});
-	var output = new PointOutput({width:0.2});
+	var area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
+	var id = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
+	var output = new EXP.PointOutput({width:0.2});
 
-	area.add(new PointOutput({width: 0.2, color:0xcccccc})); // grid
+	area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
 
 	area.add(id); //transformation -> output
 	id.add(output);

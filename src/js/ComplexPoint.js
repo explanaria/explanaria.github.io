@@ -1,4 +1,8 @@
-class ComplexPoint extends Point{
+var EXP = EXP || {};
+
+//class that was planned to handle complex numbers. Isn't ready yet. Todo.
+
+EXP.ComplexPoint = class ComplexPoint extends EXP.Point{
 	//this class handles displaying its complex number.
 	//
 	constructor(re,im,options){
@@ -7,7 +11,7 @@ class ComplexPoint extends Point{
 		if(im)options.y = im;
 		super(options);
 
-		this.value = new ComplexNumber(options.x,options.y);
+		this.value = new EXP.ComplexNumber(options.x,options.y);
 	}
 	_update(){
 		this.mesh.position.x = this.value.x;
@@ -15,10 +19,10 @@ class ComplexPoint extends Point{
 	}
 }
 
-Point.prototype._materials = {};
+EXP.ComplexPoint.prototype._materials = {};
 
 
-class ComplexNumber{
+EXP.ComplexNumber = class ComplexNumber{
 	//class to represent a complex number and to do complex math on. Operations modify the vector, so use .clone() first.
 	//same as THREE.Vector3()'s.
 	constructor(x,y){
@@ -48,6 +52,6 @@ class ComplexNumber{
 		return this;
 	}
 	clone(){
-		return new ComplexNumber(this.x,this.y);
+		return new EXP.ComplexNumber(this.x,this.y);
 	}
 }

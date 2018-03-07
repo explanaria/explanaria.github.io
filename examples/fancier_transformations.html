@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Some Fancy Transformations</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/socket.io.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../src/js/typechecks.js"></script>
+  <script src="../src/js/constants.js"></script>
+  <script src="../src/js/math.js"></script>
+  <script src="../src/js/Point.js"></script>
+  <script src="../src/js/PointOutput.js"></script>
+  <script src="../src/js/ComplexPoint.js"></script>
+  <script src="../src/js/Animation.js"></script>
+  <script src="../src/js/asyncDelayFunctions.js"></script>
+  <script src="../src/js/Area.js"></script>
+  <script src="../src/js/Transformation.js"></script>
+  <script src="../src/js/three_bootstrap.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="../src/style.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Setup(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	console.log("Loaded.");
+
+	var area = new Area({bounds: [[-5,5],[-5,5]]});
+	var id = new Transformation({'expr': (i,t,x,y) => [x,y,0]});
+	var output = new PointOutput({width:0.2});
+
+	area.add(new PointOutput({width: 0.2, color:0xcccccc})); // grid
+
+	area.add(id); //transformation -> output
+	id.add(output);
+
+	three.on("update",function(time){
+		area.activate(time.t);
+		controls.update();
+	});
+
+	async function animate(){
+
+		await delay(1000);
+
+		//demonstrate some common functions
+		/*
+		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x),Math.sin(x),0]});
+		await delay(1000);
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x+t),Math.sin(x+t),0]});
+		await delay(500);
+
+	
+		// bouncy circle
+		TransitionTo(id, {'expr': (i,t,x,y) => [(y+6)*Math.cos(x + t),(y+6)*Math.sin(x + t),0]});
+		await delay(3000);
+
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6)+5)*Math.cos(x + t),(y+Math.sin(t*6)+5)*Math.sin(x + t),0]});
+		await delay(5000);*/
+
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x*x/6 + y,0]});
+		await delay(1000);
+
+		// bouncy circle
+		TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4),y*Math.sin(x/4),0]});
+		await delay(1000);
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4 + t),y*Math.sin(x/4 + t),0]});
+		await delay(1000);
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),0]});
+		await delay(5000);
+
+		//folds up into something 3D
+		TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),Math.abs(x)*3-9]});
+		await delay(3000);
+
+		//to the THIRD DIMENSION
+		TransitionTo(three.camera.position, {z: 2, x: 9.3});
+		await delay(5000);
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,(x*x+y*y*(y+Math.sin(t)/3))/5,y+Math.sin(t)]});
+		await delay(5000);
+
+		//TransitionTo(three.camera.rotation, {y: Math.PI});
+
+		//var anim = new Animation(output, {'color': 0xffffff}); // works (albeit not on THREE.Color()s)
+
+		TransitionTo(three.camera.position, {z: 10, x: 0});
+		await delay(1000);
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),0]})
+		await delay(3000);
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),Math.cos(x+t)]})
+		await delay(4000);
+
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(x+t),-(y*y/3)+Math.cos(x+t)+4]})
+		await delay(4000);
+
+
+	}
+	animate();
+  </script>
+</body>
+</html>

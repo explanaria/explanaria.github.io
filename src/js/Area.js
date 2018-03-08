@@ -45,18 +45,20 @@ class Area{
 		//the expr()s are called with expr(i, ...[coordinates], t), 
 		//	(where i is the index of the current evaluation = times expr() has been called this frame, t = absolute timestep (s)).
 		//please call with a t value obtained from performance.now()/1000 or something like that
+
+		//note the less-than-or-equal-to in these loops
 		if(this.numDimensions == 1){
 			for(var i=0;i<this.itemDimensions[0];i++){
-				let c1 = this.bounds[0][0] + (this.bounds[0][1]-this.bounds[0][0])*(i/this.numItems);
+				let c1 = this.bounds[0][0] + (this.bounds[0][1]-this.bounds[0][0])*(i/(this.itemDimensions[0]-1));
 				let index = i;
 				this._callAllChildren(index,t,c1,0,0,0);
 			}
 		}else if(this.numDimensions == 2){
 			//this can be reduced into a fancy recursion technique over the first index of this.bounds, I know it
 			for(var i=0;i<this.itemDimensions[0];i++){
-				let c1 = this.bounds[0][0] + (this.bounds[0][1]-this.bounds[0][0])*(i/this.itemDimensions[0]);
+				let c1 = this.bounds[0][0] + (this.bounds[0][1]-this.bounds[0][0])*(i/(this.itemDimensions[0]-1));
 				for(var j=0;j<this.itemDimensions[1];j++){
-					let c2 = this.bounds[1][0] + (this.bounds[1][1]-this.bounds[1][0])*(j/this.itemDimensions[1]);
+					let c2 = this.bounds[1][0] + (this.bounds[1][1]-this.bounds[1][0])*(j/(this.itemDimensions[1]-1));
 					let index = i*this.itemDimensions[1] + j;
 					this._callAllChildren(index,t,c1,c2,0,0);
 				}

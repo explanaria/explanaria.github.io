@@ -92,7 +92,7 @@ class LineOutput{
 
 		if(x !== undefined)this._vertices[index] = x;
 		if(y !== undefined)this._vertices[index+1] = y;
-		if(z !== undefined)this._vertices[this._currentPointIndex*this._outputDimensions+2] = z;
+		if(z !== undefined)this._vertices[index+2] = z;
 
 		this._currentPointIndex++;
 

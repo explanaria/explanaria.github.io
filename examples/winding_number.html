@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
-  <title>Explanarian - Cyclical Snake</title>
+  <title>Explanarian - Some Fancy Transformations</title>
   <script src="../src/lib/three.js"></script>
   <script src="../src/lib/socket.io.js"></script>
   <script src="../src/lib/OrbitControls.js"></script>
@@ -30,21 +30,43 @@
 
 	console.log("Loaded.");
 
-	var x = new Area({bounds: [[-5,5],[-5,5]]});
-	var square = new Transformation({'expr': (i,t,x,y) => [Math.cos((t+i))+5*Math.sin((t+i)/20),Math.sin(t+i)*Math.cos(2*(t+i))]});
-	var square2 = new Transformation({'expr': (i,t,x,y) => [(y+5)*Math.cos(x/5+(t+i/302)/4*Math.PI),(y+5)*Math.sin(x/5+(t+i/302)/3*Math.PI)]});
+	var area = new Area({bounds: [[-5,5],[-5,5]]});
+	var a2 = new Area({bounds: [[-5,5]], numItems: 50});
+	var id = new Transformation({'expr': (i,t,x,y) => [x,y,0]});
 	var output = new PointOutput({width:0.2});
 
-	x.add(new PointOutput({width: 0.2, color:0xcccccc})); // grid
+	area.add(new PointOutput({width: 0.2, color:0xcccccc})); // grid
 
-	x.add(square) //transformation -> output
-		.add(square2)
-		.add(output);
+	a2.add(id); //transformation -> output
+	id.add(output);
 
 	three.on("update",function(time){
-		x.activate(time.t);
+		area.activate(time.t);
+		a2.activate(time.t);
 		controls.update();
 	});
+
+	async function animate(){
+
+		await delay(1000);
+
+		//demonstrate some common functions
+		function radius(theta){
+			return Math.sin(theta*0.5) + Math.sin(theta*3) + Math.sin(theta*7) + 3.1;
+		}
+
+		
+		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(t)*radius(t),Math.sin(t)*radius(t),0]});
+		await delay(8000);
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x+t)*radius(x+t),Math.sin(x+t)*radius(x+t),0]});
+		await delay(5000);
+
+		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x+t),Math.sin(x+t),0]});
+		await delay(3000);
+
+	}
+	animate();
   </script>
 </body>
 </html>

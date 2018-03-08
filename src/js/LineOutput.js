@@ -103,9 +103,9 @@ class LineOutput{
 	
 		but we don't want to insert a diagonal line anywhere. This handles that:  */
 
-		let firstCoordinate = i % this.itemDimensions[0];
+		let firstCoordinate = i % this.itemDimensions[this.itemDimensions.length-1];
 
-		if(!(firstCoordinate == 0 || firstCoordinate == this.itemDimensions[0]-1)){
+		if(!(firstCoordinate == 0 || firstCoordinate == this.itemDimensions[this.itemDimensions.length-1]-1)){
 			if(x !== undefined)this._vertices[index+this._outputDimensions] = x;
 			if(y !== undefined)this._vertices[index+this._outputDimensions+1] = y;
 			if(z !== undefined)this._vertices[index+this._outputDimensions+2] = z;

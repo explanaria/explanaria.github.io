@@ -1,11 +1,11 @@
 "use strict";
 
-//var y = new Transformation({expr: function(...a){console.log(...a)}});
+//Usage: var y = new Transformation({expr: function(...a){console.log(...a)}});
 
 class Transformation{
 	constructor(options){
 	
-		assertPropExists(options, "expr"); // a multidimensional array
+		assertPropExists(options, "expr"); // a function that returns a multidimensional array
 		assertType(options.expr, Function);
 
 		this.expr = options.expr;
@@ -14,9 +14,11 @@ class Transformation{
 		this.parent = null;
 	}
 	add(thing){
+		//chainable.
 		this.children.push(thing);
 		thing.parent = this;
 		if(thing._onAdd)thing._onAdd();
+		return thing;
 	}
 	evaluateSelf(...coordinates){
 		//evaluate this Transformation's _expr, and broadcast the result to all children.
@@ -36,6 +38,7 @@ class Transformation{
 		}
 	}
 	clone(){
+		//doesn't return children for now
 		return new Transformation({expr: this.expr});
 	}
 }

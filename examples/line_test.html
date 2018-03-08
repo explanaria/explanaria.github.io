@@ -31,7 +31,7 @@
 
 	console.log("Loaded.");
 
-	var area = new Area({bounds: [[-5,5],[-5,5]]});
+	var area = new Area({bounds: [[-5,5],[-5,5]],numItems: 16});
 	var id = new Transformation({'expr': (i,t,x,y) => [x,y,0]});
 	var output = new LineOutput({width:0.2});
 
@@ -51,15 +51,22 @@
 
 	async function animate(){
 
-		await delay(5000);
+		await delay(1000);
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,y,i/30]});
+
+		await delay(2000);
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x) + y,0]});
+
+		await delay(3000);
 		TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(t),x*x+y*y*y]});
 
 
 		await delay(3000);
-		TransitionTo(id, {'expr': (i,t,x,y) => [x*Math.cos(y), x*Math.sin(y),0]});
+		TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x), y*Math.sin(x),0]});
 
 		await delay(3000);
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,y,i/5]});
+		TransitionTo(id, {'expr': (i,t,x,y) => [x*Math.cos(y), x*Math.sin(y),0]});
+
 	}
 	animate();
   </script>

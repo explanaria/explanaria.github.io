@@ -38,6 +38,7 @@ class Area{
 		this.children.push(thing);
 		thing.parent = this;
 		if(thing._onAdd)thing._onAdd();
+		return thing;
 	}
 	activate(t){
 		//Use this to evaluate expr() and update the result, cascade-style.

@@ -81,10 +81,11 @@ font-size: 42px;
 	axis2.add(new PointOutput({width:0.1, color: 0x000000}));*/
 
 	area.add(transformation); //transformation -> output
-	transformation.add(applyCylindricalCoords);
-	applyCylindricalCoords.add(postCartesianTransform);
-	postCartesianTransform.add(output);
-	postCartesianTransform.add(output2);
+	transformation
+		.add(applyCylindricalCoords)
+		.add(postCartesianTransform)
+		.add(output);
+	postCartesianTransform.add(output2); //also add the line
 
 	three.on("update",function(time){
 		area.activate(time.t);

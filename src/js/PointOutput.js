@@ -36,6 +36,9 @@ class PointOutput{
 		if(z !== undefined)point.z = z;
 		point.mesh.visible = true;
 	}
+	onAfterActivation(){
+
+	}
 	getPoint(i){
 		if(i >= this.points.length){
 			this.points.push(new Point({width: this.width,color:this._color}));

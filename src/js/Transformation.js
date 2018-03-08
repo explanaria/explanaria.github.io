@@ -27,6 +27,14 @@ class Transformation{
 			this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result)
 		}
 	}
+	onAfterActivation(){
+		// do nothing
+
+		//but call all children
+		for(var i=0;i<this.children.length;i++){
+			this.children[i].onAfterActivation()
+		}
+	}
 	clone(){
 		return new Transformation({expr: this.expr});
 	}

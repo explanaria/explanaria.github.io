@@ -47,6 +47,18 @@ body{
 	position: relative
 }
 
+@media (max-height: 699px) and (max-width: 700px) {
+	.exp-label{
+		font-size: 35px; 
+		line-height: 0.8em;
+		bottom:5%; 
+	}
+	.exp-math{
+		font-size: 40px; 
+	}
+
+}
+
 /* From google fonts */
 @font-face {
   font-family: 'Lora';

@@ -32,6 +32,8 @@
 
 	console.log("Loaded.");
 
+	try{window.screen.lockOrientation('landscape');}catch{}
+
 	var area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
 	area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc}));
 

@@ -7,6 +7,7 @@ EXP.LineOutput = class LineOutput{
 		*/
 
 		this._width = options.width !== undefined ? options.width : 5;
+		this._opacity = options.opacity !== undefined ? options.opacity : 1; //trigger transparency if needed
 		this._color = options.color !== undefined ? options.color : 0x55aa55;
 
 
@@ -23,7 +24,7 @@ EXP.LineOutput = class LineOutput{
 		this._outputDimensions = 3; //how many dimensions per point to store?
 		this.makeGeometry();
 
-		this.material = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width,});
+		this.material = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width,opacity:this._opacity});
 		this.mesh = new THREE.LineSegments(this._geometry,this.material);
 
 		three.scene.add(this.mesh);
@@ -127,6 +128,15 @@ EXP.LineOutput = class LineOutput{
 	}
 	get color(){
 		return this._color;
+	}
+	set opacity(opacity){
+		let mat = this.mesh.material;
+		mat.opacity = opacity;
+		mat.transparent = opacity < 1;
+		this._opacity = opacity;
+	}
+	get opacity(){
+		return this._opacity;
 	}
 	set width(width){
 		this._width = width;

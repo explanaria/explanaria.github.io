@@ -34,11 +34,13 @@ body{
 		 2px  1px 1px rgb(255, 255, 255),
 		 1px -2px 1px rgb(255, 255, 255),
 		 2px -1px 1px rgb(255, 255, 255);
+	transition: inherit;
 }
 .exp-math{
 	font-family: "Computer Modern", serif; /* But of course! */
 	font-style: normal;
 	font-size: 60px; 
+	transition: inherit;
 }
 .exp-math sup, sub{
 	z-index:-1;

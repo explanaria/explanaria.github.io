@@ -72,6 +72,6 @@ class Animation{
 	}
 }
 
-function TransitionTo(target, toValues){
-	var animation = new Animation(target, toValues);
+function TransitionTo(target, toValues, duration){
+	var animation = new Animation(target, toValues, duration);
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
-  <title>Explanarian - Some Fancy Transformations</title>
+  <title>Explanarian - Winding Number</title>
   <script src="../src/lib/three.js"></script>
   <script src="../src/lib/socket.io.js"></script>
   <script src="../src/lib/OrbitControls.js"></script>
@@ -12,10 +12,12 @@
   <script src="../src/js/math.js"></script>
   <script src="../src/js/Point.js"></script>
   <script src="../src/js/PointOutput.js"></script>
+  <script src="../src/js/LineOutput.js"></script>
   <script src="../src/js/ComplexPoint.js"></script>
   <script src="../src/js/Animation.js"></script>
   <script src="../src/js/asyncDelayFunctions.js"></script>
   <script src="../src/js/Area.js"></script>
+  <script src="../src/js/Array.js"></script>
   <script src="../src/js/Transformation.js"></script>
   <script src="../src/js/three_bootstrap.js"></script>
 
@@ -31,42 +33,86 @@
 	console.log("Loaded.");
 
 	var area = new Area({bounds: [[-5,5],[-5,5]]});
-	var a2 = new Area({bounds: [[-5,5]], numItems: 50});
-	var id = new Transformation({'expr': (i,t,x,y) => [x,y,0]});
+	area.add(new PointOutput({width: 0.2, color:0xcccccc}));
+
+	//curve
+	var a2 = new Area({bounds: [[0,2*Math.PI]], numItems: 300});
+	var id = new Transformation({'expr': (i,t,x) => [0,0,0]});
+	var t2 = new Transformation({'expr': (i,t,x,y) => [x,y,0]});
 	var output = new PointOutput({width:0.2});
 
-	area.add(new PointOutput({width: 0.2, color:0xcccccc})); // grid
+	a2.add(id).add(t2).add(output);
 
-	a2.add(id); //transformation -> output
-	id.add(output);
+	var params = {angleOffset: 0.3};
+
+	//line to show intersection
+	var a3 = new Area({bounds: [[0,5]], numItems: 20});
+	var line = new Transformation({'expr': (i,t,r) => [0]});
+	a3.add(line)
+		.add(new Transformation({'expr': (i,t,r) => [r*Math.cos(params.angleOffset), r*Math.sin(params.angleOffset)]}))
+		.add(new LineOutput({width:5, color:0x9999ff}));
+
+	//intersection points
+	var intersectionPts = new Area({bounds: [[0,2*Math.PI*6]],numItems: 7});
+	var goToIntersection = new Transformation({expr: (i,t,theta) => [radius(theta+params.angleOffset)*Math.cos(theta+params.angleOffset), radius(theta+params.angleOffset)*Math.sin(theta+params.angleOffset)]})
+	var intersectionOutput = new PointOutput({width:0.4, color:0x5555ff});
+	intersectionPts.add(goToIntersection)
+		.add(intersectionOutput);
+	intersectionOutput.opacity = 0; //prepare fade-in
 
 	three.on("update",function(time){
 		area.activate(time.t);
 		a2.activate(time.t);
+		a3.activate(time.t);
+		intersectionPts.activate(time.t);
 		controls.update();
 	});
+
+
+	//demonstrate a path
+	function radius(theta){
+		return Math.sin(theta/2) + Math.sin(theta/3) + Math.sin(theta) + 3.1;
+	}
 
 	async function animate(){
 
 		await delay(1000);
 
-		//demonstrate some common functions
-		function radius(theta){
-			return Math.sin(theta*0.5) + Math.sin(theta*3) + Math.sin(theta*7) + 3.1;
-		}
-
-		
-		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(t)*radius(t),Math.sin(t)*radius(t),0]});
+		TransitionTo(t2, {'expr': (i,t,x,y) => [Math.cos(x*6+t*3)*radius(x*6+t*3),Math.sin(x*6+t*3)*radius(x*6+t*3),0]});
 		await delay(8000);
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x+t)*radius(x+t),Math.sin(x+t)*radius(x+t),0]});
+		t2.add(new LineOutput({}));
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,y,0]},3000);
 		await delay(5000);
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x+t),Math.sin(x+t),0]});
-		await delay(3000);
+		//show line
+		TransitionTo(line, {'expr': (i,t,x,y) => [x,0.3]});
+		TransitionTo(intersectionOutput, {'opacity': 1});
+		await delay(3000);		
+
+		TransitionTo(params, {'angleOffset': 1});
+		await delay(2000);		
+
+		TransitionTo(params, {'angleOffset': -1});
+		await delay(2000);		
+
+		TransitionTo(params, {'angleOffset': -Math.PI*2});
+		await delay(3000);		
+
+		//move the 6 points
+		TransitionTo(goToIntersection, {expr: (i,t,x,y)=> [i+8, 3]});
+		await delay(2000);
+
+		//show text
+		let element = document.getElementById("label");
+		element.style.opacity = 1;
+		//TransitionTo(element.style, {opacity: 1}, 1000); //doesn't work
 
 	}
 	animate();
   </script>
+	<div id="label" class="exp-label exp-math" style="opacity: 0">
+		Winding number = 6
+	</div>
 </body>
 </html>

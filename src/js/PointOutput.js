@@ -13,6 +13,7 @@ class PointOutput{
 		this.numCallsPerActivation = 0; //should always be equal to this.points.length
 
 		this.parent = null;
+		this._opacity = 1;
 	}
 	_onAdd(){ //should be called when this is .add()ed to something
 
@@ -44,6 +45,18 @@ class PointOutput{
 			this.points.push(new Point({width: this.width,color:this._color}));
 		}
 		return this.points[i];
+	}
+	set opacity(opacity){
+		//technically this will set all points of the same color, and it'll be wiped with a color change. But I'll deal with that sometime later.
+		for(var i=0;i<this.numCallsPerActivation;i++){
+			let mat = this.getPoint(i).mesh.material;
+			mat.opacity = opacity; //instantiate the point
+			mat.transparent = opacity < 1;
+		}
+		this._opacity = opacity;
+	}
+	get opacity(){
+		return this._opacity;
 	}
 	set color(color){
 		for(var i=0;i<this.points.length;i++){

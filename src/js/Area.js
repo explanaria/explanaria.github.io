@@ -13,6 +13,7 @@ class Area{
 	
 		assertPropExists(options, "bounds"); // a multidimensional array
 		assertType(options.bounds, Array);
+		assertType(options.bounds[0], Array); // it MUST be multidimensional
 		this.numDimensions = options.bounds.length;
 
 		assert(options.bounds[0].length != 0); //don't accept [[]], it needs to be [[1,2]].

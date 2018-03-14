@@ -32,7 +32,11 @@
 
 	console.log("Loaded.");
 
-	try{window.screen.lockOrientation('landscape');}catch{}
+	try{
+		window.screen.lockOrientation('landscape');
+	}catch(error){
+		console.log("Unable to lock screen orientation (not mobile?)")
+	}
 
 	var area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
 	area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc}));

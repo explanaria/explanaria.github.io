@@ -10,9 +10,6 @@ EXP.LineOutput = class LineOutput{
 		this._opacity = options.opacity !== undefined ? options.opacity : 1; //trigger transparency if needed
 		this._color = options.color !== undefined ? options.color : 0x55aa55;
 
-
-		this.points = [];
-
 		this.numCallsPerActivation = 0; //should always be equal to this.points.length
 		this.itemDimensions = []; // how many times to be called in each direction
 

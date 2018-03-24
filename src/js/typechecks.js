@@ -16,10 +16,14 @@ EXP.Utils = class Utils{
 		}
 	}
 
-	static assertType(thing, type){
+	static assertType(thing, type, errorMsg){
 		//A function to check if something is true and halt otherwise in a callbackable way.
-		if(!thing.constructor === type){
-			console.error("ERROR! Something not of type"+type);
+		if(!(thing.constructor === type)){
+			if(errorMsg){
+				console.error("ERROR! Something not of required type "+type.name+"! \n"+errorMsg);
+			}else{
+				console.error("ERROR! Something not of required type "+type.name+"!");
+			}
 		}
 	}
 

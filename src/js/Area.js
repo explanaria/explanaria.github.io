@@ -14,7 +14,7 @@ EXP.Area = class Area{
 	
 		EXP.Utils.assertPropExists(options, "bounds"); // a multidimensional array
 		EXP.Utils.assertType(options.bounds, Array);
-		EXP.Utils.assertType(options.bounds[0], Array); // it MUST be multidimensional
+		EXP.Utils.assertType(options.bounds[0], Array, "For an Area, options.bounds must be a multidimensional array, even for one dimension!"); // it MUST be multidimensional
 		this.numDimensions = options.bounds.length;
 
 		EXP.Utils.assert(options.bounds[0].length != 0); //don't accept [[]], it needs to be [[1,2]].

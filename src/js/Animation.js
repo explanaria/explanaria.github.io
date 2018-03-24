@@ -71,6 +71,7 @@ EXP.Animation = class Animation{
 			this.target[prop] = this.toValues[prop];
 		}
 		three.removeEventListener("update",this._updateCallback);
+		//Todo: delete this
 	}
 }
 

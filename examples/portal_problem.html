@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Mobius transform</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/socket.io.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../src/js/typechecks.js"></script>
+  <script src="../src/js/constants.js"></script>
+  <script src="../src/js/math.js"></script>
+  <script src="../src/js/Point.js"></script>
+  <script src="../src/js/PointOutput.js"></script>
+  <script src="../src/js/LineOutput.js"></script>
+  <script src="../src/js/ComplexPoint.js"></script>
+  <script src="../src/js/Animation.js"></script>
+  <script src="../src/js/asyncDelayFunctions.js"></script>
+  <script src="../src/js/Director.js"></script>
+  <script src="../src/js/Area.js"></script>
+  <script src="../src/js/Transformation.js"></script>
+  <script src="../src/js/three_bootstrap.js"></script>
+
+  <link type="text/css" href="../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Setup(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	three.camera.position.z = 4;
+
+	class Circle{
+		constructor(radius, centerPoint, color, numSamples){
+			this.interval = new EXP.Area({bounds: [[0, 2*Math.PI]], numItems:numSamples});
+			this.centerPoint = centerPoint || [0,0,0];
+			this.radius = radius || 5;
+			this.revealTransform = new EXP.Transformation({'expr':(i,t,x)=> [0]});
+			this.transform = new EXP.Transformation({'expr':this.polarexpr.bind(this)});
+			this.output = new EXP.LineOutput({width: 5, color: color});
+
+			this.interval.add(this.revealTransform).add(this.transform).add(this.output);
+		}
+		activate(t){
+			this.interval.activate(t);
+		}
+		polarexpr(i, t,theta){
+			//this.transform's expr
+			return [this.radius*Math.cos(theta)+this.centerPoint[0], this.radius*Math.sin(theta)+this.centerPoint[1],this.centerPoint[2]];
+		}
+		revealSelf(presentation){
+			presentation.transitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
+		}
+	}
+
+	class PlanetArc extends Circle{
+		constructor(radius, centerPoint, color, numSamples){
+			super(radius, centerPoint, color, numSamples);
+			this.interval.bounds = [[Math.PI/2-0.3,Math.PI/2+0.3]];
+
+		}
+	}
+
+	class Line{
+		constructor(p1,p2, color, numSamples){
+			this.interval = new EXP.Area({bounds: [[0, 1]], numItems:numSamples});
+			this.p1 = p1;
+			this.p2 = p2;
+			this.revealTransform = new EXP.Transformation({'expr':(i,t,x)=> [0]});
+			this.transform = new EXP.Transformation({'expr':this.expr.bind(this)});
+			this.output = new EXP.LineOutput({width: 5, color: color});
+
+			this.interval.add(this.revealTransform).add(this.transform).add(this.output);
+		}
+		activate(t){
+			this.interval.activate(t);
+		}
+		expr(i, t,x){
+			//this.transform's expr
+			return [x*this.p1[0]+(1-x)*this.p2[0],x*this.p1[1]+(1-x)*this.p2[1],x*this.p1[2]+(1-x)*this.p2[2]];
+		}
+		revealSelf(presentation){
+			presentation.transitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
+		}
+	}
+
+	var earth = new PlanetArc(10, [0,-10,0], 0x0000ff, 40);
+	var blueportal = new Line([-1,1,0],[1,1,0], 0x4edfed);
+	var orangeportal = new Line([-1,3,0],[1,3,0],0xfcc255);
+
+	var point = new EXP.Area({bounds: [[0, 1]], numItems:5});
+	var pointCoords = new EXP.Transformation({expr: (i,t) => [0,2]});
+	point.add(pointCoords).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
+
+	class PhysicsEnginePoint{
+		constructor(updateFunc){
+			this.updateFunc = updateFunc;
+		}
+		activate(t){
+			let dt = t - this.t;
+			this.update(dt);
+
+			
+		}
+		update(dt){
+			this.velocity[1] -= 0.2*dt;
+			//integrate
+			this.position[0] += this.velocity[0]*dt;
+			this.position[1] += this.velocity[1]*dt;
+		}
+		
+	}
+//	var pointWithGravity = new PhysicsEnginePoint((dt, ));
+
+
+	let ramp = (x) => (((x)%1)+1)%1
+
+	three.camera.position.y = 2;
+
+	var objects = [earth, blueportal, orangeportal, point];
+
+	three.on("update",function(time){
+
+		for(var i in objects){
+			objects[i].activate(time.t);
+		}
+	});
+
+	var presentation = new EXP.Director();
+
+	async function animate(){
+		await presentation.waitForPageLoad();
+
+		presentation.nextSlide();
+		await presentation.delay(3000);
+
+		presentation.showSlide(1);
+		await presentation.delay(5000);
+
+		presentation.showSlide(2);
+		await presentation.delay(1000);
+		blueportal.revealSelf(presentation);
+		await presentation.delay(500);
+
+		orangeportal.revealSelf(presentation);
+		await presentation.delay(1000);
+		earth.revealSelf(presentation);
+
+		await presentation.delay(5000);
+
+		let toPortalCoords = (x)=>(2-ramp(x)*2+1);
+
+		presentation.showSlide(3);
+		//show point
+		presentation.transitionTo(pointCoords, {'expr': (i,t) => [0,toPortalCoords(Math.sin(3*t)*0.2)]},500);
+
+		await presentation.delay(5000);
+
+		presentation.showSlide(4);
+
+		presentation.transitionTo(pointCoords, {'expr': (i,t) => [0,toPortalCoords(0)]},500);
+		await presentation.delay(1000);
+
+		let a = 1;
+		presentation.transitionTo(pointCoords, {'expr': (i,t) => [0,toPortalCoords(a/2*(t**2)/50)]});
+
+
+		/*
+			Problems now:
+			1) Make presentation.nextSlide() work, and add left/right arrow keys and an acko-style clickable left/right buttons
+			2) t is global, not from the start of the transformation. This is not useful for parametric physics. Really explanaria is not built for physics engines.
+	
+
+		/*
+
+		//to THE THIRD DIMENSION
+		presentation.transitionTo(three.camera.position, {'x':0,'y':-8,'z':2})
+		presentation.transitionTo(three.camera.rotation, {'x':1.325,'y':0,'z':0})
+
+		await presentation.delay(2000);
+		presentation.transitionTo(three.camera.position, {'x':0,'y':0,'z':4})
+		presentation.transitionTo(three.camera.rotation, {'x':0,'y':0,'z':0})*/
+
+		await presentation.delay(2000);
+
+	}
+	animate();
+  </script>
+	<section id="label1" class="exp-label exp-slide">
+		<h1>Portals and Conservation of Energy</h1>
+	</section>
+	<section id="label2" class="exp-label exp-slide" style="opacity: 0">
+		I've been thinking about how to mathematically formalize portals in such a way that energy is conserved. I'll illustrate it here with a thought experiment.
+	</section>
+	<section id="label3" class="exp-label exp-slide" style="opacity: 0">
+		Let's say we have two portals hovering above earth. 
+	</section>
+	<section id="label4" class="exp-label exp-slide" style="opacity: 0">
+		They're connected, so anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity.
+	</section>
+	<section id="label5" class="exp-label exp-slide" style="opacity: 0">
+		But we're not in math-land; we're in space, above earth. So the point should experience some gravitational force.
+	</section>
+</body>
+</html>

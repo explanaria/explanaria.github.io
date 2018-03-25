@@ -18,6 +18,7 @@
   <script src="../src/js/asyncDelayFunctions.js"></script>
   <script src="../src/js/Director.js"></script>
   <script src="../src/js/Area.js"></script>
+  <script src="../src/js/Array.js"></script>
   <script src="../src/js/Transformation.js"></script>
   <script src="../src/js/three_bootstrap.js"></script>
 
@@ -30,6 +31,7 @@
 	var three = new Threeasy_Setup(true, 60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 	three.camera.position.z = 4;
+	controls.enablePan = false;
 
 	class Circle{
 		constructor(radius, centerPoint, color, numSamples){
@@ -95,30 +97,42 @@
 
 	class PhysicsEnginePoint{
 		constructor(updateFunc){
-			this.updateFunc = updateFunc;
-		}
+		this.updateFunc = updateFunc;
+		let numPoints = 1;
+		this.velocity = [0,0];
+		this.position = [0,0];
+
+		this.array = new EXP.Array({data:[this.position]});
+		this.array.add(new EXP.Transformation({expr: (i,t,x,y) => [x,y]})).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
+
+		this.t = 0;
+			}
 		activate(t){
 			let dt = t - this.t;
 			this.update(dt);
 
-			
+			this.array.data[0] = this.position;
+			this.array.activate(t);
+
+			this.t = t;
 		}
 		update(dt){
-			this.velocity[1] -= 0.2*dt;
+			if(this.updateFunc !== undefined)this.updateFunc(this, dt);
 			//integrate
 			this.position[0] += this.velocity[0]*dt;
 			this.position[1] += this.velocity[1]*dt;
 		}
 		
 	}
-//	var pointWithGravity = new PhysicsEnginePoint((dt, ));
+	var pointWithGravity = new PhysicsEnginePoint((self, dt)=>(self.velocity[1] -= 0.2*dt));
+	pointWithGravity.position[1] = 3;
 
 
 	let ramp = (x) => (((x)%1)+1)%1
 
 	three.camera.position.y = 2;
 
-	var objects = [earth, blueportal, orangeportal, point];
+	var objects = [earth, blueportal, orangeportal, point, pointWithGravity];
 
 	three.on("update",function(time){
 
@@ -127,19 +141,16 @@
 		}
 	});
 
-	var presentation = new EXP.Director();
+	var presentation = new EXP.NonDecreasingDirector();
 
 	async function animate(){
 		await presentation.waitForPageLoad();
 
-		presentation.nextSlide();
-		await presentation.delay(3000);
+		await presentation.nextSlide();
 
-		presentation.showSlide(1);
-		await presentation.delay(5000);
+		await presentation.nextSlide();
 
-		presentation.showSlide(2);
-		await presentation.delay(1000);
+		await presentation.delay(500);
 		blueportal.revealSelf(presentation);
 		await presentation.delay(500);
 
@@ -147,17 +158,15 @@
 		await presentation.delay(1000);
 		earth.revealSelf(presentation);
 
-		await presentation.delay(5000);
+		await presentation.nextSlide();
 
 		let toPortalCoords = (x)=>(2-ramp(x)*2+1);
 
-		presentation.showSlide(3);
 		//show point
 		presentation.transitionTo(pointCoords, {'expr': (i,t) => [0,toPortalCoords(Math.sin(3*t)*0.2)]},500);
 
-		await presentation.delay(5000);
 
-		presentation.showSlide(4);
+		await presentation.nextSlide(); // 4
 
 		presentation.transitionTo(pointCoords, {'expr': (i,t) => [0,toPortalCoords(0)]},500);
 		await presentation.delay(1000);
@@ -189,6 +198,7 @@
   </script>
 	<section id="label1" class="exp-label exp-slide">
 		<h1>Portals and Conservation of Energy</h1>
+		<aside>Use the right arrow key to advance.</aside>
 	</section>
 	<section id="label2" class="exp-label exp-slide" style="opacity: 0">
 		I've been thinking about how to mathematically formalize portals in such a way that energy is conserved. I'll illustrate it here with a thought experiment.

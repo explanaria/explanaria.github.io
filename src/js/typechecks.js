@@ -12,7 +12,7 @@ EXP.Utils = class Utils{
 	static assert(thing){
 		//A function to check if something is true and halt otherwise in a callbackable way.
 		if(!thing){
-			console.error("ERROR!");
+			console.error("ERROR! Assertion failed. See traceback for more.");
 		}
 	}
 
@@ -20,9 +20,9 @@ EXP.Utils = class Utils{
 		//A function to check if something is true and halt otherwise in a callbackable way.
 		if(!(thing.constructor === type)){
 			if(errorMsg){
-				console.error("ERROR! Something not of required type "+type.name+"! \n"+errorMsg);
+				console.error("ERROR! Something not of required type "+type.name+"! \n"+errorMsg+"\n See traceback for more.");
 			}else{
-				console.error("ERROR! Something not of required type "+type.name+"!");
+				console.error("ERROR! Something not of required type "+type.name+"! See traceback for more.");
 			}
 		}
 	}

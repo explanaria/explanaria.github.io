@@ -2,7 +2,7 @@
 var EXP = EXP || {};
 
 //really this should extend Area, or some superclass of both
-EXP.Array = class Array{
+EXP.Array = class EXPArray{
 	constructor(options){
 		/*var points = new EXP.Array({
 		data: [[-10,10],
@@ -13,7 +13,7 @@ EXP.Array = class Array{
 		EXP.Utils.assertType(options.data, Array);
 		this.numDimensions = options.data[0].length;
 
-		assert(options.data[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
+		EXP.Utils.assert(options.data[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
 
 		this.data = options.data;
 

@@ -10,6 +10,51 @@ dir.nextSlide();
 
 var EXP = EXP || {};
 
+EXP.DirectionArrow = class DirectionArrow{
+	constructor(faceRight){
+		this.arrowImage = EXP.DirectionArrow.arrowImage; //this should be changed once I want to make multiple arrows at once
+
+		faceRight = faceRight===undefined ? true : faceRight;
+
+		if(faceRight){
+			this.arrowImage.classList.add("exp-arrow-right")
+		}else{
+			this.arrowImage.classList.add("exp-arrow-left")
+		}
+		this.arrowImage.onclick = (function(){
+			this.onclick();
+		}).bind(this);
+
+		this.onclickCallback = null; // to be set externally
+	}
+	onclick(){
+		this.hideSelf();
+		this.onclickCallback();
+	}
+	showSelf(){
+		this.arrowImage.style.display = '';
+		this.arrowImage.style.opacity = 1;
+		
+	}
+	hideSelf(){
+		this.arrowImage.style.opacity = 0;
+		this.arrowImage.style.display = 'none';
+	}
+	static async loadImage(){
+		return new Promise(
+			(function(resolve, reject){
+				if(this.arrowImage && this.arrowImage.width != 0){
+					return resolve(); //quit early
+				}
+				this.arrowImage = new Image();
+				this.arrowImage.src = "../src/ExplanarianNextArrow.svg";
+				this.arrowImage.className = "exp-arrow";
+			}).bind(this));
+	}
+}
+EXP.DirectionArrow.loadImage(); // preload
+
+
 EXP.NonDecreasingDirector = class NonDecreasingDirector{
 	// I want EXP.Director() to be able to backtrack by pressing backwards. This doesn't do that.
 	constructor(options){
@@ -18,6 +63,23 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 
 		this.slides = document.getElementsByClassName("exp-slide");
 		this.currentSlideIndex = 0;
+
+		this.nextSlideResolveFunction = null;
+	}
+
+
+	async begin(){
+		await this.waitForPageLoad();
+
+		this.rightArrow = new EXP.DirectionArrow();
+		document.body.appendChild(this.rightArrow.arrowImage);
+		let self = this;
+		this.rightArrow.onclickCallback = function(){
+			self._changeSlide(1, function(){}); // this errors without the empty function because there's no resolve. There must be a better way to do things.
+			console.warn("WARNING: Horrible hack in effect to change slides. Please replace the pass-an-empty-function thing with somethign that actually resolves properly and does async.")
+			self.nextSlideResolveFunction();
+		}
+
 	}
 
 	async waitForPageLoad(){
@@ -35,8 +97,12 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 
 	async nextSlide(){
 		let self = this;
+
+		this.rightArrow.showSelf();
+		//promise is resolved by calling this.nextSlidePromise.resolve() when the time comes
+
 		return new Promise(function(resolve, reject){
-			window.addEventListener("keypress", function keyListener(e){
+			function keyListener(e){
 				let slideDelta = 0;
 				switch (e.keyCode) {
 				  case 34:
@@ -46,8 +112,16 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 					break;
 				}
 				self._changeSlide(slideDelta, resolve);
+				self.rightArrow.hideSelf();
 				window.removeEventListener("keypress",keyListener); //this approach taken from https://stackoverflow.com/questions/35718645/resolving-a-promise-with-eventlistener
-			});
+			}
+
+			window.addEventListener("keypress", keyListener);
+			//horrible hack so that the 'next slide' arrow can trigger this too
+			self.nextSlideResolveFunction = function(){ 
+				resolve();
+				window.removeEventListener("keypress",keyListener); 
+			}
 		});
 	}
 	_changeSlide(slideDelta, resolve){

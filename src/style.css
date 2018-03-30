@@ -49,6 +49,19 @@ body{
 .exp-slide{
 	transition: opacity 0.5s ease-in-out;
 }
+.exp-arrow{
+	z-index: 1;
+	bottom: 2%;
+	position: absolute;
+	width: 5em;
+	transition: opacity 0.5s ease-in-out;
+}
+.exp-arrow-right{
+	right: 2%;
+}
+.exp-arrow-left{
+	left: 2%;
+}
 
 
 @media (max-height: 699px) and (max-width: 700px) {

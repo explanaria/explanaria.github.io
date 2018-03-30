@@ -12,6 +12,8 @@ EXP.Point = class Point{
 
 		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(width/2, 8, 6),this.getFromMaterialCache(color));
 
+		this.opacity = options.opacity === undefined ? 1 : options.opacity; //trigger setter
+
 		this.mesh.position.set(this.x,this.y,this.z);
 		three.scene.add(this.mesh);
 
@@ -36,6 +38,15 @@ EXP.Point = class Point{
 	}
 	get z(){
 		return this.mesh.position.z;
+	}
+	set opacity(opacity){
+		let mat = this.mesh.material;
+		mat.opacity = opacity;
+		mat.transparent = opacity < 1;
+		this._opacity = opacity;
+	}
+	get opacity(){
+		return this._opacity;
 	}
 	getFromMaterialCache(color){
 		if(this._materials[color] === undefined){

@@ -2,12 +2,15 @@ var EXP = EXP || {};
 
 EXP.PointOutput = class PointOutput{
 	constructor(options = {}){
-		/*input: Transformation
+		/*
 			width: number
+			color: hex color, as in 0xrrggbb. Technically, this is a JS integer.
+			opacity: 0-1. Optional.
 		*/
 
 		this.width = options.width !== undefined ? options.width : 1;
 		this._color = options.color !== undefined ? options.color : 0x55aa55;
+		this._opacity = options.opacity !== undefined ? options.opacity : 1;
 
 
 		this.points = [];
@@ -15,7 +18,6 @@ EXP.PointOutput = class PointOutput{
 		this.numCallsPerActivation = 0; //should always be equal to this.points.length
 
 		this.parent = null;
-		this._opacity = 1;
 	}
 	_onAdd(){ //should be called when this is .add()ed to something
 
@@ -28,7 +30,9 @@ EXP.PointOutput = class PointOutput{
 		this.numCallsPerActivation = root.numCallsPerActivation;
 
 		for(var i=0;i<this.numCallsPerActivation;i++){
-			this.getPoint(i).mesh.visible = false; //instantiate the point
+			let point = this.getPoint(i);
+			point.mesh.visible = false; //instantiate the point
+			point.opacity = this._opacity;
 		}
 	}
 	evaluateSelf(i, t, x, y, z){
@@ -44,7 +48,7 @@ EXP.PointOutput = class PointOutput{
 	}
 	getPoint(i){
 		if(i >= this.points.length){
-			this.points.push(new EXP.Point({width: this.width,color:this._color}));
+			this.points.push(new EXP.Point({width: this.width,color:this._color, opacity:this._opacity}));
 		}
 		return this.points[i];
 	}

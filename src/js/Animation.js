@@ -50,7 +50,7 @@ EXP.Animation = class Animation{
 		}else if(EXP.Utils.isFunction(toValue) && EXP.Utils.isFunction(fromValue)){
 			
 			//encapsulate percentage
-			this.target[propertyName] = function(...coords){return vectorAdd(multiplyScalar(t,toValue(...coords)),multiplyScalar(1-t,fromValue(...coords)))};
+			this.target[propertyName] = function(...coords){return lerpVectors(t,toValue(...coords),fromValue(...coords))};
 			return;
 		}else{
 			console.error("Animation class cannot yet handle transitioning between things that aren't numbers or functions!");

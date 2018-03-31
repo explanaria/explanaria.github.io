@@ -12,7 +12,7 @@ body{
 	font-size: 42px; 
 	font-family: 'Lora', "sans-serif"; 
 	position:absolute; bottom:10%; 
-	text-align:center; width: 100%; 
+	text-align:center;
 	pointer-events: none; 
 	text-shadow:
 		-3px -2px 0px rgb(255, 255, 255),
@@ -48,6 +48,7 @@ body{
 
 .exp-slide{
 	transition: opacity 0.5s ease-in-out;
+	margin: 0 5% 0;
 }
 .exp-arrow{
 	z-index: 1;
@@ -62,16 +63,19 @@ body{
 .exp-arrow-left{
 	left: 2%;
 }
+.exp-arrow:hover{
+	transform: scale(1.1);
+}
 
 
 @media (max-height: 699px) and (max-width: 700px) {
 	.exp-label{
-		font-size: 35px; 
-		line-height: 0.8em;
+		font-size: 18px; 
+		line-height: 1;
 		bottom:5%; 
 	}
 	.exp-math{
-		font-size: 40px; 
+		font-size: 1.3; 
 	}
 
 }

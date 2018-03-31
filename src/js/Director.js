@@ -32,13 +32,13 @@ EXP.DirectionArrow = class DirectionArrow{
 		this.onclickCallback();
 	}
 	showSelf(){
-		this.arrowImage.style.display = '';
+		this.arrowImage.style.pointerEvents = '';
 		this.arrowImage.style.opacity = 1;
 		
 	}
 	hideSelf(){
 		this.arrowImage.style.opacity = 0;
-		this.arrowImage.style.display = 'none';
+		this.arrowImage.style.pointerEvents = 'none';
 	}
 	static async loadImage(){
 		return new Promise(

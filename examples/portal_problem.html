@@ -13,6 +13,7 @@
   <script src="../src/js/Point.js"></script>
   <script src="../src/js/PointOutput.js"></script>
   <script src="../src/js/LineOutput.js"></script>
+  <script src="../src/js/VectorOutput.js"></script>
   <script src="../src/js/ComplexPoint.js"></script>
   <script src="../src/js/Animation.js"></script>
   <script src="../src/js/asyncDelayFunctions.js"></script>
@@ -113,8 +114,8 @@
 		this.array = new EXP.Array({data:[this.position]});
 		this.array.add(new EXP.Transformation({expr: (i,t,x,y) => [x,y]})).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
 
-		this.velocityVector = new EXP.Array({data:[this.position,this.position+this.velocity]});
-		this.velocityVector.add(new EXP.LineOutput({color: 0x000000, width:0.1, opacity:0}));
+		this.velocityVector = new EXP.Array({data:[[0],[0]]});
+		this.velocityVector.add(new EXP.VectorOutput({color: 0x00f000, width:2, opacity:1}));
 
 		this.t = 0;
 			}
@@ -125,7 +126,13 @@
 			this.array.data[0] = this.position;
 			this.array.activate(t);
 
+			this.velocityVector.activate(t);
+
 			this.t = t;
+		}
+		updateVelocityVector(){
+			this.velocityVector.data[0] = this.position;
+			this.velocityVector.data[1] = vectorAdd(clone(this.position), clone(this.velocity));
 		}
 		update(dt){
 			if(this.updateFunc !== undefined)this.updateFunc(this, dt);
@@ -148,6 +155,8 @@
 			//integrate
 			this.position[0] += this.velocity[0]*dt;
 			this.position[1] += this.velocity[1]*dt;
+
+			this.updateVelocityVector();
 
 		}		
 	}
@@ -232,6 +241,7 @@
 			Problems now:
 			1) Make presentation.nextSlide() work, and add left/right arrow keys and an acko-style clickable left/right buttons
 			2) t is global, not from the start of the transformation. This is not useful for parametric physics. Really explanaria is not built for physics engines.
+			...but it could work if a function could feed back into itself.
 	
 
 		/*
@@ -249,38 +259,38 @@
 	}
 	animate();
   </script>
-	<section id="label1" class="exp-label exp-slide">
-		<h1>Portals and Conservation of Energy</h1>
-		<aside>Use the right arrow key to advance.</aside>
-	</section>
-	<section id="label2" class="exp-label exp-slide" style="opacity: 0">
-		I've been thinking about how to mathematically formalize portals in such a way that energy is conserved. I'll illustrate it here with a thought experiment.
-	</section>
-	<section id="label3" class="exp-label exp-slide" style="opacity: 0">
-		Let's say we have two portals hovering above earth. 
-	</section>
-	<section id="label4" class="exp-label exp-slide" style="opacity: 0">
-		They're connected, so anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity.
-	</section>
-	<section id="label5" class="exp-label exp-slide" style="opacity: 0">
-		We're in space, above earth, so the point should experience some gravitational force.
-	</section>
+		<section id="label1" class="exp-label exp-slide">
+			<h1>Portals and Conservation of Energy</h1>
+			<aside>Use the right arrow key to advance.</aside>
+		</section>
+		<section id="label2" class="exp-label exp-slide" style="opacity: 0">
+			I've been thinking about how to mathematically formalize portals in such a way that energy is conserved. I'll illustrate it here with a thought experiment.
+		</section>
+		<section id="label3" class="exp-label exp-slide" style="opacity: 0">
+			Let's say we have two portals hovering above earth. 
+		</section>
+		<section id="label4" class="exp-label exp-slide" style="opacity: 0">
+			They're connected, so anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity.
+		</section>
+		<section id="label5" class="exp-label exp-slide" style="opacity: 0">
+			We're in space, above earth, so the point should experience some gravitational force.
+		</section>
 
-	<section class="exp-label exp-slide" style="opacity: 0">
-		Because of the portals, this acceleration can keep accumularing for an infinitely long time, resulting in an infinitely large speed. Obviously, this discontinuity violates the conservation of energy.
-	</section>
+		<section class="exp-label exp-slide" style="opacity: 0">
+			Because of the portals, this acceleration can keep accumularing for an infinitely long time, resulting in an infinitely large speed. Obviously, this discontinuity violates the conservation of energy.
+		</section>
 
-	<section class="exp-label exp-slide" style="opacity: 0">
-		But <i>why</i> is there a discontinuity? Newtonian gravity says the force F is proportional to 1/r<sup>2</sup>, where r is the distance from the point to Earth. Therefore, since the top portal is farther from Earth, it experiences less gravity.
-		<!-- show two points, with dashed paths to Earth -->
-	</section>
+		<section class="exp-label exp-slide" style="opacity: 0">
+			But <i>why</i> is there a discontinuity? Newtonian gravity says the force F is proportional to 1/r<sup>2</sup>, where r is the distance from the point to Earth. Therefore, since the top portal is farther from Earth, it experiences less gravity.
+			<!-- show two points, with dashed paths to Earth -->
+		</section>
 
-	<section class="exp-label exp-slide" style="opacity: 0">
-		But near the top portal, there's a better way: we can find a shorter path to Earth through the portal!
-	</section>
+		<section class="exp-label exp-slide" style="opacity: 0">
+			But near the top portal, there's a better way: we can find a shorter path to Earth through the portal!
+		</section>
 
-	<section class="exp-label exp-slide" style="opacity: 0">
-		This gets rid of the discontinuity: infinite free-falling is impossible now. In essence, it seems like what we're doing is <i>allowing gravity to flow through portals</i>.
-	</section>
+		<section class="exp-label exp-slide" style="opacity: 0">
+			This gets rid of the discontinuity: infinite free-falling is impossible now. In essence, it seems like what we're doing is <i>allowing gravity to flow through portals</i>.
+		</section>
 </body>
 </html>

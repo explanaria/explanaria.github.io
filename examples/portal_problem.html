@@ -163,11 +163,11 @@
 	var pointWithGravity = new PhysicsEnginePoint({updateFunc:(self, dt)=>(null)});
 	pointWithGravity.position[1] = 0;
 
-	var velocityVector = new Line([0,0],[1,0],0x00ff00);
+	//var velocityVector = new Line([0,0],[1,0],0x00ff00);
 
 
 
-	var objects = [earth, blueportal, orangeportal, pointWithGravity, velocityVector];
+	var objects = [earth, blueportal, orangeportal, pointWithGravity];
 
 	three.on("update",function(time){
 

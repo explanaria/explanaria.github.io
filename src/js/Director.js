@@ -110,10 +110,14 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 				  case 40:
 					slideDelta = 1;
 					break;
+				  default:
+					break;
 				}
-				self._changeSlide(slideDelta, resolve);
-				self.rightArrow.hideSelf();
-				window.removeEventListener("keypress",keyListener); //this approach taken from https://stackoverflow.com/questions/35718645/resolving-a-promise-with-eventlistener
+				if(slideDelta != 0){
+					self._changeSlide(slideDelta, resolve);
+					self.rightArrow.hideSelf();
+					window.removeEventListener("keypress",keyListener); //this approach taken from https://stackoverflow.com/questions/35718645/resolving-a-promise-with-eventlistener
+				}
 			}
 
 			window.addEventListener("keypress", keyListener);
@@ -136,7 +140,6 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 			if(this.currentSlideIndex == this.slides.length-1 && slideDelta == 1){
 				return;
 			}
-				console.log(slideDelta, this.currentSlideIndex);
 			this.currentSlideIndex += slideDelta;
 			this.showSlide(this.currentSlideIndex);
 			resolve();

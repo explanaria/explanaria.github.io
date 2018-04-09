@@ -12,13 +12,16 @@ EXP.LineOutput = class LineOutput{
 
 		this.numCallsPerActivation = 0; //should always be equal to this.points.length
 		this.itemDimensions = []; // how many times to be called in each direction
+		this._outputDimensions = 3; //how many dimensions per point to store?
 
 		this.parent = null;
 
-
+		this.init();
+	}
+	init(){
+		console.log('line init');
 		this._geometry = new THREE.BufferGeometry();
 		this._vertices;
-		this._outputDimensions = 3; //how many dimensions per point to store?
 		this.makeGeometry();
 
 		this.material = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width,opacity:this._opacity});
@@ -30,12 +33,11 @@ EXP.LineOutput = class LineOutput{
 		// follow http://blog.cjgammon.com/threejs-geometry
 		// or mathbox's lineGeometry
 
-		let numVertices = 3;
-
 		/*
 		This code seems to be necessary to render lines as a triangle strp.
 		I can't seem to get it to work properly.
 
+		let numVertices = 3;
 		var indices = [];
 
 		//indices

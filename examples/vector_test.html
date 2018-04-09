@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - VectorOutput Testing</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/socket.io.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../src/js/typechecks.js"></script>
+  <script src="../src/js/constants.js"></script>
+  <script src="../src/js/math.js"></script>
+  <script src="../src/js/Point.js"></script>
+  <script src="../src/js/PointOutput.js"></script>
+  <script src="../src/js/LineOutput.js"></script>
+  <script src="../src/js/VectorOutput.js"></script>
+  <script src="../src/js/ComplexPoint.js"></script>
+  <script src="../src/js/Animation.js"></script>
+  <script src="../src/js/asyncDelayFunctions.js"></script>
+  <script src="../src/js/Area.js"></script>
+  <script src="../src/js/Transformation.js"></script>
+  <script src="../src/js/three_bootstrap.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="../src/style.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Setup(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	console.log("Loaded.");
+
+	var area = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
+	var id = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
+	var output = new EXP.PointOutput({width:0.2});
+
+	area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
+
+	area.add(id); //transformation -> output
+	//id.add(output);
+
+	three.on("update",function(time){
+		area.activate(time.t);
+		controls.update();
+	});
+
+	var line = new EXP.VectorOutput();
+	id.add(line);
+
+	async function animate(){
+
+		await delay(1000);
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x/5+y*x/5,0]});
+
+		await delay(5000);
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x) + y,0]});
+
+		await delay(3000);
+		TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(t),x*x+y*y*y/30]});
+
+
+		await delay(3000);
+		TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x), y*Math.sin(x),0]});
+
+		await delay(3000);
+		TransitionTo(id, {'expr': (i,t,x,y) => [x*Math.cos(y), x*Math.sin(y),0]});
+	}
+	animate();
+  </script>
+</body>
+</html>

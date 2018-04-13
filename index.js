@@ -21,7 +21,9 @@ fs.mkdir(savefoldername);
 
 io.sockets.on('connection', function (socket) {
     socket.on('render-frame', function (data) {
-		console.log("Frame "+data.frame+" recieved!");
+		if(data.frame % 10 == 0){
+			console.log("Frame "+data.frame+" recieved!");
+		}
         data.file = data.file.split(',')[1]; // Get rid of the data:image/png;base64 at the beginning of the file data
         var buffer = new Buffer(data.file, 'base64');
 

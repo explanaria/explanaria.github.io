@@ -43,7 +43,7 @@ function Threeasy_Setup(autostart = true){
 
 	this.renderer = new THREE.WebGLRenderer( { antialias: true } );
 	this.renderer.setPixelRatio( window.devicePixelRatio );
-	this.renderer.setSize( window.innerWidth, window.innerHeight );
+	this.renderer.setSize( this.evenify(window.innerWidth),this.evenify(window.innerHeight) );
 	this.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
 
 	this.container = document.createElement( 'div' );
@@ -101,10 +101,16 @@ Threeasy_Setup.prototype.onPointerUnrestricted= function() {
 		document.exitPointerLock();
 	}
 }
+Threeasy_Setup.prototype.evenify = function(x){
+	if(x % 2 == 1){
+		return x+1
+	};
+	return x;
+}
 Threeasy_Setup.prototype.onWindowResize= function() {
 	this.camera.aspect = window.innerWidth / window.innerHeight;
 	this.camera.updateProjectionMatrix();
-	this.renderer.setSize( window.innerWidth, window.innerHeight );
+	this.renderer.setSize( this.evenify(window.innerWidth),this.evenify(window.innerHeight) );
 }
 Threeasy_Setup.prototype.listeners = {"update": [],"render":[]}; //update event listeners
 Threeasy_Setup.prototype.render = function(timestep){

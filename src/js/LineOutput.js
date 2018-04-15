@@ -19,7 +19,6 @@ EXP.LineOutput = class LineOutput{
 		this.init();
 	}
 	init(){
-		console.log('line init');
 		this._geometry = new THREE.BufferGeometry();
 		this._vertices;
 		this.makeGeometry();
@@ -123,7 +122,8 @@ EXP.LineOutput = class LineOutput{
 		//currently only a single color is supported.
 		//I should really
 		this._color = color;
-		this.mesh.material.color.copy(color); //assumed color is a THREE.Width
+		this.mesh.material.color.copy(color); //assumed color is a T
+HREE.Width
 	}
 	get color(){
 		return this._color;

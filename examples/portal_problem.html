@@ -24,6 +24,26 @@
   <script src="../src/js/three_bootstrap.js"></script>
 
   <link type="text/css" href="../src/style.css" rel="stylesheet" />
+  <style>
+	.centered-image{
+		border: 2px solid gray;
+		margin: auto auto;
+		max-width: 50vh;
+		height: auto;
+		margin-top:1em;
+		margin-bottom: 1em;
+	}
+	.highlight-over-bg::before{
+		position:fixed;
+		width:100vw;
+		height:100vh;
+		top:0px;
+		left:0px;
+		background-color: rgba(0,0,0,0.05);
+		content: " ";
+	}
+
+  </style>
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
@@ -236,6 +256,10 @@
 	
 		pointWithGravity.updateFunc = (self, dt)=>(self.velocity[1]=3*dt*(0-self.position[1]));
 
+		for(var i=0;i<10;i++){
+			await presentation.nextSlide();
+		}
+
 
 		/*
 			Problems now:
@@ -259,38 +283,63 @@
 	}
 	animate();
   </script>
+
 		<section id="label1" class="exp-label exp-slide">
 			<h1>Portals and Conservation of Energy</h1>
 			<aside>Use the right arrow key to advance.</aside>
 		</section>
-		<section id="label2" class="exp-label exp-slide" style="opacity: 0">
+		<section id="label2" class="exp-text exp-slide" style="opacity: 0">
 			I've been thinking about how to mathematically formalize portals in such a way that energy is conserved. I'll illustrate it here with a thought experiment.
 		</section>
-		<section id="label3" class="exp-label exp-slide" style="opacity: 0">
+		<section id="label3" class="exp-text exp-slide" style="opacity: 0">
 			Let's say we have two portals hovering above earth. 
 		</section>
-		<section id="label4" class="exp-label exp-slide" style="opacity: 0">
-			They're connected, so anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity.
+		<section id="label4" class="exp-text exp-slide" style="opacity: 0">
+			Anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity. Ideally, space should be smoothly connected - each neighborhood looks Euclidean. <aside>(except perhaps the portal's edges, which I'm ignoring for now.)</aside>
 		</section>
-		<section id="label5" class="exp-label exp-slide" style="opacity: 0">
-			We're in space, above earth, so the point should experience some gravitational force.
-		</section>
-
-		<section class="exp-label exp-slide" style="opacity: 0">
-			Because of the portals, this acceleration can keep accumularing for an infinitely long time, resulting in an infinitely large speed. Obviously, this discontinuity violates the conservation of energy.
+		<section id="label5" class="exp-text exp-slide" style="opacity: 0">
+			Assume we're in space, above earth, so Newtonian gravity says there should be a force downwards, following the gradient of gravitational potential.
 		</section>
 
-		<section class="exp-label exp-slide" style="opacity: 0">
-			But <i>why</i> is there a discontinuity? Newtonian gravity says the force F is proportional to 1/r<sup>2</sup>, where r is the distance from the point to Earth. Therefore, since the top portal is farther from Earth, it experiences less gravity.
-			<!-- show two points, with dashed paths to Earth -->
+		<section class="exp-text exp-slide" style="opacity: 0">
+			Notice how because of the portals, this acceleration can keep accumularing for an infinitely long time, so the particle can gain infinite amounts of energy. Obviously, this violates the conservation of energy.
 		</section>
 
-		<section class="exp-label exp-slide" style="opacity: 0">
-			But near the top portal, there's a better way: we can find a shorter path to Earth through the portal!
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram1small.png" class="centered-image"></img>
+				<br>
+
+				But <i>why</i> is the particle able to attain infinite energy? Usually, gravity is a conservative force: potential energy is the same no matter the path one takes to get from A to B. But consider two points, each ε away from a portal. Through the portal, they're only a tiny distance of 2ε away from one another, so they <i>should</i> feel the same force of gravity.
+				<!-- show two points, with dashed paths to Earth -->
+			</div>
 		</section>
 
-		<section class="exp-label exp-slide" style="opacity: 0">
-			This gets rid of the discontinuity: infinite free-falling is impossible now. In essence, it seems like what we're doing is <i>allowing gravity to flow through portals</i>.
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram2small.png" class="centered-image"></img>
+				<br>
+				Newtonian gravity says the force F is proportional to 1/r<sup>2</sup>, where r is the distance from the point to Earth. Therefore, since the top point is farther from Earth, Newtonian physics says it experiences less gravity. Can we change how we define r to fix the problem?
+			</div>
+		</section>
+
+
+		<section class="exp-text exp-slide" style="opacity: 0">
+			Let's <i>allow gravity to flow through portals</i>. We can do this by defining the force of gravity as k/r<sup>2</sup> again; but this time, let's define r the length of <u>shortest</u> path to Earth. This seems to make falling infinitely long impossible - anything near the top portal would feel a force of gravity <u>upwards</u> through that portal.
+		</section>
+
+
+		<section class="exp-text exp-slide" style="opacity: 0">
+			So it seems I've created a metric on this space-like manifold, and used something like the gradient of a function on it to define a conservative force. My question is: is there any terminology for what I've done?Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields on manifolds. How would I define it rigorously?
+
+		<p style="display:none">Thank you!</p>
+		</section>
+
+		<section class="exp-text exp-slide" style="opacity: 0">
+			So it seems I've created a metric on this space-like manifold, and used something like the gradient of a function on it to define a conservative force. My question is: is there any terminology for what I've done? Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields. How would I define it rigorously?
+
+		<p>Thank you!</p>
 		</section>
 </body>
 </html>

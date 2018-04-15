@@ -8,8 +8,7 @@ body{
 
 	transition: opacity 1s ease-in-out;
 }
-.exp-label{
-	font-size: 42px; 
+.exp-label, .exp-text{
 	font-family: 'Lora', "sans-serif"; 
 	position:absolute; bottom:10%; 
 	text-align:center;
@@ -36,6 +35,15 @@ body{
 		 2px -1px 1px rgb(255, 255, 255);
 	transition: inherit;
 }
+.exp-label{
+	font-size: 42px; 
+
+}
+.exp-text{
+	font-size: 24px; 
+}
+
+
 .exp-math{
 	font-family: "Computer Modern", serif; /* But of course! */
 	font-style: normal;
@@ -46,6 +54,12 @@ body{
 	z-index:-1;
 	position: relative
 }
+
+.exp-small{
+	font-size: 75%;
+	margin: 0;
+}
+
 
 .exp-slide{
 	transition: opacity 0.5s ease-in-out;
@@ -71,7 +85,7 @@ body{
 
 
 @media (max-height: 699px) and (max-width: 700px) {
-	.exp-label{
+	.exp-text{
 		font-size: 18px; 
 		line-height: 1;
 		bottom:5%; 

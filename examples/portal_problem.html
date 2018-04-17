@@ -34,13 +34,18 @@
 		margin-bottom: 1em;
 	}
 	.highlight-over-bg::before{
-		position:fixed;
+		position:absolute;
 		width:100vw;
 		height:100vh;
 		top:0px;
 		left:0px;
-		background-color: rgba(0,0,0,0.05);
+		background-color: rgba(255,255,255,0.8);
 		content: " ";
+		z-index: -1;
+	}
+	canvas{
+		z-index: -10;
+		position: absolute;
 	}
 
   </style>
@@ -256,27 +261,18 @@
 	
 		pointWithGravity.updateFunc = (self, dt)=>(self.velocity[1]=3*dt*(0-self.position[1]));
 
-		for(var i=0;i<10;i++){
+		//at this point I gave up trying to animate things and started using images instead
+		for(var i=0;i<7;i++){
 			await presentation.nextSlide();
 		}
 
 
 		/*
 			Problems now:
-			1) Make presentation.nextSlide() work, and add left/right arrow keys and an acko-style clickable left/right buttons
+			1) add a left arrow
 			2) t is global, not from the start of the transformation. This is not useful for parametric physics. Really explanaria is not built for physics engines.
 			...but it could work if a function could feed back into itself.
-	
-
-		/*
-
-		//to THE THIRD DIMENSION
-		presentation.transitionTo(three.camera.position, {'x':0,'y':-8,'z':2})
-		presentation.transitionTo(three.camera.rotation, {'x':1.325,'y':0,'z':0})
-
-		await presentation.delay(2000);
-		presentation.transitionTo(three.camera.position, {'x':0,'y':0,'z':4})
-		presentation.transitionTo(three.camera.rotation, {'x':0,'y':0,'z':0})*/
+		*/
 
 		await presentation.delay(2000);
 
@@ -286,7 +282,10 @@
 
 		<section id="label1" class="exp-label exp-slide">
 			<h1>Portals and Conservation of Energy</h1>
-			<aside>Use the right arrow key to advance.</aside>
+			<aside> <span class='show-if-small'>Tap the friendly planarian</span> 
+					<span class='hide-if-small'>Right arrow key</span>
+				 to advance.
+			</aside>
 		</section>
 		<section id="label2" class="exp-text exp-slide" style="opacity: 0">
 			I've been thinking about how to mathematically formalize portals in such a way that energy is conserved. I'll illustrate it here with a thought experiment.
@@ -298,7 +297,8 @@
 			Anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity. Ideally, space should be smoothly connected - each neighborhood looks Euclidean. <aside>(except perhaps the portal's edges, which I'm ignoring for now.)</aside>
 		</section>
 		<section id="label5" class="exp-text exp-slide" style="opacity: 0">
-			Assume we're in space, above earth, so Newtonian gravity says there should be a force downwards, following the gradient of gravitational potential.
+			Assume we're in space, above earth. Newtonian gravity says there should be a force downwards, calculated from the distance r between a particle and the earth. 
+		<aside>The particle should follow the gradient of gravitational potential.</aside>
 		</section>
 
 		<section class="exp-text exp-slide" style="opacity: 0">
@@ -325,19 +325,51 @@
 		</section>
 
 
-		<section class="exp-text exp-slide" style="opacity: 0">
-			Let's <i>allow gravity to flow through portals</i>. We can do this by defining the force of gravity as k/r<sup>2</sup> again; but this time, let's define r the length of <u>shortest</u> path to Earth. This seems to make falling infinitely long impossible - anything near the top portal would feel a force of gravity <u>upwards</u> through that portal.
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram2.5small.png" class="centered-image"></img>
+				<br>
+			Let's <i>allow gravity to flow through portals</i>. We can do this by defining the force of gravity as k/r<sup>2</sup> again; but this time, let's define r as the length of <u>shortest</u> path to Earth, and make the resulting force the vector sum of all possible paths. This seems to fix the problem where a particle could falling infinitely long - anything near the top portal would feel a force of gravity <u>upwards</u> through that portal.
 		</section>
 
 
-		<section class="exp-text exp-slide" style="opacity: 0">
-			So it seems I've created a metric on this space-like manifold, and used something like the gradient of a function on it to define a conservative force. My question is: is there any terminology for what I've done?Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields on manifolds. How would I define it rigorously?
-
-		<p style="display:none">Thank you!</p>
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram3small.png" class="centered-image"></img>
+				<br>
+				Interestingly, this also means that it's possible to exactly balance a point in gravity in such a way that the <span style="color: #00f000">force of gravity</span> exactly balances itself out out, meaning a point can hover there forever untill it's perturbed.
+			</div>
 		</section>
 
-		<section class="exp-text exp-slide" style="opacity: 0">
-			So it seems I've created a metric on this space-like manifold, and used something like the gradient of a function on it to define a conservative force. My question is: is there any terminology for what I've done? Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields. How would I define it rigorously?
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram4small.png" class="centered-image"></img>
+				<br>
+			This vector summation rule also accounts for paths that take multiple trips through the portal! Let d be the distance between the two portals. If a path loops through the portals n times, each time, the resulting distance r is increased by d. The resulting force is the infinite sum 
+		<br><span style="color: #00f000">F<sub>total</sub></span> = 1/(<span style="color: #af3232">r</span>)<sup>2</sup> + 1/(<span style="color: #daa2a2">r+d</span>)<sup>2</sup> + ... + 1/(r+nd)<sup>2</sup>
+		<br>
+		and this sum converges!
+
+		<aside></aside>
+		</section>
+
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram4small.png" class="centered-image"></img>
+				<br>
+			There's a lot of questions to ask. How would one calculate a particle's force? These evenly-spaced lines almost remind me of waves. Could we divide space into an infinitesmal grid, give each grid square a potential, and then use something similar to the heat equation to update each square's potential based on its neighbors? In that model, maybe the portal's surgery could be represented by changing which squares are neighbors? I'm not sure!
+		</section>
+
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			So it seems I've done surgery on ℝ<sup>2</sup>, defined a new metric, and used something like the gradient of a function to define a conservative force. My question is: what did I just do? Is there any terminology for what I've done? Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields on manifolds. How would I define it rigorously?
+
+		<p style="opacity: 0;">Thank you!</p>
+		</section>
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			So it seems I've done surgery on ℝ<sup>, defined a new metric, and used something like the gradient of a function to define a conservative force. My question is: what did I just do? Is there any terminology for what I've done? Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields on manifolds. How would I define it rigorously?
 
 		<p>Thank you!</p>
 		</section>

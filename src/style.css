@@ -42,6 +42,9 @@ body{
 .exp-text{
 	font-size: 24px; 
 }
+.exp-text aside{
+	font-size: 80%;
+}
 
 
 .exp-math{
@@ -70,7 +73,8 @@ body{
 	z-index: 1;
 	bottom: 2%;
 	position: absolute;
-	width: 5em;
+	width: 10vw;
+	max-width: 5em;
 	transition: opacity 0.5s ease-in-out;
 }
 .exp-arrow-right{
@@ -83,15 +87,31 @@ body{
 	transform: scale(1.1);
 }
 
+.show-if-small{
+	display: none;
+}
+.hide-if-small{
+}
 
-@media (max-height: 699px) and (max-width: 700px) {
+
+@media (max-width: 39em) {
 	.exp-text{
 		font-size: 18px; 
 		line-height: 1;
 		bottom:5%; 
 	}
+	.exp-label{
+		font-size: 24px; 
+
+	}
 	.exp-math{
 		font-size: 1.3; 
+	}
+	.show-if-small{
+		display: inline;
+	}
+	.hide-if-small{
+		display: none;
 	}
 
 }

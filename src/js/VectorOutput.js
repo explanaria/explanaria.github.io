@@ -20,6 +20,8 @@ EXP.VectorOutput = class VectorOutput extends EXP.LineOutput{
 
 		const circleResolution = 12;
 		const arrowheadSize = 0.3;
+		const EPSILON = 0.00001;
+		this.EPSILON = EPSILON;
 
 		this.coneGeometry = new THREE.CylinderBufferGeometry( 0, arrowheadSize, arrowheadSize*1.7, circleResolution, 1 );
 		let arrowheadOvershootFactor = 0.1; //used so that the line won't rudely clip through the point of the arrowhead
@@ -109,16 +111,21 @@ EXP.VectorOutput = class VectorOutput extends EXP.LineOutput{
 			let clampedLength = Math.max(0, Math.min(length/effectiveDistance, 1))/1
 
 			//shrink function designed to have a steep slope close to 0 but mellow out at 0.5 or so in order to avoid the line width overcoming the arrowhead width
-			this.arrowheads[lineNumber].scale.setScalar(Math.acos(1-2*clampedLength)/Math.PI);
+			//In Chrome, three.js complains whenever something is set to 0 scale. Adding an epsilon term is unfortunate but necessary to avoid console spam.
+			
+			this.arrowheads[lineNumber].scale.setScalar(Math.acos(1-2*clampedLength)/Math.PI + this.EPSILON);
 			
  			//position/rotation comes after since .normalize() modifies directionVector in place
-
+		
 			let pos = this.arrowheads[lineNumber].position;
 
 			if(x !== undefined)pos.x = x;
 			if(y !== undefined)pos.y = y;
 			if(z !== undefined)pos.z = z;
-			this.arrowheads[lineNumber].quaternion.setFromUnitVectors(this._coneUpDirection, directionVector.normalize() );
+
+			if(length > 0){ //directionVector.normalize() fails with 0 length
+				this.arrowheads[lineNumber].quaternion.setFromUnitVectors(this._coneUpDirection, directionVector.normalize() );
+			}
 
 		}
 	}

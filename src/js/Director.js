@@ -103,6 +103,7 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 
 		return new Promise(function(resolve, reject){
 			function keyListener(e){
+				if(e.repeat)return; //keydown fires multiple times but we only want the first one
 				let slideDelta = 0;
 				switch (e.keyCode) {
 				  case 34:
@@ -116,15 +117,15 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 				if(slideDelta != 0){
 					self._changeSlide(slideDelta, resolve);
 					self.rightArrow.hideSelf();
-					window.removeEventListener("keypress",keyListener); //this approach taken from https://stackoverflow.com/questions/35718645/resolving-a-promise-with-eventlistener
+					window.removeEventListener("keydown",keyListener); //this approach taken from https://stackoverflow.com/questions/35718645/resolving-a-promise-with-eventlistener
 				}
 			}
 
-			window.addEventListener("keypress", keyListener);
+			window.addEventListener("keydown", keyListener);
 			//horrible hack so that the 'next slide' arrow can trigger this too
 			self.nextSlideResolveFunction = function(){ 
 				resolve();
-				window.removeEventListener("keypress",keyListener); 
+				window.removeEventListener("keydown",keyListener); 
 			}
 		});
 	}

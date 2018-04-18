@@ -15,6 +15,12 @@ body{
 	width: 90%;
 	pointer-events: none; 
 	text-shadow:
+
+		 4px  0px 0px rgb(255, 255, 255),
+		-4px  0px 0px rgb(255, 255, 255),
+		 0px  4px 0px rgb(255, 255, 255),
+		 0px -4px 0px rgb(255, 255, 255),
+
 		-3px -2px 0px rgb(255, 255, 255),
 		-3px  2px 0px rgb(255, 255, 255),
 		 3px  2px 0px rgb(255, 255, 255),

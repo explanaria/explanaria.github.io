@@ -55,6 +55,8 @@
 <body>
   <script>
 	var three = new Threeasy_Setup(true, 60,15);
+
+	
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 	three.camera.position.z = 4;
 	controls.enablePan = false;
@@ -120,7 +122,7 @@
 			presentation.transitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
 		}
 	}
-
+	
 	var earth = new PlanetArc(10, [0,-12,0], 0x0000ff, 40);
 	var blueportal = new Line([-1,-1,0],[1,-1,0], 0x4edfed);
 	var orangeportal = new Line([-1,1,0],[1,1,0],0xfcc255);
@@ -131,19 +133,19 @@
 
 	class PhysicsEnginePoint{
 		constructor(options){
-		this.updateFunc = options.updateFunc;
-		let numPoints = 1;
-		this.velocity = [0,0];
-		this.position = [0,0];
+			this.updateFunc = options.updateFunc;
+			let numPoints = 1;
+			this.velocity = [0,0];
+			this.position = [0,0];
 
-		this.array = new EXP.Array({data:[this.position]});
-		this.array.add(new EXP.Transformation({expr: (i,t,x,y) => [x,y]})).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
+			this.array = new EXP.Array({data:[this.position]});
+			this.array.add(new EXP.Transformation({expr: (i,t,x,y) => [x,y]})).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
 
-		this.velocityVector = new EXP.Array({data:[[0],[0]]});
-		this.velocityVector.add(new EXP.VectorOutput({color: 0x00f000, width:2, opacity:1}));
+			this.velocityVector = new EXP.Array({data:[[0],[0]]});
+			this.velocityVector.add(new EXP.VectorOutput({color: 0x00f000, width:2, opacity:1}));
 
-		this.t = 0;
-			}
+			this.t = 0;
+		}
 		activate(t){
 			let dt = t - this.t;
 			this.update(dt);
@@ -188,9 +190,6 @@
 	var pointWithGravity = new PhysicsEnginePoint({updateFunc:(self, dt)=>(null)});
 	pointWithGravity.position[1] = 0;
 
-	//var velocityVector = new Line([0,0],[1,0],0x00ff00);
-
-
 
 	var objects = [earth, blueportal, orangeportal, pointWithGravity];
 
@@ -229,12 +228,6 @@
 		await presentation.delay(500);
 		pointWithGravity.updateFunc = (self, dt, t)=>(self.position[1] = toPortalCoords(Math.sin(3*self.t)*0.5+2));
 
-		//show point
-		/*
-		pointWithGravity.timer = 0;
-		pointWithGravity.updateFunc = (self, dt)=>(self.timer+=dt,self.position[1] = Math.cos(self.timer)+5);
-		*/
-
 		await presentation.nextSlide(); // 4
 
 		pointWithGravity.updateFunc = (self, dt, t)=>(null);
@@ -243,11 +236,10 @@
 		await presentation.delay(1000);
 
 		//show physics point and not other point
-		/*
-		presentation.transitionTo(firstPointCoords.children[0], {"opacity":0});
-		presentation.transitionTo(pointWithGravity, {'opacity': 1});
-
-		this fails because the material is shared among PointOutputs. whoops */
+		
+		//presentation.transitionTo(firstPointCoords.children[0], {"opacity":0});
+		//presentation.transitionTo(pointWithGravity, {'opacity': 1});
+		//this fails because the material is shared among PointOutputs. whoops
 
 		let a = 1;
 		pointWithGravity.updateFunc = (self, dt)=>(self.velocity[1] -= 0.5*dt);
@@ -267,17 +259,18 @@
 		}
 
 
-		/*
-			Problems now:
-			1) add a left arrow
-			2) t is global, not from the start of the transformation. This is not useful for parametric physics. Really explanaria is not built for physics engines.
-			...but it could work if a function could feed back into itself.
-		*/
+		
+		//	Problems now:
+		//	1) add a left arrow
+		//	2) t is global, not from the start of the transformation. This is not useful for parametric physics. Really explanaria is not built for physics engines.
+		//	...but it could work if a function could feed back into itself.
+		
 
 		await presentation.delay(2000);
 
 	}
 	animate();
+	
   </script>
 
 		<section id="label1" class="exp-label exp-slide">
@@ -370,8 +363,6 @@
 
 		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
 			So it seems I've done surgery on ℝ<sup>2</sup>, defined a new metric, and used something like the gradient of a function to define a conservative force. My question is: what did I just do? Is there any terminology for what I've done? Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields on manifolds. How would I define it rigorously?
-
-		<p style="opacity: 0;">Thank you!</p>
 
 		<p>Thank you!</p>
 		</section>

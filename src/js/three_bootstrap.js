@@ -46,6 +46,8 @@ function Threeasy_Setup(autostart = true){
 	this.renderer.setSize( this.evenify(window.innerWidth),this.evenify(window.innerHeight) );
 	this.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
 
+	this.aspect = window.innerWidth/window.innerHeight;
+
 	this.container = document.createElement( 'div' );
 	this.container.appendChild( this.renderer.domElement );
 
@@ -109,6 +111,7 @@ Threeasy_Setup.prototype.evenify = function(x){
 }
 Threeasy_Setup.prototype.onWindowResize= function() {
 	this.camera.aspect = window.innerWidth / window.innerHeight;
+	this.aspect = this.camera.aspect;
 	this.camera.updateProjectionMatrix();
 	this.renderer.setSize( this.evenify(window.innerWidth),this.evenify(window.innerHeight) );
 }
@@ -158,10 +161,10 @@ Threeasy_Setup.prototype.removeEventListener = function(event_name, func){
 
 class Threeasy_Recorder extends Threeasy_Setup{
 	//based on http://www.tysoncadenhead.com/blog/exporting-canvas-animation-to-mov/ to record an animation
-	//when done,     ffmpeg -r 60 -framerate 60 -i ./frame-%d.png -vcodec libx264 -pix_fmt yuv420p -crf:v 0 video.mp4
+	//when done,     ffmpeg -r 60 -framerate 60 -i ./%07d.png -vcodec libx264 -pix_fmt yuv420p -crf:v 0 video.mp4
 	//then, add the yuv420p pixels (which for some reason isn't done by the prev command) by:
-	// ffmpeg -i video.mp4 -vcodec libx264 -pix_fmt yuv420p -strict -2 -acodec aac output.mp4
-	//check with ffmpeg -i output.mp4
+	// ffmpeg -i video.mp4 -vcodec libx264 -pix_fmt yuv420p -strict -2 -acodec aac finished_video.mp4
+	//check with ffmpeg -i finished_video.mp4
 
 	constructor(autostart, fps=30, length = 5){
 		/* fps is evident, autostart is a boolean (by default, true), and length is in s.*/
@@ -171,7 +174,14 @@ class Threeasy_Recorder extends Threeasy_Setup{
 		this.frameCount = fps * length;
 		this.frames_rendered = 0;
 
-		this.socket = io.connect('http://localhost:3000');
+		this.capturer = new CCapture( {
+			framerate: fps,
+			format: 'png',
+			name: document.title,
+			verbose: true,
+		} );
+
+		this.rendering = false;
 	}
 	start(){
 		//make a recording sign
@@ -185,11 +195,21 @@ class Threeasy_Recorder extends Threeasy_Setup{
 		this.recording_icon.style.backgroundColor = 'red';
 		document.body.appendChild(this.recording_icon);
 
+		this.frameCounter = document.createElement("div");
+		this.frameCounter.style.position = 'absolute';
+		this.frameCounter.style.top = '20px';
+		this.frameCounter.style.left = '50px';
+		this.frameCounter.style.color = 'black';
+		this.frameCounter.style.borderRadius = '10px';
+		this.frameCounter.style.backgroundColor = 'rgba(255,255,255,0.1)';
+		document.body.appendChild(this.frameCounter);
 
+		this.capturer.start();
+		this.rendering = true;
 		this.render();
 	}
 	render(timestep){
-		var delta = 1/this.fps;
+		var delta = 1/this.fps; //ignoring the true time, calculate the delta
 		//get timestep
 		for(var i=0;i<this.listeners["update"].length;i++){
 			this.listeners["update"][i]({"t":this.elapsedTime,"delta":delta});
@@ -201,21 +221,43 @@ class Threeasy_Recorder extends Threeasy_Setup{
 			this.listeners["render"][i]();
 		}
 
+
 		this.record_frame();
+		this.recording_icon.style.borderRadius = '10px';
 
 		this.elapsedTime += delta;
 		window.requestAnimationFrame(this.render.bind(this));
 	}
 	record_frame(){
-		let current_frame = document.querySelector('canvas').toDataURL();
-        this.socket.emit('render-frame', {
-        	frame: this.frames_rendered++,
-        	file: current_frame
-        });
+	//	let current_frame = document.querySelector('canvas').toDataURL();
+
+		this.capturer.capture( document.querySelector('canvas') );
+
+		this.frameCounter.innerHTML = this.frames_rendered + " / " + this.frameCount; //update timer
+
+		this.frames_rendered++;
+
+
 		if(this.frames_rendered>this.frameCount){
 			this.render = null; //hacky way of stopping the rendering
 			this.recording_icon.style.display = "none";
-			alert("All done!\nFiles outputted to output_images if this was run via node."); //blocks last frame
+			//this.frameCounter.style.display = "none";
+
+			this.rendering = false;
+			this.capturer.stop();
+			// default save, will download automatically a file called {name}.extension (webm/gif/tar)
+			this.capturer.save();
 		}
+	}
+	onWindowResize() {
+		//stop recording if window size changes
+		if(this.rendering && window.innerWidth / window.innerHeight != this.aspect){
+			this.capturer.stop();
+			this.render = null; //hacky way of stopping the rendering
+			alert("Aborting record: Window-size change detected!");
+			this.rendering = false;
+			return;
+		}
+		super.onWindowResize();
 	}
 }

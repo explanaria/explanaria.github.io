@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Helix</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/CCapture.all.min.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../src/js/typechecks.js"></script>
+  <script src="../src/js/constants.js"></script>
+  <script src="../src/js/math.js"></script>
+  <script src="../src/js/Point.js"></script>
+  <script src="../src/js/PointOutput.js"></script>
+  <script src="../src/js/LineOutput.js"></script>
+  <script src="../src/js/Director.js"></script>
+  <script src="../src/js/ComplexPoint.js"></script>
+  <script src="../src/js/Animation.js"></script>
+  <script src="../src/js/asyncDelayFunctions.js"></script>
+  <script src="../src/js/Area.js"></script>
+  <script src="../src/js/Transformation.js"></script>
+  <script src="../src/js/three_bootstrap.js"></script>
+
+  <link type="text/css" href="../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Setup(true, 60,10);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.set(0,10,0);
+	three.camera.lookAt(new THREE.Vector3(0,0,0));
+
+	console.log("Loaded.");
+
+	var helix = new EXP.Area({bounds: [[-5,5],[0,Math.PI]]});
+	var transformation2 = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
+	var output2 = new EXP.LineOutput({width:5});
+
+
+	helix.add(transformation2).add(output2)
+	transformation2.add(new EXP.PointOutput({width:0.5,color:0x0070f0}));
+
+
+	var area = new EXP.Area({bounds: [[-5,5],[-Math.PI,Math.PI]],numItems:30});
+	var transformation = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
+	var output = new EXP.LineOutput({width:5});
+
+
+	area.add(transformation).add(output)
+	transformation.add(new EXP.PointOutput({width:0.2}));
+
+
+
+	three.on("update",function(time){
+		area.activate(time.t);
+		helix.activate(time.t);
+
+		//three.camera.position.set(10*Math.cos(time.t*Math.PI/10),10*Math.sin(time.t*Math.PI/10),0);
+		//three.camera.rotation.y += -time.delta/Math.PI;
+	});
+
+	async function animate(){
+
+		await delay(1000);
+		//and back again, completing the transformation
+		TransitionTo(transformation2, {'expr': (i,t,u,v) => [Math.cos(u),Math.sin(u),u]})
+
+		//await delay(2000);
+		//and back again, completing the transformation
+		TransitionTo(transformation, {'expr': (i,t,u,v) => [Math.cos(u) - v*Math.sin(u),Math.sin(u)+v*Math.cos(u),u]})
+
+	}
+	animate();
+  </script>
+</body>
+</html>

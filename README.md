@@ -14,4 +14,4 @@ This tool is most definitely a work in progress.
 
 See [https://zsteinberg.github.io/explanaria](https://zsteinberg.github.io/explanaria) for a demo, and view the `examples/` folder for usage and more. You're better off looking at the examples than at any formal documentation right now.
 
-If you want, you can also create high-quality videos of a created explanarian. Just run a local webserver with `node index.js`. Then, change any `new Threeasy_Setup()` to `new Threeasy_Recorder()`, and the program will automatically render a series of png images, which can be compiled (for example, with `ffmpeg`) into a smooth mp4.
+If you want, you can also create high-quality videos of a created explanarian, using [CCapture](https://github.com/spite/ccapture.js/). Change any `new Threeasy_Setup()` to `new Threeasy_Recorder()`, and the program will automatically render and download a TAR file of PNGs, which can be compiled into a video file using ffmpeg or a video editor of your choice..

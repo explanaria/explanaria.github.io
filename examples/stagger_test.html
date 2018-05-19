@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Stagger test</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/CCapture.all.min.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../src/js/typechecks.js"></script>
+  <script src="../src/js/constants.js"></script>
+  <script src="../src/js/math.js"></script>
+  <script src="../src/js/Point.js"></script>
+  <script src="../src/js/PointOutput.js"></script>
+  <script src="../src/js/LineOutput.js"></script>
+  <script src="../src/js/Director.js"></script>
+  <script src="../src/js/ComplexPoint.js"></script>
+  <script src="../src/js/Animation.js"></script>
+  <script src="../src/js/asyncDelayFunctions.js"></script>
+  <script src="../src/js/Area.js"></script>
+  <script src="../src/js/Transformation.js"></script>
+  <script src="../src/js/three_bootstrap.js"></script>
+
+  <link type="text/css" href="../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Setup(true, 120,10);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.set(0,0,10);
+	three.camera.lookAt(new THREE.Vector3(0,0,0));
+
+	console.log("Loaded.");
+	var n = 5
+	var csquared = 1
+
+	var area = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems:30});
+	var proj1 = new EXP.Transformation({'expr':(i,t,a,b,c) => [a,0]});
+	var output2 = new EXP.PointOutput({width:0.1,color:0x0070f0});
+
+
+	area.add(proj1).add(output2);
+
+	three.on("update",function(time){
+		area.activate(time.t);
+	});
+
+	async function animate(){
+		await delay(500);
+
+		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1500, 500);
+
+		await delay(1500);
+
+		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [b,0]}, 1500, 300);
+
+		await delay(1500);
+
+		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [0,a]}, 1500, 1000);
+
+		await delay(1500);
+
+		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,0]}, 1500, 500);
+
+		await delay(2000);
+
+		TransitionTo(proj1, {'expr': function(i,t,a,b,c){return [a*a,-1]}}, 1500, 500);
+
+		await delay(2000);
+
+		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1000, 250);
+
+
+		await delay(1500);
+
+		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b-2*a]}, 1500, 500);
+
+
+		await delay(1500);
+
+		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [Math.cos(t)*a,Math.sin(t)*b-2*a]}, 1500, 500);
+
+
+		await delay(5000);
+
+		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1500, 500);
+
+	}
+	animate();
+  </script>
+</body>
+</html>

@@ -8,7 +8,7 @@ EXP.Animation = class Animation{
 		this.target = target;	
 		this.staggerFraction = staggerFraction === undefined ? 0 : staggerFraction; // time in ms between first element beginning the animation and last element beginning the animation. Should be less than duration.
 
-		EXP.Utils.assert(staggerFraction >= 0 && staggerFraction < 1);
+		EXP.Utils.assert(this.staggerFraction >= 0 && this.staggerFraction < 1);
 
 		this.fromValues = {};
 		for(var property in this.toValues){

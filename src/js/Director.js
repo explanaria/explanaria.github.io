@@ -47,7 +47,9 @@ EXP.DirectionArrow = class DirectionArrow{
 					return resolve(); //quit early
 				}
 				this.arrowImage = new Image();
-				this.arrowImage.src = "../src/ExplanarianNextArrow.svg";
+				
+				this.arrowImage.src = 
+this.arrowImage.baseURI.substring(0,this.arrowImage.baseURI.search("explanaria")) + "explanaria/src/ExplanarianNextArrow.svg";
 				this.arrowImage.className = "exp-arrow";
 			}).bind(this));
 	}

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - Mobius transform</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../src/js/typechecks.js"></script>
+  <script src="../../src/js/constants.js"></script>
+  <script src="../../src/js/math.js"></script>
+  <script src="../../src/js/Point.js"></script>
+  <script src="../../src/js/PointOutput.js"></script>
+  <script src="../../src/js/LineOutput.js"></script>
+  <script src="../../src/js/VectorOutput.js"></script>
+  <script src="../../src/js/ComplexPoint.js"></script>
+  <script src="../../src/js/Animation.js"></script>
+  <script src="../../src/js/asyncDelayFunctions.js"></script>
+  <script src="../../src/js/Director.js"></script>
+  <script src="../../src/js/Area.js"></script>
+  <script src="../../src/js/Array.js"></script>
+  <script src="../../src/js/Transformation.js"></script>
+  <script src="../../src/js/three_bootstrap.js"></script>
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <style>
+	.centered-image{
+		border: 2px solid gray;
+		margin: auto auto;
+		max-width: 50vh;
+		height: auto;
+		margin-top:1em;
+		margin-bottom: 1em;
+	}
+	.highlight-over-bg::before{
+		position: fixed;
+		width:100vw;
+		height:100vh;
+		top:0px;
+		left:0px;
+		background-color: rgba(255,255,255,0.8);
+		content: " ";
+		z-index: -1;
+	}
+	canvas{
+		z-index: -10;
+		position: absolute;
+	}
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Setup(true, 60,15);
+
+	
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	three.camera.position.z = 4;
+	controls.enablePan = false;
+
+	class Circle{
+		constructor(radius, centerPoint, color, numSamples){
+			this.interval = new EXP.Area({bounds: [[0, 2*Math.PI]], numItems:numSamples});
+			this.centerPoint = centerPoint || [0,0,0];
+			this.radius = radius || 5;
+			this.revealTransform = new EXP.Transformation({'expr':(i,t,x)=> [0]});
+			this.transform = new EXP.Transformation({'expr':this.polarexpr.bind(this)});
+			this.output = new EXP.LineOutput({width: 5, color: color});
+
+			this.interval.add(this.revealTransform).add(this.transform).add(this.output);
+		}
+		activate(t){
+			this.interval.activate(t);
+		}
+		polarexpr(i, t,theta){
+			//this.transform's expr
+			return [this.radius*Math.cos(theta)+this.centerPoint[0], this.radius*Math.sin(theta)+this.centerPoint[1],this.centerPoint[2]];
+		}
+		revealSelf(presentation){
+			presentation.transitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
+		}
+	}
+
+	class PlanetArc extends Circle{
+		constructor(radius, centerPoint, color, numSamples){
+			super(radius, centerPoint, color, numSamples);
+			this.interval.bounds = [[Math.PI/2-0.3,Math.PI/2+0.3]];
+			let lowerBound = this.interval.bounds[0][0];
+			this.revealTransform.expr = (i,t,x)=> [lowerBound];
+
+		}
+	}
+
+	class Line{
+		constructor(p1,p2, color, numSamples){
+			this.interval = new EXP.Area({bounds: [[0, 1]], numItems:numSamples});
+			this.p1 = p1;
+			this.p2 = p2;
+
+			let startPt = p1;
+			this.revealTransform = new EXP.Transformation({'expr':(i,t,x)=> [0]});
+			this.transform = new EXP.Transformation({'expr':this.expr.bind(this)});
+			this.output = new EXP.LineOutput({width: 5, color: color});
+
+			this.interval.add(this.revealTransform).add(this.transform).add(this.output);
+		}
+		activate(t){
+			this.interval.activate(t);
+		}
+		expr(i, t,x){
+			//this.transform's expr
+
+			let p1 = clone(this.p1);
+			let p2 = clone(this.p2);
+
+			return lerpVectors(x, p1, p2)
+		}
+		revealSelf(presentation){
+			presentation.transitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
+		}
+	}
+	
+	var earth = new PlanetArc(10, [0,-12,0], 0x0000ff, 40);
+	var blueportal = new Line([-1,-1,0],[1,-1,0], 0x4edfed);
+	var orangeportal = new Line([-1,1,0],[1,1,0],0xfcc255);
+
+	var firstPoint = new EXP.Area({bounds: [[0, 1]], numItems:5});
+	var firstPointCoords = new EXP.Transformation({expr: (i,t) => [0,0]});
+	firstPoint.add(firstPointCoords).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
+
+	class PhysicsEnginePoint{
+		constructor(options){
+			this.updateFunc = options.updateFunc;
+			let numPoints = 1;
+			this.velocity = [0,0];
+			this.position = [0,0];
+
+			this.array = new EXP.Array({data:[this.position]});
+			this.array.add(new EXP.Transformation({expr: (i,t,x,y) => [x,y]})).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
+
+			this.velocityVector = new EXP.Array({data:[[0],[0]]});
+			this.velocityVector.add(new EXP.VectorOutput({color: 0x00f000, width:2, opacity:1}));
+
+			this.t = 0;
+		}
+		activate(t){
+			let dt = t - this.t;
+			this.update(dt);
+
+			this.array.data[0] = this.position;
+			this.array.activate(t);
+
+			this.velocityVector.activate(t);
+
+			this.t = t;
+		}
+		updateVelocityVector(){
+			this.velocityVector.data[0] = this.position;
+			this.velocityVector.data[1] = vectorAdd(clone(this.position), clone(this.velocity));
+		}
+		update(dt){
+			if(this.updateFunc !== undefined)this.updateFunc(this, dt);
+
+			// Apply the effect of the portals. Cut this part out to generalize.
+			let currentY = this.position[1];
+			let nextY = this.position[1] + this.velocity[1]*dt;
+			const topYPos = 1;
+			const bottomYPos = -1;
+			//top portal
+			if(this.velocity[1] > 0 && currentY < topYPos && nextY >= topYPos){
+				this.position[1] -= 2; //teleport to bottom portal
+			}
+			//bottom portal
+			if(this.velocity[1] < 0 && currentY > bottomYPos && nextY <= bottomYPos){
+				this.position[1] += 2; //teleport to top portal
+			}
+			//emd portal section
+
+			//integrate
+			this.position[0] += this.velocity[0]*dt;
+			this.position[1] += this.velocity[1]*dt;
+
+			this.updateVelocityVector();
+
+		}		
+	}
+	var pointWithGravity = new PhysicsEnginePoint({updateFunc:(self, dt)=>(null)});
+	pointWithGravity.position[1] = 0;
+
+
+	var objects = [earth, blueportal, orangeportal, pointWithGravity];
+
+	three.on("update",function(time){
+
+		for(var i in objects){
+			objects[i].activate(time.t);
+		}
+	});
+
+	var presentation = new EXP.NonDecreasingDirector();
+
+	async function animate(){
+		await presentation.begin();
+
+		await presentation.nextSlide();
+
+		await presentation.nextSlide();
+
+		await presentation.delay(500);
+		blueportal.revealSelf(presentation);
+		await presentation.delay(500);
+
+		orangeportal.revealSelf(presentation);
+		await presentation.delay(500);
+		earth.revealSelf(presentation);
+
+		presentation.transitionTo(firstPointCoords.children[0], {'opacity': 1});
+
+		await presentation.nextSlide();
+
+		let ramp = (x) => (((x)%1)+1)%1
+		let toPortalCoords = (x)=>(1-ramp(x)*2);
+
+		presentation.transitionTo(pointWithGravity.position, {"1": 0.5},250);
+		await presentation.delay(500);
+		pointWithGravity.updateFunc = (self, dt, t)=>(self.position[1] = toPortalCoords(Math.sin(3*self.t)*0.5+2));
+
+		await presentation.nextSlide(); // 4
+
+		pointWithGravity.updateFunc = (self, dt, t)=>(null);
+
+		presentation.transitionTo(pointWithGravity.position, {"1": 0});
+		await presentation.delay(1000);
+
+		//show physics point and not other point
+		
+		//presentation.transitionTo(firstPointCoords.children[0], {"opacity":0});
+		//presentation.transitionTo(pointWithGravity, {'opacity': 1});
+		//this fails because the material is shared among PointOutputs. whoops
+
+		let a = 1;
+		pointWithGravity.updateFunc = (self, dt)=>(self.velocity[1] -= 0.5*dt);
+		//show a force too
+		
+		await presentation.nextSlide();
+
+		//show force
+
+		await presentation.nextSlide();
+	
+		pointWithGravity.updateFunc = (self, dt)=>(self.velocity[1]=3*dt*(0-self.position[1]));
+
+		//at this point I gave up trying to animate things and started using images instead
+		for(var i=0;i<7;i++){
+			await presentation.nextSlide();
+		}
+
+
+		
+		//	Problems now:
+		//	1) add a left arrow
+		//	2) t is global, not from the start of the transformation. This is not useful for parametric physics. Really explanaria is not built for physics engines.
+		//	...but it could work if a function could feed back into itself.
+		
+
+		await presentation.delay(2000);
+
+	}
+	animate();
+	
+  </script>
+
+		<section id="label1" class="exp-label exp-slide">
+			<h1>Portals and Conservation of Energy</h1>
+			<aside> <span class='show-if-small'>Tap the friendly planarian</span> 
+					<span class='hide-if-small'>Right arrow key</span>
+				 to advance.
+			</aside>
+		</section>
+		<section id="label2" class="exp-text exp-slide" style="opacity: 0">
+			I've been thinking about how to mathematically formalize portals in such a way that energy is conserved. I'll illustrate it here with a thought experiment.
+		</section>
+		<section id="label3" class="exp-text exp-slide" style="opacity: 0">
+			Let's say we have two portals hovering above earth. 
+		</section>
+		<section id="label4" class="exp-text exp-slide" style="opacity: 0">
+			Anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity. Ideally, space should be smoothly connected - each neighborhood looks Euclidean. <aside>(except perhaps the portal's edges, which I'm ignoring for now.)</aside>
+		</section>
+		<section id="label5" class="exp-text exp-slide" style="opacity: 0">
+			Assume we're in space, above earth. Newtonian gravity says there should be a force downwards, calculated from the distance r between a particle and the earth. 
+		<aside>The particle should follow the gradient of gravitational potential.</aside>
+		</section>
+
+		<section class="exp-text exp-slide" style="opacity: 0">
+			Notice how because of the portals, this acceleration can keep accumularing for an infinitely long time, so the particle can gain infinite amounts of energy. Obviously, this violates the conservation of energy.
+		</section>
+
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram1small.png" class="centered-image"></img>
+				<br>
+
+				But <i>why</i> is the particle able to attain infinite energy? Usually, gravity is a conservative force: potential energy is the same no matter the path one takes to get from A to B. But consider two points, each ε away from a portal. Through the portal, they're only a tiny distance of 2ε away from one another, so they <i>should</i> feel the same force of gravity.
+				<!-- show two points, with dashed paths to Earth -->
+			</div>
+		</section>
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram2small.png" class="centered-image"></img>
+				<br>
+				Newtonian gravity says the force F is proportional to 1/r<sup>2</sup>, where r is the distance from the point to Earth. Therefore, since the top point is farther from Earth, Newtonian physics says it experiences less gravity. Can we change how we define r to fix the problem?
+			</div>
+		</section>
+
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram2.5small.png" class="centered-image"></img>
+				<br>
+			Let's <i>allow gravity to flow through portals</i>. We can do this by defining the force of gravity as k/r<sup>2</sup> again; but this time, let's define r as the length of <u>shortest</u> path to Earth, and make the resulting force the vector sum of all possible paths. This seems to fix the problem where a particle could falling infinitely long - anything near the top portal would feel a force of gravity <u>upwards</u> through that portal.
+		</section>
+
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram3small.png" class="centered-image"></img>
+				<br>
+				Interestingly, this also means that it's possible to exactly balance a point in gravity in such a way that the <span style="color: #00f000">force of gravity</span> exactly balances itself out out, meaning a point can hover there forever until it's perturbed.
+			</div>
+		</section>
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram4small.png" class="centered-image"></img>
+				<br>
+			This vector summation rule also accounts for paths that take multiple trips through the portal! Let d be the distance between the two portals. If a path loops through the portals n times, each time, the resulting distance r is increased by d. The resulting force is the infinite sum 
+		<br><span style="color: #00f000">F<sub>total</sub></span> = 1/(<span style="color: #af3232">r</span>)<sup>2</sup> + 1/(<span style="color: #daa2a2">r+d</span>)<sup>2</sup> + ... + 1/(r+nd)<sup>2</sup>
+		<br>
+		and this sum converges!
+
+		<aside></aside>
+		</section>
+
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			<div class="bg-img-container">
+				<img src="portalDiagram4small.png" class="centered-image"></img>
+				<br>
+			There's a lot of questions to ask. How would one calculate a particle's force? These evenly-spaced lines almost remind me of waves. Could we divide space into an infinitesmal grid, give each grid square a potential, and then use something similar to the heat equation to update each square's potential based on its neighbors? In that model, maybe the portal's surgery could be represented by changing which squares are neighbors? I'm not sure!
+		</section>
+
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			So it seems I've done surgery on ℝ<sup>2</sup>, defined a new metric, and used something like the gradient of a function to define a conservative force. My question is: what did I just do? Is there any terminology for what I've done? Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields on manifolds. How would I define it rigorously?
+
+		<p style="opacity: 0;">Thank you!</p>
+		</section>
+
+		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
+			So it seems I've done surgery on ℝ<sup>2</sup>, defined a new metric, and used something like the gradient of a function to define a conservative force. My question is: what did I just do? Is there any terminology for what I've done? Any things to learn about to figure out how better to define this maneuver? This feels very topological, and I can't have been the first one to think about vector fields on manifolds. How would I define it rigorously?
+
+		<p>Thank you!</p>
+		</section>
+</body>
+</html>

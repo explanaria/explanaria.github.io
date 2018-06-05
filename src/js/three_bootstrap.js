@@ -162,9 +162,9 @@ Threeasy_Setup.prototype.removeEventListener = function(event_name, func){
 class Threeasy_Recorder extends Threeasy_Setup{
 	//based on http://www.tysoncadenhead.com/blog/exporting-canvas-animation-to-mov/ to record an animation
 	//when done,     ffmpeg -r 60 -framerate 60 -i ./%07d.png -vcodec libx264 -pix_fmt yuv420p -crf:v 0 video.mp4
+    // to perform motion blur on an oversampled video, ffmpeg -i video.mp4 -vf tblend=all_mode=average,framestep=2 video2.mp4
 	//then, add the yuv420p pixels (which for some reason isn't done by the prev command) by:
 	// ffmpeg -i video.mp4 -vcodec libx264 -pix_fmt yuv420p -strict -2 -acodec aac finished_video.mp4
-    // to perform motion blur on an oversampled video, ffmpeg -i finished_video.mp4 -vf tblend=all_mode=average,framestep=2 30fps.mp4
 	//check with ffmpeg -i finished_video.mp4
 
 	constructor(autostart, fps=30, length = 5){

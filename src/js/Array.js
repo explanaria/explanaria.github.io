@@ -11,7 +11,15 @@ EXP.Array = class EXPArray{
 
 		EXP.Utils.assertPropExists(options, "data"); // a multidimensional array
 		EXP.Utils.assertType(options.data, Array);
-		this.numDimensions = options.data[0].length;
+
+		if(options.data[0].constructor === Number){
+			this.numDimensions = 1;
+		}else if(options.data[0].constructor === Array){
+			this.numDimensions = options.data[0].length;
+		}else{
+			console.error("Data in an EXP.Array should be a number or an array of other things, not " + options.data[0].constructor);
+		}
+
 
 		EXP.Utils.assert(options.data[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
 
@@ -38,9 +46,17 @@ EXP.Array = class EXPArray{
 		return thing;
 	}
 	activate(t){
-		for(var i=0;i<this.data.length;i++){
-			this._callAllChildren(i,t,...this.data[i]);
+		if(	this.numDimensions == 1){
+			//numbers can't be spread using ... operator
+			for(var i=0;i<this.data.length;i++){
+				this._callAllChildren(i,t,this.data[i]);
+			}
+		}else{
+			for(var i=0;i<this.data.length;i++){
+				this._callAllChildren(i,t,...this.data[i]);
+			}
 		}
+
 		this.onAfterActivation(); // call children if necessary
 	}
 	onAfterActivation(){

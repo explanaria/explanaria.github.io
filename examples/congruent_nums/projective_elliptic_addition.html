@@ -22,6 +22,8 @@
   <script src="../../src/js/Transformation.js"></script>
   <script src="../../src/js/three_bootstrap.js"></script>
 
+  <script src="./congruent_utilities.js"></script>
+
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -63,46 +65,83 @@
 	var proj3 = new EXP.Transformation({'expr':(i,t,a,b,c) => [a,b,c]});
 	var output3 = new EXP.LineOutput({width:5,color:0x0070f0});
 
+
 	curve3.add(ellipticCurve3).add(proj3).add(output3);
 
-	let gridSize = 10;
-	var grid1 = new EXP.Area({'bounds': [[-gridSize,gridSize],[-gridSize,gridSize]], numItems: 80});
-	var gridproj1 = new EXP.Transformation({'expr':(i,t,a,b,c) => [a,b,c]});
 
-	grid1.add(gridproj1).add(new EXP.LineOutput({width:3,color:0x888888,opacity:0.5}));
+	//points to add on the curve
+	let curveY = (x)=>Math.sqrt(x*x*x - 2*x+1);
+	let points = [
+					[-1,curveY(-1),0],
+					[0.1,curveY(0.1),0]]
 
-	var grid2 = new EXP.Area({'bounds': [[-gridSize,gridSize],[-gridSize,gridSize]],numItems: 80});
-	var gridproj2 = new EXP.Transformation({'expr':(i,t,b,a,c) => [a,b,c]});
+	var ellipticpts = new EXP.Array({data: points});
+	var projpts = new EXP.Transformation({'expr':(i,t,a,b,c) => [a,b,c]});
+	var ptsoutput = new EXP.PointOutput({width:0.2,color:0xff7070});
 
-	grid2.add(gridproj2).add(new EXP.LineOutput({width:3,color:0x888888,opacity:0.5}));
+	ellipticpts.add(projpts).add(ptsoutput)
 
 
+	let sceneObjects = [curve3,ellipticpts]; 
 	three.on("update",function(time){
-		[curve3, grid1, grid2].forEach(i => i.activate(time.t));
+		sceneObjects.forEach(i => i.activate(time.t));
 	});
+
+	var additionLine;
+
+	var showToProjectiveCoords; // a function
+
+
+	function toProjectiveSphere(i,t,a,b,c){ //set as a Transformation later on
+		if(c === undefined)c=0;
+		let r = Math.sqrt(a*a+b*b+c*c); 
+		let theta = Math.atan2(b,a);
+		//2*r/(r*r+1), theta, z = (r*r-1)/(r*r+1)]
+		let cylindricalLength = 2*r/(r*r+1);
+
+		return [cylindricalLength*Math.cos(theta),cylindricalLength*Math.sin(theta),(r*r-1)/(r*r+1)]
+	}
+
+
 
 	async function animate(){
 		//
 		await delay(3000);
 
-		//does this project into homogenous coordinates like the paper does? I don't think so - isn't this only RP2? RP3 embedded in Euclidean space requires a 4-sphere, doesn't it. man I really want to geometrically show that this is an elliptic curve
-		function toProjectiveSphere(i,t,a,b,c){
-			let r = Math.sqrt(a*a+b*b+c*c); 
-			let theta = Math.atan2(b,a);
-			//2*r/(r*r+1), theta, z = (r*r-1)/(r*r+1)]
-			let cylindricalLength = 2*r/(r*r+1);
+		//perform elliptic curve addition
+		let p3 = elliptic_curve_add(points[0],points[1], [-2,1]);
 
-			return [cylindricalLength*Math.cos(theta),cylindricalLength*Math.sin(theta),(r*r-1)/(r*r+1)]
+		additionLine = new LongLineThrough(points[0],points[1],0xbf5050, 50);
+		sceneObjects.push(additionLine);
+		additionLine.revealSelf();
+
+		await delay(1000);
+
+		//draw 3rd point
+		var addedPoint = new EXP.Array({data: [[...p3,0]]});
+		var projpt3 = new EXP.Transformation({'expr':(i,t,a,b,c) => [a,b,c]});
+		var pt3output = new EXP.PointOutput({width:0.2,color:0xff7070,opacity:0});
+		addedPoint.add(projpt3).add(pt3output);
+		sceneObjects.push(addedPoint);	
+
+		//animate a fancy wiggle
+		TransitionTo(pt3output,{opacity:1, width:0.6},400);
+		await delay(400);
+
+		TransitionTo(pt3output,{opacity:1, width:0.2},400);
+			await delay(500);
+
+		showToProjectiveCoords = async function(){
+			TransitionTo(proj3, {'expr': toProjectiveSphere});	
+			TransitionTo(projpts, {'expr': toProjectiveSphere});	
+			TransitionTo(projpt3, {'expr': toProjectiveSphere});
+			TransitionTo(additionLine.transform2, {'expr': toProjectiveSphere});
 		}
-
-		TransitionTo(proj3, {'expr': toProjectiveSphere});
-		TransitionTo(gridproj1, {'expr': toProjectiveSphere});
-		TransitionTo(gridproj2, {'expr': toProjectiveSphere});
-		//TransitionTo(proj2, {'expr': function(i,t,a,b,c){let z = Math.sqrt(a*a+b*b+c*c); return [a/z,b/z,c/z]}});
 		
-		
+		//showToProjectiveCoords();
 
 	}
+
 	animate();
   </script>
 </body>

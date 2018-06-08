@@ -26,6 +26,8 @@ EXP.LineOutput = class LineOutput{
 		this.material = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width,opacity:this._opacity});
 		this.mesh = new THREE.LineSegments(this._geometry,this.material);
 
+		this.opacity = this._opacity; // setter sets transparent flag if necessary
+
 		three.scene.add(this.mesh);
 	}
 	makeGeometry(){
@@ -48,7 +50,7 @@ EXP.LineOutput = class LineOutput{
 		}
 		this._geometry.setIndex( indices );*/
 
-		let MAX_POINTS = 1000;
+		let MAX_POINTS = 10000;
 
 		this._vertices = new Float32Array(MAX_POINTS * 2 * this._outputDimensions);
 
@@ -122,16 +124,15 @@ EXP.LineOutput = class LineOutput{
 		//currently only a single color is supported.
 		//I should really
 		this._color = color;
-		this.mesh.material.color.copy(color); //assumed color is a T
+		this.material.color.copy(color); //assumed color is a hex color or other supported thing by THREE.Color
 HREE.Width
 	}
 	get color(){
 		return this._color;
 	}
 	set opacity(opacity){
-		let mat = this.mesh.material;
-		mat.opacity = opacity;
-		mat.transparent = opacity < 1;
+		this.material.opacity = opacity;
+		this.material.transparent = opacity < 1;
 		this._opacity = opacity;
 	}
 	get opacity(){
@@ -139,7 +140,7 @@ HREE.Width
 	}
 	set width(width){
 		this._width = width;
-		this.mesh.material.linewidth = width;
+		this.material.linewidth = width;
 	}
 	get width(){
 		return this._width;

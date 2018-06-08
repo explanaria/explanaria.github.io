@@ -8,7 +8,7 @@ EXP.PointOutput = class PointOutput{
 			opacity: 0-1. Optional.
 		*/
 
-		this.width = options.width !== undefined ? options.width : 1;
+		this._width = options.width !== undefined ? options.width : 1;
 		this._color = options.color !== undefined ? options.color : 0x55aa55;
 		this._opacity = options.opacity !== undefined ? options.opacity : 1;
 
@@ -48,7 +48,8 @@ EXP.PointOutput = class PointOutput{
 	}
 	getPoint(i){
 		if(i >= this.points.length){
-			this.points.push(new EXP.Point({width: this.width,color:this._color, opacity:this._opacity}));
+			this.points.push(new EXP.Point({width: 1,color:this._color, opacity:this._opacity}));
+			this.points[i].mesh.scale.setScalar(this._width); //set width by scaling point
 		}
 		return this.points[i];
 	}
@@ -72,6 +73,15 @@ EXP.PointOutput = class PointOutput{
 	}
 	get color(){
 		return this._color;
+	}
+	set width(width){
+		for(var i=0;i<this.points.length;i++){
+			this.getPoint(i).mesh.scale.setScalar(width);
+		}
+		this._width = width;
+	}
+	get width(){
+		return this._width;
 	}
 }
 

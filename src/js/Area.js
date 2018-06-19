@@ -4,10 +4,10 @@ var EXP = EXP || {};
 EXP.Area = class Area{
 	constructor(options){
 
-		/*var axes = new THINGNAME.Area({
+		/*var axes = new EXP.Area({
 		bounds: [[-10,10],
 			[10,10]]
-		numItems: 10; //optional
+		numItems: 10; //optional. Alternately numItems can vary for each axis: numItems: [10,2]
 		})*/
 
 
@@ -24,9 +24,16 @@ EXP.Area = class Area{
 		this.numItems = options.numItems || 16;
 
 		this.itemDimensions = []; // array to store the number of times this is called per dimension.
-		//right now, this is identical in each direction. todo: allow users to specify this.
-		for(var i=0;i<this.numDimensions;i++){
-			this.itemDimensions.push(this.numItems);
+
+		if(this.numItems.constructor === Number){
+			for(var i=0;i<this.numDimensions;i++){
+				this.itemDimensions.push(this.numItems);
+			}
+		}else if(this.numItems.constructor === Array){
+			EXP.Utils.assert(options.numItems.length == options.bounds.length);
+			for(var i=0;i<this.numDimensions;i++){
+				this.itemDimensions.push(this.numItems[i]);
+			}
 		}
 
 		//the number of times every child's expr is called
@@ -85,7 +92,13 @@ EXP.Area = class Area{
 			this.children[i].evaluateSelf(...coordinates)
 		}
 	}
-
+	clone(){
+		let clone = new EXP.Area({bounds: EXP.Utils.arrayCopy(this.bounds), numItems: this.numItems});
+		for(var i=0;i<this.children.length;i++){
+			clone.add(this.children[i].clone());
+		}
+		return clone;
+	}
 }
 
 

@@ -4,6 +4,7 @@
 	class Line{
 		constructor(p1,p2, color, numSamples){
 			this.interval = new EXP.Area({bounds: [[0, 1]], numItems:numSamples});
+			this.interval = new ExponentiallySpacedInterval({});
 			this.p1 = p1;
 			this.p2 = p2;
 
@@ -84,3 +85,32 @@ function elliptic_curve_add_fractions(p1,p2, curveparams){
 
 	return [x3,y3];
 }
+
+	class ExponentiallySpacedInterval extends EXP.Array{
+		// an interval that goes from -inf to inf, but with far more points centered around 0 than around, say, 5000.
+		/*
+		detailedPartWidth: 10
+		detailedPartSpacing: 1/10
+		nonDetailedExponentCount: 5 // number of
+			//these defaults will produce a detailed area of [-5,-4.9,-4.8... 4.8,4.9,5] and then add [5,5^1.5, 5^2,5^3...] up to detailedPartWidth/2 ^ nonDetailedExponentCount, by default 5^5.
+		
+		*/
+
+		constructor(options){
+			options.detailedPartWidth = options.detailedPartWidth === undefined ? 10 : options.detailedPartWidth;
+			options.detailedPartSpacing = options.detailedPartSpacing === undefined ? 1/10 : options.detailedPartSpacing;
+			options.nonDetailedExponentCount = options.nonDetailedExponentCount === undefined ? 5 : options.nonDetailedExponentCount;
+
+			let range = ExponentiallySpacedInterval.range;
+
+			let positiveCurveRange = (range(0,options.detailedPartWidth/2,options.detailedPartSpacing)).concat(range(1,options.nonDetailedExponentCount,0.5).map(i => Math.pow(options.detailedPartWidth/2,i)))
+
+			options.data = positiveCurveRange.map(i => -i).reverse().concat(positiveCurveRange);
+
+			super(options);
+		}
+		static range(startAt = 0,endAt=10,step = 1) { // from https://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-a-range-within-the-supp#10050831
+			return [...Array(parseInt((endAt-startAt)/step)).keys()].map(i => i*step + startAt);
+		}
+
+	}

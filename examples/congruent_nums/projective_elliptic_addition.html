@@ -94,12 +94,12 @@
 
 	function toProjectiveSphere(i,t,a,b,c){ //set as a Transformation later on
 		if(c === undefined)c=0;
-		let r = Math.sqrt(a*a+b*b+c*c); 
+		let r = Math.sqrt(a*a+b*b); 
 		let theta = Math.atan2(b,a);
-		//2*r/(r*r+1), theta, z = (r*r-1)/(r*r+1)]
-		let cylindricalLength = 2*r/(r*r+1);
+		//new equation, this time a gnomonic projection. probably. it's buggy in the z direction 
+		let new_r = r/Math.sqrt(1+r*r);
 
-		return [cylindricalLength*Math.cos(theta),cylindricalLength*Math.sin(theta),(r*r-1)/(r*r+1)]
+		return [new_r*Math.cos(theta),new_r*Math.sin(theta),4-4/Math.sqrt((1+new_r*new_r))]
 	}
 
 
@@ -120,7 +120,7 @@
 		//draw 3rd point
 		var addedPoint = new EXP.Array({data: [[...p3,0]]});
 		var projpt3 = new EXP.Transformation({'expr':(i,t,a,b,c) => [a,b,c]});
-		var pt3output = new EXP.PointOutput({width:0.2,color:0xff7070,opacity:0});
+		var pt3output = new EXP.PointOutput({width:0.0,color:0xff7070});
 		addedPoint.add(projpt3).add(pt3output);
 		sceneObjects.push(addedPoint);	
 

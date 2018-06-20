@@ -21,7 +21,7 @@ EXP.Array = class EXPArray{
 		}
 
 
-		EXP.Utils.assert(options.data[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
+		EXP.Utils.assert(options.data[0].length != 0); //don't accept [[]], data needs to be something like [[1,2]].
 
 		this.data = options.data;
 
@@ -71,6 +71,13 @@ EXP.Array = class EXPArray{
 		for(var i=0;i<this.children.length;i++){
 			this.children[i].evaluateSelf(...coordinates)
 		}
+	}
+	clone(){
+		let clone = new EXP.Array({data: EXP.Utils.arrayCopy(this.data)});
+		for(var i=0;i<this.children.length;i++){
+			clone.add(this.children[i].clone());
+		}
+		return clone;
 	}
 }
 

@@ -5,6 +5,9 @@ EXP.Utils = class Utils{
 	static isArray(x){
 		return x.constructor === Array;
 	}
+	static arrayCopy(x){
+		return x.slice();
+	}
 	static isFunction(x){
 		return x.constructor === Function;
 	}

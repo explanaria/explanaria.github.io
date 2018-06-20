@@ -129,6 +129,9 @@ EXP.VectorOutput = class VectorOutput extends EXP.LineOutput{
 
 		}
 	}
+	clone(){
+		return new EXP.VectorOutput({width: this.width, color: this.color, opacity: this.opacity});
+	}
 }
 
 

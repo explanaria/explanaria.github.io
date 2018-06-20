@@ -83,6 +83,9 @@ EXP.PointOutput = class PointOutput{
 	get width(){
 		return this._width;
 	}
+	clone(){
+		return new EXP.PointOutput({width: this.width, color: this.color, opacity: this.opacity});
+	}
 }
 
 //testing code

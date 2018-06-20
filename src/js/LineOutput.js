@@ -120,12 +120,12 @@ EXP.LineOutput = class LineOutput{
 		positionAttribute.needsUpdate = true;
 		this._currentPointIndex = 0; //reset after each update
 	}
-	set color(color){
+	set color(col){
 		//currently only a single color is supported.
 		//I should really
+		let color = new THREE.Color(col);
 		this._color = color;
 		this.material.color.copy(color); //assumed color is a hex color or other supported thing by THREE.Color
-HREE.Width
 	}
 	get color(){
 		return this._color;
@@ -144,6 +144,9 @@ HREE.Width
 	}
 	get width(){
 		return this._width;
+	}
+	clone(){
+		return new EXP.LineOutput({width: this.width, color: this.color, opacity: this.opacity});
 	}
 }
 

@@ -39,7 +39,12 @@ EXP.Transformation = class Transformation{
 		}
 	}
 	clone(){
-		return new EXP.Transformation({expr: this.expr});
+		let thisExpr = this.expr;
+		let clone = new EXP.Transformation({expr: thisExpr.bind()});
+		for(var i=0;i<this.children.length;i++){
+			clone.add(this.children[i].clone());
+		}
+		return clone;
 	}
 }
 

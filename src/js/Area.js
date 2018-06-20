@@ -96,6 +96,7 @@ EXP.Area = class Area{
 		let clone = new EXP.Area({bounds: EXP.Utils.arrayCopy(this.bounds), numItems: this.numItems});
 		for(var i=0;i<this.children.length;i++){
 			clone.add(this.children[i].clone());
+			if(clone.children[i]._onAdd)clone.children[i]._onAdd(); // necessary now that the chain of adding has been established
 		}
 		return clone;
 	}

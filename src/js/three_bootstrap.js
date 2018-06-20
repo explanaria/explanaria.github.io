@@ -1,3 +1,8 @@
+//This library is designed to help start three.js easily, creating the render loop and canvas automagically.
+//Really it should be spun off into its own thing instead of being part of explanaria.
+
+//also, change Threeasy_Environment to Threeasy_Recorder to download high-quality frames of an animation
+
 function Threeasy_Setup(autostart = true){
 	this.prev_timestep = 0;
 	this.autostart = autostart;
@@ -262,3 +267,5 @@ class Threeasy_Recorder extends Threeasy_Setup{
 		super.onWindowResize();
 	}
 }
+
+export { Threeasy_Setup as Threeasy_Environment, Threeasy_Recorder as Threeasy_Recorder}

@@ -1,6 +1,7 @@
-var EXP = EXP || {};
+import { LineOutput } from './LineOutput.js';
+import { Utils } from './utils.js';
 
-EXP.VectorOutput = class VectorOutput extends EXP.LineOutput{
+export class VectorOutput extends LineOutput{
 	constructor(options = {}){
 		/*input: Transformation
 			width: number
@@ -98,7 +99,7 @@ EXP.VectorOutput = class VectorOutput extends EXP.LineOutput{
 			let dz = this._vertices[index-this._outputDimensions+2] - this._vertices[index+2]
 
 			let lineNumber = Math.floor(i / this.itemDimensions[this.itemDimensions.length-1]);
-			EXP.Utils.assert(lineNumber <= this.numArrowheads); //this may be wrong
+			Utils.assert(lineNumber <= this.numArrowheads); //this may be wrong
 
 			let directionVector = new THREE.Vector3(-dx,-dy,-dz)
 
@@ -130,7 +131,7 @@ EXP.VectorOutput = class VectorOutput extends EXP.LineOutput{
 		}
 	}
 	clone(){
-		return new EXP.VectorOutput({width: this.width, color: this.color, opacity: this.opacity});
+		return new VectorOutput({width: this.width, color: this.color, opacity: this.opacity});
 	}
 }
 

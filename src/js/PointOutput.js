@@ -1,6 +1,6 @@
-var EXP = EXP || {};
+import Point from './Point.js';
 
-EXP.PointOutput = class PointOutput{
+class PointOutput{
 	constructor(options = {}){
 		/*
 			width: number
@@ -16,10 +16,11 @@ EXP.PointOutput = class PointOutput{
 		this.points = [];
 
 		this.numCallsPerActivation = 0; //should always be equal to this.points.length
+		this._activatedOnce = false;
 
 		this.parent = null;
 	}
-	_onAdd(){ //should be called when this is .add()ed to something
+	_onFirstActivation(){ //should be called when this is .add()ed to something
 
 		//climb up parent hierarchy to find the Area
 		let root = this;
@@ -36,6 +37,10 @@ EXP.PointOutput = class PointOutput{
 		}
 	}
 	evaluateSelf(i, t, x, y, z){
+		if(!this._activatedOnce){
+			this._activatedOnce = true;
+			this._onFirstActivation();	
+		}
 		//it's assumed i will go from 0 to this.numCallsPerActivation, since this should only be called from an Area.
 		var point = this.getPoint(i);
 		if(x !== undefined)point.x = x;
@@ -48,7 +53,7 @@ EXP.PointOutput = class PointOutput{
 	}
 	getPoint(i){
 		if(i >= this.points.length){
-			this.points.push(new EXP.Point({width: 1,color:this._color, opacity:this._opacity}));
+			this.points.push(new Point({width: 1,color:this._color, opacity:this._opacity}));
 			this.points[i].mesh.scale.setScalar(this._width); //set width by scaling point
 		}
 		return this.points[i];
@@ -84,7 +89,7 @@ EXP.PointOutput = class PointOutput{
 		return this._width;
 	}
 	clone(){
-		return new EXP.PointOutput({width: this.width, color: this.color, opacity: this.opacity});
+		return new PointOutput({width: this.width, color: this.color, opacity: this.opacity});
 	}
 }
 
@@ -97,3 +102,5 @@ function testPoint(){
 	y.add(z);
 	x.activate();
 }
+
+export {PointOutput}

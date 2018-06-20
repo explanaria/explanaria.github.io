@@ -1,8 +1,7 @@
 "use strict";
-var EXP = EXP || {};
 
 //really this should extend Area, or some superclass of both
-EXP.Array = class EXPArray{
+class EXPArray{
 	constructor(options){
 		/*var points = new EXP.Array({
 		data: [[-10,10],
@@ -82,8 +81,6 @@ EXP.Array = class EXPArray{
 }
 
 
-
-
 //testing code
 function testArray(){
 	var x = new EXP.Array({data: [[0,1],[0,1]]});
@@ -91,3 +88,5 @@ function testArray(){
 	x.add(y);
 	x.activate(512);
 }
+
+export {EXPArray as Array};

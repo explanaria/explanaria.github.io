@@ -1,6 +1,4 @@
-var EXP = EXP || {};
-
-EXP.LineOutput = class LineOutput{
+class LineOutput{
 	constructor(options = {}){
 		/*input: Transformation
 			width: number
@@ -62,8 +60,10 @@ EXP.LineOutput = class LineOutput{
 
 		this._currentPointIndex = 0; //used during updates as a pointer to the buffer
 
+		this._activatedOnce = false;
+
 	}
-	_onAdd(){ //should be called when this is .add()ed to something
+	_onFirstActivation(){ //should be called when this is .add()ed to something
 
 		//climb up parent hierarchy to find the Area
 		let root = this;
@@ -85,6 +85,11 @@ EXP.LineOutput = class LineOutput{
 		positionAttribute.needsUpdate = true;
 	}
 	evaluateSelf(i, t, x, y, z){
+		if(!this._activatedOnce){
+			this._activatedOnce = true;
+			this._onFirstActivation();	
+		}
+
 		//it's assumed i will go from 0 to this.numCallsPerActivation, since this should only be called from an Area.
 
 		//assert i < vertices.count
@@ -120,12 +125,12 @@ EXP.LineOutput = class LineOutput{
 		positionAttribute.needsUpdate = true;
 		this._currentPointIndex = 0; //reset after each update
 	}
-	set color(col){
+	set color(color){
 		//currently only a single color is supported.
 		//I should really
-		let color = new THREE.Color(col);
 		this._color = color;
 		this.material.color.copy(color); //assumed color is a hex color or other supported thing by THREE.Color
+HREE.Width
 	}
 	get color(){
 		return this._color;
@@ -146,8 +151,8 @@ EXP.LineOutput = class LineOutput{
 		return this._width;
 	}
 	clone(){
-		return new EXP.LineOutput({width: this.width, color: this.color, opacity: this.opacity});
+		return new LineOutput({width: this.width, color: this.color, opacity: this.opacity});
 	}
 }
 
-
+export {LineOutput};

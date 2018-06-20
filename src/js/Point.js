@@ -1,6 +1,4 @@
-var EXP = EXP || {};
-
-EXP.Point = class Point{
+export default class Point{
 	constructor(options){
 		/*options: color: <THREE.Color or hex code
 			x,y: numbers
@@ -59,4 +57,4 @@ EXP.Point = class Point{
 	}
 }
 
-EXP.Point.prototype._materials = {};
+Point.prototype._materials = {};

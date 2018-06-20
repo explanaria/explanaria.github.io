@@ -1,9 +1,7 @@
 "use strict";
 
 //Usage: var y = new Transformation({expr: function(...a){console.log(...a)}});
-var EXP = EXP || {};
-
-EXP.Transformation = class Transformation{
+class Transformation{
 	constructor(options){
 	
 		EXP.Utils.assertPropExists(options, "expr"); // a function that returns a multidimensional array
@@ -40,7 +38,7 @@ EXP.Transformation = class Transformation{
 	}
 	clone(){
 		let thisExpr = this.expr;
-		let clone = new EXP.Transformation({expr: thisExpr.bind()});
+		let clone = new Transformation({expr: thisExpr.bind()});
 		for(var i=0;i<this.children.length;i++){
 			clone.add(this.children[i].clone());
 		}
@@ -53,8 +51,10 @@ EXP.Transformation = class Transformation{
 
 //testing code
 function testTransformation(){
-	var x = new EXP.Area({bounds: [[-10,10]]});
-	var y = new EXP.Transformation({'expr': (x) => console.log(x*x)});
+	var x = new Area({bounds: [[-10,10]]});
+	var y = new Transformation({'expr': (x) => console.log(x*x)});
 	x.add(y);
-	x.activate();
+	x.activate(); // should return 100, 81, 64... 0, 1, 4... 100
 }
+
+export { Transformation }

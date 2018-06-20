@@ -8,11 +8,9 @@ dir.nextSlide();
 
 */
 
-var EXP = EXP || {};
-
-EXP.DirectionArrow = class DirectionArrow{
+class DirectionArrow{
 	constructor(faceRight){
-		this.arrowImage = EXP.DirectionArrow.arrowImage; //this should be changed once I want to make multiple arrows at once
+		this.arrowImage = DirectionArrow.arrowImage; //this should be changed once I want to make multiple arrows at once
 
 		faceRight = faceRight===undefined ? true : faceRight;
 
@@ -54,11 +52,11 @@ this.arrowImage.baseURI.substring(0,this.arrowImage.baseURI.search("explanaria")
 			}).bind(this));
 	}
 }
-EXP.DirectionArrow.loadImage(); // preload
+DirectionArrow.loadImage(); // preload
 
 
-EXP.NonDecreasingDirector = class NonDecreasingDirector{
-	// I want EXP.Director() to be able to backtrack by pressing backwards. This doesn't do that.
+class NonDecreasingDirector{
+	// I want Director() to be able to backtrack by pressing backwards. This doesn't do that.
 	constructor(options){
 		this.undoStack = [];
 		this.undoStackIndex = 0;
@@ -73,7 +71,7 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 	async begin(){
 		await this.waitForPageLoad();
 
-		this.rightArrow = new EXP.DirectionArrow();
+		this.rightArrow = new DirectionArrow();
 		document.body.appendChild(this.rightArrow.arrowImage);
 		let self = this;
 		this.rightArrow.onclickCallback = function(){
@@ -160,7 +158,7 @@ EXP.NonDecreasingDirector = class NonDecreasingDirector{
 	}
 }
 /*
-EXP.Director = class Director{
+class Director{
 	//todo. Make this able to backtrack
 	constructor(options){
 		this.undoStack = [];
@@ -245,3 +243,5 @@ EXP.Director.UndoItem = class UndoItem{
 		this.durationMS = durationMS;
 	}
 }*/
+
+export { NonDecreasingDirector, DirectionArrow };

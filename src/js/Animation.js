@@ -1,21 +1,25 @@
-var EXP = EXP || {};
+import { Utils } from './utils.js';
 
-EXP.Animation = class Animation{
+import { Transformation } from './Transformation.js';
+
+import * as math from './math.js';
+
+class Animation{
 	constructor(target, toValues, duration, staggerFraction){
-		EXP.Utils.assertType(toValues, Object);
+		Utils.assertType(toValues, Object);
 
 		this.toValues = toValues;
 		this.target = target;	
 		this.staggerFraction = staggerFraction === undefined ? 0 : staggerFraction; // time in ms between first element beginning the animation and last element beginning the animation. Should be less than duration.
 
-		EXP.Utils.assert(this.staggerFraction >= 0 && this.staggerFraction < 1);
+		Utils.assert(this.staggerFraction >= 0 && this.staggerFraction < 1);
 
 		this.fromValues = {};
 		for(var property in this.toValues){
-			EXP.Utils.assertPropExists(this.target, property);
+			Utils.assertPropExists(this.target, property);
 
 			//copy property, making sure to store the correct 'this'
-			if(EXP.Utils.isFunction(this.target[property])){
+			if(Utils.isFunction(this.target[property])){
 				this.fromValues[property] = this.target[property].bind(this.target);
 			}else{
 				this.fromValues[property] = this.target[property];
@@ -27,7 +31,7 @@ EXP.Animation = class Animation{
 		this.elapsedTime = 0;
 
 
-		if(target.constructor === EXP.Transformation){
+		if(target.constructor === Transformation){
 			//find out how many objects are passing through this transformation
 			let root = target;
 			while(root.parent !== null){
@@ -66,7 +70,7 @@ EXP.Animation = class Animation{
 			let t = this.interpolationFunction(percentage);
 			this.target[propertyName] = t*toValue + (1-t)*fromValue;
 			return;
-		}else if(EXP.Utils.isFunction(toValue) && EXP.Utils.isFunction(fromValue)){
+		}else if(Utils.isFunction(toValue) && Utils.isFunction(fromValue)){
 			//if staggerFraction != 0, it's the amount of time between the first point's start time and the last point's start time.
 			//ASSUMPTION: the first variable of this function is i, and it's assumed i is zero-indexed.
 
@@ -76,7 +80,7 @@ EXP.Animation = class Animation{
 				//let percent = Math.min(Math.max(percentage - i/this.targetNumCallsPerActivation   ,1),0);
 
 				let t = this.interpolationFunction(Math.max(Math.min(lerpFactor,1),0));
-				return lerpVectors(t,toValue(i, ...coords),fromValue(i, ...coords))
+				return math.lerpVectors(t,toValue(i, ...coords),fromValue(i, ...coords))
 			}).bind(this);
 			return;
 		}else{
@@ -104,6 +108,7 @@ EXP.Animation = class Animation{
 
 //todo: put this into a Director class so that it can have an undo stack
 function TransitionTo(target, toValues, durationMS, staggerFraction){
-	var animation = new EXP.Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, staggerFraction);
+	var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, staggerFraction);
 }
-EXP.TransitionTo = TransitionTo;
+
+export {TransitionTo, Animation}

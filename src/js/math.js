@@ -1,5 +1,3 @@
-
-
 function multiplyScalar(c, array){
 	for(var i=0;i<array.length;i++){
 		array[i] *= c;
@@ -23,3 +21,5 @@ function clone(vec){
 	}
 	return newArr
 }
+
+export {vectorAdd, lerpVectors, clone, multiplyScalar};

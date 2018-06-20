@@ -1,7 +1,8 @@
 "use strict";
-var EXP = EXP || {};
 
-EXP.Area = class Area{
+import { Utils } from './utils.js';
+
+class Area{
 	constructor(options){
 
 		/*var axes = new EXP.Area({
@@ -12,12 +13,12 @@ EXP.Area = class Area{
 
 
 	
-		EXP.Utils.assertPropExists(options, "bounds"); // a multidimensional array
-		EXP.Utils.assertType(options.bounds, Array);
-		EXP.Utils.assertType(options.bounds[0], Array, "For an Area, options.bounds must be a multidimensional array, even for one dimension!"); // it MUST be multidimensional
+		Utils.assertPropExists(options, "bounds"); // a multidimensional array
+		Utils.assertType(options.bounds, Array);
+		Utils.assertType(options.bounds[0], Array, "For an Area, options.bounds must be a multidimensional array, even for one dimension!"); // it MUST be multidimensional
 		this.numDimensions = options.bounds.length;
 
-		EXP.Utils.assert(options.bounds[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
+		Utils.assert(options.bounds[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
 
 		this.bounds = options.bounds;
 
@@ -30,7 +31,7 @@ EXP.Area = class Area{
 				this.itemDimensions.push(this.numItems);
 			}
 		}else if(this.numItems.constructor === Array){
-			EXP.Utils.assert(options.numItems.length == options.bounds.length);
+			Utils.assert(options.numItems.length == options.bounds.length);
 			for(var i=0;i<this.numDimensions;i++){
 				this.itemDimensions.push(this.numItems[i]);
 			}
@@ -93,7 +94,7 @@ EXP.Area = class Area{
 		}
 	}
 	clone(){
-		let clone = new EXP.Area({bounds: EXP.Utils.arrayCopy(this.bounds), numItems: this.numItems});
+		let clone = new Area({bounds: Utils.arrayCopy(this.bounds), numItems: this.numItems});
 		for(var i=0;i<this.children.length;i++){
 			clone.add(this.children[i].clone());
 			if(clone.children[i]._onAdd)clone.children[i]._onAdd(); // necessary now that the chain of adding has been established
@@ -103,12 +104,12 @@ EXP.Area = class Area{
 }
 
 
-
-
 //testing code
 function testArea(){
-	var x = new EXP.Area({bounds: [[0,1],[0,1]]});
-	var y = new EXP.Transformation({expr: function(...a){console.log(...a)}});
+	var x = new Area({bounds: [[0,1],[0,1]]});
+	var y = new Transformation({expr: function(...a){console.log(...a)}});
 	x.add(y);
 	x.activate();
 }
+
+export { Area }

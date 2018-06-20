@@ -4,3 +4,5 @@ async function delay(waitTime){
 	});
 
 }
+
+export {delay};

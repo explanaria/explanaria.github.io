@@ -1,9 +1,8 @@
 {
-  "name": "abcdtransform-gifsaver",
-  "version": "0.0.1",
-  "description": "A program to save gifs from abcdtransform",
-  "dependencies": {
-    "express": "^4.15.2",
-    "socket.io": "^2.0.4"
+  "name": "Explanaria",
+  "version": "0.0.2",
+  "description": "A library to make 3D presentations that help explain math concepts in visual ways.",
+  "scripts": {
+    "build": "rollup -c"
   }
 }

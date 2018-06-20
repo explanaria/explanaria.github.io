@@ -17,7 +17,7 @@
 </head>
 <body>
   <script>
-	var three = new Threeasy_Setup(true, 120,10);
+	var three = new EXP.Threeasy_Environment(true, 120,10);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
@@ -39,42 +39,42 @@
 	});
 
 	async function animate(){
-		await delay(500);
+		await EXP.delay(500);
 
 		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1500, 1/3);
 
-		await delay(1500);
+		await EXP.delay(1500);
 
 		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [b,0]}, 1500, 0.2);
 
-		await delay(1500);
+		await EXP.delay(1500);
 
 		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [0,a]}, 1500, 2/3); // F A S T
 
-		await delay(1500);
+		await EXP.delay(1500);
 
 		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,0]}, 1500, 1/3);
 
-		await delay(2000);
+		await EXP.delay(2000);
 
 		TransitionTo(proj1, {'expr': function(i,t,a,b,c){return [a*a,-1]}}, 1500, 1/3);
 
-		await delay(2000);
+		await EXP.delay(2000);
 
 		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1000, 0.25);
 
 
-		await delay(1500);
+		await EXP.delay(1500);
 
 		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b-2*a]}, 1500, 1/3);
 
 
-		await delay(1500);
+		await EXP.delay(1500);
 
 		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [Math.cos(t)*a,Math.sin(t)*b-2*a]}, 1500, 1/3);
 
 
-		await delay(5000);
+		await EXP.delay(5000);
 
 		TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1500, 1/3);
 

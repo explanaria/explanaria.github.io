@@ -17,7 +17,7 @@
 </head>
 <body>
   <script>
-	var three = new Threeasy_Setup(true, 120,10);
+	var three = new EXP.Threeasy_Environment(true, 120,10);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,10,0);
@@ -57,13 +57,13 @@
 		spin2.children[1].opacity = 0;
 		output.opacity = 0;
 
-		await delay(1000);
+		await EXP.delay(1000);
 
 		TransitionTo(transformation2, {'expr': (i,t,u,v) => [Math.cos(u),Math.sin(u),u]})
 		TransitionTo(transformation, {'expr': (i,t,u,v) => [Math.cos(u),Math.sin(u),u]})
 
 
-		await delay(3000);
+		await EXP.delay(3000);
 
 		output.opacity = 1;
 		spin2.children[1].opacity = 1;
@@ -71,7 +71,7 @@
 		TransitionTo(transformation, {'expr': (i,t,u,v) => [Math.cos(u) - v*Math.sin(u),Math.sin(u)+v*Math.cos(u),u]},2000)
 
 
-		await delay(5000);	
+		await EXP.delay(5000);	
 
 		TransitionTo(three.camera.position, {x:10/Math.sqrt(2),y:10/Math.sqrt(2)});
 		TransitionTo(three.camera.rotation, {y:Math.PI/4});

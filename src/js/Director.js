@@ -8,6 +8,8 @@ dir.nextSlide();
 
 */
 
+import {Animation} from './Animation.js';
+
 class DirectionArrow{
 	constructor(faceRight){
 		this.arrowImage = DirectionArrow.arrowImage; //this should be changed once I want to make multiple arrows at once
@@ -154,7 +156,7 @@ class NonDecreasingDirector{
 	}
 	transitionTo(target, toValues, durationMS){
 		//EXP.Utils.Assert(this.undoStackIndex == 0); //This may not work well.
-		new EXP.Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000);
+		new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000);
 	}
 }
 /*

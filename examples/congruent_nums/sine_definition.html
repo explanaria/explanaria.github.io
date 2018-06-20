@@ -5,21 +5,8 @@
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Definition of a sine wave</title>
   <script src="../../src/lib/three.js"></script>
-  <script src="../../src/lib/CCapture.all.min.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../src/js/typechecks.js"></script>
-  <script src="../../src/js/constants.js"></script>
-  <script src="../../src/js/math.js"></script>
-  <script src="../../src/js/Point.js"></script>
-  <script src="../../src/js/PointOutput.js"></script>
-  <script src="../../src/js/LineOutput.js"></script>
-  <script src="../../src/js/Director.js"></script>
-  <script src="../../src/js/ComplexPoint.js"></script>
-  <script src="../../src/js/Animation.js"></script>
-  <script src="../../src/js/asyncDelayFunctions.js"></script>
-  <script src="../../src/js/Area.js"></script>
-  <script src="../../src/js/Transformation.js"></script>
-  <script src="../../src/js/three_bootstrap.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
 
@@ -27,7 +14,7 @@
 </head>
 <body>
   <script>
-	var three = new Threeasy_Setup(true, 120,10);
+	var three = new EXP.Threeasy_Environment(true, 120,10);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
@@ -86,28 +73,28 @@
 
 		//Start with a rotating circle.
 
-		await delay(4000);
+		await EXP.delay(4000);
 
 		//turn sideways
-		[transformCircle,transformCircle2,transformCircle3].forEach(i => TransitionTo(i, {'expr': (i,t,a,b,c) => [c,b,a/10]})); // rotate
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c,b,a/10]})); // rotate
 
-		await delay(1500);
+		await EXP.delay(1500);
 
 		//Move to the left in preparation to create the graph
-		[transformCircle,transformCircle2,transformCircle3].forEach(i => TransitionTo(i, {'expr': (i,t,a,b,c) => [c-6,b,a/10]},700));
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c-6,b,a/10]},700));
 		
 
-		await delay(2000);
+		await EXP.delay(2000);
 
 		//move to the right while showing the trail
-		[transformCircle,transformCircle2,transformCircle3].forEach(i => TransitionTo(i, {'expr': (i,t,a,b,c) => [c+6,b,a/10]},10000));
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c+6,b,a/10]},10000));
 
-		TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},10000)
-		TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},10000);
+		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},10000)
+		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},10000);
 
-		await delay(10000+5000);
+		await EXP.delay(10000+5000);
 		//fade away everything to get the sine wave
-		[output1,output2,output3].forEach(i => TransitionTo(i, {'opacity': 0}));
+		[output1,output2,output3].forEach(i => EXP.TransitionTo(i, {'opacity': 0}));
 		
 
 	}

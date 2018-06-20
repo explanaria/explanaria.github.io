@@ -1,3 +1,5 @@
+import {clone} from './math.js'
+
 class Utils{
 
 	static isArray(x){
@@ -33,6 +35,10 @@ class Utils{
 		if(!(name in thing)){
 			console.error("ERROR! "+name+" not present in required property")
 		}
+	}
+	
+	static clone(vec){
+		return clone(vec);
 	}
 }
 

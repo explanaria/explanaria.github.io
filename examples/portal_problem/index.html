@@ -5,23 +5,8 @@
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Mobius transform</title>
   <script src="../../src/lib/three.js"></script>
-  <script src="../../src/lib/socket.io.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../src/js/typechecks.js"></script>
-  <script src="../../src/js/constants.js"></script>
-  <script src="../../src/js/math.js"></script>
-  <script src="../../src/js/Point.js"></script>
-  <script src="../../src/js/PointOutput.js"></script>
-  <script src="../../src/js/LineOutput.js"></script>
-  <script src="../../src/js/VectorOutput.js"></script>
-  <script src="../../src/js/ComplexPoint.js"></script>
-  <script src="../../src/js/Animation.js"></script>
-  <script src="../../src/js/asyncDelayFunctions.js"></script>
-  <script src="../../src/js/Director.js"></script>
-  <script src="../../src/js/Area.js"></script>
-  <script src="../../src/js/Array.js"></script>
-  <script src="../../src/js/Transformation.js"></script>
-  <script src="../../src/js/three_bootstrap.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
   <style>
@@ -54,7 +39,7 @@
 </head>
 <body>
   <script>
-	var three = new Threeasy_Setup(true, 60,15);
+	var three = new EXP.Threeasy_Environment(true, 60,15);
 
 	
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
@@ -113,10 +98,10 @@
 		expr(i, t,x){
 			//this.transform's expr
 
-			let p1 = clone(this.p1);
-			let p2 = clone(this.p2);
+			let p1 = EXP.Math.clone(this.p1);
+			let p2 = EXP.Math.clone(this.p2);
 
-			return lerpVectors(x, p1, p2)
+			return EXP.Math.lerpVectors(x, p1, p2)
 		}
 		revealSelf(presentation){
 			presentation.transitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
@@ -159,7 +144,7 @@
 		}
 		updateVelocityVector(){
 			this.velocityVector.data[0] = this.position;
-			this.velocityVector.data[1] = vectorAdd(clone(this.position), clone(this.velocity));
+			this.velocityVector.data[1] = EXP.Math.vectorAdd(EXP.Math.clone(this.position), EXP.Math.clone(this.velocity));
 		}
 		update(dt){
 			if(this.updateFunc !== undefined)this.updateFunc(this, dt);

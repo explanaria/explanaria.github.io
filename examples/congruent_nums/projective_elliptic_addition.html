@@ -5,22 +5,8 @@
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Elliptic Curves are homeomorphic to two circles in P^2</title>
   <script src="../../src/lib/three.js"></script>
-  <script src="../../src/lib/CCapture.all.min.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../src/js/typechecks.js"></script>
-  <script src="../../src/js/constants.js"></script>
-  <script src="../../src/js/math.js"></script>
-  <script src="../../src/js/Point.js"></script>
-  <script src="../../src/js/PointOutput.js"></script>
-  <script src="../../src/js/LineOutput.js"></script>
-  <script src="../../src/js/Director.js"></script>
-  <script src="../../src/js/ComplexPoint.js"></script>
-  <script src="../../src/js/Animation.js"></script>
-  <script src="../../src/js/asyncDelayFunctions.js"></script>
-  <script src="../../src/js/Area.js"></script>
-  <script src="../../src/js/Array.js"></script>
-  <script src="../../src/js/Transformation.js"></script>
-  <script src="../../src/js/three_bootstrap.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
 
   <script src="./congruent_utilities.js"></script>
 
@@ -30,7 +16,7 @@
 </head>
 <body>
   <script>
-	var three = new Threeasy_Setup(true, 120,10);
+	var three = new EXP.Threeasy_Environment(true, 120,10);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
@@ -106,7 +92,7 @@
 
 	async function animate(){
 		//
-		await delay(3000);
+		await EXP.delay(3000);
 
 		//perform elliptic curve addition
 		let p3 = elliptic_curve_add(points[0],points[1], [-2,1]);
@@ -115,7 +101,7 @@
 		sceneObjects.push(additionLine);
 		additionLine.revealSelf();
 
-		await delay(1000);
+		await EXP.delay(1000);
 
 		//draw 3rd point
 		var addedPoint = new EXP.Array({data: [[...p3,0]]});
@@ -125,17 +111,19 @@
 		sceneObjects.push(addedPoint);	
 
 		//animate a fancy wiggle
-		TransitionTo(pt3output,{opacity:1, width:0.6},400);
-		await delay(400);
+		EXP.TransitionTo(pt3output,{opacity:1, width:0.6},400);
+		await EXP.delay(400);
 
-		TransitionTo(pt3output,{opacity:1, width:0.2},400);
-			await delay(500);
+		EXP.TransitionTo(pt3output,{opacity:1, width:0.2},400);
+		await EXP.delay(500);
 
 		showToProjectiveCoords = async function(){
-			TransitionTo(proj3, {'expr': toProjectiveSphere});	
-			TransitionTo(projpts, {'expr': toProjectiveSphere});	
-			TransitionTo(projpt3, {'expr': toProjectiveSphere});
-			TransitionTo(additionLine.transform2, {'expr': toProjectiveSphere});
+			//todo: extend addition line
+
+			EXP.TransitionTo(proj3, {'expr': toProjectiveSphere});	
+			EXP.TransitionTo(projpts, {'expr': toProjectiveSphere});	
+			EXP.TransitionTo(projpt3, {'expr': toProjectiveSphere});
+			EXP.TransitionTo(additionLine.transform2, {'expr': toProjectiveSphere});
 		}
 		
 		//showToProjectiveCoords();

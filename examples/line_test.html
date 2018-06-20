@@ -16,7 +16,7 @@
 </head>
 <body>
   <script>
-	var three = new Threeasy_Setup(true, 60,15);
+	var three = new EXP.Threeasy_Environment(true, 60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	console.log("Loaded.");
@@ -40,20 +40,20 @@
 
 	async function animate(){
 
-		await delay(1000);
+		await EXP.delay(1000);
 		TransitionTo(id, {'expr': (i,t,x,y) => [x,y,i/30]});
 
-		await delay(2000);
+		await EXP.delay(2000);
 		TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x) + y,0]});
 
-		await delay(3000);
+		await EXP.delay(3000);
 		TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(t),x*x+y*y*y]});
 
 
-		await delay(3000);
+		await EXP.delay(3000);
 		TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x), y*Math.sin(x),0]});
 
-		await delay(3000);
+		await EXP.delay(3000);
 		TransitionTo(id, {'expr': (i,t,x,y) => [x*Math.cos(y), x*Math.sin(y),0]});
 	}
 	animate();

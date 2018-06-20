@@ -22,4 +22,7 @@ function clone(vec){
 	return newArr
 }
 
-export {vectorAdd, lerpVectors, clone, multiplyScalar};
+//hack
+let Math = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, multiplyScalar: multiplyScalar};
+
+export {vectorAdd, lerpVectors, clone, multiplyScalar, Math};

@@ -5,22 +5,8 @@
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Elliptic Curves are homeomorphic to two circles in P^2</title>
   <script src="../../src/lib/three.js"></script>
-  <script src="../../src/lib/CCapture.all.min.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../src/js/typechecks.js"></script>
-  <script src="../../src/js/constants.js"></script>
-  <script src="../../src/js/math.js"></script>
-  <script src="../../src/js/Point.js"></script>
-  <script src="../../src/js/PointOutput.js"></script>
-  <script src="../../src/js/LineOutput.js"></script>
-  <script src="../../src/js/Director.js"></script>
-  <script src="../../src/js/ComplexPoint.js"></script>
-  <script src="../../src/js/Animation.js"></script>
-  <script src="../../src/js/asyncDelayFunctions.js"></script>
-  <script src="../../src/js/Area.js"></script>
-  <script src="../../src/js/Array.js"></script>
-  <script src="../../src/js/Transformation.js"></script>
-  <script src="../../src/js/three_bootstrap.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
 
@@ -28,7 +14,7 @@
 </head>
 <body>
   <script>
-	var three = new Threeasy_Setup(true, 120,10);
+	var three = new EXP.Threeasy_Environment(true, 120,10);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
@@ -83,7 +69,7 @@
 
 	async function animate(){
 		//
-		await delay(3000);
+		await EXP.delay(3000);
 
 		//does this project into homogenous coordinates like the paper does? I don't think so - isn't this only RP2? RP3 embedded in Euclidean space requires a 4-sphere, doesn't it. man I really want to geometrically show that this is an elliptic curve
 		function toProjectiveSphere(i,t,a,b,c){
@@ -95,10 +81,10 @@
 			return [cylindricalLength*Math.cos(theta),cylindricalLength*Math.sin(theta),(r*r-1)/(r*r+1)]
 		}
 
-		TransitionTo(proj3, {'expr': toProjectiveSphere});
-		TransitionTo(gridproj1, {'expr': toProjectiveSphere});
-		TransitionTo(gridproj2, {'expr': toProjectiveSphere});
-		//TransitionTo(proj2, {'expr': function(i,t,a,b,c){let z = Math.sqrt(a*a+b*b+c*c); return [a/z,b/z,c/z]}});
+		EXP.TransitionTo(proj3, {'expr': toProjectiveSphere});
+		EXP.TransitionTo(gridproj1, {'expr': toProjectiveSphere});
+		EXP.TransitionTo(gridproj2, {'expr': toProjectiveSphere});
+		//EXP.TransitionTo(proj2, {'expr': function(i,t,a,b,c){let z = Math.sqrt(a*a+b*b+c*c); return [a/z,b/z,c/z]}});
 		
 		
 

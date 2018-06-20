@@ -5,7 +5,6 @@
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Adding sine waves</title>
   <script src="../../src/lib/three.js"></script>
-  <script src="../../src/lib/CCapture.all.min.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
 
@@ -50,15 +49,14 @@
 	var linePostTransform5 = revealTransform5.children[0].children[0];
 	linePostTransform5.expr = (i,t,x,y,z) => [x-6,y,z];
 	var output5 = linePostTransform5.children[0];
-	output5.color = lightblue;
+	//output5.color = lightblue; //I CAUSE AN ERROR, FIX ME
 
 //todo
+	
 	var line6 = new EXP.Area({bounds: [[-12,0],[0,1]],numItems:[80,2]});
 	line6.children = line5.clone().children;
 
 	line6.children[0].children[0].children[0].children[0] = new EXP.VectorOutput();
-
-
 
 
 	//ok now back to the actual animation

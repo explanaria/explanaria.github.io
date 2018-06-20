@@ -63,6 +63,9 @@ class LineOutput{
 		this._activatedOnce = false;
 
 	}
+	_onAdd(){
+
+	}
 	_onFirstActivation(){ //should be called when this is .add()ed to something
 
 		//climb up parent hierarchy to find the Area
@@ -130,7 +133,6 @@ class LineOutput{
 		//I should really
 		this._color = color;
 		this.material.color.copy(color); //assumed color is a hex color or other supported thing by THREE.Color
-HREE.Width
 	}
 	get color(){
 		return this._color;

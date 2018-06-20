@@ -63,6 +63,10 @@ export class VectorOutput extends LineOutput{
 	}
 	evaluateSelf(i, t, x, y, z){
 		//it's assumed i will go from 0 to this.numCallsPerActivation, since this should only be called from an Area.
+		if(!this._activatedOnce){
+			this._activatedOnce = true;
+			this._onFirstActivation();	
+		}
 
 		//assert i < vertices.count
 

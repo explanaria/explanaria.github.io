@@ -4,7 +4,7 @@
 	class Line{
 		constructor(p1,p2, color, numSamples){
 			this.interval = new EXP.Area({bounds: [[0, 1]], numItems:numSamples});
-			this.interval = new ExponentiallySpacedInterval({});
+			//this.interval = new ExponentiallySpacedInterval({}); // uncomment if you want a near-infinitely long line for projective coordinates
 			this.p1 = p1;
 			this.p2 = p2;
 
@@ -22,13 +22,13 @@
 		expr(i, t,x){
 			//this.transform's expr
 
-			let p1 = clone(this.p1);
-			let p2 = clone(this.p2);
+			let p1 = EXP.Math.clone(this.p1);
+			let p2 = EXP.Math.clone(this.p2);
 
-			return lerpVectors(x, p1, p2)
+			return EXP.Math.lerpVectors(x, p1, p2)
 		}
 		revealSelf(){
-			TransitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
+			EXP.TransitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
 		}
 	}
 

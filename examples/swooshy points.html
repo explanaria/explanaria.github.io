@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Cyclical Snake</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/socket.io.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" rel="stylesheet" href="../src/style.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Recorder(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	console.log("Loaded.");
+
+	var x = new EXP.Area({bounds: [[0,5],[0,Math.PI]]});
+
+	function swooshyRamp(r,t){
+		return r*(Math.sin(t*Math.PI/2)+1)/2+(r*t*Math.PI/4);
+	}
+	function swooshyRampPrime(r,t){ //dswooshyRamp/dt
+		return Math.PI/2*r*(-Math.sin(t*Math.PI/2))/2 + r*Math.PI/2;//+(r*Math.PI/4);
+	}
+
+	var timeCoords = new EXP.Transformation({'expr': (i,t,r,theta) => [r,theta+swooshyRamp(r,t), theta]});
+	var square2 = new EXP.Transformation({'expr': (i,t,r,theta, real_theta) => [r*Math.cos(theta),r*Math.sin(theta)]});
+	var output = new EXP.PointOutput({width:0.2});
+
+	var velocityvec = new EXP.Transformation({'expr': (i,t,r,theta) => [r*Math.cos(theta),r*Math.sin(theta)]});
+
+	x.add(timeCoords) //transformation -> output
+		.add(square2)
+		.add(output);
+
+	var y = new EXP.Area({bounds: [[-5,5],[-5,5]]}); y.add(new EXP.PointOutput({width:0.1, color:0xcccccc}));
+
+	timeCoords.add(velocityvec).add(new EXP.VectorOutput({width:3}));
+
+	//timeCoords.add(new EXP.Transformation({'expr': (i,t,r,theta, real_theta) => i % 16 != 15 ? [r*Math.cos(theta+Math.PI/16),r*Math.sin(theta+Math.PI/16)] : [r*Math.cos(theta) + Math.sin(swooshyRampPrime(r,t)),r*Math.sin(theta) + Math.sin(swooshyRampPrime(r,t))]})).add(new EXP.VectorOutput({width:3}));
+
+	three.on("update",function(time){
+		x.activate(time.t);
+		y.activate(time.t);
+		controls.update();
+	});
+  </script>
+</body>
+</html>

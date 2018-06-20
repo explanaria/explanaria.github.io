@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - Adding sine waves</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/CCapture.all.min.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new EXP.Threeasy_Environment(true, 120,10);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.set(0,0,10);
+	three.camera.lookAt(new THREE.Vector3(0,0,0));
+
+	console.log("Loaded.");
+
+	let lightblue = 0x0070f0;
+	let orangered = 0xff7070;
+
+
+	var params = {};
+	params.radius=4;
+	params.freq = 2;
+
+	//Improvement: parametric color so it fades to nothing as you go to the left
+	var line4 = new EXP.Area({bounds: [[-12,0]],numItems:80});
+	var revealTransform = new EXP.Transformation({'expr': (i,t,x) => [0]});
+	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),params.radius*Math.cos(params.freq*t + x)/10]});
+	var linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-6,y,z]});
+	var output4 = new EXP.LineOutput({width:5,color:orangered});
+
+	line4.add(revealTransform).add(lineDefinition).add(linePostTransform).add(output4);
+
+	params.freq2 = 6;
+
+	var line5 = line4.clone();
+	
+	var revealTransform5 = line5.children[0];
+	var lineDefinition5 = revealTransform5.children[0]
+	lineDefinition5.expr = (i,t,x) => [x,params.radius*Math.sin(params.freq2*t + x),params.radius*Math.cos(params.freq2*t + x)/10] //use freq2 instead of freq1
+	var linePostTransform5 = revealTransform5.children[0].children[0];
+	linePostTransform5.expr = (i,t,x,y,z) => [x-6,y,z];
+	var output5 = linePostTransform5.children[0];
+	output5.color = lightblue;
+
+//todo
+	var line6 = new EXP.Area({bounds: [[-12,0],[0,1]],numItems:[80,2]});
+	line6.children = line5.clone().children;
+
+	line6.children[0].children[0].children[0].children[0] = new EXP.VectorOutput();
+
+
+
+
+	//ok now back to the actual animation
+
+	three.on("update",function(time){
+		[line4, line5].map(i => i.activate(time.t));
+	});
+
+	async function animate(){
+
+		await EXP.delay(500);
+	
+		//from sine_definition.html
+		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},1000)
+		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},1000);
+
+		await EXP.delay(3000);
+
+		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5,z]},1000);
+
+		await EXP.delay(2000);
+
+		EXP.TransitionTo(revealTransform5,{'expr': (i,t,x) => [x]},1000)
+		EXP.TransitionTo(linePostTransform5,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5,z]},0);
+		
+
+	}
+	animate();
+  </script>
+</body>
+</html>

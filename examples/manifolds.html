@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Torii as a manifold (broken)</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/socket.io.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" href="../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new Threeasy_Setup(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.z = 4;
+
+	console.log("Loaded.");
+
+	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]]});
+	var a=1;
+	var b=2;
+	var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]});
+	var output = new EXP.PointOutput({width:0.2});
+
+	torus.add(manifoldParametrization).add(output);
+
+	function coordinate_chart(point_on_manifold){
+		//todo
+		let c1 = point_on_manifold[0];
+		let c2 = point_on_manifold[1];
+
+		//manifoldParametrization.expr(0,0,poin);
+		
+	}
+	console.warn("WARNING: THIS IS HORRIBLY BROKEN. FIX IT. DO YOUR DIFFERENTIAL TOPOLOGY PROPERLY")
+	function calc_torus_tangent_space(point_on_manifold){
+		let theta1 = point_on_manifold[0];
+		let theta2 = point_on_manifold[1];
+
+
+		//f(theta1,theta2) = [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
+
+
+		// something is wrong with this. for one thing, I took the transpose, and that is not good
+		let jacobian_theta1 = [(-a*Math.sin(theta1)*Math.cos(theta2)),(-a*Math.sin(theta1))*Math.sin(theta2),a*Math.cos(theta1)]
+		let jacobian_theta2 = [-(a*Math.cos(theta1)+b)*Math.sin(theta2),(a*Math.cos(theta1)+b)*Math.cos(theta2),0];
+
+
+		// the parametrization is a map U ( M --> R^2
+		//Then produce a map df: T_x M -> R^2 from R^2 => R^2
+
+		return (i,t,x1,x2) => vectorAdd(multiplyScalar(x1,clone(jacobian_theta1)),multiplyScalar(x2,clone(jacobian_theta2)))
+		
+	}
+
+
+	
+	class ParameterTracker{
+		constructor(){}
+		activate(t){
+			this.tangentSpaceChart = calc_torus_tangent_space(this.tangentPoint);
+		}
+	}
+	var params = new ParameterTracker();
+	params.tangentPoint = manifoldParametrization.expr(0,0,0,0);
+
+	var tangentspace = new EXP.Area({bounds: [[-5,5],[-5,5]]});
+	tangentspace
+		.add(new EXP.Transformation({expr: (i,t,x1,x2) => vectorAdd(clone(params.tangentPoint), params.tangentSpaceChart(i,t,x1,x2))}))
+		.add(new EXP.PointOutput({color: blue, width:0.3}));
+
+	
+	var tangentPt = new EXP.Array({data: [[0]]});
+	tangentPt
+		.add(new EXP.Transformation({expr: (i,t) => [Math.cos(t/3), Math.cos(t/5)]}))
+		.add(manifoldParametrization.clone())
+		.add(new EXP.Transformation({expr: (i,t,...x) => (params.tangentPoint = x, x)})) // HORRIBLE HACK to exfiltrate data out of here
+		.add(new EXP.PointOutput({width:0.1, color: 0x0000f0}));
+
+
+	let objects = [tangentPt, params, torus, tangentspace];
+
+	three.on("update",function(time){
+		for(var x of objects){
+			x.activate(time.t);
+		}
+		//controls.update();
+	});
+
+	async function animate(){
+
+	}
+	animate();
+  </script>
+	<div id="label" class="exp-label exp-slide">
+		f(z) = 1/z
+	</div>
+</body>
+</html>

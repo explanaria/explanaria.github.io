@@ -3,6 +3,13 @@
   "version": "0.0.2",
   "description": "A library to make 3D presentations that help explain math concepts in visual ways.",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
+  },
+  "devDependencies": {
+    "rollup-plugin-node-resolve": "^3.3.0"
+  },
+  "dependencies": {
+    "ccapture.js": "^1.1.0"
   }
 }

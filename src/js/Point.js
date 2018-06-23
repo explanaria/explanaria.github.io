@@ -8,11 +8,12 @@ export default class Point{
 		let width = options.width === undefined ? 1 : options.width
 		let color = options.color === undefined ? 0x777777 : options.color;
 
-		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(width/2, 8, 6),this.getFromMaterialCache(color));
+		this.mesh = new THREE.Mesh(this.sharedCircleGeometry,this.getFromMaterialCache(color));
 
 		this.opacity = options.opacity === undefined ? 1 : options.opacity; //trigger setter
 
 		this.mesh.position.set(this.x,this.y,this.z);
+		this.mesh.scale.setScalar(this.width/2);
 		three.scene.add(this.mesh);
 
 		this.x = options.x || 0;
@@ -56,5 +57,6 @@ export default class Point{
 		this.mesh.material = this.getFromMaterialCache(color);
 	}
 }
+Point.prototype.sharedCircleGeometry = new THREE.SphereGeometry(width/2, 8, 6);
 
 Point.prototype._materials = {};

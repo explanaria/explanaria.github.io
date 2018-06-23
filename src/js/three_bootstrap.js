@@ -3,7 +3,7 @@
 
 //also, change Threeasy_Environment to Threeasy_Recorder to download high-quality frames of an animation
 
-import CCapture from 'ccapture.js';
+import { CCapture } from 'ccapture.js';
 
 function Threeasy_Setup(autostart = true){
 	this.prev_timestep = 0;

@@ -49,12 +49,12 @@
 	var linePostTransform5 = revealTransform5.children[0].children[0];
 	linePostTransform5.expr = (i,t,x,y,z) => [x-6,y,z];
 	var output5 = linePostTransform5.children[0];
-	//output5.color = lightblue; //I CAUSE AN ERROR, FIX ME
+	output5.color = lightblue;
 
-//todo
+	//todo: vectorized
 	
 	var line6 = new EXP.Area({bounds: [[-12,0],[0,1]],numItems:[80,2]});
-	line6.children = line5.clone().children;
+	line6.add(line5.clone().children[0]);
 
 	line6.children[0].children[0].children[0].children[0] = new EXP.VectorOutput();
 
@@ -62,7 +62,7 @@
 	//ok now back to the actual animation
 
 	three.on("update",function(time){
-		[line4, line5].map(i => i.activate(time.t));
+		[line4, line5,line6].map(i => i.activate(time.t));
 	});
 
 	console.log("Don't forget protal problem has a bug with the point ont appearing");

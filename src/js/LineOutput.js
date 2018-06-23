@@ -131,8 +131,8 @@ class LineOutput{
 	set color(color){
 		//currently only a single color is supported.
 		//I should really
-		this._color = color;
-		this.material.color.copy(color); //assumed color is a hex color or other supported thing by THREE.Color
+		this.material.color = new THREE.Color(color);
+		this._color = color;	
 	}
 	get color(){
 		return this._color;

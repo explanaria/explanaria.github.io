@@ -56,11 +56,11 @@
 
 		await EXP.delay(1000);
 		//and back again, completing the transformation
-		TransitionTo(transformation2, {'expr': (i,t,u,v) => [Math.cos(u),Math.sin(u),u]})
+		EXP.TransitionTo(transformation2, {'expr': (i,t,u,v) => [Math.cos(u),Math.sin(u),u]})
 
 		//await EXP.delay(2000);
 		//and back again, completing the transformation
-		TransitionTo(transformation, {'expr': (i,t,u,v) => [Math.cos(u) - v*Math.sin(u),Math.sin(u)+v*Math.cos(u),u]})
+		EXP.TransitionTo(transformation, {'expr': (i,t,u,v) => [Math.cos(u) - v*Math.sin(u),Math.sin(u)+v*Math.cos(u),u]})
 
 	}
 	animate();

@@ -57,6 +57,6 @@ export default class Point{
 		this.mesh.material = this.getFromMaterialCache(color);
 	}
 }
-Point.prototype.sharedCircleGeometry = new THREE.SphereGeometry(width/2, 8, 6);
+Point.prototype.sharedCircleGeometry = new THREE.SphereGeometry(1/2, 8, 6); //radius 1/2 so that scaling by n means width=n
 
 Point.prototype._materials = {};

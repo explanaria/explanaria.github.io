@@ -75,29 +75,29 @@
 
 		await EXP.delay(1000);
 
-		TransitionTo(t2, {'expr': (i,t,x,y) => [Math.cos(x*6+t*3)*radius(x*6+t*3),Math.sin(x*6+t*3)*radius(x*6+t*3),0]});
+		EXP.TransitionTo(t2, {'expr': (i,t,x,y) => [Math.cos(x*6+t*3)*radius(x*6+t*3),Math.sin(x*6+t*3)*radius(x*6+t*3),0]});
 		await EXP.delay(4000);
 
-		TransitionTo(windingLine, {'opacity':1});
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,y,0]},3000);
+		EXP.TransitionTo(windingLine, {'opacity':1});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,y,0]},3000);
 		await EXP.delay(5000);
 
 		//show line
-		TransitionTo(line, {'expr': (i,t,x,y) => [x,0.3]});
-		TransitionTo(intersectionOutput, {'opacity': 1});
+		EXP.TransitionTo(line, {'expr': (i,t,x,y) => [x,0.3]});
+		EXP.TransitionTo(intersectionOutput, {'opacity': 1});
 		await EXP.delay(3000);		
 
-		TransitionTo(params, {'angleOffset': -1});
+		EXP.TransitionTo(params, {'angleOffset': -1});
 		await EXP.delay(2000);		
 
-		TransitionTo(params, {'angleOffset': 1});
+		EXP.TransitionTo(params, {'angleOffset': 1});
 		await EXP.delay(2000);		
 
-		TransitionTo(params, {'angleOffset': -Math.PI*2+0.3});
+		EXP.TransitionTo(params, {'angleOffset': -Math.PI*2+0.3});
 		await EXP.delay(3000);		
 
 		//move the 6 points
-		TransitionTo(goToIntersection, {expr: (i,t,x,y)=> [i-3, -3]});
+		EXP.TransitionTo(goToIntersection, {expr: (i,t,x,y)=> [i-3, -3]});
 		await EXP.delay(2000);
 
 		//show text

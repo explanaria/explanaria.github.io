@@ -41,20 +41,20 @@
 	async function animate(){
 
 		await EXP.delay(1000);
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,y,i/30]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,y,i/30]});
 
 		await EXP.delay(2000);
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x) + y,0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x) + y,0]});
 
 		await EXP.delay(3000);
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(t),x*x+y*y*y]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(t),x*x+y*y*y]});
 
 
 		await EXP.delay(3000);
-		TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x), y*Math.sin(x),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x), y*Math.sin(x),0]});
 
 		await EXP.delay(3000);
-		TransitionTo(id, {'expr': (i,t,x,y) => [x*Math.cos(y), x*Math.sin(y),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x*Math.cos(y), x*Math.sin(y),0]});
 	}
 	animate();
   </script>

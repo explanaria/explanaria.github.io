@@ -41,61 +41,61 @@
 
 		//demonstrate some common functions
 		/*
-		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x),Math.sin(x),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x),Math.sin(x),0]});
 		await EXP.delay(1000);
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x+t),Math.sin(x+t),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [Math.cos(x+t),Math.sin(x+t),0]});
 		await EXP.delay(500);
 
 	
 		// bouncy circle
-		TransitionTo(id, {'expr': (i,t,x,y) => [(y+6)*Math.cos(x + t),(y+6)*Math.sin(x + t),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [(y+6)*Math.cos(x + t),(y+6)*Math.sin(x + t),0]});
 		await EXP.delay(3000);
 
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6)+5)*Math.cos(x + t),(y+Math.sin(t*6)+5)*Math.sin(x + t),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6)+5)*Math.cos(x + t),(y+Math.sin(t*6)+5)*Math.sin(x + t),0]});
 		await EXP.delay(5000);*/
 
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x*x/6 + y,0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x*x/6 + y,0]});
 		await EXP.delay(1000);
 
 		// bouncy circle
-		TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4),y*Math.sin(x/4),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4),y*Math.sin(x/4),0]});
 		await EXP.delay(1000);
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4 + t),y*Math.sin(x/4 + t),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4 + t),y*Math.sin(x/4 + t),0]});
 		await EXP.delay(1000);
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),0]});
 		await EXP.delay(5000);
 
 		//folds up into something 3D
-		TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),Math.abs(x)*3-9]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),Math.abs(x)*3-9]});
 		await EXP.delay(3000);
 
 		//to the THIRD DIMENSION
-		TransitionTo(three.camera.position, {z: 2, x: 9.3});
+		EXP.TransitionTo(three.camera.position, {z: 2, x: 9.3});
 		await EXP.delay(5000);
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,(x*x+y*y*(y+Math.sin(t)/3))/5,y+Math.sin(t)]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,(x*x+y*y*(y+Math.sin(t)/3))/5,y+Math.sin(t)]});
 		await EXP.delay(5000);
 
 		//TransitionTo(three.camera.rotation, {y: Math.PI});
 
 		//var anim = new Animation(output, {'color': 0xffffff}); // works (albeit not on THREE.Color()s)
 
-		TransitionTo(three.camera.position, {z: 10, x: 0});
+		EXP.TransitionTo(three.camera.position, {z: 10, x: 0});
 		await EXP.delay(1000);
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),0]})
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),0]})
 		await EXP.delay(3000);
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),Math.cos(x+t)]})
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),Math.cos(x+t)]})
 		await EXP.delay(4000);
 
 
-		TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(x+t),-(y*y/3)+Math.cos(x+t)+4]})
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(x+t),-(y*y/3)+Math.cos(x+t)+4]})
 		await EXP.delay(4000);
 
 

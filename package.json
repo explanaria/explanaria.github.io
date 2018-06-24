@@ -3,8 +3,8 @@
   "version": "0.0.2",
   "description": "A library to make 3D presentations that help explain math concepts in visual ways.",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w"
+    "build": "rollup -c -m inline",
+    "watch": "rollup -c -m -w"
   },
   "devDependencies": {
     "rollup-plugin-commonjs": "^9.1.3",

@@ -1,11 +1,19 @@
-class LineOutput{
+import {OutputNode} from './Node.js';
+
+class LineOutput extends OutputNode{
 	constructor(options = {}){
-		/*input: Transformation
-			width: number
+		super();
+		/* should be .add()ed to a Transformation to work
+			options:
+			{
+				width: number
+				opacity: number
+				color: hex code or THREE.Color()
+			}
 		*/
 
 		this._width = options.width !== undefined ? options.width : 5;
-		this._opacity = options.opacity !== undefined ? options.opacity : 1; //trigger transparency if needed
+		this._opacity = options.opacity !== undefined ? options.opacity : 1;
 		this._color = options.color !== undefined ? options.color : 0x55aa55;
 
 		this.numCallsPerActivation = 0; //should always be equal to this.points.length
@@ -64,18 +72,19 @@ class LineOutput{
 
 	}
 	_onAdd(){
-
-	}
-	_onFirstActivation(){ //should be called when this is .add()ed to something
-
 		//climb up parent hierarchy to find the Area
 		let root = this;
 		while(root.parent !== null){
 			root = root.parent;
 		}
+	
+		//todo: implement something like assert root typeof RootNode
 
 		this.numCallsPerActivation = root.numCallsPerActivation;
 		this.itemDimensions = root.itemDimensions;
+	}
+	_onFirstActivation(){
+		this._onAdd(); //setup this.numCallsPerActivation and this.itemDimensions. used here again because cloning means the onAdd() might be called before this is connected to a type of domain
 
 		// perhaps instead of generating a whole new array, this can reuse the old one?
 		let vertices = new Float32Array(this.numCallsPerActivation * this._outputDimensions);
@@ -132,7 +141,7 @@ class LineOutput{
 		//currently only a single color is supported.
 		//I should really
 		this.material.color = new THREE.Color(color);
-		this._color = color;	
+		this._color = color;
 	}
 	get color(){
 		return this._color;

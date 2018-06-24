@@ -6,7 +6,6 @@ export class VectorOutput extends LineOutput{
 		/*input: Transformation
 			width: number
 		*/
-
 		super(options);
 
 	}
@@ -16,8 +15,11 @@ export class VectorOutput extends LineOutput{
 		this.arrowheads = [];
 
 
-		this.material = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width,opacity:this._opacity});
+		this.material = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width, opacity:this._opacity});
 		this.lineMesh = new THREE.LineSegments(this._geometry,this.material);
+
+		this.opacity = this._opacity; // setter sets transparent flag if necessary
+
 
 		const circleResolution = 12;
 		const arrowheadSize = 0.3;
@@ -35,14 +37,13 @@ export class VectorOutput extends LineOutput{
 
 		three.scene.add(this.lineMesh);
 	}
-	_onAdd(){
-		super._onAdd()
-
+	_onFirstActivation(){
+		super._onFirstActivation();
 
 		if(this.itemDimensions.length > 1){
 			this.numArrowheads = this.itemDimensions.slice(0,this.itemDimensions.length-1).reduce(function(prev, current){
 				return current + prev;
-			});;	
+			});
 		}else{
 			//assumed itemDimensions isn't a nonzero array. That should be the constructor's problem.
 			this.numArrowheads = 1;
@@ -50,7 +51,7 @@ export class VectorOutput extends LineOutput{
 
 		//remove any previous arrowheads
 		for(var i=0;i<this.arrowheads.length;i++){
-			let arrow = this.arrowheads[0];
+			let arrow = this.arrowheads[i];
 			three.scene.remove(arrow);
 		}
 

@@ -1,9 +1,11 @@
 "use strict";
 
 import { Utils } from './utils.js';
+import Node from './Node.js';
 
-class Area{
+class Area extends Node{
 	constructor(options){
+		super();
 
 		/*var axes = new EXP.Area({
 		bounds: [[-10,10],
@@ -42,13 +44,6 @@ class Area{
 
 		this.children = [];
 		this.parent = null;
-	}
-	add(thing){
-		//todo: assert thing not in this.children
-		this.children.push(thing);
-		thing.parent = this;
-		if(thing._onAdd)thing._onAdd();
-		return thing;
 	}
 	activate(t){
 		//Use this to evaluate expr() and update the result, cascade-style.

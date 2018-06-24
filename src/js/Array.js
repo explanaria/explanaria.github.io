@@ -1,8 +1,10 @@
 "use strict";
 
-//really this should extend Area, or some superclass of both
-class EXPArray{
+import Node from './Node.js';
+
+class EXPArray extends Node{
 	constructor(options){
+		super();
 		/*var points = new EXP.Array({
 		data: [[-10,10],
 			[10,10]]
@@ -36,13 +38,6 @@ class EXPArray{
 
 		this.children = [];
 		this.parent = null;
-	}
-	add(thing){
-		//todo: assert thing not in this.children
-		this.children.push(thing);
-		thing.parent = this;
-		if(thing._onAdd)thing._onAdd();
-		return thing;
 	}
 	activate(t){
 		if(	this.numDimensions == 1){

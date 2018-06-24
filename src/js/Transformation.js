@@ -1,8 +1,11 @@
 "use strict";
 
+import Node from './Node.js';
+
 //Usage: var y = new Transformation({expr: function(...a){console.log(...a)}});
-class Transformation{
+class Transformation extends Node{
 	constructor(options){
+		super();
 	
 		EXP.Utils.assertPropExists(options, "expr"); // a function that returns a multidimensional array
 		EXP.Utils.assertType(options.expr, Function);
@@ -11,13 +14,6 @@ class Transformation{
 
 		this.children = [];
 		this.parent = null;
-	}
-	add(thing){
-		//chainable.
-		this.children.push(thing);
-		thing.parent = this;
-		if(thing._onAdd)thing._onAdd();
-		return thing;
 	}
 	evaluateSelf(...coordinates){
 		//evaluate this Transformation's _expr, and broadcast the result to all children.

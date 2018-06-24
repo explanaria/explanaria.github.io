@@ -76,9 +76,9 @@
 		await EXP.delay(4000);
 
 		//turn sideways
-		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c,b,a/10]})); // rotate
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c,b,a/10]}),1500); // rotate
 
-		await EXP.delay(1500);
+		await EXP.delay(2000);
 
 		//Move to the left in preparation to create the graph
 		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c-6,b,a/10]},700));
@@ -87,7 +87,9 @@
 		await EXP.delay(2000);
 
 		//move to the right while showing the trail
-		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c+6,b,a/10]},10000));
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c+6,b,0]},10000));
+
+		EXP.TransitionTo(lineDefinition, {'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]},10000); //make the sine wave flat so that the lines show up properly on mobile
 
 		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},10000)
 		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},10000);

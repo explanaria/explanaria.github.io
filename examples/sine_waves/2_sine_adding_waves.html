@@ -24,6 +24,7 @@
 
 	let lightblue = 0x0070f0;
 	let orangered = 0xff7070;
+	let yellow = 0xc0c070;
 
 
 	var params = {};
@@ -32,44 +33,76 @@
 
 	//Improvement: parametric color so it fades to nothing as you go to the left
 	var line4 = new EXP.Area({bounds: [[-12,0]],numItems:80});
-	var revealTransform = new EXP.Transformation({'expr': (i,t,x) => [0]});
-	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),params.radius*Math.cos(params.freq*t + x)/10]});
+	var revealTransform = new EXP.Transformation({'expr': (i,t,x,y) => [0,0]});
+	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]});
 	var linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-6,y,z]});
 	var output4 = new EXP.LineOutput({width:5,color:orangered});
 
 	line4.add(revealTransform).add(lineDefinition).add(linePostTransform).add(output4);
 
-	params.freq2 = 6;
+	params.freq2 = 0.5;
 
+	//blue line
 	var line5 = line4.clone();
 	
 	var revealTransform5 = line5.children[0];
 	var lineDefinition5 = revealTransform5.children[0]
-	lineDefinition5.expr = (i,t,x) => [x,params.radius*Math.sin(params.freq2*t + x),params.radius*Math.cos(params.freq2*t + x)/10] //use freq2 instead of freq1
+	lineDefinition5.expr = (i,t,x) => [x,params.radius*Math.sin(params.freq2*(t + x)),0] //use freq2 instead of freq1
 	var linePostTransform5 = revealTransform5.children[0].children[0];
 	linePostTransform5.expr = (i,t,x,y,z) => [x-6,y,z];
 	var output5 = linePostTransform5.children[0];
 	output5.color = lightblue;
 
-	//todo: vectorized
+	//vectors for blue line 5
 	
-	var line6 = new EXP.Area({bounds: [[-12,0],[0,1]],numItems:[80,2]});
+	var line6 = new EXP.Area({bounds: [[-12,0],[0,1]],numItems:[20,2]});
 	line6.add(line5.clone().children[0]);
+	var line6RevealTransform = line6.children[0];
+	line6RevealTransform.expr = (i,t,x,y) => [x,y];
+	var line6Definition = line6RevealTransform.children[0];
+	line6Definition.expr = (i,t,x,y) => 1-y<0.1 ? [x,(params.radius)*Math.sin(params.freq2*(t + x))] : [x,0];
 
-	line6.children[0].children[0].children[0].children[0] = new EXP.VectorOutput();
+	var line6PostTransform = line6.children[0].children[0].children[0]; //tbh this is kind of ridiculous. there's got to be a better way
+	line6PostTransform.remove(line6PostTransform.children[0]).add(new EXP.VectorOutput({width: 5, color: lightblue, opacity: 0}));
+
+
+	//vectors for line 4
+
+	var line7 = line6.clone();
+	var line7Definition = line7.children[0].children[0];
+	line7Definition.expr = (i,t,x,y) => 1-y<0.1 ? [x,(params.radius)*Math.sin(params.freq*(t + x))] : [x,0];
+
+	var line7PostTransform = line7.children[0].children[0].children[0]; //tbh this is kind of ridiculous. there's got to be a better way
+	var line7Output = line7PostTransform.children[0];
+	line7Output.color = orangered;
+	line7Output.opacity = 0;
+
+	//combined line
+	var line8 = line4.clone();
+	line8.children[0].expr = (i,t,x) => [x]; //pre-enable it
+	var line8Definition = line8.children[0].children[0];
+	line8Definition.expr = (i,t,x) => {
+			let wave1 = (params.radius)*Math.sin(params.freq*(t + x));
+			let wave2 = (params.radius)*Math.sin(params.freq2*(t + x));
+
+				return [x,wave1+wave2];
+			}
+	var line8PostTransform = line8.children[0].children[0].children[0];
+	var output8 = line8PostTransform.children[0];
+	output8.color = yellow;
+	output8.opacity = 0;
 
 
 	//ok now back to the actual animation
 
 	three.on("update",function(time){
-		[line4, line5,line6].map(i => i.activate(time.t));
+		[line4, line5,line6, line7, line8].map(i => i.activate(time.t));
 	});
 
 	console.log("Don't forget protal problem has a bug with the point ont appearing");
 
 	async function animate(){
 
-		await EXP.delay(500);
 	
 		//from sine_definition.html
 		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},1000)
@@ -77,13 +110,63 @@
 
 		await EXP.delay(3000);
 
+
+		//show off different-frequency waves
+
+		EXP.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(4*(t + x)),0]},1000);
+
+		await EXP.delay(5000);
+
+		params.freq = 1;
+
+		//now it's a proper-freq wave, nyeheheheh
+		EXP.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*(t + x)),0]},500);
+
+		await EXP.delay(1000);
+		//store the wave on the up
+
 		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5,z]},1000);
+		EXP.TransitionTo(line7PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5]},1000);
+		EXP.TransitionTo(params,{'radius': 5},1000)
 
 		await EXP.delay(2000);
 
+		//reveal line 2
 		EXP.TransitionTo(revealTransform5,{'expr': (i,t,x) => [x]},1000)
-		EXP.TransitionTo(linePostTransform5,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5,z]},0);
-		
+		EXP.TransitionTo(linePostTransform5,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
+
+		//reveal arrows 2
+		await EXP.delay(7000);
+		console.log("ARROWS SHOULD BE APPEARING HERE");
+		EXP.TransitionTo(line6PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
+		EXP.TransitionTo(line6PostTransform.children[0], {'opacity': 1},1000);
+
+		EXP.delay(3000);
+		//reveal red arrows
+		EXP.TransitionTo(line7Output, {'opacity': 1},1000);
+
+		EXP.delay(7000);
+		//move lines on top of one another
+		[linePostTransform5,linePostTransform, line6PostTransform, line7PostTransform].forEach((i) => EXP.TransitionTo(i, {'expr': (i,t,x,y,z) => [(x+6)/2,y/2]},1000));
+
+
+		EXP.delay(5000);
+		//show combined wave
+		EXP.TransitionTo(line7Definition,{'expr':(i,t,x,y) => {
+			let wave1 = (params.radius)*Math.sin(params.freq*(t + x));
+			let wave2 = (params.radius)*Math.sin(params.freq2*(t + x));
+
+			return 1-y<0.1 ? [x,wave1+wave2] : [x,wave2];
+			}},1000);
+
+		EXP.delay(5000);
+		//fade out original two waves and show combined wave
+		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},1000));
+		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0.3},1000));
+
+		EXP.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2]},10);
+		EXP.TransitionTo(output8, {'opacity': 1},1000);
+
 
 	}
 	animate();

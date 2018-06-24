@@ -1,7 +1,9 @@
 import Point from './Point.js';
+import {OutputNode} from './Node.js';
 
-class PointOutput{
+class PointOutput extends OutputNode{
 	constructor(options = {}){
+		super();
 		/*
 			width: number
 			color: hex color, as in 0xrrggbb. Technically, this is a JS integer.
@@ -47,9 +49,6 @@ class PointOutput{
 		if(y !== undefined)point.y = y;
 		if(z !== undefined)point.z = z;
 		point.mesh.visible = true;
-	}
-	onAfterActivation(){
-
 	}
 	getPoint(i){
 		if(i >= this.points.length){

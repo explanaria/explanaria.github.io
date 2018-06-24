@@ -69,7 +69,8 @@
 
 	//air particles
 	pointPositions = [];
-	for(var i=-horizontalRange;i<=horizontalRange;i+=0.1){
+	for(var i=-horizontalRange;i<=horizontalRange;i+=(three.IS_RENDERING ? 0.05 : 0.3)){
+		pointPositions.push([i,Math.random()*height*2-height]);
 		pointPositions.push([i,Math.random()*height*2-height]);
 		pointPositions.push([i,Math.random()*height*2-height]);
 	}

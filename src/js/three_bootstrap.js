@@ -75,6 +75,8 @@ function Threeasy_Setup(autostart = true){
 	window.addEventListener('load', this.onPageLoad.bind(this), false);
 
 	this.clock = new THREE.Clock();
+
+	this.IS_RECORDING = false; // queryable if one wants to do things like beef up particle counts for render
 }
 
 Threeasy_Setup.prototype.onPageLoad = function() {
@@ -190,6 +192,8 @@ class Threeasy_Recorder extends Threeasy_Setup{
 		} );
 
 		this.rendering = false;
+
+		this.IS_RECORDING = true;
 	}
 	start(){
 		//make a recording sign

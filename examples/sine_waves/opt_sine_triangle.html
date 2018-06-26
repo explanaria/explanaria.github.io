@@ -7,6 +7,7 @@
   <script src="../../src/lib/three.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
+  <script src="./commonClasses.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
 
@@ -21,10 +22,6 @@
 	three.camera.lookAt(new THREE.Vector3(0,0,0));
 
 	console.log("Loaded.");
-
-	let lightblue = 0x0070f0;
-	let orangered = 0xff7070;
-	let lightgreen = 0x70ff70;
 
 
 	var params = {};
@@ -52,27 +49,6 @@
 
 	circle3.add(circleTransformation3).add(transformCircle3).add(output3);
 
-	class twoPointLine{
-		constructor(funcA,funcB, col){
-
-			let pt1 = funcA;
-			let pt2 = funcB;
-
-			this.area = new EXP.Area({bounds: [[0,1]],numItems:2});
-			this.revealTransform = new EXP.Transformation({'expr': (i,t,x) => [0]});
-			this.lineDefinition = new EXP.Transformation({'expr': (i,t,x) => EXP.Math.vectorAdd(EXP.Math.multiplyScalar((1-x),funcA(i,t,x)),EXP.Math.multiplyScalar(x,funcB(i,t,x)))});
-			this.linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y]});
-			this.out = new EXP.LineOutput({width:5,color:col});
-			this.area.add(this.revealTransform).add(this.lineDefinition).add(this.linePostTransform).add(this.out);
-		}
-		activate(time){
-			this.area.activate(time);
-		}	
-		reveal(){
-			EXP.TransitionTo(this.revealTransform,{'expr': (i,t,x) => [x]},800);
-		}	
-	}	
-	
 	var hypotenuse = new twoPointLine( (i,t,x) => [0,0], (i,t,x) => [params.radius*Math.cos(params.freq*t),params.radius*Math.sin(params.freq*t)], orangered);
 	var xaxis = new twoPointLine( (i,t,x) => [params.radius*Math.cos(params.freq*t),0], (i,t,x) => [0,0], orangered);
 	var yaxis = new twoPointLine( (i,t,x) => [params.radius*Math.cos(params.freq*t),params.radius*Math.sin(params.freq*t)], (i,t,x) => [params.radius*Math.cos(params.freq*t),0], lightgreen);
@@ -115,8 +91,10 @@
 		xaxis.reveal();
 
 		await EXP.delay(800);
-		EXP.TransitionTo(outputAngle,{'opacity':1},1000);
 		hypotenuse.reveal();
+
+		await EXP.delay(300); //without this it gets caught in an end-of-period and it looks bad
+		EXP.TransitionTo(outputAngle,{'opacity':1},1000);
 		
 
 	}

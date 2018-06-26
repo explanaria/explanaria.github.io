@@ -7,6 +7,7 @@
   <script src="../../src/lib/three.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
+  <script src="./commonClasses.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
 
@@ -21,11 +22,6 @@
 	three.camera.lookAt(new THREE.Vector3(0,0,0));
 
 	console.log("Loaded.");
-
-	let lightblue = 0x0070f0;
-	let orangered = 0xff7070;
-	let yellow = 0xc0c070;
-
 
 	var params = {};
 	params.radius=4;
@@ -91,12 +87,18 @@
 	var output8 = line8PostTransform.children[0];
 	output8.color = yellow;
 	output8.opacity = 0;
+	output8.width = 2*output8.width;
+
+	//common classes
+	var plus = new PlusSign([-6,0],1,0x000000);
+	var equals = new EqualsSign([0,0],1,0x000000);
 
 
 	//ok now back to the actual animation
 
+	var sceneItems = [line4, line5,line6, line7, line8];
 	three.on("update",function(time){
-		[line4, line5,line6, line7, line8].map(i => i.activate(time.t));
+		sceneItems.map(i => i.activate(time.t));
 	});
 
 	console.log("Don't forget protal problem has a bug with the point ont appearing");
@@ -137,20 +139,23 @@
 
 		//reveal arrows 2
 		await EXP.delay(7000);
-		console.log("ARROWS SHOULD BE APPEARING HERE");
 		EXP.TransitionTo(line6PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
 		EXP.TransitionTo(line6PostTransform.children[0], {'opacity': 1},1000);
 
-		EXP.delay(3000);
+		await EXP.delay(3000);
 		//reveal red arrows
 		EXP.TransitionTo(line7Output, {'opacity': 1},1000);
 
-		EXP.delay(7000);
+		await EXP.delay(2000);
+		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},1000));
+
+		await EXP.delay(5000);
+
 		//move lines on top of one another
-		[linePostTransform5,linePostTransform, line6PostTransform, line7PostTransform].forEach((i) => EXP.TransitionTo(i, {'expr': (i,t,x,y,z) => [(x+6)/2,y/2]},1000));
+		[linePostTransform5,linePostTransform, line6PostTransform, line7PostTransform].forEach((i) => {console.log(i);EXP.TransitionTo(i, {'expr': (i,t,x,y,z) => [(x+6)/2,y/2]},1000)});
 
 
-		EXP.delay(5000);
+		await EXP.delay(5000);
 		//show combined wave
 		EXP.TransitionTo(line7Definition,{'expr':(i,t,x,y) => {
 			let wave1 = (params.radius)*Math.sin(params.freq*(t + x));
@@ -159,13 +164,31 @@
 			return 1-y<0.1 ? [x,wave1+wave2] : [x,wave2];
 			}},1000);
 
-		EXP.delay(5000);
+		await EXP.delay(5000);
 		//fade out original two waves and show combined wave
-		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},1000));
-		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0.3},1000));
+		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0.7},1000));
 
-		EXP.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2]},10);
+		EXP.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2,0.07]},10);
 		EXP.TransitionTo(output8, {'opacity': 1},1000);
+
+		//and that's how you add. show addition equation
+		await EXP.delay(10000);
+		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},1000));
+		await EXP.delay(3000);
+		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 1},1000));
+
+		EXP.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+18)/2,y/2,0.07]},1000);
+
+		EXP.TransitionTo(linePostTransform, {'expr': (i,t,x,y,z) => [(x-6)/2,y/3+3.5]},1000);
+		EXP.TransitionTo(linePostTransform5, {'expr': (i,t,x,y,z) => [(x-6)/2,y/3-3.5]},1000);
+
+
+		await EXP.delay(1000);
+		plus.addTo(sceneItems);
+		await plus.reveal(1000);
+		await EXP.delay(1000);
+		equals.addTo(sceneItems);
+		await equals.reveal(1000);
 
 
 	}

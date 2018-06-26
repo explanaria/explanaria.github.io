@@ -149,6 +149,7 @@ class LineOutput extends OutputNode{
 	set opacity(opacity){
 		this.material.opacity = opacity;
 		this.material.transparent = opacity < 1;
+		this.material.visible = opacity > 0;
 		this._opacity = opacity;
 	}
 	get opacity(){

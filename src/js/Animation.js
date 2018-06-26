@@ -11,6 +11,7 @@ class Animation{
 		this.toValues = toValues;
 		this.target = target;	
 		this.staggerFraction = staggerFraction === undefined ? 0 : staggerFraction; // time in ms between first element beginning the animation and last element beginning the animation. Should be less than duration.
+r
 
 		Utils.assert(this.staggerFraction >= 0 && this.staggerFraction < 1);
 

@@ -44,16 +44,18 @@ function Threeasy_Setup(autostart = true){
 
 	
 	this.scene = new THREE.Scene();
-	this.scene.background = new THREE.Color( 0xFFFFFF );
 
 	this.scene.add(this.camera);
 
-	this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+	this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 	this.renderer.setPixelRatio( window.devicePixelRatio );
 	this.renderer.setSize( this.evenify(window.innerWidth),this.evenify(window.innerHeight) );
 	this.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
 
 	this.aspect = window.innerWidth/window.innerHeight;
+
+	this.timeScale = 1;
+	this.elapsedTime = 0;
 
 	this.container = document.createElement( 'div' );
 	this.container.appendChild( this.renderer.domElement );
@@ -126,10 +128,11 @@ Threeasy_Setup.prototype.onWindowResize= function() {
 }
 Threeasy_Setup.prototype.listeners = {"update": [],"render":[]}; //update event listeners
 Threeasy_Setup.prototype.render = function(timestep){
-	var delta = this.clock.getDelta();
+	var delta = this.clock.getDelta()*this.timeScale;
+	this.elapsedTime += delta;
 	//get timestep
 	for(var i=0;i<this.listeners["update"].length;i++){
-		this.listeners["update"][i]({"t":this.clock.elapsedTime,"delta":delta});
+		this.listeners["update"][i]({"t":this.elapsedTime,"delta":delta});
 	}
 
 	this.renderer.render( this.scene, this.camera );
@@ -188,7 +191,7 @@ class Threeasy_Recorder extends Threeasy_Setup{
 			framerate: fps,
 			format: 'png',
 			name: document.title,
-			verbose: true,
+			//verbose: true,
 		} );
 
 		this.rendering = false;

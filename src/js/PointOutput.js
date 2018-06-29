@@ -22,21 +22,29 @@ class PointOutput extends OutputNode{
 
 		this.parent = null;
 	}
-	_onFirstActivation(){ //should be called when this is .add()ed to something
+	_onAdd(){ //should be called when this is .add()ed to something
 
+		let parentCount = 0;
 		//climb up parent hierarchy to find the Area
 		let root = this;
-		while(root.parent !== null){
+		while(root.parent !== null && parentCount < 50){
 			root = root.parent;
+			parentCount++;
 		}
+		if(parentCount >= 50)throw new Error("Unable to find root!");
 
 		this.numCallsPerActivation = root.numCallsPerActivation;
 
-		for(var i=0;i<this.numCallsPerActivation;i++){
-			let point = this.getPoint(i);
-			point.mesh.visible = false; //instantiate the point
-			point.opacity = this._opacity;
+		if(this.points.length < this.numCallsPerActivation){
+			for(var i=this.points.length;i<this.numCallsPerActivation;i++){
+				this.points.push(new Point({width: 1,color:this._color, opacity:this._opacity}));
+				this.points[i].mesh.scale.setScalar(this._width); //set width by scaling point
+				this.points[i].mesh.visible = false; //instantiate the point
+			}
 		}
+	}
+	_onFirstActivation(){
+		if(this.points.length < this.numCallsPerActivation)this._onAdd();
 	}
 	evaluateSelf(i, t, x, y, z){
 		if(!this._activatedOnce){
@@ -51,10 +59,6 @@ class PointOutput extends OutputNode{
 		point.mesh.visible = true;
 	}
 	getPoint(i){
-		if(i >= this.points.length){
-			this.points.push(new Point({width: 1,color:this._color, opacity:this._opacity}));
-			this.points[i].mesh.scale.setScalar(this._width); //set width by scaling point
-		}
 		return this.points[i];
 	}
 	set opacity(opacity){

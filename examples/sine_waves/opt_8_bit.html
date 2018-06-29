@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - 8-bit waveforms</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+  <script src="./commonClasses.js"></script>
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new EXP.Threeasy_Environment(true, 60,20);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.set(0,0,10);
+	three.camera.lookAt(new THREE.Vector3(0,0,0));
+
+	console.log("Loaded.");
+
+	var params = {};
+	params.radius=4;
+
+	class SineWave{
+		constructor(frequency, amplitude, color, numItems=80){
+			this.amplitude = amplitude;
+			this.freq = frequency;
+
+			let width = 12;
+
+			this.area = new EXP.Area({bounds: [[0,width]],numItems:numItems});
+			this.revealTransform  = new EXP.Transformation({'expr': (i,t,x,y) => [0,0]});
+
+			let sineFunc = ((i,t,x) => [x,this.amplitude*Math.sin(this.freq*(t + x)),0]).bind(this);
+			this.lineDefinition = new EXP.Transformation({'expr': sineFunc});
+			this.postTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-width/2,y]});
+
+			this.color = color;
+			this.output = new EXP.LineOutput({width:5,color:this.color});
+
+			this.area.add(this.revealTransform).add(this.lineDefinition).add(this.postTransform).add(this.output);
+
+		}
+		reveal(duration=1000){
+			EXP.TransitionTo(this.revealTransform,{'expr':(i,t,x,y) => [x,y]},duration);
+			this.output.opacity = 1;
+		}
+		fadeOut(duration=1000){
+			EXP.TransitionTo(this.revealTransform,{'expr':(i,t,x,y) => [0,0]},duration*3);
+			EXP.TransitionTo(this.output,{'opacity':0},duration);
+		}
+		activate(...args){
+			this.area.activate(...args);
+		}
+	}
+
+	let sqFC = (w) => w%2==1 ? [w,2/w] : [w,0]; //squareFourierCoeffs, fourier coeffs of a square wave
+	let sawFC = (w) => [w,Math.pow(2,-w+1)]; //squareFourierCoeffs, fourier coeffs of a square wave
+	let randFC = (w) => [w,[1,2,1,1,1,2,1,0,1,2,1,1,1,1,1,1,1,1][w]];
+
+	let genCoeffs = (func) => [func(1),func(2),func(3),func(4),func(5),func(6),func(7),func(8)];
+	let genOddCoeffs = (func) => [func(1),func(3),func(5),func(7),func(9),func(11)];
+
+	//params.freqs = genOddCoeffs(sqFC); //freq, amplitude
+	params.freqs = genCoeffs(randFC); //freq, amplitude
+	params.freqs = genCoeffs(sawFC);
+
+	var totalWave = new SineWave(0.5, 5, orangered, three.IS_RECORDING ? 1500 : 80);
+
+	let quantNumber = 16;
+	let eightBitSine = (t,x,freq,amplit,quantNumber) => { // to be used with a much higher line density
+		let sin = Math.sin(freq*(t+x));
+		let y = Math.ceil(sin*quantNumber-0.5)/quantNumber;
+		return [x, y*amplit];
+	}
+	//totalWave.lineDefinition.expr = (i,t,x) => eightBitSine(t,x)
+
+	async function changeWave(newFunc, odd){
+		console.log(odd);
+		let originalTransform = totalWave.postTransform.expr;
+		EXP.TransitionTo(totalWave.postTransform, {'expr':(i,t,x,y) => {let a = originalTransform(i,t,x,y);a[1]=0;return a;}},500);
+		await EXP.delay(500);
+		params.freqs = odd ? genOddCoeffs(newFunc) : genCoeffs(newFunc); //new wave
+		EXP.TransitionTo(totalWave.postTransform, {'expr':(i,t,x,y) => originalTransform(i,t,x,y)},500);
+		await EXP.delay(500);
+	}
+
+	var sceneItems = [totalWave.area]
+	three.on("update",function(time){
+		sceneItems.map(i => i.activate(time.t));
+	});
+
+	async function animate(){
+
+		totalWave.reveal();
+		await EXP.delay(6000);
+
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,4)},1000);
+		await EXP.delay(6000);
+
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,8)},1000);
+		await EXP.delay(1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,16)},1000);
+		await EXP.delay(1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,32)},1000);
+		await EXP.delay(1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,64)},1000);
+		await EXP.delay(1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,128)},1000);
+		await EXP.delay(1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,256)},1000);
+		await EXP.delay(1000);
+
+	}
+	window.onload = animate;
+  </script>
+</body>
+</html>

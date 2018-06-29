@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - What the Fourier Transform does</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+  <script src="./commonClasses.js"></script>
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new EXP.Threeasy_Environment(true, 60,10);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.set(0,0,10);
+	three.camera.lookAt(new THREE.Vector3(0,0,0));
+
+	console.log("Loaded.");
+
+
+	var params = {};
+	params.radius=4;
+
+
+	class SineWave{
+		constructor(frequency, amplitude, color, numItems=80){
+			this.amplitude = amplitude;
+			this.freq = frequency;
+
+			let width = 12;
+
+			this.area = new EXP.Area({bounds: [[0,width]],numItems:numItems});
+			this.revealTransform  = new EXP.Transformation({'expr': (i,t,x,y) => [0,0]});
+
+			let sineFunc = ((i,t,x) => [x,this.amplitude*Math.sin(this.freq*(t + x)),0]).bind(this);
+			this.lineDefinition = new EXP.Transformation({'expr': sineFunc});
+			this.postTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-width/2,y]});
+
+			this.color = color;
+			this.output = new EXP.LineOutput({width:5,color:this.color});
+
+			this.area.add(this.revealTransform).add(this.lineDefinition).add(this.postTransform).add(this.output);
+
+		}
+		reveal(duration=1000){
+			EXP.TransitionTo(this.revealTransform,{'expr':(i,t,x,y) => [x,y]},duration);
+			this.output.opacity = 1;
+		}
+		fadeOut(duration=1000){
+			EXP.TransitionTo(this.revealTransform,{'expr':(i,t,x,y) => [0,0]},duration*3);
+			EXP.TransitionTo(this.output,{'opacity':0},duration);
+		}
+		activate(...args){
+			this.area.activate(...args);
+		}
+	}
+
+	params.freqs = [2,2,3,2,1.5,1.5]
+
+	var amps = [2,1,1,1,0.8,0.8];
+
+	var scaleXes = [1,1,1,1,3,-3];
+
+	var poses = [[-6,12],[7,8],[-8,-7],[12,-2],[-12,6.5],[12,-6.5]];
+
+	var rots = [1.9,1,3.7,-3.7,0,0];
+
+	var waves = [];
+	for(var i=0;i<params.freqs.length;i++){
+		let blu = new THREE.Color(lightblue);
+
+		waves.push(new SineWave(params.freqs[i],1,lightblue, three.IS_RECORDING ? 300 : 80));
+
+		let rot = rots[i]
+
+		let pos = poses[i]
+		let amp = amps[i];
+		let scaleX = scaleXes[i];
+
+		waves[i].postTransform.expr = (i,t,x,y,z) => [Math.cos(rot)*amp*x*scaleX + Math.sin(rot)*amp*(y) + pos[0], -Math.sin(rot)*x*amp*scaleX + Math.cos(rot)*amp*y + pos[1],0]
+	}
+
+
+	var sceneItems = [].concat(waves);
+	three.on("update",function(time){
+		sceneItems.map(i => i.activate(time.t));
+	});
+
+	async function showWave(i){
+		await EXP.delay(1500*Math.random());
+
+		let revealTime = (i == 2 || i == 3) ? 1500 : 3000;
+
+		i.reveal(revealTime);
+
+
+	}
+
+	async function animate(){
+			waves.forEach((i) => showWave(i));
+	}
+	window.onload = animate;
+  </script>
+</body>
+</html>

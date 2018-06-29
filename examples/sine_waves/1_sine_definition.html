@@ -14,7 +14,7 @@
 </head>
 <body>
   <script>
-	var three = new EXP.Threeasy_Environment(true, 120,10);
+	var three = new EXP.Threeasy_Environment(true, 60,25);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
@@ -53,7 +53,7 @@
 
 
 	//Improvement: parametric color so it fades to nothing as you go to the left
-	var line4 = new EXP.Area({bounds: [[-12,0]],numItems:80});
+	var line4 = new EXP.Area({bounds: [[-12,0]],numItems:three.IS_RECORDING ? 300 : 80});
 	var revealTransform = new EXP.Transformation({'expr': (i,t,x) => [0]});
 	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),params.radius*Math.cos(params.freq*t + x)/10]});
 	var linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-6,y,z]});
@@ -76,31 +76,44 @@
 		await EXP.delay(4000);
 
 		//turn sideways
-		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c,b,a/10]}),1500); // rotate
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c,b,a/10]}),500); // rotate
 
-		await EXP.delay(2000);
+		await EXP.delay(2500);
 
 		//Move to the left in preparation to create the graph
-		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c-6,b,a/10]},700));
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c-6,b,a/10]},500));
 		
+
+		await EXP.delay(1000);
+
+		let trailShowTime = 10000;
+
+		//move to the right while showing the trail
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c+6,b,0]},trailShowTime));
+
+		EXP.TransitionTo(lineDefinition, {'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]},trailShowTime); //make the sine wave flat so that the lines show up properly on mobile
+
+
+		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},trailShowTime)
+		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},trailShowTime);
+
+		await EXP.delay(trailShowTime);
+		//fade away everything to get the sine wave
+		[output1,output2,output3].forEach(i => EXP.TransitionTo(i, {'opacity': 0}));
 
 		await EXP.delay(2000);
 
-		//move to the right while showing the trail
-		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c+6,b,0]},10000));
+		//now it's a proper-freq wave, nyeheheheh
+		EXP.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(4*(t + x)),0]},1000);
+		await EXP.delay(3000);
 
-		EXP.TransitionTo(lineDefinition, {'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]},10000); //make the sine wave flat so that the lines show up properly on mobile
-
-		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},10000)
-		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},10000);
-
-		await EXP.delay(10000+5000);
-		//fade away everything to get the sine wave
-		[output1,output2,output3].forEach(i => EXP.TransitionTo(i, {'opacity': 0}));
+		//now it's a proper-freq wave, nyeheheheh
+		EXP.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(1*(t + x)),0]},500);
+		await EXP.delay(1000);
 		
 
 	}
-	animate();
+	window.onload = animate;
   </script>
 </body>
 </html>

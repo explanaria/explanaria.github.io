@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
-  <title>Explanarian - Adding sine waves</title>
+  <title>Explanarian - Sound waves</title>
   <script src="../../src/lib/three.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
@@ -14,7 +14,7 @@
 </head>
 <body>
   <script>
-	var three = new EXP.Threeasy_Environment(true, 120,10);
+	var three = new EXP.Threeasy_Environment(true, 60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
@@ -69,10 +69,11 @@
 
 	//air particles
 	pointPositions = [];
-	for(var i=-horizontalRange;i<=horizontalRange;i+=(three.IS_RENDERING ? 0.05 : 0.3)){
-		pointPositions.push([i,Math.random()*height*2-height]);
-		pointPositions.push([i,Math.random()*height*2-height]);
-		pointPositions.push([i,Math.random()*height*2-height]);
+	for(var i=-horizontalRange;i<=horizontalRange;i+=(three.IS_RECORDING ? 0.1 : 0.3)){
+
+		for(var j=0;j<3; j+=1){
+			pointPositions.push([i,Math.random()*height*2-height]);
+		}
 	}
 
 	console.log("Done with particles");
@@ -101,16 +102,16 @@
 
 		//Sound waves work the same as normal waves!
 
-		await EXP.delay(500);
+		await EXP.delay(three.IS_RECORDING ? 2000 : 500);
 		
 		//from sine_definition.html
 		EXP.TransitionTo(output5,{'opacity':1})
 
-		await EXP.delay(3000);
-		three.clock.elapsedTime = -1; //ensure waves are to the left of screen before things happen
+		await EXP.delay(1000);
+		three.clock.elapsedTime = -0.9; //ensure waves are to the left of screen before things happen. doesn't seem to work when recording
 		EXP.TransitionTo(waveoutput,{'opacity':1});
 
-		await EXP.delay(8000);
+		await EXP.delay(4000);
 
 		//EXP.TransitionTo(particleTransform,{'expr': (i,t,x,y,z) => [x + 0.5*repeatingSineJiggle(t*soundWaveSpeed-x+Math.cos(y/height)),y]},1000);
 		EXP.TransitionTo(particleTransform,{'expr': (i,t,x,y,z) => [x + 1*repeatingSineJiggle(t*soundWaveSpeed-x-5.3+Math.cos(y/height*2)),y+1]},1000);
@@ -119,10 +120,8 @@
 
 		EXP.TransitionTo(output6,{'opacity':1},1000);
 
-airWaveDemonstration
-
 	}
-	animate();
+	window.onload = animate;
   </script>
 </body>
 </html>

@@ -15,7 +15,7 @@
 </head>
 <body>
   <script>
-	var three = new EXP.Threeasy_Environment(true, 120,10);
+	var three = new EXP.Threeasy_Environment(true, 60,55);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
@@ -28,7 +28,7 @@
 	params.freq = 2;
 
 	//Improvement: parametric color so it fades to nothing as you go to the left
-	var line4 = new EXP.Area({bounds: [[-12,0]],numItems:80});
+	var line4 = new EXP.Area({bounds: [[-12,0]],numItems: three.IS_RECORDING ? 300 : 80});
 	var revealTransform = new EXP.Transformation({'expr': (i,t,x,y) => [0,0]});
 	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]});
 	var linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-6,y,z]});
@@ -172,7 +172,7 @@
 		EXP.TransitionTo(output8, {'opacity': 1},1000);
 
 		//and that's how you add. show addition equation
-		await EXP.delay(10000);
+		await EXP.delay(5000);
 		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},1000));
 		await EXP.delay(3000);
 		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 1},1000));
@@ -192,7 +192,7 @@
 
 
 	}
-	animate();
+	window.onload = animate;
   </script>
 </body>
 </html>

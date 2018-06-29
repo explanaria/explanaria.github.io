@@ -36,10 +36,28 @@
 			scene.push(this.lineA);
 			scene.push(this.lineB);
 		}
+		removeFromScene(scene){
+			this.removeFrom(scene,this.lineA);
+			this.removeFrom(scene,this.lineB);
+		}
+		removeFrom(scene, thing){
+			var index = scene.indexOf( thing );
+			if ( index !== - 1 ) {
+				scene.splice( index, 1 );
+			}
+		}
 		async reveal(duration,delay=500){
+			this.lineA.out.opacity = 1;
+			this.lineB.out.opacity = 1;
 			this.lineA.reveal(duration);
 			await EXP.delay(delay);
 			this.lineB.reveal(duration);
+		}
+		async fadeOut(duration,delay=500){
+			EXP.TransitionTo(this.lineA.out, {'opacity': 0},duration);
+			EXP.TransitionTo(this.lineB.out, {'opacity': 0},duration);
+			EXP.TransitionTo(this.lineA.revealTransform,{'expr': (i,t,x) => [0]},duration*3);
+			EXP.TransitionTo(this.lineB.revealTransform,{'expr': (i,t,x) => [0]},duration*3);
 		}
 	}
 

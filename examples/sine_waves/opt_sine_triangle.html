@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
-  <title>Explanarian - Definition of a sine wave</title>
+  <title>Explanarian - Sine waves with triangle</title>
   <script src="../../src/lib/three.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
@@ -15,7 +15,7 @@
 </head>
 <body>
   <script>
-	var three = new EXP.Threeasy_Environment(true, 120,10);
+	var three = new EXP.Threeasy_Recorder(true, 60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
@@ -55,6 +55,7 @@
 
 	let angleR = 0.5;
 	var angleMeasure = new EXP.Area({bounds: [[0,2*Math.PI]],numItems:[30]});
+	var circleReveal = new EXP.Transformation({expr: (i,t,theta) => [0]});
 	var circleTransformation2 = new EXP.Transformation({'expr': (i,t,realTheta) => {
 			let pointTheta = (params.freq*t) % (2*Math.PI);
 			var theta = realTheta;
@@ -62,9 +63,9 @@
 		return [angleR*Math.cos(theta),angleR*Math.sin(theta),0]
 		}});
 	var transformCircle2 = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y,z]});
-	var outputAngle = new EXP.LineOutput({width:5,color:orangered,opacity:0});
+	var outputAngle = new EXP.LineOutput({width:5,color:orangered,opacity:1});
 
-	angleMeasure.add(circleTransformation2).add(transformCircle2).add(outputAngle);
+	angleMeasure.add(circleReveal).add(circleTransformation2).add(transformCircle2).add(outputAngle);
 
 
 	//ok now back to the actual animation
@@ -77,28 +78,36 @@
 
 		//Rotating circle.
 
-		await EXP.delay(500);
+		await EXP.delay(5600);
 
-		[output1,output2].forEach(i => EXP.TransitionTo(i, {'opacity': 0.2}));
+		[output1,output2].forEach(i => EXP.TransitionTo(i, {'opacity': 0.2}),1000);
 		EXP.TransitionTo(transformCircle,{expr: (i,t,x,y,z) => [x,y,z-0.01]},10); //don't cover up lines
 
-		await EXP.delay(800);
+		await EXP.delay(400); //without this the circle gets caught at the end of the period and it looks bad
 
-		yaxis.reveal();
+		//slowmo!
+		EXP.TransitionTo(three,{timeScale:0.05},400);
 
-		await EXP.delay(800);
+		await EXP.delay(700);
 
-		xaxis.reveal();
+		yaxis.reveal(150/4);
 
-		await EXP.delay(800);
-		hypotenuse.reveal();
+		await EXP.delay(400);
 
-		await EXP.delay(300); //without this it gets caught in an end-of-period and it looks bad
-		EXP.TransitionTo(outputAngle,{'opacity':1},1000);
+		xaxis.reveal(150/4);
+
+		await EXP.delay(400);
+		hypotenuse.reveal(150/4);
+
+		await EXP.delay(300);
+
+		EXP.TransitionTo(circleReveal,{'expr':(i,t,x)=>[x]},1000/4);
+
+		EXP.TransitionTo(three,{timeScale:1},500);
 		
 
 	}
-	animate();
+	window.onload = animate;
   </script>
 </body>
 </html>

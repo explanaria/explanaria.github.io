@@ -47,7 +47,7 @@ function Threeasy_Setup(autostart = true){
 
 	this.scene.add(this.camera);
 
-	this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+	this.renderer = new THREE.WebGLRenderer( { antialias: true } );
 	this.renderer.setPixelRatio( window.devicePixelRatio );
 	this.renderer.setSize( this.evenify(window.innerWidth),this.evenify(window.innerHeight) );
 	this.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);

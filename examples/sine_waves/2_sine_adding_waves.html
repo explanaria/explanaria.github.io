@@ -30,7 +30,7 @@
 	//Improvement: parametric color so it fades to nothing as you go to the left
 	var line4 = new EXP.Area({bounds: [[-12,0]],numItems: three.IS_RECORDING ? 300 : 80});
 	var revealTransform = new EXP.Transformation({'expr': (i,t,x,y) => [0,0]});
-	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]});
+	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*(t + x)),0]});
 	var linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-6,y,z]});
 	var output4 = new EXP.LineOutput({width:5,color:orangered});
 
@@ -108,33 +108,15 @@
 	
 		//from sine_definition.html
 		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},1000)
-		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},1000);
 
-		await EXP.delay(3000);
-
-
-		//show off different-frequency waves
-
-		EXP.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(4*(t + x)),0]},1000);
-
-		await EXP.delay(5000);
-
-		params.freq = 1;
-
-		//now it's a proper-freq wave, nyeheheheh
-		EXP.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*(t + x)),0]},500);
-
-		await EXP.delay(1000);
-		//store the wave on the up
-
-		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5,z]},1000);
-		EXP.TransitionTo(line7PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5]},1000);
+		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5,z]},10);
+		EXP.TransitionTo(line7PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5]},750);
 		EXP.TransitionTo(params,{'radius': 5},1000)
 
-		await EXP.delay(2000);
+		await EXP.delay(500);
 
 		//reveal line 2
-		EXP.TransitionTo(revealTransform5,{'expr': (i,t,x) => [x]},1000)
+		EXP.TransitionTo(revealTransform5,{'expr': (i,t,x) => [x]},750)
 		EXP.TransitionTo(linePostTransform5,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
 
 		//reveal arrows 2

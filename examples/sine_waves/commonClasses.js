@@ -78,3 +78,98 @@
 			this.lineB.reveal(duration);
 		}
 	}
+
+	class RightArrow{
+		constructor(centerPoint, width, color){
+			let height = 0.8*width;
+			let arrowBack = 2*width/3;
+			this.lineA = new twoPointLine((i,t,x)=>[centerPoint[0]-width,centerPoint[1]],(i,t,x)=>[centerPoint[0]+width+0.02,centerPoint[1]],color)
+			this.lineB = new twoPointLine((i,t,x)=>[centerPoint[0]+width,centerPoint[1]],(i,t,x)=>[centerPoint[0]+width-arrowBack,centerPoint[1]+height], color);
+			this.lineC = new twoPointLine((i,t,x)=>[centerPoint[0]+width,centerPoint[1]],(i,t,x)=>[centerPoint[0]+width-arrowBack,centerPoint[1]-height], color);
+		}
+		addTo(scene){
+			scene.push(this.lineA);
+			scene.push(this.lineB);
+			scene.push(this.lineC);
+		}
+		removeFromScene(scene){
+			this.removeFrom(scene,this.lineA);
+			this.removeFrom(scene,this.lineB);
+			this.removeFrom(scene,this.lineC);
+		}
+		removeFrom(scene, thing){
+			var index = scene.indexOf( thing );
+			if ( index !== - 1 ) {
+				scene.splice( index, 1 );
+			}
+		}
+		async reveal(duration,delay=500){
+			this.lineA.out.opacity = 1;
+			this.lineB.out.opacity = 1;
+			this.lineC.out.opacity = 1;
+			this.lineA.reveal(duration);
+			await EXP.delay(delay);
+			this.lineB.reveal(duration);
+			this.lineC.reveal(duration);
+		}
+		async fadeOut(duration,delay=500){
+			EXP.TransitionTo(this.lineA.out, {'opacity': 0},duration);
+			EXP.TransitionTo(this.lineB.out, {'opacity': 0},duration);
+			EXP.TransitionTo(this.lineC.out, {'opacity': 0},duration);
+			await EXP.delay(duration);
+			EXP.TransitionTo(this.lineA.revealTransform,{'expr': (i,t,x) => [0]},10);
+			EXP.TransitionTo(this.lineB.revealTransform,{'expr': (i,t,x) => [0]},10);
+			EXP.TransitionTo(this.lineC.revealTransform,{'expr': (i,t,x) => [0]},10);
+		}
+	}
+
+	class XSign extends PlusSign{
+		constructor(centerPoint, height, width, color){
+			super(centerPoint, height, color);
+			this.lineA = new twoPointLine((i,t,x)=>[centerPoint[0]+width,centerPoint[1]+height],(i,t,x)=>[centerPoint[0]-width,centerPoint[1]-height],color)
+			this.lineB = new twoPointLine((i,t,x)=>[centerPoint[0]+width,centerPoint[1]-height],(i,t,x)=>[centerPoint[0]-width,centerPoint[1]+height], color);
+		}
+	}
+
+	class Box{
+		constructor(bottomLeftCorner,topRightCorner, color){
+
+			this.lineA = new twoPointLine((i,t,x)=>[bottomLeftCorner[0], topRightCorner[1]],(i,t,x)=>[topRightCorner[0],topRightCorner[1]], color);
+			this.lineB = new twoPointLine((i,t,x)=>[topRightCorner[0],topRightCorner[1]],(i,t,x)=>[topRightCorner[0], bottomLeftCorner[1]], color);
+			this.lineC = new twoPointLine((i,t,x)=>[topRightCorner[0], bottomLeftCorner[1]],(i,t,x)=>[bottomLeftCorner[0],bottomLeftCorner[1]], color);
+			this.lineD = new twoPointLine((i,t,x)=>[bottomLeftCorner[0],bottomLeftCorner[1]],(i,t,x)=>[bottomLeftCorner[0], topRightCorner[1]], color);
+
+			this.lines = [this.lineA,this.lineB,this.lineC,this.lineD];
+
+			/*
+			//THIS DOESN'T WORK. I HATE REFERENCES. I HATE JAVASCRIPT
+
+			let BLCorner = [bottomLeftCorner[0],bottomLeftCorner[1]];
+			let TRCorner = [topRightCorner[0],topRightCorner[1]];
+			let topLeftCorner = [bottomLeftCorner[0], topRightCorner[1]];
+			let bottomRightCorner = [topRightCorner[0], bottomLeftCorner[1]];
+			this.lineA = new twoPointLine((i,t,x)=>topLeftCorner,(i,t,x)=>TRCorner, color);
+			this.lineB = new twoPointLine((i,t,x)=>TRCorner,(i,t,x)=>bottomRightCorner, color);
+			this.lineC = new twoPointLine((i,t,x)=>bottomRightCorner,(i,t,x)=>BLCorner, color);
+			this.lineD = new twoPointLine((i,t,x)=>BLCorner,(i,t,x)=>topLeftCorner, color);
+			*/
+		}
+		addTo(scene){
+			this.lines.forEach((i) => scene.push(i));
+		}
+		async reveal(duration, delay=500){
+			this.lineA.reveal(duration);
+			await EXP.delay(delay);
+			this.lineB.reveal(duration);
+			await EXP.delay(delay);
+			this.lineC.reveal(duration);
+			await EXP.delay(delay);
+			this.lineD.reveal(duration);
+		}
+		async fadeOut(duration,delay=500){
+			[this.lineA,this.lineB,this.lineC,this.lineD].forEach((i) => EXP.TransitionTo(i.out, {'opacity': 0},duration));
+
+			await EXP.delay(duration);
+			this.lines.forEach((i) => EXP.TransitionTo(i.revealTransform,{'expr': (i,t,x) => [0]},10));
+		}
+	}

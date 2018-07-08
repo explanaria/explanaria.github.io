@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - Adding sine waves</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+  <script src="./commonClasses.js"></script>
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new EXP.Threeasy_Environment(true, 60,17);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.set(0,0,10);
+	three.camera.lookAt(new THREE.Vector3(0,0,0));
+
+	console.log("Loaded.");
+
+	var params = {};
+	params.radius=4;
+	params.freq = 2;
+
+	//Improvement: parametric color so it fades to nothing as you go to the left
+	var line4 = new EXP.Area({bounds: [[-12,0]],numItems: three.IS_RECORDING ? 300 : 80});
+	var revealTransform = new EXP.Transformation({'expr': (i,t,x,y) => [0,0]});
+	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*(t + x)),0]});
+	var linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-6,y,z]});
+	var output4 = new EXP.LineOutput({width:5,color:orangered});
+
+	line4.add(revealTransform).add(lineDefinition).add(linePostTransform).add(output4);
+
+	params.freq2 = 0.5;
+
+	//blue line
+	var line5 = line4.clone();
+	
+	var revealTransform5 = line5.children[0];
+	var lineDefinition5 = revealTransform5.children[0]
+	lineDefinition5.expr = (i,t,x) => [x,params.radius*Math.sin(params.freq2*(t + x)),0] //use freq2 instead of freq1
+	var linePostTransform5 = revealTransform5.children[0].children[0];
+	linePostTransform5.expr = (i,t,x,y,z) => [x-6,y,z];
+	var output5 = linePostTransform5.children[0];
+	output5.color = lightblue;
+
+	//vectors for blue line 5
+	
+	var line6 = new EXP.Area({bounds: [[-12,0],[0,1]],numItems:[20,2]});
+	line6.add(line5.clone().children[0]);
+	var line6RevealTransform = line6.children[0];
+	line6RevealTransform.expr = (i,t,x,y) => [x,y];
+	var line6Definition = line6RevealTransform.children[0];
+	line6Definition.expr = (i,t,x,y) => 1-y<0.1 ? [x,(params.radius)*Math.sin(params.freq2*(t + x))] : [x,0];
+
+	var line6PostTransform = line6.children[0].children[0].children[0]; //tbh this is kind of ridiculous. there's got to be a better way
+	line6PostTransform.remove(line6PostTransform.children[0]).add(new EXP.VectorOutput({width: 5, color: lightblue, opacity: 0}));
+
+
+	//vectors for line 4
+
+	var line7 = line6.clone();
+	var line7Definition = line7.children[0].children[0];
+	line7Definition.expr = (i,t,x,y) => 1-y<0.1 ? [x,(params.radius)*Math.sin(params.freq*(t + x))] : [x,0];
+
+	var line7PostTransform = line7.children[0].children[0].children[0]; //tbh this is kind of ridiculous. there's got to be a better way
+	var line7Output = line7PostTransform.children[0];
+	line7Output.color = orangered;
+	line7Output.opacity = 0;
+
+	//combined line
+	var line8 = line4.clone();
+	line8.children[0].expr = (i,t,x) => [x]; //pre-enable it
+	var line8Definition = line8.children[0].children[0];
+	line8Definition.expr = (i,t,x) => {
+			let wave1 = (params.radius)*Math.sin(params.freq*(t + x));
+			let wave2 = (params.radius)*Math.sin(params.freq2*(t + x));
+
+				return [x,wave1+wave2];
+			}
+	var line8PostTransform = line8.children[0].children[0].children[0];
+	var output8 = line8PostTransform.children[0];
+	output8.color = yellow;
+	output8.opacity = 0;
+	output8.width = 2*output8.width;
+
+	//common classes
+	var plus = new PlusSign([-6,0],1,0x000000);
+	var equals = new EqualsSign([0,0],1,0x000000);
+
+
+	//ok now back to the actual animation
+
+	var sceneItems = [line4, line5,line6, line7, line8];
+	three.on("update",function(time){
+		sceneItems.map(i => i.activate(time.t));
+	});
+
+	console.log("Don't forget protal problem has a bug with the point ont appearing");
+
+	async function animate(){
+
+	
+		//"If you have two waves..."
+		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},1500)
+
+		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5,z]},10);
+		EXP.TransitionTo(line7PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5]},1000);
+		EXP.TransitionTo(params,{'radius': 5},1000)
+
+		await EXP.delay(500);
+
+		//reveal line 2
+		EXP.TransitionTo(revealTransform5,{'expr': (i,t,x) => [x]},1000)
+		EXP.TransitionTo(linePostTransform5,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
+
+		//"That you want to combine..."
+		await EXP.delay(500);
+		var plus1 = new PlusSign([0,0],0.7,0x000000);
+		plus1.addTo(sceneItems);
+		await plus1.reveal(500,250);
+
+		//reveal arrows 2
+		await EXP.delay(1000);
+		EXP.TransitionTo(line6PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
+		EXP.TransitionTo(line6PostTransform.children[0], {'opacity': 1},1000);
+
+		plus1.fadeOut(1000);
+
+		await EXP.delay(1000);
+		//reveal red arrows
+		EXP.TransitionTo(line7Output, {'opacity': 1},1000);
+
+		await EXP.delay(1000);
+		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},1000));
+
+		await EXP.delay(3000);
+
+		//move lines on top of one another
+		[linePostTransform5,linePostTransform, line6PostTransform, line7PostTransform].forEach((i) => {EXP.TransitionTo(i, {'expr': (i,t,x,y,z) => [(x+6)/2,y/2]},1000)});
+
+
+		//await EXP.delay(2000);
+		//show combined wave
+		EXP.TransitionTo(line7Definition,{'expr':(i,t,x,y) => {
+			let wave1 = (params.radius)*Math.sin(params.freq*(t + x));
+			let wave2 = (params.radius)*Math.sin(params.freq2*(t + x));
+
+			return 1-y<0.1 ? [x,wave1+wave2] : [x,wave2];
+			}},1000);
+
+		await EXP.delay(2000);
+		//fade out original two waves and show combined wave
+		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0.7},1000));
+
+		//move under cover of invisibility, for later
+		EXP.TransitionTo(linePostTransform, {'expr': (i,t,x,y,z) => [(x-3)/2,y/3+1]},10);
+		EXP.TransitionTo(linePostTransform5, {'expr': (i,t,x,y,z) => [(x-3)/2,y/3-1]},10);
+
+
+		//show combined wave
+		EXP.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2,0.07]},10);
+		EXP.TransitionTo(output8, {'opacity': 1},1000);
+
+		//and that's how you add. show addition equation
+		await EXP.delay(3000);
+		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},500));
+		await EXP.delay(2000);
+
+		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 1},1000));
+
+		[line8PostTransform,line6PostTransform, line7PostTransform].forEach((i)=>EXP.TransitionTo(i,{'expr': (i,t,x,y,z) => [(x+18)/2,y/2]},1500));
+
+		EXP.TransitionTo(linePostTransform, {'expr': (i,t,x,y,z) => [(x-6)/2,y/3+3.5]},1000);
+		EXP.TransitionTo(linePostTransform5, {'expr': (i,t,x,y,z) => [(x-6)/2,y/3-3.5]},1000);
+
+
+		await EXP.delay(500);
+		plus.addTo(sceneItems);
+		await plus.reveal(500,250);
+		await EXP.delay(250);
+		equals.addTo(sceneItems);
+		await equals.reveal(500,250);
+
+
+	}
+	window.onload = animate;
+  </script>
+</body>
+</html>

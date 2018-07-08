@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
-  <title>Explanarian - What the Fourier Transform does</title>
+  <title>Explanarian - Lossy Compression</title>
   <script src="../../src/lib/three.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
@@ -52,9 +52,10 @@
 			EXP.TransitionTo(this.revealTransform,{'expr':(i,t,x,y) => [x,y]},duration);
 			this.output.opacity = 1;
 		}
-		fadeOut(duration=1000){
-			EXP.TransitionTo(this.revealTransform,{'expr':(i,t,x,y) => [0,0]},duration*3);
+		async fadeOut(duration=1000){
 			EXP.TransitionTo(this.output,{'opacity':0},duration);
+			await EXP.delay(duration);
+			EXP.TransitionTo(this.revealTransform,{'expr':(i,t,x,y) => [0,0]},10);
 		}
 		activate(...args){
 			this.area.activate(...args);
@@ -65,12 +66,12 @@
 	let sawFC = (w) => [w,Math.pow(2,-w+1)]; //squareFourierCoeffs, fourier coeffs of a square wave
 	let randFC = (w) => [w,[1,2,1,1,1,2,1,0,1,2,1,1,1,1,1,1,1,1][w]];
 
-	let genCoeffs = (func) => [func(1),func(2),func(3),func(4),func(5),func(6),func(7),func(8)];
-	let genOddCoeffs = (func) => [func(1),func(3),func(5),func(7),func(9),func(11)];
+	let genCoeffs = (func, amount=8) => [func(1),func(2),func(3),func(4),func(5),func(6),func(7),func(8),func(9),func(10),func(11),func(12),func(13),func(14),func(15),func(16),func(17),func(18)].splice(0,amount);
+	let genOddCoeffs = (func, amount=6) => [func(1),func(3),func(5),func(7),func(9),func(11),func(13),func(15),func(17),func(19),func(21),func(23),func(25)].splice(0,amount);
 
 	//params.freqs = genOddCoeffs(sqFC); //freq, amplitude
-	params.freqs = genCoeffs(randFC); //freq, amplitude
-	params.freqs = genCoeffs(sawFC);
+	params.freqs = genCoeffs(randFC, 15); //freq, amplitude
+	//params.freqs = genCoeffs(sawFC);
 
 	var totalWave = new SineWave(1, 2, orangered, three.IS_RECORDING ? 500 : 80);
 	totalWave.lineDefinition.expr = (i,t,x) => {
@@ -91,16 +92,16 @@
 
 	var waves = [];
 	for(var i=0;i<params.freqs.length;i++){
-		waves.push(new SineWave(params.freqs[i][0],params.freqs[i][1],lightblue, three.IS_RECORDING ? 300 : 80));
+		waves.push(new SineWave(params.freqs[i][0],params.freqs[i][1],lightblue, three.IS_RECORDING ? 500 : 120));
 	}
 
 	var pluses = [];
 
 	let dotWidth = 0.8;
 	var dotDotDot = new EXP.Array({data: [[0,0],[0,0],[0,0]]});
-	dotDotDot.add(new EXP.PointOutput({color: 0x000000, width:0.2, opacity: 0}));
+	dotDotDot.add(new EXP.Transformation({expr: (i,t,x,y) => [x,y]})).add(new EXP.PointOutput({color: 0x000000, width:0.2, opacity: 0}));
 
-	async function drawWaves(numWavesToDraw, maxHeight, xCoord, addEllipsis=true){
+	async function drawWaves(numWavesToDraw, maxHeight, xCoord, addEllipsis=true, showPluses=true){
 		let heightIncrement = maxHeight/(numWavesToDraw);
 		var height;
 		for(var i=0;i<numWavesToDraw;i++){
@@ -110,8 +111,8 @@
 
 			let h = height;
 			EXP.TransitionTo(waves[i].postTransform,{'expr': (i,t,x,y,z) => [(x-6)/3+xCoord,y/3 + h]},10);
-			waves[i].reveal();
-			await EXP.delay(800);
+			waves[i].reveal(1000);
+			await EXP.delay(300);
 	
 			var plus = new PlusSign([xCoord,height-heightIncrement/2],0.5,0x000000);
 			if(i >= pluses.length){
@@ -121,15 +122,86 @@
 				pluses[i] = plus;
 			}
 			plus.addTo(sceneItems);
-			if(i < numWavesToDraw-1)await pluses[i].reveal(200,100);
+			if(i < numWavesToDraw-1 && showPluses)pluses[i].reveal(200,100);
 
-			await EXP.delay(200);
 		}
 
 		if(addEllipsis){
+			await EXP.delay(200);
 			await pluses[i-1].reveal(200,100);
 			dotDotDot.data = [[xCoord-dotWidth, -maxHeight/2], [xCoord, -maxHeight/2], [xCoord+dotWidth, -maxHeight/2]];
-			EXP.TransitionTo(dotDotDot.children[0], {opacity: 1},1000);
+			EXP.TransitionTo(dotDotDot.children[0].children[0], {opacity: 1},1000);
+		}
+	}
+
+
+	async function drawWaves2Cols(numWavesToDraw, maxHeight, xCoord, addEllipsis=true, showPluses=true,numCols=2){
+		//this function is so bugged. don't use it for actual purposes
+		var height, centerXCoord;
+		var colCounter = 0;
+
+		let wavesPerCol = Math.floor(numWavesToDraw/numCols);
+		let heightIncrement = maxHeight/(wavesPerCol);
+
+		let maxXDirection = 15;
+		for(var i=0;i<numWavesToDraw-1;i++){
+
+			height = -(i%wavesPerCol +0.7)/(wavesPerCol)*maxHeight + maxHeight/2;
+			if(!addEllipsis)height = (-(i%wavesPerCol)+0.7-0.5)/(wavesPerCol)*maxHeight*numCols + maxHeight/2;
+
+			colCounter = Math.floor(i/wavesPerCol);
+
+			if(colCounter > 0) height -= heightIncrement/2;
+			centerXCoord = xCoord + (colCounter/numCols - numCols/2)*maxXDirection;
+			let h = height;
+			let xc = centerXCoord;
+
+			//plus
+			var plus = new PlusSign([xc,height+heightIncrement/2],0.5,0x000000);
+			if(i >= pluses.length){
+				pluses.push(plus);
+			}else{
+				pluses[i].removeFromScene(sceneItems);
+				pluses[i] = plus;
+			}
+			plus.addTo(sceneItems);
+			if(i > 0 && showPluses){
+				pluses[i].reveal(200,100);
+				await EXP.delay(100);
+			}
+
+			//wave
+			EXP.TransitionTo(waves[i].postTransform,{'expr': (i,t,x,y,z) => [(x-6)/3+xc,y/3 + h]},10);
+			if(true && i < numWavesToDraw-2 && {THIS_IS_A_HORRIBLE_HACK_FOR_THE_VIDEO: true})waves[i].reveal(500);
+		}
+
+		if(addEllipsis){
+			await EXP.delay(200);
+			await pluses[i-1].reveal(200,100);
+			dotDotDot.data = [[centerXCoord-dotWidth, -maxHeight/2], [centerXCoord, -maxHeight/2], [centerXCoord+dotWidth, -maxHeight/2]];
+			EXP.TransitionTo(dotDotDot.children[0].children[0], {opacity: 1},1000);
+		}
+	}
+
+
+	async function drawWavesNoPlus(numWavesToDraw, maxHeight, xCoord, addEllipsis=true){
+		let heightIncrement = maxHeight/(numWavesToDraw);
+		var height;
+		for(var i=0;i<numWavesToDraw;i++){
+
+			height = -i/(numWavesToDraw)*maxHeight + maxHeight/2;
+			if(!addEllipsis)height = (-i-0.5)/(numWavesToDraw)*maxHeight + maxHeight/2;
+
+			let h = height;
+			EXP.TransitionTo(waves[i].postTransform,{'expr': (i,t,x,y,z) => [(x-6)+xCoord,y/3 + h]},10);
+			waves[i].reveal(1000);
+			//await EXP.delay(300);
+		}
+
+		if(addEllipsis){
+			await EXP.delay(200);
+			dotDotDot.data = [[xCoord-dotWidth, -maxHeight/2], [xCoord, -maxHeight/2], [xCoord+dotWidth, -maxHeight/2]];
+			EXP.TransitionTo(dotDotDot.children[0].children[0], {opacity: 1},1000);
 		}
 	}
 
@@ -138,17 +210,30 @@
 		console.log(odd);
 		let originalTransform = totalWave.postTransform.expr;
 		EXP.TransitionTo(totalWave.postTransform, {'expr':(i,t,x,y) => {let a = originalTransform(i,t,x,y);a[1]=0;return a;}},500);
+		//reset line definition
+		totalWave.lineDefinition.expr = (i,t,x) => {
+				let y = 0;
+				for(var i=0;i<params.freqs.length;i++){
+					y += params.freqs[i][1]*Math.sin(params.freqs[i][0]*(t + x));
+				}
+				return [x,y];
+			}
+
 		await EXP.delay(500);
 		params.freqs = odd ? genOddCoeffs(newFunc) : genCoeffs(newFunc); //new wave
 		EXP.TransitionTo(totalWave.postTransform, {'expr':(i,t,x,y) => originalTransform(i,t,x,y)},500);
 		await EXP.delay(500);
 	}
 
+	let nameWidth = 7;
+	var fileName = new THREE.Mesh(new THREE.PlaneGeometry(nameWidth,nameWidth*324/1614,1,1), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture("./mysong.png"), opacity: 0, transparent: true}));
+	fileName.position.set(0,6.3,-1);
+	three.scene.add(fileName);
 
-
-
-	var plus = new PlusSign([-6,0],1,0x000000);
-	var equals = new EqualsSign([-1,0],1,0x000000);
+	nameWidth = 7.3;
+	var fileNameWav = new THREE.Mesh(new THREE.PlaneGeometry(nameWidth,nameWidth*272/1328,1,1), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture("./mysongwav.png"), opacity: 0, transparent: true}));
+	fileNameWav.position.set(0,6.3,-1);
+	three.scene.add(fileNameWav);
 
 	var sceneItems = [totalWave.area, dotDotDot].concat(waves);
 	three.on("update",function(time){
@@ -157,47 +242,132 @@
 
 	async function animate(){
 
-		totalWave.reveal();
-		await EXP.delay(3000);
-		//from sine_definition.html
-		//EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},1000)
-		EXP.TransitionTo(totalWave.postTransform,{'expr': (i,t,x,y,z) => [(x-6)/2-6.5,y/1.5]},1000);
-
-		await EXP.delay(1000);
-
-		equals.addTo(sceneItems);
-		await equals.reveal(500,300);
-		await EXP.delay(1000);
-		
-		let xPlace = 5;
-		await drawWaves(5, maxHeight=12, xCoord=xPlace, addEllipsis=true);
-
-
-
-		//change to new wave
-		async function showFourierDecompositionOf(func, numToDraw, addEllipsis, onlyOdd=false){
-
-			changeWave(func, onlyOdd);
-
-			waves.forEach((i) => i.fadeOut());
-			pluses.forEach((i) => i.fadeOut(500));
-			EXP.TransitionTo(dotDotDot.children[0],{opacity: 0},500);
-
-			await EXP.delay(3000);
+		async function showFourierWaves(func, numToDraw, addEllipsis, onlyOdd=false, showPluses=true){
 			//refresh waves
 			for(var i=0;i<params.freqs.length;i++){
 				waves[i].freq = params.freqs[i][0];
 				waves[i].amplitude = params.freqs[i][1];
 			}
 		
-			await drawWaves(numToDraw, maxHeight=12, xCoord=xPlace, addEllipsis=addEllipsis);
+			await drawWaves(numToDraw, maxHeight=12, xCoord=xPlace, addEllipsis=addEllipsis, showPluses=showPluses);
 		}
 
-		await EXP.delay(5000);
-		await showFourierDecompositionOf(randFC,4, false);
+		async function showFourierWaves2Cols(func, numToDraw, addEllipsis, onlyOdd=false, showPluses=true){
+			//refresh waves
+			for(var i=0;i<params.freqs.length;i++){
+				waves[i].freq = params.freqs[i][0];
+				waves[i].amplitude = Math.max(params.freqs[i][1],0.2);
+			}
+		
+			await drawWaves2Cols(numToDraw, maxHeight=12, xCoord=xPlace, addEllipsis=addEllipsis, showPluses=showPluses, numCols=3);
+		}
+		async function showFourierAddition(func, numToDraw, addEllipsis, onlyOdd=false, showPluses=true){
 
-		await EXP.delay(5000);
-		await showFourierDecompositionOf(sqFC, 5, true, true);
+			waves.forEach((i) => i.fadeOut());
+			pluses.forEach((i) => i.fadeOut(500));
+			EXP.TransitionTo(dotDotDot.children[0].children[0],{opacity: 0},500);
+
+			await EXP.delay(1100);
+			await showFourierWaves(func, numToDraw, addEllipsis, onlyOdd, showPluses=showPluses);
+		}
+		//change to new wave
+		async function showFourierDecompositionOf(func, numToDraw, addEllipsis, onlyOdd=false, showPluses=true){
+
+			changeWave(func, onlyOdd);
+
+			await showFourierAddition(func, numToDraw, addEllipsis, onlyOdd, showPluses=showPluses);
+		}
+
+		// start frequency scene
+		params.freqs = [[1,1],[3,1],[6,1],[20,1],[three.IS_RECORDING ? 45 : 30,1]];
+
+		//show several waves
+		for(var i=0;i<params.freqs.length;i++){
+			waves[i].freq = params.freqs[i][0];
+			waves[i].amplitude = params.freqs[i][1];
+		}
+
+		//Show waves of various frequencies
+		await drawWavesNoPlus(5, maxHeight=12, xCoord=0, false);
+
+		await EXP.delay(2000);
+
+		//display a big X over high-frequency waves
+		var x = new XSign([0,-4.9], 1,3, orangered);
+		x.addTo(sceneItems);
+		x.reveal(750);
+
+		await EXP.delay(4000);
+	
+		x.fadeOut(1000);
+		waves.forEach((i) => i.fadeOut(1000));
+		//end frequency scene*/
+
+
+		//show your file
+		//params.freqs = genOddCoeffs(sqFC,12);
+		EXP.TransitionTo(totalWave.postTransform,{'expr': (i,t,x,y,z) => [(x-6),y]},10);
+		params.freqs = [[1,1],[3,1],[6,1],[20,1]]; //no last frequency causing jitters
+		totalWave.reveal();
+
+		EXP.TransitionTo(fileNameWav.material, {"opacity": 1},1000);
+
+		//show 'song.wav' text
+		/*
+		var wavFile = new XSign([0,-4.9], 1,3, orangered);
+		wavFile.addTo(sceneItems);
+		wavFile.reveal(750);*/
+
+		await EXP.delay(4000);
+
+		//move wave to left in preparation for fourier transform
+		//EXP.TransitionTo(totalWave.postTransform,{'expr': (i,t,x,y,z) => [(x-6)/2-6.5,y/1.5]},750);
+		await EXP.delay(250);
+		var rightArrow = new RightArrow([8.5,0],1.5,0x000000);
+		rightArrow.addTo(sceneItems);
+		await rightArrow.reveal(250,250); // change to an arrow
+
+		await EXP.delay(300);
+
+		let moveLeftAmt = 18;
+		EXP.TransitionTo(totalWave.postTransform,{'expr': (i,t,x,y,z) => [(x-6)-moveLeftAmt-5,y]},1000);
+		[rightArrow.lineA, rightArrow.lineB, rightArrow.lineC].forEach((i)=>EXP.TransitionTo(i.linePostTransform, {'expr': (i,t,x,y) => [x-moveLeftAmt,y]},1000));
+		EXP.TransitionTo(fileNameWav.position, {"x": -moveLeftAmt-5},1000);
+		
+		await EXP.delay(750);
+		xPlace = 17.5;
+
+		params.freqs = genOddCoeffs(sqFC,15);
+		await showFourierWaves2Cols(sqFC, 13, true, true);
+
+		//then throw away totalWave and too-high sine waves
+		var box = new Box([2.5,-6.3],[7.9,-1.4],orangered);
+		box.addTo(sceneItems);
+		await box.reveal(250,100); // change to an arrow
+		//draw box
+		//show 'song.mp3'
+		rightArrow.fadeOut(2000);
+		
+		await EXP.delay(750);
+
+		//have things fall away
+		let fallPosition = [15,-35];
+		[waves[10].postTransform,waves[11].postTransform,dotDotDot.children[0]].forEach(i => {
+			EXP.TransitionTo(i,{'expr': (i,t,x,y,z) => [x*Math.cos(t) + y*Math.sin(t) + fallPosition[0],-x*Math.sin(t) + y*Math.cos(t) + fallPosition[1]]},3000);
+		});
+
+		[pluses[10].lineA,pluses[10].lineB,pluses[11].lineA,pluses[11].lineB].concat(box.lines).forEach(i => {
+			EXP.TransitionTo(i.linePostTransform,{'expr': (i,t,x,y,z) => [x*Math.cos(t) + y*Math.sin(t) + fallPosition[0],-x*Math.sin(t) + y*Math.cos(t) + fallPosition[1]]},3000);
+		});
+
+		await EXP.delay(3000);
+
+		var fileBox = new Box([-7.9,-6.8],[7.9,6.3],lightblue);
+		fileBox.addTo(sceneItems);
+		await fileBox.reveal(250,250); // change to an arrow
+
+		await EXP.delay(500);
+		EXP.TransitionTo(fileName.material, {"opacity": 1},1000);
 
 	}
 	window.onload = animate;

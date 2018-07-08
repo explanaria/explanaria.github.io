@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - Definition of a sine wave</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new EXP.Threeasy_Environment(true, 60,25);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.set(0,0,10);
+	three.camera.lookAt(new THREE.Vector3(0,0,0));
+
+	console.log("Loaded.");
+
+	let lightblue = 0x0070f0;
+	let orangered = 0xff7070;
+
+
+	var params = {};
+	params.radius=4;
+	params.freq = 3;
+
+	var circle = new EXP.Area({bounds: [[0,2*Math.PI],[0,params.radius]],numItems:[17,2]});
+	var circleTransformation = new EXP.Transformation({'expr': (i,t,theta,r) => [r*Math.cos(params.freq*t+theta),r*Math.sin(params.freq*t+theta),0]});
+	var transformCircle = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y,z]});
+	var output1 = new EXP.LineOutput({width:5,color:lightblue,opacity:1});
+
+	circle.add(circleTransformation).add(transformCircle).add(output1);
+
+	var circle2 = new EXP.Area({bounds: [[0,2*Math.PI]],numItems:60});
+	var circleTransformation2 = new EXP.Transformation({'expr': (i,t,theta) => [params.radius*Math.cos(params.freq*t+theta),params.radius*Math.sin(params.freq*t+theta),0]});
+	var transformCircle2 = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y,z]});
+	var output2 = new EXP.LineOutput({width:5,color:lightblue,opacity:1});
+
+	circle2.add(circleTransformation2).add(transformCircle2).add(output2);
+
+	var circle3 = new EXP.Area({bounds: [[0,2*Math.PI]],numItems:1});
+	var circleTransformation3 = new EXP.Transformation({'expr': (i,t,theta) => [params.radius*Math.cos(params.freq*t),params.radius*Math.sin(params.freq*t),0]});
+	var transformCircle3 = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y,z]});
+	var output3 = new EXP.PointOutput({width:0.5,color:orangered,opacity:1});
+
+	circle3.add(circleTransformation3).add(transformCircle3).add(output3);
+
+
+	//Improvement: parametric color so it fades to nothing as you go to the left
+	var line4 = new EXP.Area({bounds: [[-12,0]],numItems:three.IS_RECORDING ? 300 : 80});
+	var revealTransform = new EXP.Transformation({'expr': (i,t,x) => [0]});
+	var lineDefinition = new EXP.Transformation({'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),params.radius*Math.cos(params.freq*t + x)/10]});
+	var linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x-6,y,z]});
+	var output4 = new EXP.LineOutput({width:5,color:orangered});
+
+	line4.add(revealTransform).add(lineDefinition).add(linePostTransform).add(output4);
+
+
+
+	//ok now back to the actual animation
+
+	three.on("update",function(time){
+		[circle,circle2,circle3,line4].map(i => i.activate(time.t));
+	});
+
+	async function animate(){
+
+		//Start with a rotating circle.
+
+		await EXP.delay(3000);
+
+		let speedFactor = 1;
+		//EXP.TransitionTo(three,{timeScale:speedFactor},500);
+
+		//turn sideways
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c,b,a/10]},600)); // rotate
+
+		await EXP.delay(600);
+
+		//Move to the left in preparation to create the graph
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c-6,b,a/10]},1000));
+		
+
+		await EXP.delay(1000);
+
+		let trailShowTime = 6666;
+
+
+		//move to the right while showing the trail
+		[transformCircle,transformCircle2,transformCircle3].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,a,b,c) => [c+6,b,0]},trailShowTime));
+
+		EXP.TransitionTo(lineDefinition, {'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]},trailShowTime); //make the sine wave flat so that the lines show up properly on mobile
+
+
+		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},trailShowTime)
+		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},trailShowTime);
+
+		await EXP.delay(trailShowTime/speedFactor-1000);
+
+		//EXP.TransitionTo(three,{timeScale:1},1000); //back to normal speed
+
+
+
+		//fade away everything to get the sine wave
+		[output1,output2,output3].forEach(i => EXP.TransitionTo(i, {'opacity': 0},1000*speedFactor));
+
+		await EXP.delay(1000);
+
+		await EXP.delay(3000);
+
+		//now it's a proper-freq wave, nyeheheheh
+		EXP.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(4*(t + x)),0]},1000*speedFactor);
+		await EXP.delay(3000);
+
+		//well so much for that
+		EXP.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]},1000*speedFactor);
+		await EXP.delay(1000);
+		
+
+	}
+	window.onload = animate;
+  </script>
+</body>
+</html>

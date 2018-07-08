@@ -224,7 +224,8 @@ class Threeasy_Recorder extends Threeasy_Setup{
 		this.render();
 	}
 	render(timestep){
-		var delta = 1/this.fps; //ignoring the true time, calculate the delta
+		var delta = 1/this.fps*this.timeScale; //ignoring the true time, calculate the delta
+
 		//get timestep
 		for(var i=0;i<this.listeners["update"].length;i++){
 			this.listeners["update"][i]({"t":this.elapsedTime,"delta":delta});

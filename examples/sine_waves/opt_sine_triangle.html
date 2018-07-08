@@ -49,9 +49,9 @@
 
 	circle3.add(circleTransformation3).add(transformCircle3).add(output3);
 
-	var hypotenuse = new twoPointLine( (i,t,x) => [0,0], (i,t,x) => [params.radius*Math.cos(params.freq*t),params.radius*Math.sin(params.freq*t)], orangered);
-	var xaxis = new twoPointLine( (i,t,x) => [params.radius*Math.cos(params.freq*t),0], (i,t,x) => [0,0], orangered);
-	var yaxis = new twoPointLine( (i,t,x) => [params.radius*Math.cos(params.freq*t),params.radius*Math.sin(params.freq*t)], (i,t,x) => [params.radius*Math.cos(params.freq*t),0], lightgreen);
+	var hypotenuse = new twoPointLine( (i,t,x) => [0,0], (i,t,x) => [params.radius*Math.cos(params.freq*t),params.radius*Math.sin(params.freq*t)], yellow);
+	var xaxis = new twoPointLine( (i,t,x) => [params.radius*Math.cos(params.freq*t),0], (i,t,x) => [0,0], yellow);
+	var yaxis = new twoPointLine( (i,t,x) => [params.radius*Math.cos(params.freq*t),params.radius*Math.sin(params.freq*t)], (i,t,x) => [params.radius*Math.cos(params.freq*t),0], orangered);
 
 	let angleR = 0.5;
 	var angleMeasure = new EXP.Area({bounds: [[0,2*Math.PI]],numItems:[30]});

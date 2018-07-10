@@ -87,13 +87,12 @@ class LineOutput extends OutputNode{
 		this._onAdd(); //setup this.numCallsPerActivation and this.itemDimensions. used here again because cloning means the onAdd() might be called before this is connected to a type of domain
 
 		// perhaps instead of generating a whole new array, this can reuse the old one?
-		let vertices = new Float32Array(this.numCallsPerActivation * this._outputDimensions);
+		let vertices = new Float32Array(this.numCallsPerActivation * this._outputDimensions * 2);
 
 		let positionAttribute = this._geometry.attributes.position;
-		positionAttribute.count = this.numCallsPerActivation*2;
+		this._vertices = vertices;
+		positionAttribute.setArray(this._vertices);
 
-		positionAttribute.array = this._vertices;
-		this.vertices = vertices;
 		positionAttribute.needsUpdate = true;
 	}
 	evaluateSelf(i, t, x, y, z){

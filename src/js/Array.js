@@ -10,13 +10,14 @@ class EXPArray extends Node{
 			[10,10]]
 		})*/
 
-		EXP.Utils.assertPropExists(options, "data"); // a multidimensional array
+		EXP.Utils.assertPropExists(options, "data"); // a multidimensional array. assumed to only contain one type: either numbers or arrays
 		EXP.Utils.assertType(options.data, Array);
 
+		//It's assumed an EXP.Array will only store things such as 0, [0], [0,0] or [0,0,0]. If an array type is stored, this.arrayTypeDimensions contains the .length of that array. Otherwise it's 0, because points are 0-dimensional.
 		if(options.data[0].constructor === Number){
-			this.numDimensions = 1;
+			this.arrayTypeDimensions = 0;
 		}else if(options.data[0].constructor === Array){
-			this.numDimensions = options.data[0].length;
+			this.arrayTypeDimensions = options.data[0].length;
 		}else{
 			console.error("Data in an EXP.Array should be a number or an array of other things, not " + options.data[0].constructor);
 		}
@@ -28,10 +29,7 @@ class EXPArray extends Node{
 
 		this.numItems = this.data.length;
 
-		this.itemDimensions = []; // array to store the number of times this is called per dimension.
-		for(var i=0;i<this.numDimensions;i++){
-			this.itemDimensions.push(this.numItems);
-		}
+		this.itemDimensions = [this.data.length]; // array to store the number of times this is called per dimension.
 
 		//the number of times every child's expr is called
 		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y)
@@ -40,7 +38,7 @@ class EXPArray extends Node{
 		this.parent = null;
 	}
 	activate(t){
-		if(	this.numDimensions == 1){
+		if(this.arrayTypeDimensions == 0){
 			//numbers can't be spread using ... operator
 			for(var i=0;i<this.data.length;i++){
 				this._callAllChildren(i,t,this.data[i]);

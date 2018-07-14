@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Cyclical Snake</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" rel="stylesheet" href="../src/style.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = new EXP.Threeasy_Environment(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	console.log("Loaded.");
+
+	function nthroot(n, i){
+		return [Math.cos(Math.PI*2*i/n),Math.sin(Math.PI*2*i/n)]
+	}
+	function rotate(x,y,angle){
+		return [Math.cos(angle)*x + Math.sin(angle)*y, -Math.sin(angle)*x + Math.cos(angle)*y];
+	}
+
+	var polyhedron = new EXP.Array({data: [nthroot(6,0),nthroot(6,1),nthroot(6,2),nthroot(6,3),nthroot(6,4),nthroot(6,5)]});
+	var g = new EXP.Transformation({'expr': (i,t,x,y) => [x,y]});
+	var postTransform1 = new EXP.Transformation({'expr': (i,t,x,y) => [x*3-5,y*3]});
+	var output = new EXP.PointOutput({width:0.2});
+
+	polyhedron.add(g).add(postTransform1).add(output);
+
+	var polyhedronshadow = new EXP.Array({data: [nthroot(6,0),nthroot(6,1),nthroot(6,2),nthroot(6,3),nthroot(6,4),nthroot(6,5)]});
+	var g3 = new EXP.Transformation({'expr': (i,t,x,y) => [x,y]});
+	var postTransform3 = new EXP.Transformation({'expr': (i,t,x,y) => [x*3-5,y*3]});
+	var output3 = new EXP.PointOutput({width:0.18, opacity: 0.5, color: 0x888888});
+
+	polyhedronshadow.add(g3).add(postTransform3).add(output3);
+
+	//polyhedronshadow = polyhedron.clone(); // bugged??
+	//polyhedronshadow.children[0].children[0].children[0].width = 0.1;
+	//polyhedronshadow.children[0].children[0].children[0].opacity = 0.5;
+
+
+	class RightArrow{
+		constructor(centerPoint, width, color){
+			let height = 0.8*width;
+			let arrowBack = 2*width/3;
+			this.lineA = new twoPointLine((i,t,x)=>[centerPoint[0]-width,centerPoint[1]],(i,t,x)=>[centerPoint[0]+width+0.02,centerPoint[1]],color)
+			this.lineB = new twoPointLine((i,t,x)=>[centerPoint[0]+width,centerPoint[1]],(i,t,x)=>[centerPoint[0]+width-arrowBack,centerPoint[1]+height], color);
+			this.lineC = new twoPointLine((i,t,x)=>[centerPoint[0]+width,centerPoint[1]],(i,t,x)=>[centerPoint[0]+width-arrowBack,centerPoint[1]-height], color);
+		}
+		addTo(scene){
+			scene.push(this.lineA);
+			scene.push(this.lineB);
+			scene.push(this.lineC);
+		}
+		async reveal(duration,delay=500){
+			this.lineA.out.opacity = 1;
+			this.lineB.out.opacity = 1;
+			this.lineC.out.opacity = 1;
+			this.lineA.reveal(duration);
+			await EXP.delay(delay);
+			this.lineB.reveal(duration);
+			this.lineC.reveal(duration);
+		}
+	}
+	class twoPointLine{
+		constructor(funcA,funcB, col){
+
+			let pt1 = funcA;
+			let pt2 = funcB;
+
+			this.area = new EXP.Area({bounds: [[0,1]],numItems:2});
+			this.revealTransform = new EXP.Transformation({'expr': (i,t,x) => [0]});
+			this.lineDefinition = new EXP.Transformation({'expr': (i,t,x) => EXP.Math.vectorAdd(EXP.Math.multiplyScalar((1-x),funcA(i,t,x)),EXP.Math.multiplyScalar(x,funcB(i,t,x)))});
+			this.linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y]});
+			this.out = new EXP.LineOutput({width:5,color:col});
+			this.area.add(this.revealTransform).add(this.lineDefinition).add(this.linePostTransform).add(this.out);
+		}
+		activate(time){
+			this.area.activate(time);
+		}	
+		reveal(duration=800){
+			EXP.TransitionTo(this.revealTransform,{'expr': (i,t,x) => [x]},duration);
+		}	
+	}	
+	
+
+
+	function genRandomPoints(){
+		var randomPoints = [];
+		for(var i=0;i<=50;i++){
+			randomPoints.push([Math.random()*2-1,Math.random()*2-1]);
+		}
+		return randomPoints;
+	}
+
+	var somethingelse = new EXP.Array({data: genRandomPoints()});
+	var g2 = new EXP.Transformation({'expr': (i,t,x,y) => [x,y]});
+	var postTransform2 = new EXP.Transformation({'expr': (i,t,x,y) => [x*3+5,y*3]});
+	var output2 = new EXP.PointOutput({width:0.2});
+
+	somethingelse.add(g2).add(postTransform2).add(output2);
+
+	var sceneElements = [polyhedron, somethingelse, polyhedronshadow]
+	three.on("update",function(time){
+		sceneElements.forEach(i => i.activate(time.t));
+		controls.update();
+	});
+
+	async function animate(){
+
+		
+
+		var arrow = new RightArrow([0,0], 1, 0x444444);
+		arrow.addTo(sceneElements);
+
+		await EXP.delay(500);
+		arrow.reveal(250,250);
+		await EXP.delay(1000);
+
+		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => [-x,y]}, 1000));
+
+		await EXP.delay(2000);
+
+		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => [-x,-y]}, 1000));
+
+		await EXP.delay(2000);
+
+		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, Math.PI/3)}, 1000, 0.4));
+
+		await EXP.delay(2000);
+
+		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, 4*Math.PI/3)}, 1000, 0.4));
+
+		await EXP.delay(2000);
+
+		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, Math.PI)}, 1000, 0.4));
+
+
+	}
+
+	window.onload = animate;
+
+  </script>
+</body>
+</html>

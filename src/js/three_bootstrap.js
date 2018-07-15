@@ -4,10 +4,13 @@
 //also, change Threeasy_Environment to Threeasy_Recorder to download high-quality frames of an animation
 
 import CCapture from 'ccapture.js';
+import { Detector } from '../lib/WebGL_Detector.js';
 
 function Threeasy_Setup(autostart = true){
 	this.prev_timestep = 0;
 	this.autostart = autostart;
+
+	if(!Detector.webgl)Detector.addGetWebGLMessage();
 
 	this.camera = new THREE.OrthographicCamera({
 		near: .1,

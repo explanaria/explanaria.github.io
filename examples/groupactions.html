@@ -30,7 +30,7 @@
 	var polyhedron = new EXP.Array({data: [nthroot(6,0),nthroot(6,1),nthroot(6,2),nthroot(6,3),nthroot(6,4),nthroot(6,5)]});
 	var g = new EXP.Transformation({'expr': (i,t,x,y) => [x,y]});
 	var postTransform1 = new EXP.Transformation({'expr': (i,t,x,y) => [x*3-5,y*3]});
-	var output = new EXP.PointOutput({width:0.2});
+	var output = new EXP.PointOutput({width:0.2, color: 0x55aaff});
 
 	polyhedron.add(g).add(postTransform1).add(output);
 
@@ -103,7 +103,7 @@
 	var somethingelse = new EXP.Array({data: genRandomPoints()});
 	var g2 = new EXP.Transformation({'expr': (i,t,x,y) => [x,y]});
 	var postTransform2 = new EXP.Transformation({'expr': (i,t,x,y) => [x*3+5,y*3]});
-	var output2 = new EXP.PointOutput({width:0.2});
+	var output2 = new EXP.PointOutput({width:0.2, color: 0x55aaff});
 
 	somethingelse.add(g2).add(postTransform2).add(output2);
 
@@ -119,9 +119,7 @@
 
 		var arrow = new RightArrow([0,0], 1, 0x444444);
 		arrow.addTo(sceneElements);
-
-		await EXP.delay(500);
-		arrow.reveal(250,250);
+		arrow.reveal(0,0);
 		await EXP.delay(1000);
 
 		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => [-x,y]}, 1000));
@@ -132,7 +130,7 @@
 
 		await EXP.delay(2000);
 
-		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, Math.PI/3)}, 1000, 0.4));
+		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, Math.PI/3)}, 1000, 0.0));
 
 		await EXP.delay(2000);
 
@@ -140,7 +138,13 @@
 
 		await EXP.delay(2000);
 
-		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, Math.PI)}, 1000, 0.4));
+		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, Math.PI)}, 1000, 0.0));
+
+		await EXP.delay(2000);
+
+		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => [x,y]}, 1000));
+
+		await EXP.delay(1000);
 
 
 	}

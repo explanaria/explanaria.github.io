@@ -188,6 +188,7 @@
 	var presentation = new EXP.NonDecreasingDirector();
 
 	async function animate(){
+		controls.enableRotate = false;
 		await presentation.begin();
 
 		await presentation.nextSlide();
@@ -202,6 +203,7 @@
 		await presentation.delay(500);
 		earth.revealSelf(presentation);
 
+		controls.enableRotate = true;
 		presentation.transitionTo(firstPointCoords.children[0], {'opacity': 1});
 
 		await presentation.nextSlide();

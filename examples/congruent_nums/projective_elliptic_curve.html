@@ -14,7 +14,7 @@
 </head>
 <body>
   <script>
-	var three = new EXP.Threeasy_Environment(true, 120,10);
+	var three = EXP.setupThree(true, 120,10);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);

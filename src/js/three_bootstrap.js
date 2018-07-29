@@ -6,7 +6,7 @@
 import CCapture from 'ccapture.js';
 import { Detector } from '../lib/WebGL_Detector.js';
 
-function Threeasy_Setup(autostart = true){
+function ThreeasyEnvironment(autostart = true){
 	this.prev_timestep = 0;
 	this.autostart = autostart;
 
@@ -84,7 +84,7 @@ function Threeasy_Setup(autostart = true){
 	this.IS_RECORDING = false; // queryable if one wants to do things like beef up particle counts for render
 }
 
-Threeasy_Setup.prototype.onPageLoad = function() {
+ThreeasyEnvironment.prototype.onPageLoad = function() {
 	console.log("Threeasy_Setup loaded!");
 	document.body.appendChild( this.container );
 
@@ -92,45 +92,45 @@ Threeasy_Setup.prototype.onPageLoad = function() {
 		this.start();
 	}
 }
-Threeasy_Setup.prototype.start = function(){
+ThreeasyEnvironment.prototype.start = function(){
 	this.prev_timestep = performance.now();
 	this.clock.start();
 	this.render(this.prev_timestep);
 }
 
-Threeasy_Setup.prototype.onMouseDown = function() {
+ThreeasyEnvironment.prototype.onMouseDown = function() {
 	this.isMouseDown = true;
 }
-Threeasy_Setup.prototype.onMouseUp= function() {
+ThreeasyEnvironment.prototype.onMouseUp= function() {
 	this.isMouseDown = false;
 }
-Threeasy_Setup.prototype.onPointerRestricted= function() {
+ThreeasyEnvironment.prototype.onPointerRestricted= function() {
 	var pointerLockElement = renderer.domElement;
 	if ( pointerLockElement && typeof(pointerLockElement.requestPointerLock) === 'function' ) {
 		pointerLockElement.requestPointerLock();
 	}
 }
-Threeasy_Setup.prototype.onPointerUnrestricted= function() {
+ThreeasyEnvironment.prototype.onPointerUnrestricted= function() {
 	var currentPointerLockElement = document.pointerLockElement;
 	var expectedPointerLockElement = renderer.domElement;
 	if ( currentPointerLockElement && currentPointerLockElement === expectedPointerLockElement && typeof(document.exitPointerLock) === 'function' ) {
 		document.exitPointerLock();
 	}
 }
-Threeasy_Setup.prototype.evenify = function(x){
+ThreeasyEnvironment.prototype.evenify = function(x){
 	if(x % 2 == 1){
 		return x+1
 	};
 	return x;
 }
-Threeasy_Setup.prototype.onWindowResize= function() {
+ThreeasyEnvironment.prototype.onWindowResize= function() {
 	this.camera.aspect = window.innerWidth / window.innerHeight;
 	this.aspect = this.camera.aspect;
 	this.camera.updateProjectionMatrix();
 	this.renderer.setSize( this.evenify(window.innerWidth),this.evenify(window.innerHeight) );
 }
-Threeasy_Setup.prototype.listeners = {"update": [],"render":[]}; //update event listeners
-Threeasy_Setup.prototype.render = function(timestep){
+ThreeasyEnvironment.prototype.listeners = {"update": [],"render":[]}; //update event listeners
+ThreeasyEnvironment.prototype.render = function(timestep){
 	var delta = this.clock.getDelta()*this.timeScale;
 	this.elapsedTime += delta;
 	//get timestep
@@ -147,7 +147,7 @@ Threeasy_Setup.prototype.render = function(timestep){
 	this.prev_timestep = timestep;
 	window.requestAnimationFrame(this.render.bind(this));
 }
-Threeasy_Setup.prototype.on = function(event_name, func){
+ThreeasyEnvironment.prototype.on = function(event_name, func){
 	//Registers an event listener.
 	//each listener will be called with an object consisting of:
 	//	{t: <current time in s>, "delta": <delta, in ms>}
@@ -160,7 +160,7 @@ Threeasy_Setup.prototype.on = function(event_name, func){
 		console.error("Invalid event name!")
 	}
 }
-Threeasy_Setup.prototype.removeEventListener = function(event_name, func){
+ThreeasyEnvironment.prototype.removeEventListener = function(event_name, func){
 	//Unregisters an event listener, undoing an Threeasy_setup.on() event listener.
 	//the naming scheme might not be the best here.
 	if(event_name == "update"){ 
@@ -173,8 +173,9 @@ Threeasy_Setup.prototype.removeEventListener = function(event_name, func){
 		console.error("Nonexistent event name!")
 	}
 }
+ThreeasyEnvironment.prototype.off = ThreeasyEnvironment.prototype.removeEventListener; //alias to match ThreeasyEnvironment.on
 
-class Threeasy_Recorder extends Threeasy_Setup{
+class ThreeasyRecorder extends ThreeasyEnvironment{
 	//based on http://www.tysoncadenhead.com/blog/exporting-canvas-animation-to-mov/ to record an animation
 	//when done,     ffmpeg -r 60 -framerate 60 -i ./%07d.png -vcodec libx264 -pix_fmt yuv420p -crf:v 0 video.mp4
     // to perform motion blur on an oversampled video, ffmpeg -i video.mp4 -vf tblend=all_mode=average,framestep=2 video2.mp4
@@ -281,4 +282,24 @@ class Threeasy_Recorder extends Threeasy_Setup{
 	}
 }
 
-export { Threeasy_Setup as Threeasy_Environment, Threeasy_Recorder as Threeasy_Recorder}
+function setupThree(autostart, fps=30, length = 5){
+	/* All the existing code I have uses "new ThreeasySetup" or "new ThreeasyRecorder" and I want to switch
+   between them dynamically so that you can record by appending "?record=true" to an url. */
+	var recorder = null;
+	var is_recording = false;
+
+	//extract record parameter from url
+	var params = new URLSearchParams(document.location.search);
+	let recordString = params.get("record");
+
+	if(recordString)is_recording = params.get("record").toLowerCase() == "true" || params.get("record").toLowerCase() == "1";
+
+	if(is_recording){
+		return new ThreeasyRecorder(autostart, fps, length);
+	
+	}else{
+		return new ThreeasyEnvironment(autostart);
+	}
+}
+
+export {setupThree, ThreeasyEnvironment, ThreeasyRecorder}

@@ -69,6 +69,19 @@ class Area extends Node{
 					this._callAllChildren(index,t,c1,c2,0,0);
 				}
 			}
+		}else if(this.numDimensions == 3){
+			//this can be reduced into a fancy recursion technique over the first index of this.bounds, I know it
+			for(var i=0;i<this.itemDimensions[0];i++){
+				let c1 = this.bounds[0][0] + (this.bounds[0][1]-this.bounds[0][0])*(i/(this.itemDimensions[0]-1));
+				for(var j=0;j<this.itemDimensions[1];j++){
+					let c2 = this.bounds[1][0] + (this.bounds[1][1]-this.bounds[1][0])*(j/(this.itemDimensions[1]-1));
+					for(var k=0;k<this.itemDimensions[2];k++){
+						let c3 = this.bounds[2][0] + (this.bounds[2][1]-this.bounds[2][0])*(k/(this.itemDimensions[2]-1));
+						let index = (i*this.itemDimensions[1] + j)*this.itemDimensions[2] + k;
+						this._callAllChildren(index,t,c1,c2,c3,0);
+					}
+				}
+			}
 		}else{
 			assert("TODO: Use a fancy recursion technique to loop over all indices!");
 		}

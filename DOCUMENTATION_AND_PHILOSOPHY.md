@@ -14,11 +14,33 @@ Explanaria is an engine for creating animated 3D presentations designed for expl
 * Explanaria should be *interactive*. Any javascript variable can be used as a source of data in a `EXP.Transformation`, whether the mouse position, the result of an API call, or any other source of user interaction.
 
 # Core Concepts: A High-Level Overview
-Let's say a mathematician wants to graph a function, such as `f(x) = x^3`. This information, alone, is technically not enough to know what the graph of this function will look like: one must also specify which range of x-values to graph, and similarly what range of y-values will be output by the function when called with those x-values. Therefore, as many students know, there are three parts of any function to consider: the domain, the range, and the function itself. 
+Let's say a mathematician wants to graph a function, such as `f(x) = x^3`. Along with the formula, one must also specify which range of x-values to graph, and similarly what range of y-values will be output by the function when called with those x-values. Therefore, as many students know, there are three parts of any function to consider: the domain, the range, and the function itself. 
 
-In Explanaria, domains, functions, and ranges are represented as three different categories of objects. To graph a function, one must first create a domain object such as `EXP.Area`, representing the inputs where the function should be called. The domain will then provide the appropriate input values to any number of function objects, such as `EXP.Transformation`, which may feed into other functions. Finally, the range of a function is passed to a subclass of `EXP.OutputNode` (such as a `EXP.PointOutput` or `EXP.LineOutput`) which represents its output onscreen. 
+In Explanaria, domains, functions, and ranges are represented as three different categories of objects. Domains represent the inputs where the function should be called, functions run a javascript function, and ranges are passed to a subclass of `EXP.OutputNode` (such as a `EXP.PointOutput` or `EXP.LineOutput`) which represents its output onscreen. 
 
-This domain-function-range chain is at the core of how Explanaria operates internally. `Node`s must be connected via .add() to form such a chain. Calling `.activate()` on a Domain, will recursively call and update each of its children in turn.
+This domain-function-range chain is at the core of how Explanaria operates internally. `Node`s must be connected via .add() to form such a chain. Calling `.activate()` on a Domain will recursively call and update each of its children in turn.
+
+# Example code
+
+Here is some sample code using Explanaria to render a Lissajous curve.
+
+```
+var three = EXP.setupThree(true, 60,15);
+var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+var area = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 16});
+var varyParameters = new EXP.Transformation({'expr': (i,t,theta) => [theta, Math.sin(t)+1.1]});
+var outputCurve = new EXP.Transformation({'expr': (i,t,theta,a) => [Math.sin(theta+t), Math.sin(theta+t*a)]});
+var output = new EXP.PointOutput({width:0.2, color: 0x00ff00});
+
+area.add(varyParameters).add(outputCurve).add(output)
+	
+three.on("update",function(time){
+		area.activate(time.t);
+		controls.update();
+}
+```
+
 
 # API Reference
 
@@ -145,26 +167,4 @@ Using setupThree() also allows an animation to be recorded on a frame-by-frame b
 # Presentations
 If you want to synchronize text-based slides to your animations, use an EXP.Director().
 This section will be expanded later.
-
-
-# Example code
-
-Here is some sample code using Explanaria to render a Lissajous curve.
-
-```
-var three = EXP.setupThree(true, 60,15);
-var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
-
-var area = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 16});
-var varyParameters = new EXP.Transformation({'expr': (i,t,theta) => [theta, Math.sin(t)+1.1]});
-var outputCurve = new EXP.Transformation({'expr': (i,t,theta,a) => [Math.sin(theta+t), Math.sin(theta+t*a)]});
-var output = new EXP.PointOutput({width:0.2, color: 0x00ff00});
-
-area.add(varyParameters).add(outputCurve).add(output)
-	
-three.on("update",function(time){
-		area.activate(time.t);
-		controls.update();
-}
-```
 

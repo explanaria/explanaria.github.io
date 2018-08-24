@@ -47,6 +47,7 @@ class DirectionArrow{
 					return resolve(); //quit early
 				}
 				this.arrowImage = new Image();
+				this.arrowImage.onload = resolve;
 				
 				this.arrowImage.src = 
 this.arrowImage.baseURI.substring(0,this.arrowImage.baseURI.search("explanaria")) + "explanaria/src/ExplanarianNextArrow.svg";
@@ -78,7 +79,7 @@ class NonDecreasingDirector{
 		let self = this;
 		this.rightArrow.onclickCallback = function(){
 			self._changeSlide(1, function(){}); // this errors without the empty function because there's no resolve. There must be a better way to do things.
-			console.warn("WARNING: Horrible hack in effect to change slides. Please replace the pass-an-empty-function thing with somethign that actually resolves properly and does async.")
+			console.warn("WARNING: Horrible hack in effect to change slides. Please replace the pass-an-empty-function thing with something that actually resolves properly and does async.")
 			self.nextSlideResolveFunction();
 		}
 
@@ -86,7 +87,9 @@ class NonDecreasingDirector{
 
 	async waitForPageLoad(){
 		return new Promise(function(resolve, reject){
-			window.addEventListener("load",resolve);
+			//window.addEventListener("load",resolve);
+			window.setTimeout(resolve,1);
+			resolve()
 		});
 	}
 

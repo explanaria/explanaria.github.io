@@ -65,7 +65,7 @@
 			return [this.radius*Math.cos(theta)+this.centerPoint[0], this.radius*Math.sin(theta)+this.centerPoint[1],this.centerPoint[2]];
 		}
 		revealSelf(presentation){
-			presentation.transitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
+			presentation.TransitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
 		}
 	}
 
@@ -104,7 +104,7 @@
 			return EXP.Math.lerpVectors(x, p1, p2)
 		}
 		revealSelf(presentation){
-			presentation.transitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
+			presentation.TransitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
 		}
 	}
 	
@@ -204,14 +204,14 @@
 		earth.revealSelf(presentation);
 
 		controls.enableRotate = true;
-		presentation.transitionTo(firstPointCoords.children[0], {'opacity': 1});
+		presentation.TransitionTo(firstPointCoords.children[0], {'opacity': 1});
 
 		await presentation.nextSlide();
 
 		let ramp = (x) => (((x)%1)+1)%1
 		let toPortalCoords = (x)=>(1-ramp(x)*2);
 
-		presentation.transitionTo(pointWithGravity.position, {"1": 0.5},250);
+		presentation.TransitionTo(pointWithGravity.position, {"1": 0.5},250);
 		await presentation.delay(500);
 		pointWithGravity.updateFunc = (self, dt, t)=>(self.position[1] = toPortalCoords(Math.sin(3*self.t)*0.5+2));
 
@@ -219,13 +219,13 @@
 
 		pointWithGravity.updateFunc = (self, dt, t)=>(null);
 
-		presentation.transitionTo(pointWithGravity.position, {"1": 0});
+		presentation.TransitionTo(pointWithGravity.position, {"1": 0});
 		await presentation.delay(1000);
 
 		//show physics point and not other point
 		
-		//presentation.transitionTo(firstPointCoords.children[0], {"opacity":0});
-		//presentation.transitionTo(pointWithGravity, {'opacity': 1});
+		//presentation.TransitionTo(firstPointCoords.children[0], {"opacity":0});
+		//presentation.TransitionTo(pointWithGravity, {'opacity': 1});
 		//this fails because the material is shared among PointOutputs. whoops
 
 		let a = 1;

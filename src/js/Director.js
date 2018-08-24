@@ -154,7 +154,7 @@ class NonDecreasingDirector{
 			window.setTimeout(resolve, waitTime);
 		});
 	}
-	transitionTo(target, toValues, durationMS){
+	TransitionTo(target, toValues, durationMS){
 		//EXP.Utils.Assert(this.undoStackIndex == 0); //This may not work well.
 		new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000);
 	}

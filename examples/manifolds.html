@@ -72,7 +72,7 @@
 	var tangentspace = new EXP.Area({bounds: [[-5,5],[-5,5]]});
 	tangentspace
 		.add(new EXP.Transformation({expr: (i,t,theta1,theta2) => EXP.Math.vectorAdd(manifoldParametrization.expr(i,t,...params.tangentPoint), params.tangentSpaceChart(i,t,theta1,theta2))}))
-		.add(new EXP.PointOutput({color: green, width:0.3}));
+		.add(new EXP.SurfaceOutput({color: green, opacity:0.8}));
 
 	
 	var tangentPt = new EXP.Array({data: [[0]]});
@@ -80,7 +80,7 @@
 		.add(new EXP.Transformation({expr: (i,t) => [Math.cos(t/3), Math.cos(t/5)]}))
 		.add(new EXP.Transformation({expr: (i,t,...x) => { params.tangentPoint = x; return x }}))
 		.add(manifoldParametrization.clone())
-		.add(new EXP.PointOutput({width:0.1, color: 0x0000f0}));
+		.add(new EXP.PointOutput({width:0.3, color: 0x0000f0}));
 
 
 	let objects = [tangentPt, params, torus, tangentspace];

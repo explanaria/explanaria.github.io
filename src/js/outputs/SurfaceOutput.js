@@ -104,8 +104,8 @@ class SurfaceOutput extends OutputNode{
 				indices.push(b, c, d);
 				
 				//double sided reverse faces
-        		/*indices.push(d, b, a);
-				indices.push(d, c, b);*/
+        		indices.push(d, b, a);
+				indices.push(d, c, b);
 
 				//set normal to [0,0,1]
 				/*normals[(i + j * this.itemDimensions[1])*3] = 0

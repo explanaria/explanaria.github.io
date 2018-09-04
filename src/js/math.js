@@ -21,8 +21,23 @@ function clone(vec){
 	}
 	return newArr
 }
+function multiplyMatrix(vec, matrix){
+	//assert vec.length == numRows
+
+	let numRows = matrix.length;
+	let numCols = matrix[0].length;
+
+	var output = new Array(numCols);
+	for(var j=0;j<numCols;j++){
+		output[j] = 0;
+		for(var i=0;i<numRows;i++){
+			output[j] += matrix[i][j] * vec[i];
+		}
+	}
+	return output;
+}
 
 //hack
-let Math = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, multiplyScalar: multiplyScalar};
+let Math = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix};
 
-export {vectorAdd, lerpVectors, clone, multiplyScalar, Math};
+export {vectorAdd, lerpVectors, clone, multiplyScalar, multiplyMatrix, Math};

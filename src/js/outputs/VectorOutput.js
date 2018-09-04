@@ -1,5 +1,5 @@
 import { LineOutput } from './LineOutput.js';
-import { Utils } from './utils.js';
+import { Utils } from '../utils.js';
 
 export class VectorOutput extends LineOutput{
 	constructor(options = {}){

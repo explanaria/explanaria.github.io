@@ -1,4 +1,4 @@
-import {OutputNode} from './Node.js';
+import {OutputNode} from '../Node.js';
 
 class LineOutput extends OutputNode{
 	constructor(options = {}){

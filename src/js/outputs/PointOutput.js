@@ -1,5 +1,5 @@
 import Point from './Point.js';
-import {OutputNode} from './Node.js';
+import {OutputNode} from '../Node.js';
 
 class PointOutput extends OutputNode{
 	constructor(options = {}){

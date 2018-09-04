@@ -21,24 +21,28 @@
 
 	three.camera.position.z = 4;
 
+	let blue = 0x0070f0;
+
 	console.log("Loaded.");
 
 	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]]});
 	var a=1;
 	var b=2;
-	var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]});
-	var output = new EXP.PointOutput({width:0.2});
+	var timeChange = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [theta1, theta2]});
+	var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => 
+		[(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
+	});
+	var output = new EXP.SurfaceOutput({opacity:1, color: 0x0070f0});
 
-	torus.add(manifoldParametrization).add(output);
+	torus.add(timeChange).add(manifoldParametrization).add(output);
 
 	function coordinate_chart(point_on_manifold){
 		//todo
 		let c1 = point_on_manifold[0];
 		let c2 = point_on_manifold[1];
-
 		//manifoldParametrization.expr(0,0,poin);
-		
 	}
+
 	console.warn("WARNING: THIS IS HORRIBLY BROKEN. FIX IT. DO YOUR DIFFERENTIAL TOPOLOGY PROPERLY")
 	function calc_torus_tangent_space(point_on_manifold){
 		let theta1 = point_on_manifold[0];
@@ -56,7 +60,7 @@
 		// the parametrization is a map U ( M --> R^2
 		//Then produce a map df: T_x M -> R^2 from R^2 => R^2
 
-		return (i,t,x1,x2) => vectorAdd(multiplyScalar(x1,clone(jacobian_theta1)),multiplyScalar(x2,clone(jacobian_theta2)))
+		return (i,t,x1,x2) => EXP.Math.vectorAdd(EXP.Math.multiplyScalar(x1,EXP.Math.clone(jacobian_theta1)),EXP.Math.multiplyScalar(x2,EXP.Math.clone(jacobian_theta2)))
 		
 	}
 
@@ -70,10 +74,11 @@
 	}
 	var params = new ParameterTracker();
 	params.tangentPoint = manifoldParametrization.expr(0,0,0,0);
+	params.activate(0);
 
 	var tangentspace = new EXP.Area({bounds: [[-5,5],[-5,5]]});
 	tangentspace
-		.add(new EXP.Transformation({expr: (i,t,x1,x2) => vectorAdd(clone(params.tangentPoint), params.tangentSpaceChart(i,t,x1,x2))}))
+		.add(new EXP.Transformation({expr: (i,t,x1,x2) => EXP.Math.vectorAdd(EXP.Math.clone(params.tangentPoint), params.tangentSpaceChart(i,t,x1,x2))}))
 		.add(new EXP.PointOutput({color: blue, width:0.3}));
 
 	
@@ -86,6 +91,7 @@
 
 
 	let objects = [tangentPt, params, torus, tangentspace];
+	objects = [torus];
 
 	three.on("update",function(time){
 		for(var x of objects){

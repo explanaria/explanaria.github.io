@@ -10,8 +10,9 @@ export { Utils } from './js/utils.js';
 export { Math } from './js/math.js'; // may need to be changed depending on how it should be done. congruent_utilities.js definitely needs to change if so;
 export * from './js/asyncDelayFunctions.js'
 //outputs
-export { LineOutput } from './js/LineOutput.js';
-export { PointOutput } from './js/PointOutput.js';
-export { VectorOutput } from './js/VectorOutput.js';
+export { LineOutput } from './js/outputs/LineOutput.js';
+export { PointOutput } from './js/outputs/PointOutput.js';
+export { VectorOutput } from './js/outputs/VectorOutput.js';
+export { SurfaceOutput } from './js/outputs/SurfaceOutput.js';
 
 export { NonDecreasingDirector, DirectionArrow } from './js/Director.js';

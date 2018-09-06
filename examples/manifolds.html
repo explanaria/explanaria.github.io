@@ -40,20 +40,18 @@
 	console.warn("WARNING: THIS IS HORRIBLY BROKEN. FIX IT. DO YOUR DIFFERENTIAL TOPOLOGY PROPERLY")
 	function calc_torus_tangent_space(theta1, theta2){
 
+
+		// the parametrization is a map U ( M --> R^2
+		//This is a manually entered map df: T_x M -> R^2 from R^2 => R^2
+
 		//f(theta1,theta2) = [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
 		let jacobian_matrix = [
 				[(-a*Math.sin(theta1)*Math.cos(theta2)),(-a*Math.sin(theta1))*Math.sin(theta2),a*Math.cos(theta1)],
 				[-(a*Math.cos(theta1)+b)*Math.sin(theta2),(a*Math.cos(theta1)+b)*Math.cos(theta2),0]
 			]
 		
-
 		//we now compute [x1, x2] * jacobian_matrix
-
-		// the parametrization is a map U ( M --> R^2
-		//Then produce a map df: T_x M -> R^2 from R^2 => R^2
-
-		//x1 * jacobian_theta1 + x2 * jacobian_theta2;
-
+		//== x1 * jacobian_theta1 + x2 * jacobian_theta2;
 		return (i,t,x1,x2) => EXP.Math.multiplyMatrix([x1,x2],jacobian_matrix)
 	}
 
@@ -69,7 +67,7 @@
 	params.tangentPoint = manifoldParametrization.expr(0,0,0,0);
 	params.activate(0);
 
-	var tangentspace = new EXP.Area({bounds: [[-5,5],[-5,5]]});
+	var tangentspace = new EXP.Area({bounds: [[-5,5],[-2,2]]});
 	tangentspace
 		.add(new EXP.Transformation({expr: (i,t,theta1,theta2) => EXP.Math.vectorAdd(manifoldParametrization.expr(i,t,...params.tangentPoint), params.tangentSpaceChart(i,t,theta1,theta2))}))
 		.add(new EXP.SurfaceOutput({color: green, opacity:0.8}));

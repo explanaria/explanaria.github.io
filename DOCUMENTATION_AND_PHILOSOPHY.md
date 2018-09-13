@@ -38,9 +38,8 @@ area.add(varyParameters).add(outputCurve).add(output)
 three.on("update",function(time){
 		area.activate(time.t);
 		controls.update();
-}
+});
 ```
-
 
 # API Reference
 
@@ -126,7 +125,8 @@ Explanaria allows for animated transitions between two functions, or parameters,
 
 For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo animates a transition from `target[key]`'s previous value to the specified `newValue`.  
 	When combined with an `EXP.Transformation`, this can be used to smoothly animate between functions, tweak parameters, or more!
-	Technical note: TransitionTo assumes `target[key] is either a number or a function returning
+
+	Technical note: TransitionTo assumes `target[key]` is either a number or a function (and if a function, it is assumed that this function always returns an array of numbers)
 	
 
 * EXP.TransitionTo

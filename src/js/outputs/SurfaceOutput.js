@@ -61,6 +61,8 @@ class SurfaceOutput extends OutputNode{
 		this._uniforms.showSolid.value = this._showSolid ? 1 : 0;
 		this._uniforms.lineWidth.value = this._gridLineWidth;
 
+		if(!this.showSolid)this.material.transparent = true;
+
 		three.scene.add(this.mesh);
 	}
 	makeGeometry(){

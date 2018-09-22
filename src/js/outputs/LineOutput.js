@@ -138,7 +138,7 @@ class LineOutput extends OutputNode{
 	}
 	set color(color){
 		//currently only a single color is supported.
-		//I should really
+		//I should really make it possible to specify color by a function.
 		this.material.color = new THREE.Color(color);
 		this._color = color;
 	}

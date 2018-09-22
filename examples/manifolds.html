@@ -26,14 +26,14 @@
 
 	console.log("Loaded.");
 
-	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]]});
+	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]], numItems: [17,17]});
 	var a=1;
 	var b=2;
 	var timeChange = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [theta1, theta2]});
 	var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => 
 		[(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
 	});
-	var output = new EXP.SurfaceOutput({opacity:0.5, color: 0x0070f0});
+	var output = new EXP.SurfaceOutput({opacity:0.5, color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
 
 	torus.add(timeChange).add(manifoldParametrization).add(output);
 
@@ -67,10 +67,10 @@
 	params.tangentPoint = manifoldParametrization.expr(0,0,0,0);
 	params.activate(0);
 
-	var tangentspace = new EXP.Area({bounds: [[-5,5],[-2,2]]});
+	var tangentspace = new EXP.Area({bounds: [[-1,1],[-2/5,2/5]]});
 	tangentspace
 		.add(new EXP.Transformation({expr: (i,t,theta1,theta2) => EXP.Math.vectorAdd(manifoldParametrization.expr(i,t,...params.tangentPoint), params.tangentSpaceChart(i,t,theta1,theta2))}))
-		.add(new EXP.SurfaceOutput({color: green, opacity:0.8}));
+		.add(new EXP.SurfaceOutput({color: green, opacity:0.8, showGrid: true, gridSquares: 8, showSolid:false}));
 
 	
 	var tangentPt = new EXP.Array({data: [[0]]});

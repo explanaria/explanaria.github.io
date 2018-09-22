@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Cyclical Snake</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/socket.io.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" rel="stylesheet" href="../src/style.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>var three = EXP.setupThree(true, 60,15);
+var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+var area = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 16});
+var varyParameters = new EXP.Transformation({'expr': (i,t,theta) => [theta, 1.1+Math.sin(t)]});
+var outputCurve = new EXP.Transformation({'expr': (i,t,theta,a) => [Math.cos(theta+t), Math.sin(theta+t)*a)]});
+var output = new EXP.PointOutput({width:0.2, color: 0x00ff00});
+
+area.add(varyParameters).add(outputCurve).add(output)
+	
+three.on("update",function(time){
+		area.activate(time.t);
+		controls.update();
+});
+  </script>
+</body>
+</html>

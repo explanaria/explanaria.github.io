@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Parametric surface</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/socket.io.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" href="../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+  <style>
+  .selectionarea{
+    pointer-events: all;
+  }
+	.invalid{
+		border: 2px solid red;
+	}
+  </style>
+</head>
+<body>
+  <script>
+	var three = EXP.setupThree(true, 60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.z = 4;
+
+	let blue = 0x0070f0;
+	let green = 0x50d050;
+
+	console.log("Loaded.");
+
+	var range = new EXP.Area({bounds: [[-5,5],[-5,5]], numItems: [31,31]});
+	var parametricSurface = new EXP.Transformation({'expr': (i,t,u,v) => 
+		[1,u,v]
+	});
+	var output = new EXP.SurfaceOutput({color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
+
+	range.add(parametricSurface).add(output);
+	let objects = [range];
+	three.on("update",function(time){
+		for(var x of objects){
+			x.activate(time.t);
+		}
+		controls.update();
+	});
+
+
+	// parametric function code.
+	function updateText(){
+		var providedText = document.getElementById("parametricText").value;
+		console.log(providedText);
+
+		objects = [];
+
+		var functionText = ["function providedFunc(i,t,u,v){",
+		"return [" + providedText + "];",
+		"}; window.providedFunc = providedFunc;"].join('');
+		console.log(functionText);
+
+		var success = false;
+
+		//the great evil.
+		try{
+			eval(functionText);
+			success = true;
+		}catch(e){
+			console.log("Oh no! Error!");
+		}
+
+		if(success && window.providedFunc && typeof(providedFunc) == "function"){
+			console.log("Success!");
+			parametricSurface.expr = providedFunc;
+			objects.push(range);
+
+			var elems = document.getElementsByClassName("highlight-if-invalid");
+			for(var i=0;i<elems.length;i++){
+				elems[i].style.color = "";
+			}
+			document.getElementById("parametricText").style.backgroundColor = "";
+
+			three.render();
+
+		}else{
+			var elems = document.getElementsByClassName("highlight-if-invalid");
+			for(var i=0;i<elems.length;i++){
+				elems[i].style.color = "red";
+			}
+			document.getElementById("parametricText").style.backgroundColor = "rgba(255,0,0,0.2)";
+		}
+	}
+
+	function queueTextUpdate(){
+		window.setTimeout(updateText,1); //hack because I still don't know how to wait
+	}
+	function setup(){
+		queueTextUpdate();
+
+		//provided functions
+		for(var name of ['sin','cos','atan','tan','sqrt','exp']){
+			window[name] = Math[name];
+		}
+	}
+	window.onload = setup();
+
+  </script>
+	<script id="evalScript"></script>
+
+	<div id="label" class="exp-label selectionarea">
+		f(u, v) = <span class="highlight-if-invalid">[</span>
+		<input id="parametricText" type="textarea" value="u,v*cos(u),sin(3*t+v)" onchange="queueTextUpdate()" onkeydown="queueTextUpdate()"></input><span class="highlight-if-invalid">]</span>
+	</div>
+</body>
+</html>

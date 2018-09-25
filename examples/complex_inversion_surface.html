@@ -22,12 +22,12 @@
 
 	console.log("Loaded.");
 
-	var area = new EXP.Area({bounds: [[0.0001,5],[0,2*Math.PI]], numItems: 16});
+	var area = new EXP.Area({bounds: [[0.0001,5],[0,2*Math.PI]], numItems: 32+1});
 	var transformation = new EXP.Transformation({'expr': (i,t,r,theta) => [r,theta,0]});
 	var applyCylindricalCoords = new EXP.Transformation({'expr': (i,t,r,theta,z) => [r*Math.cos(theta),r*Math.sin(theta),z]});
 	var postCartesianTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y,z]});
-	var output = new EXP.PointOutput({width:0.2});
-	var output2 = new EXP.LineOutput({width: 3});
+	var output = new EXP.PointOutput({width:0.2, opacity:0.9});
+	var output2 = new EXP.SurfaceOutput({showSolid: false});
 
 
 	var unitcircle = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 40});
@@ -46,7 +46,7 @@
 	transformation
 		.add(applyCylindricalCoords)
 		.add(postCartesianTransform)
-		.add(output);
+		//.add(output);
 	postCartesianTransform.add(output2); //also add the line
 
 	three.on("update",function(time){

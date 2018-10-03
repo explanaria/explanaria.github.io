@@ -23,7 +23,8 @@
 	}
 
 	input{
-		font-size: 42px;
+		font-size: 100%;
+        max-width: 50%;
 		font-family: 'Lora', "sans-serif";
 		text-align: center;
 		text-shadow: 4px 0px 0px rgb(255, 255, 255), -4px 0px 0px rgb(255, 255, 255), 0px 4px 0px rgb(255, 255, 255), 0px -4px 0px rgb(255, 255, 255), -3px -2px 0px rgb(255, 255, 255), -3px 2px 0px rgb(255, 255, 255), 3px 2px 0px rgb(255, 255, 255), 3px -2px 0px rgb(255, 255, 255), -2px -3px 0px rgb(255, 255, 255), -2px 3px 0px rgb(255, 255, 255), 2px 3px 0px rgb(255, 255, 255), 2px -3px 0px rgb(255, 255, 255), -1px -2px 1px rgb(255, 255, 255), -2px -1px 1px rgb(255, 255, 255), -1px 2px 1px rgb(255, 255, 255), -2px 1px 1px rgb(255, 255, 255), 1px 2px 1px rgb(255, 255, 255), 2px 1px 1px rgb(255, 255, 255), 1px -2px 1px rgb(255, 255, 255), 2px -1px 1px rgb(255, 255, 255);
@@ -142,11 +143,11 @@
   </script>
 	<script id="evalScript"></script>
 
-	<div id="label" class="exp-label selectionarea" style="width: 100%;">
+	<div id="label" class="exp-text selectionarea" style="width: 100%;">
 		<div id="errormessage"></div>
 		f(u, v) = <span class="highlight-if-invalid">[</span>
 		<input id="parametricText" type="textarea" value="u,v*cos(u),sin(3*t+v)" onkeyup="queueTextUpdate()"></input> <span class="highlight-if-invalid">]</span>
-		<aside style="font-size: 60%; margin-bottom:-1em;"><br />(Type in your favorite equation! Commas separate the x, y, and z coordinates. Use 't' (or sin(t)) in your equations to make things change over time! Use * for multiplication: enter 2uv as 2*u*v, please.)</aside>
+		<aside style="margin-bottom:-1em;"><br />(Type in your favorite equation! Commas separate the x, y, and z coordinates. Use 't' (or sin(t)) in your equations to make things change over time! Use * for multiplication: enter 2uv as 2*u*v, please.)</aside>
 	</div>
 </body>
 </html>

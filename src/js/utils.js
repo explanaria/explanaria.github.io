@@ -16,6 +16,7 @@ class Utils{
 		//A function to check if something is true and halt otherwise in a callbackable way.
 		if(!thing){
 			console.error("ERROR! Assertion failed. See traceback for more.");
+            console.trace();
 		}
 	}
 
@@ -27,13 +28,15 @@ class Utils{
 			}else{
 				console.error("ERROR! Something not of required type "+type.name+"! See traceback for more.");
 			}
+            console.trace();
 		}
 	}
 
 
 	static assertPropExists(thing, name){
 		if(!(name in thing)){
-			console.error("ERROR! "+name+" not present in required property")
+			console.error("ERROR! "+name+" not present in required property");
+            console.trace();
 		}
 	}
 	

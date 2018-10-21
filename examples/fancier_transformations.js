@@ -1,19 +1,25 @@
+    //setup variable 'three' beforehand using EXP.setupThree() please
 
-	console.log("Loaded.");
+    var controls, area, id, output;
+    function init(){
+	    controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	    console.log("Loaded.");
 
-	var area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
-	var id = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
-	var output = new EXP.PointOutput({width:0.2});
+	    area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
+	    id = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
+	    output = new EXP.PointOutput({width:0.2});
 
-	area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
+	    area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
 
-	area.add(id); //transformation -> output
-	id.add(output);
+	    area.add(id); //transformation -> output
+	    id.add(output);
 
-	three.on("update",function(time){
-		area.activate(time.t);
-		controls.update();
-	});
+	    three.on("update",function(time){
+		    area.activate(time.t);
+		    controls.update();
+	    });
+    	animate();
+    }
 
 	async function animate(){
 
@@ -80,4 +86,3 @@
 
 
 	}
-	animate();

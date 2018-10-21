@@ -292,8 +292,10 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 	}
 }
 
-function setupThree(autostart, fps=30, length = 5, canvasContainer = null){
-	/* Set up the three.js environment. Switch between classes dynamically so that you can record by appending "?record=true" to an url. Then EXP.threeEnvironment.camera and EXP.threeEnvironment.scene work, as well as EXP.threeEnvironment.on('event name', callback). Only one environment exists at a time.*/
+function setupThree(fps=30, length = 5, canvasContainer = null){
+	/* Set up the three.js environment. Switch between classes dynamically so that you can record by appending "?record=true" to an url. Then EXP.threeEnvironment.camera and EXP.threeEnvironment.scene work, as well as EXP.threeEnvironment.on('event name', callback). Only one environment exists at a time.
+
+    The returned object is a singleton: multiple calls will return the same object: EXP.threeEnvironment.*/
 	var recorder = null;
 	var is_recording = false;
 
@@ -301,14 +303,18 @@ function setupThree(autostart, fps=30, length = 5, canvasContainer = null){
 	var params = new URLSearchParams(document.location.search);
 	let recordString = params.get("record");
 
-	if(recordString)is_recording = params.get("record").toLowerCase() == "true" || params.get("record").toLowerCase() == "1";
+	if(recordString){ //detect if URL params include ?record=1 or ?record=true
+        recordString = recordString.toLowerCase();
+        is_recording = (recordString == "true" || recordString == "1");
+    }
 
+    if(EXP.threeEnvironment !== null){//singleton has already been created
+        return EXP.threeEnvironment;
+    }
 
-    let threeEnvironment = null
-
+    let threeEnvironment = null;
 	if(is_recording){
 		threeEnvironment = new ThreeasyRecorder(fps, length, canvasContainer);
-	
 	}else{
 		threeEnvironment = new ThreeasyEnvironment(canvasContainer);
 	}

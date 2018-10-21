@@ -25,7 +25,7 @@ This domain-function-range chain is at the core of how Explanaria operates inter
 Here is some sample code using Explanaria to render a Lissajous curve.
 
 ```
-var three = EXP.setupThree(true, 60,15);
+var three = EXP.setupThree(60,15);
 var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 var area = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 16});
@@ -158,11 +158,13 @@ Using setupThree() also allows an animation to be recorded on a frame-by-frame b
 
 * EXP.setupThree()
 	Parameters:
-	* autostart: boolean. Default is true.
 	* fps: frames per second to record, if recording.
 	* seconds: seconds of footage to record, if recording.
 		
-`var three = EXP.setupThree(true, 60,15);`
+```var three = EXP.setupThree(60,15);
+// can now access three.camera, three.renderer, three.scene```
+
+Technical note: The result of a EXP.setupThree() call is also available at EXP.threeEnvironment. This is used internally to create three.js entities. As a result, the three.js environment is a 'singleton': after the first call, calling EXP.setupThree() multiple times will return the same object each time.
 
 # Presentations
 If you want to synchronize text-based slides to your animations, use an EXP.Director().

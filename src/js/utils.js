@@ -34,7 +34,7 @@ class Utils{
 
 
 	static assertPropExists(thing, name){
-		if(!(name in thing)){
+		if(!thing || !(name in thing)){
 			console.error("ERROR! "+name+" not present in required property");
             console.trace();
 		}

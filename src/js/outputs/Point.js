@@ -1,3 +1,5 @@
+import { threeEnvironment } from '../ThreeEnvironment.js';
+
 export default class Point{
 	constructor(options){
 		/*options: color: <THREE.Color or hex code
@@ -14,7 +16,7 @@ export default class Point{
 
 		this.mesh.position.set(this.x,this.y,this.z);
 		this.mesh.scale.setScalar(this.width/2);
-		three.scene.add(this.mesh);
+		threeEnvironment.scene.add(this.mesh);
 
 		this.x = options.x || 0;
 		this.y = options.y || 0;

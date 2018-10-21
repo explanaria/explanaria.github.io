@@ -3,6 +3,7 @@ import { Utils } from './utils.js';
 import { Transformation } from './Transformation.js';
 
 import * as math from './math.js';
+import { threeEnvironment } from './ThreeEnvironment.js';
 
 class Animation{
 	constructor(target, toValues, duration, staggerFraction){
@@ -47,7 +48,7 @@ r
 
 		//begin
 		this._updateCallback = this.update.bind(this)
-		three.on("update",this._updateCallback);
+		threeEnvironment.on("update",this._updateCallback);
 	}
 	update(time){
 		this.elapsedTime += time.delta;	
@@ -102,7 +103,7 @@ r
 		for(var prop in this.toValues){
 			this.target[prop] = this.toValues[prop];
 		}
-		three.removeEventListener("update",this._updateCallback);
+		threeEnvironment.removeEventListener("update",this._updateCallback);
 		//Todo: delete this
 	}
 }

@@ -1,4 +1,5 @@
 import {OutputNode} from '../Node.js';
+import { threeEnvironment } from '../ThreeEnvironment.js';
 
 class LineOutput extends OutputNode{
 	constructor(options = {}){
@@ -34,7 +35,7 @@ class LineOutput extends OutputNode{
 
 		this.opacity = this._opacity; // setter sets transparent flag if necessary
 
-		three.scene.add(this.mesh);
+		threeEnvironment.scene.add(this.mesh);
 	}
 	makeGeometry(){
 		// follow http://blog.cjgammon.com/threejs-geometry

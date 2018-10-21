@@ -1,5 +1,6 @@
 import { LineOutput } from './LineOutput.js';
 import { Utils } from '../utils.js';
+import { threeEnvironment } from '../ThreeEnvironment.js';
 
 export class VectorOutput extends LineOutput{
 	constructor(options = {}){
@@ -35,7 +36,7 @@ export class VectorOutput extends LineOutput{
 
 		this.makeGeometry();
 
-		three.scene.add(this.lineMesh);
+		threeEnvironment.scene.add(this.lineMesh);
 	}
 	_onFirstActivation(){
 		super._onFirstActivation();
@@ -52,13 +53,13 @@ export class VectorOutput extends LineOutput{
 		//remove any previous arrowheads
 		for(var i=0;i<this.arrowheads.length;i++){
 			let arrow = this.arrowheads[i];
-			three.scene.remove(arrow);
+			threeEnvironment.scene.remove(arrow);
 		}
 
 		this.arrowheads = new Array(this.numArrowheads);
 		for(var i=0;i<this.numArrowheads;i++){
 			this.arrowheads[i] = new THREE.Mesh(this.coneGeometry, this.material);
-			three.scene.add(this.arrowheads[i]);
+			threeEnvironment.scene.add(this.arrowheads[i]);
 		}
 		console.log("number of arrowheads (= number of lines):"+ this.numArrowheads);
 	}

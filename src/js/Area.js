@@ -40,10 +40,7 @@ class Area extends Node{
 		}
 
 		//the number of times every child's expr is called
-		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y)
-
-		this.children = [];
-		this.parent = null;
+		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y);
 	}
 	activate(t){
 		//Use this to evaluate expr() and update the result, cascade-style.

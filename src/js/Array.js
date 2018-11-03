@@ -32,10 +32,7 @@ class EXPArray extends Node{
 		this.itemDimensions = [this.data.length]; // array to store the number of times this is called per dimension.
 
 		//the number of times every child's expr is called
-		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y)
-
-		this.children = [];
-		this.parent = null;
+		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y);
 	}
 	activate(t){
 		if(this.arrayTypeDimensions == 0){

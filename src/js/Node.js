@@ -7,7 +7,10 @@
 */
 
 class Node{
-	constructor(){}
+	constructor(){        
+		this.children = [];
+		this.parent = null;        
+    }
 	add(thing){
 		//chainable so you can a.add(b).add(c) to make a->b->c
 		this.children.push(thing);
@@ -24,6 +27,17 @@ class Node{
 		}
 		return this;
 	}
+    getTopParent(){
+        const var MAX_CHAIN = 1000;
+        let parentCount = 0;
+		let root = this;
+		while(root.parent !== null && parentCount < MAX_CHAIN){
+			root = root.parent;
+            parentCount+= 1;
+		}
+		if(parentCount >= MAX_CHAIN)throw new Error("Unable to find top-level parent!");
+        return root;
+    }
 }
 
 class OutputNode{ //more of a java interface, really

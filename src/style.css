@@ -1,6 +1,5 @@
 #gui { position: absolute; top: 50px; left: 0px }
 body{ 
-	background: #dddddd;
     margin: 0;
     padding: 0;
     border: 0;
@@ -11,7 +10,7 @@ body{
 	transition: opacity 1s ease-in-out;
 }
 .exp-label, .exp-text{
-	font-family: 'Lora', "sans-serif"; 
+	font-family: 'Lora', "serif"; 
 	position:absolute; bottom:10%; 
 	text-align:center;
 	width: 90%;
@@ -60,7 +59,7 @@ body{
 
 
 .exp-math{
-	font-family: "Computer Modern", serif; /* But of course! */
+	font-family: "Computer Modern Serif", serif; /* But of course! */
 	font-style: normal;
 	font-size: 3em; 
 	transition: inherit;
@@ -149,22 +148,36 @@ body{
 }
 /* From spratt.github.io/Computer-Modern */
   @font-face {
-    font-family: "Computer Modern";
-    src: url('./fonts/cmunss-webfont.woff') format('woff2');
+    font-family: "Computer Modern Sans";
+    src: url('./fonts/cmunss-webfont.woff') format('woff');
   }
   @font-face {
-    font-family: "Computer Modern";
-    src: url('./fonts/cmunsx-webfont.woff') format('woff2');
+    font-family: "Computer Modern Sans";
+    src: url('./fonts/cmunsx-webfont.woff') format('woff');
     font-weight: bold;
-  }/*
-  @font-face {
-    font-family: "Computer Modern";
-    src: url('./fonts/cmunsi-webfont.woff') format('woff2');
-    font-style: italic, oblique;
   }
-  @font-face {
-    font-family: "Computer Modern";
-    src: url('./fonts/cmunbxo-webfont.woff') format('woff2');
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunrm-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunsl-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunbl-webfont.woff') format('woff');
     font-weight: bold;
-    font-style: italic, oblique;
-  }*/
+    font-style: italic;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunbx-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+

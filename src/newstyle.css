@@ -1,0 +1,201 @@
+body{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size:16px;
+	transition: opacity 1s ease-in-out;
+}
+
+/* index.html specific CSS */
+
+.container{
+}
+#mainiframecontainer{
+    max-height:800px;
+    height:60%;
+    width:80%;
+    margin: auto;
+}
+#mainiframe{
+    width:100%;
+    height:70vh; /* 60% of height */
+    border: none;
+    margin: 0;
+    overflow: hidden;
+    border-bottom: 1px solid #ddd;
+
+}
+.mainheader{
+    background-color: #222;
+    color: #eee;
+    padding: 2em 0 1em 0;
+	font-family: "Computer Modern Sans", serif;
+	text-align:center;
+    line-height:0.9;
+}  
+.mainheader h1{
+    font-size: 3em;
+    margin: 0em;
+    font-family: "Computer Modern Serif", serif;
+}  
+.mainheader aside{
+    font-size: 1em;
+}  
+
+#examplecontainer{
+    margin: auto;
+    max-width: 850px;
+    padding: 0 15px;
+	font-family: "Computer Modern Sans", sans-serif;
+	text-align:center;
+}
+
+#examplecontainer h2{
+    margin-bottom: 0px;
+}
+
+.row {
+  display: flex;
+  flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+.examplelink {
+  flex-basis: 100%;
+  margin:16px;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding:1em;
+  background-color: #eee
+
+}
+
+.examplepic{
+    width: 50%;
+}
+
+.column {
+  flex-basis: 100%;
+}
+
+@media screen and (min-width: 800px) {
+  .column {
+    flex: 1;
+  }
+  .examplelink {
+    flex: 20%;
+  }
+    .mainheader h1{
+        font-size: 6em;
+        margin: 0em;
+    }  
+    .mainheader aside{
+        font-size: 1.2em;
+    }  
+}
+
+
+
+/*  explanaria-specific CSS                               */
+
+
+.exp-label, .exp-text{
+	font-family: 'Computer Modern Sans', "sans-serif";
+	text-underline-position: under;
+    -webkit-text-decoration-skip: auto;
+	text-decoration-skip-ink: auto;
+	-webkit-text-decoration-skip-ink: auto;
+    text-decoration-skip: auto;
+	pointer-events: none; 
+	text-shadow:
+
+		 4px  0px 0px rgb(255, 255, 255),
+		-4px  0px 0px rgb(255, 255, 255),
+		 0px  4px 0px rgb(255, 255, 255),
+		 0px -4px 0px rgb(255, 255, 255),
+
+		-3px -2px 0px rgb(255, 255, 255),
+		-3px  2px 0px rgb(255, 255, 255),
+		 3px  2px 0px rgb(255, 255, 255),
+		 3px -2px 0px rgb(255, 255, 255),
+
+		-2px -3px 0px rgb(255, 255, 255),
+		-2px  3px 0px rgb(255, 255, 255),
+		 2px  3px 0px rgb(255, 255, 255),
+		 2px -3px 0px rgb(255, 255, 255),
+
+		-1px -2px 1px rgb(255, 255, 255),
+		-2px -1px 1px rgb(255, 255, 255),
+		-1px  2px 1px rgb(255, 255, 255),
+		-2px  1px 1px rgb(255, 255, 255),
+		 1px  2px 1px rgb(255, 255, 255),
+		 2px  1px 1px rgb(255, 255, 255),
+		 1px -2px 1px rgb(255, 255, 255),
+		 2px -1px 1px rgb(255, 255, 255);
+	transition: inherit;
+}
+.exp-label{
+	font-size: 2.5em; 
+}
+.exp-text{
+	font-size: 1.5em; 
+}
+.exp-text aside{
+	font-size: 80%;
+}
+
+
+.exp-math{
+	font-family: "Computer Modern Serif", serif; /* But of course! */
+	font-style: normal;
+	font-size: 3em; 
+	transition: inherit;
+}
+.exp-math sup, sub{
+	z-index:-1;
+	position: relative
+}
+
+.exp-small{
+	font-size: 75%;
+	margin: 0;
+}
+
+
+
+
+/* From spratt.github.io/Computer-Modern */
+  @font-face {
+    font-family: "Computer Modern Sans";
+    src: url('./fonts/cmunss-webfont.woff') format('woff');
+  }
+  @font-face {
+    font-family: "Computer Modern Sans";
+    src: url('./fonts/cmunsx-webfont.woff') format('woff');
+    font-weight: bold;
+  }
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunrm-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunsl-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunbl-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunbx-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+

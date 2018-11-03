@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="favicon.ico"/>
+  <title>Explanaria</title>
+
+  <link type="text/css" rel="stylesheet" href="./src/newstyle.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <style>
+	.bigcontainer{
+
+		type: flex
+		divisions: 5
+	}
+	.infopart: 0-2
+	.demopart: 3-5
+	/*
+	.textcontainer{
+		border: 1px solid #ccc;
+		border-radius: 20px;
+		background-color: rgba(255,255,255, 0.5);
+	}*/
+
+  </style>
+</head>
+<body>
+	<div class="container">
+		<header class="mainheader">
+		    <h1>Explanaria</h1>
+            <br />
+		    <aside>A framework for building animated explanations of math</aside>
+       </header>
+
+    <div id="mainiframecontainer">
+    <iframe id="mainiframe" src="examples/fancier_transformations.html" scrolling='no'></iframe>
+    </div>
+
+    <div id="examplecontainer">
+
+        <h2>Full-Length Explanations of Math Concepts</h2>
+
+	    <div class="row">
+
+			    <article class="examplelink"><a href="examples/explained_sine_definition.html"><img class="examplepic" src="examples/example_thumbnails/explained_sine_definition.png"></img><p>A Visual Definition of Sine Waves</p></a></article>
+
+			    <article class="examplelink"><a href="examples/portal_problem/index.html">Portals and Conservation of Energy: a full-length presentation </a></article>
+	    </div>
+
+        <h3>Interactive Visual Illustrations</h3>
+
+	    <div class="row">
+
+                <article class="examplelink"><a href="examples/manifolds.html"><img class="examplepic" src="examples/example_thumbnails/manifolds.png"></img><p>The Tangent Plane of a Manifold</p></a></article>
+
+			    <article class="examplelink"><a href="examples/complex_inversion.html">What does f(z)=1/z do to the complex plane?</a></article>
+
+			    <article class="examplelink"><a href="examples/winding_number.html">The Winding Number</a></article>
+
+			    <article class="examplelink"><a href="examples/helix_tangent_space.html">The Tangent Space of a Helical Curve</a></article>
+
+			    <article class="examplelink"><a href="examples/groupactions.html">Group Actions</a></article>
+	    </div>
+    </div>
+</body>
+</html>

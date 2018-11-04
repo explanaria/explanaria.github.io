@@ -22,7 +22,7 @@ class PointOutput extends OutputNode{
 	}
 	_onAdd(){ //should be called when this is .add()ed to something
 		//climb up parent hierarchy to find the Area
-		let root = this.getTopParent();
+		let root = this.getClosestDomain();
 
 		this.numCallsPerActivation = root.numCallsPerActivation;
 

@@ -1,9 +1,9 @@
 "use strict";
 
 import { Utils } from './utils.js';
-import Node from './Node.js';
+import DomainNode from './Node.js';
 
-class Area extends Node{
+class Area extends DomainNode{
 	constructor(options){
 		super();
 
@@ -84,14 +84,6 @@ class Area extends Node{
 		}
 
 		this.onAfterActivation(); // call children if necessary
-	}
-	onAfterActivation(){
-		// do nothing
-
-		//but call all children
-		for(var i=0;i<this.children.length;i++){
-			this.children[i].onAfterActivation()
-		}
 	}
 	_callAllChildren(...coordinates){
 		for(var i=0;i<this.children.length;i++){

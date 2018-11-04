@@ -21,14 +21,6 @@ class Transformation extends Node{
 			this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result)
 		}
 	}
-	onAfterActivation(){
-		// do nothing
-
-		//but call all children
-		for(var i=0;i<this.children.length;i++){
-			this.children[i].onAfterActivation()
-		}
-	}
 	clone(){
 		let thisExpr = this.expr;
 		let clone = new Transformation({expr: thisExpr.bind()});

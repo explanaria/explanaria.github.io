@@ -1,8 +1,8 @@
 "use strict";
 
-import Node from './Node.js';
+import DomainNode from './Node.js';
 
-class EXPArray extends Node{
+class EXPArray extends DomainNode{
 	constructor(options){
 		super();
 		/*var points = new EXP.Array({
@@ -47,14 +47,6 @@ class EXPArray extends Node{
 		}
 
 		this.onAfterActivation(); // call children if necessary
-	}
-	onAfterActivation(){
-		// do nothing
-
-		//but call all children
-		for(var i=0;i<this.children.length;i++){
-			this.children[i].onAfterActivation()
-		}
 	}
 	_callAllChildren(...coordinates){
 		for(var i=0;i<this.children.length;i++){

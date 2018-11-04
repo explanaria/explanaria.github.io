@@ -83,8 +83,8 @@ class SurfaceOutput extends OutputNode{
 
 	}
 	_onAdd(){
-		//climb up parent hierarchy to find the Area
-		let root = this.getTopParent();
+		//climb up parent hierarchy to find the DomainNode we're rendering from
+		let root = this.getClosestDomain();
 	
 		//todo: implement something like assert root typeof RootNode
 

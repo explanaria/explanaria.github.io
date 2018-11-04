@@ -7,7 +7,10 @@
 */
 
 class Node{
-	constructor(){}
+	constructor(){        
+		this.children = [];
+		this.parent = null;        
+    }
 	add(thing){
 		//chainable so you can a.add(b).add(c) to make a->b->c
 		this.children.push(thing);
@@ -24,14 +27,61 @@ class Node{
 		}
 		return this;
 	}
+    getTopParent(){ //find the parent of the parent of the... until there's no more parents.
+        const MAX_CHAIN = 100;
+        let parentCount = 0;
+		let root = this;
+		while(root !== null && root.parent !== null && parentCount < MAX_CHAIN){
+			root = root.parent;
+            parentCount+= 1;
+		}
+		if(parentCount >= MAX_CHAIN)throw new Error("Unable to find top-level parent!");
+        return root;
+    }
+    getClosestDomain(){
+        /* Find the DomainNode that this Node is being called from.
+        Traverse the chain of parents upwards until we find a DomainNode, at which point we return it.
+        This allows an output to resize an array to match a domainNode's numCallsPerActivation, for example.
+
+        Note that this returns the MOST RECENT DomainNode ancestor - it's assumed that domainnodes overwrite one another.
+        */
+        const MAX_CHAIN = 100;
+        let parentCount = 0;
+		let root = this.parent; //start one level up in case this is a DomainNode already. we don't want that
+		while(root !== null && root.parent !== null && !root.isDomainNode && parentCount < MAX_CHAIN){
+			root = root.parent;
+            parentCount+= 1;
+		}
+		if(parentCount >= MAX_CHAIN)throw new Error("Unable to find parent!");
+        if(root === null || !root.isDomainNode)throw new Error("No DomainNode parent found!");
+        return root;
+    }
+
+	onAfterActivation(){
+		// do nothing
+		//but call all children
+		for(var i=0;i<this.children.length;i++){
+			this.children[i].onAfterActivation();
+		}
+	}
 }
 
-class OutputNode{ //more of a java interface, really
-	constructor(){}
+class OutputNode extends Node{ //more of a java interface, really
+	constructor(){super();}
 	evaluateSelf(i, t, x, y, z){}
 	onAfterActivation(){}
 	_onAdd(){}
 }
 
+class DomainNode extends Node{ //A node that calls other functions over some range.
+	constructor(){
+        super();
+		this.itemDimensions = []; // array to store the number of times this is called per dimension.
+        this.numCallsPerActivation = null; // number of times any child node's evaluateSelf() is called
+    }
+    activate(t){}
+}
+DomainNode.prototype.isDomainNode = true;
+
 export default Node;
-export {OutputNode};
+export {OutputNode, DomainNode};

@@ -19,19 +19,10 @@ class PointOutput extends OutputNode{
 
 		this.numCallsPerActivation = 0; //should always be equal to this.points.length
 		this._activatedOnce = false;
-
-		this.parent = null;
 	}
 	_onAdd(){ //should be called when this is .add()ed to something
-
-		let parentCount = 0;
 		//climb up parent hierarchy to find the Area
-		let root = this;
-		while(root.parent !== null && parentCount < 50){
-			root = root.parent;
-			parentCount++;
-		}
-		if(parentCount >= 50)throw new Error("Unable to find root!");
+		let root = this.getClosestDomain();
 
 		this.numCallsPerActivation = root.numCallsPerActivation;
 

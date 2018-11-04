@@ -11,9 +11,6 @@ class Transformation extends Node{
 		EXP.Utils.assertType(options.expr, Function);
 
 		this.expr = options.expr;
-
-		this.children = [];
-		this.parent = null;
 	}
 	evaluateSelf(...coordinates){
 		//evaluate this Transformation's _expr, and broadcast the result to all children.
@@ -22,14 +19,6 @@ class Transformation extends Node{
 
 		for(var i=0;i<this.children.length;i++){
 			this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result)
-		}
-	}
-	onAfterActivation(){
-		// do nothing
-
-		//but call all children
-		for(var i=0;i<this.children.length;i++){
-			this.children[i].onAfterActivation()
 		}
 	}
 	clone(){

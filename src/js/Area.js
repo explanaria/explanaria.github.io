@@ -1,9 +1,9 @@
 "use strict";
 
 import { Utils } from './utils.js';
-import Node from './Node.js';
+import { DomainNode } from './Node.js';
 
-class Area extends Node{
+class Area extends DomainNode{
 	constructor(options){
 		super();
 
@@ -23,7 +23,6 @@ class Area extends Node{
 		Utils.assert(options.bounds[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
 
 		this.bounds = options.bounds;
-
 		this.numItems = options.numItems || 16;
 
 		this.itemDimensions = []; // array to store the number of times this is called per dimension.
@@ -40,10 +39,7 @@ class Area extends Node{
 		}
 
 		//the number of times every child's expr is called
-		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y)
-
-		this.children = [];
-		this.parent = null;
+		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y);
 	}
 	activate(t){
 		//Use this to evaluate expr() and update the result, cascade-style.
@@ -87,14 +83,6 @@ class Area extends Node{
 		}
 
 		this.onAfterActivation(); // call children if necessary
-	}
-	onAfterActivation(){
-		// do nothing
-
-		//but call all children
-		for(var i=0;i<this.children.length;i++){
-			this.children[i].onAfterActivation()
-		}
 	}
 	_callAllChildren(...coordinates){
 		for(var i=0;i<this.children.length;i++){

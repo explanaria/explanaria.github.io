@@ -29,8 +29,6 @@ class SurfaceOutput extends OutputNode{
 		this.itemDimensions = []; // how many times to be called in each direction
 		this._outputDimensions = 3; //how many dimensions per point to store?
 
-		this.parent = null;
-
 		this.init();
 	}
 	init(){
@@ -86,11 +84,8 @@ class SurfaceOutput extends OutputNode{
 
 	}
 	_onAdd(){
-		//climb up parent hierarchy to find the Area
-		let root = this;
-		while(root.parent !== null){
-			root = root.parent;
-		}
+		//climb up parent hierarchy to find the DomainNode we're rendering from
+		let root = this.getClosestDomain();
 	
 		//todo: implement something like assert root typeof RootNode
 

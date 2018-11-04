@@ -2,6 +2,8 @@ export { Array } from './js/Array.js';
 export { Area } from './js/Area.js';
 
 export { Transformation } from './js/Transformation.js';
+export { HistoryRecorder } from './js/HistoryRecorder.js';
+
 export { TransitionTo, Animation } from './js/Animation.js';
 
 export { setupThree, ThreeasyEnvironment, ThreeasyRecorder }from './js/three_bootstrap.js';

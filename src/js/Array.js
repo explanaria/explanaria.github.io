@@ -1,8 +1,8 @@
 "use strict";
 
-import Node from './Node.js';
-
-class EXPArray extends Node{
+import { DomainNode }  from './Node.js';
+//test??
+class EXPArray extends DomainNode{
 	constructor(options){
 		super();
 		/*var points = new EXP.Array({
@@ -26,16 +26,12 @@ class EXPArray extends Node{
 		EXP.Utils.assert(options.data[0].length != 0); //don't accept [[]], data needs to be something like [[1,2]].
 
 		this.data = options.data;
-
 		this.numItems = this.data.length;
 
 		this.itemDimensions = [this.data.length]; // array to store the number of times this is called per dimension.
 
 		//the number of times every child's expr is called
-		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y)
-
-		this.children = [];
-		this.parent = null;
+		this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y);
 	}
 	activate(t){
 		if(this.arrayTypeDimensions == 0){
@@ -50,14 +46,6 @@ class EXPArray extends Node{
 		}
 
 		this.onAfterActivation(); // call children if necessary
-	}
-	onAfterActivation(){
-		// do nothing
-
-		//but call all children
-		for(var i=0;i<this.children.length;i++){
-			this.children[i].onAfterActivation()
-		}
 	}
 	_callAllChildren(...coordinates){
 		for(var i=0;i<this.children.length;i++){

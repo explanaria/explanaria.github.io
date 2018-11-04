@@ -1,7 +1,7 @@
 "use strict";
 
 import { Utils } from './utils.js';
-import DomainNode from './Node.js';
+import { DomainNode } from './Node.js';
 
 class Area extends DomainNode{
 	constructor(options){

@@ -47,13 +47,12 @@ class Node{
         */
         const MAX_CHAIN = 100;
         let parentCount = 0;
-		let root = this;
+		let root = this.parent; //start one level up in case this is a DomainNode already. we don't want that
 		while(root !== null && root.parent !== null && !root.isDomainNode && parentCount < MAX_CHAIN){
 			root = root.parent;
             parentCount+= 1;
 		}
 		if(parentCount >= MAX_CHAIN)throw new Error("Unable to find parent!");
-        console.log(root);
         if(root === null || !root.isDomainNode)throw new Error("No DomainNode parent found!");
         return root;
     }
@@ -79,10 +78,10 @@ class DomainNode extends Node{ //A node that calls other functions over some ran
         super();
 		this.itemDimensions = []; // array to store the number of times this is called per dimension.
         this.numCallsPerActivation = null; // number of times any child node's evaluateSelf() is called
-        this.isDomainNode = true; // needed for Node.getClosestDomain()
     }
     activate(t){}
 }
+DomainNode.prototype.isDomainNode = true;
 
 export default Node;
 export {OutputNode, DomainNode};

@@ -1,7 +1,7 @@
 "use strict";
 
-import DomainNode from './Node.js';
-
+import { DomainNode }  from './Node.js';
+//test??
 class EXPArray extends DomainNode{
 	constructor(options){
 		super();
@@ -26,7 +26,6 @@ class EXPArray extends DomainNode{
 		EXP.Utils.assert(options.data[0].length != 0); //don't accept [[]], data needs to be something like [[1,2]].
 
 		this.data = options.data;
-
 		this.numItems = this.data.length;
 
 		this.itemDimensions = [this.data.length]; // array to store the number of times this is called per dimension.

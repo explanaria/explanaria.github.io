@@ -23,7 +23,6 @@ class Area extends DomainNode{
 		Utils.assert(options.bounds[0].length != 0); //don't accept [[]], it needs to be [[1,2]].
 
 		this.bounds = options.bounds;
-
 		this.numItems = options.numItems || 16;
 
 		this.itemDimensions = []; // array to store the number of times this is called per dimension.

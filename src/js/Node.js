@@ -77,7 +77,6 @@ class OutputNode extends Node{ //more of a java interface, really
 class DomainNode extends Node{ //A node that calls other functions over some range.
 	constructor(){
         super();
-		this.numItems = null;
 		this.itemDimensions = []; // array to store the number of times this is called per dimension.
         this.numCallsPerActivation = null; // number of times any child node's evaluateSelf() is called
         this.isDomainNode = true; // needed for Node.getClosestDomain()

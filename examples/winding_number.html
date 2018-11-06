@@ -27,18 +27,19 @@
 		console.log("Unable to lock screen orientation (not mobile?)")
 	}
 
+    //coordinate system points
 	var area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
 	area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc}));
 
 	//curve
-	var a2 = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 300});
-	var id = new EXP.Transformation({'expr': (i,t,x) => [0,0,0]});
-	var t2 = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
-	var output = new EXP.PointOutput({width:0.2});
+	var a2 = new EXP.Array({data:[[0]]});
+	var t2 = new EXP.Transformation({'expr': (i,t,x) => [Math.cos(t*3)*radius(x*3+t*3),Math.sin(t*3)*radius(t*3),0]});
+	var output = new EXP.PointOutput({width:0.3});
+    var historyRecorder = new EXP.HistoryRecorder({memoryLength:200,recordFrameInterval:2});
 	var windingLine = new EXP.LineOutput({width: 5, opacity: 0})
 
-	a2.add(id).add(t2).add(output);
-	t2.add(windingLine);
+	a2.add(t2).add(output);
+	t2.add(historyRecorder).add(windingLine);
 
 	var params = {angleOffset: 0.3};
 
@@ -50,7 +51,7 @@
 		.add(new EXP.LineOutput({width:5, color:0x9999ff}));
 
 	//intersection points
-	var intersectionPts = new EXP.Area({bounds: [[0,2*Math.PI*5]],numItems: 6});
+	var intersectionPts = new EXP.Area({bounds: [[0,2*Math.PI*(3-1)]],numItems: 3});
 	var goToIntersection = new EXP.Transformation({expr: (i,t,theta) => [radius(theta+params.angleOffset)*Math.cos(theta+params.angleOffset), radius(theta+params.angleOffset)*Math.sin(theta+params.angleOffset)]})
 	var intersectionOutput = new EXP.PointOutput({width:0.4, color:0x5555ff});
 	intersectionPts.add(goToIntersection)
@@ -68,19 +69,19 @@
 
 	//demonstrate a path
 	function radius(theta){
-		return Math.sin(theta/2) + Math.sin(theta/3) + Math.sin(theta) + 3.1;
+		return Math.sin(theta/3) + Math.sin(theta) + 3.1;
 	}
 
 	async function animate(){
 
-		await EXP.delay(1000);
+		await EXP.delay(10);
 
-		EXP.TransitionTo(t2, {'expr': (i,t,x,y) => [Math.cos(x*6+t*3)*radius(x*6+t*3),Math.sin(x*6+t*3)*radius(x*6+t*3),0]});
-		await EXP.delay(4000);
-
+		EXP.TransitionTo(t2, {'expr': (i,t,x,y) => [Math.cos(x*3+t*3)*radius(x*3+t*3),Math.sin(x*3+t*3)*radius(x*3+t*3),0]});
 		EXP.TransitionTo(windingLine, {'opacity':1});
-		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,y,0]},3000);
 		await EXP.delay(5000);
+
+        EXP.TransitionTo(output, {'opacity':0});
+		await EXP.delay(2000);
 
 		//show line
 		EXP.TransitionTo(line, {'expr': (i,t,x,y) => [x,0.3]});
@@ -109,7 +110,7 @@
 	animate();
   </script>
 	<div id="label" class="exp-label exp-math" style="opacity: 0">
-		Winding number = 6
+		Winding number = #intersections = 3
 	</div>
 </body>
 </html>

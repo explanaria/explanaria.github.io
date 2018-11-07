@@ -83,20 +83,16 @@ class SurfaceOutput extends OutputNode{
 		this._activatedOnce = false;
 
 	}
-	_onAdd(){
-		//climb up parent hierarchy to find the DomainNode we're rendering from
-		let root = this.getClosestDomain();
-	
-		//todo: implement something like assert root typeof RootNode
-
-		this.numCallsPerActivation = root.numCallsPerActivation;
-		this.itemDimensions = root.itemDimensions;
-	}
 	_setUVs(uvs, index, u, v){
 
 	}
 	_onFirstActivation(){
-		this._onAdd(); //setup this.numCallsPerActivation and this.itemDimensions. used here again because cloning means the onAdd() might be called before this is connected to a type of domain
+        //setup this.numCallsPerActivation and this.itemDimensions. used here again because cloning means the onAdd() might be called before this is connected to a type of domain
+
+		//climb up parent hierarchy to find the DomainNode we're rendering from
+		let root = this.getClosestDomain();
+		this.numCallsPerActivation = root.numCallsPerActivation;
+		this.itemDimensions = root.itemDimensions;
 
 		// perhaps instead of generating a whole new array, this can reuse the old one?
 		let vertices = new Float32Array(this.numCallsPerActivation * this._outputDimensions);

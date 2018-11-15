@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - Torii as a manifold</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = EXP.setupThree(60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	three.camera.position.z = 4;
+
+	let blue = 0x0070f0;
+	let green = 0x50d050;
+
+	console.log("Loaded.");
+
+	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]], numItems: [17,17]});
+	var a=1;
+	var b=2;
+	var timeChange = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [theta1, theta2]});
+	var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => 
+		[(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
+	});
+    var wobbleSpace = new EXP.Transformation({'expr':(i,t,x,y,z) => [x,y,z]});
+	var output = new EXP.SurfaceOutput({opacity:0.5, color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
+
+	torus.add(timeChange).add(manifoldParametrization).add(wobbleSpace).add(output);
+
+
+	let objects = [torus];
+
+	three.on("update",function(time){
+		for(var x of objects){
+			x.activate(time.t);
+		}
+		//controls.update();
+	});
+
+    var presentation = new EXP.NonDecreasingDirector();
+	async function animate(){
+        await presentation.nextSlide();
+        EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x+Math.sin(t+x*y)/(Math.abs(x)+2),y+Math.sin(y+x/5+t*3+0.2)/(Math.abs(y)+2),z+Math.cos(t*2+z)/(Math.abs(z)+2)]});
+
+	}
+	animate();
+  </script>
+	<section id="label1" class="exp-label exp-slide">
+			<h1>Homotopy</h1>
+			<aside>Press the right arrow to advance.</aside>
+    </section>
+
+	<section id="label1" class="exp-label exp-slide">
+			This is a donut. It comes to you right out of the mathematical oven. Delicious!
+	</section>
+
+	<section id="label1" class="exp-label exp-slide">
+			But what  we move it around a little bit? It feels like we should
+	</section>
+</body>
+</html>

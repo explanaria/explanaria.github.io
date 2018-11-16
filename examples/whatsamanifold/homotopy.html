@@ -3,14 +3,28 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
-  <title>Explanarian - Torii as a manifold</title>
+  <title>Explanarian - Discovering Bagelness (What the Heck is a Manifold)</title>
   <script src="../../src/lib/three.js"></script>
   <script src="../../src/lib/socket.io.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
+  <script src="./lib/GLTFLoader.js"></script>
 
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+    <style>
+aside{
+    font-size:70%;
+}
+exp-label{
+    font-size: 1.5em;
+}
+exp-slide{
+    font-size: 1.5em;
+}
+
+</style>
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
@@ -18,15 +32,16 @@
   <script>
 	var three = EXP.setupThree(60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+    controls.enableKeys = false;
 
-	three.camera.position.z = 4;
+	three.camera.position.z = 5;
 
 	let blue = 0x0070f0;
 	let green = 0x50d050;
 
 	console.log("Loaded.");
 
-	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]], numItems: [17,17]});
+	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]], numItems: [33,17]});
 	var a=1;
 	var b=2;
 	var timeChange = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [theta1, theta2]});
@@ -34,39 +49,244 @@
 		[(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
 	});
     var wobbleSpace = new EXP.Transformation({'expr':(i,t,x,y,z) => [x,y,z]});
-	var output = new EXP.SurfaceOutput({opacity:0.5, color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
+	var output = new EXP.SurfaceOutput({opacity:0.6, color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
 
 	torus.add(timeChange).add(manifoldParametrization).add(wobbleSpace).add(output);
 
+    //two endpoints of the path
+    var points = new EXP.Array({data: [[2,0], [8,1]]});
+    let pointsOutput =new EXP.PointOutput({width:0.4,color: 0xffff00,opacity:0});
+    let wobbleSpace2 = points.add(manifoldParametrization.makeLink()).add(wobbleSpace.makeLink());
+    wobbleSpace2.add(pointsOutput);
 
-	let objects = [torus];
+    //ant model. How many math visualization programs can say they put an ant in their mathematical world? :)
+    var loader = new THREE.GLTFLoader();
+    loader.load( 'Ant_01.gltf', function ( gltf ) {
+        
+        antModel = gltf.scene.children[0];
+        antModel.rotation.x=Math.PI/2
+        antModel.scale.setScalar(0.05);
+        antModel.material.opacity = 0;
+        antModel.material.transparent=true;
+	    three.scene.add( antModel );
+    }, undefined, function ( e ) {
+	    console.error( e );
+    } );
+    let antModel = null;
+    let setAntPosition = new EXP.Transformation({'expr':(i,t,x,y,z)=>{ //passthrough but also intercept the data
+        if(i==0){
+            antModel.position.set(x,y,z+0.2);
+        };
+        return [];
+    }});
+    wobbleSpace2.add(setAntPosition);
+
+    var lineConnectingPoints = new EXP.Area({bounds: [[0,1]], numItems: [20]});
+    var lerpBetweenPoints = new EXP.Transformation({'expr': (i,t,lerpFactor) => EXP.Math.lerpVectors(lerpFactor, points.data[0],points.data[1])});
+    var lerpBetweenPoints2 = lerpBetweenPoints.clone();
+    let pointsLine = new EXP.LineOutput({width:20,color: 0xaaaa00,opacity:0});
+    let pointsLine2 = new EXP.LineOutput({width:20,color: 0xaaaa00,opacity:0});
+    let phaseJiggle = new EXP.Transformation({'expr':(i,t,x1,x2)=>[x1,x2]});
+    //line 2 - 1 wrap
+    lineConnectingPoints.add(lerpBetweenPoints2).add(phaseJiggle.makeLink())
+        .add(manifoldParametrization.makeLink()).add(wobbleSpace.makeLink()).add(pointsLine2);
+
+    //line 1
+    lineConnectingPoints.add(lerpBetweenPoints).add(phaseJiggle)
+        .add(manifoldParametrization.makeLink()).add(wobbleSpace.makeLink()).add(pointsLine);
+
+
+	let objects = [torus, lineConnectingPoints, points];
 
 	three.on("update",function(time){
 		for(var x of objects){
 			x.activate(time.t);
 		}
-		//controls.update();
+		controls.update();
 	});
 
     var presentation = new EXP.NonDecreasingDirector();
 	async function animate(){
+        await presentation.begin();
         await presentation.nextSlide();
+
+        await presentation.nextSlide();
+        EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x+Math.sin(1+x*y)/(Math.abs(x)+2),y+Math.sin(y+x/5+1*3+0.2)/(Math.abs(y)+2),z+Math.cos(1*2+z)/(Math.abs(z)+2)]});
+        await presentation.nextSlide();
+        await presentation.nextSlide();
+        await presentation.nextSlide();
+
+        controls.autoRotate=true; //begin rotating
+        //points
+        EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x,y,z]});
+        [pointsOutput,pointsLine].forEach((i)=>EXP.TransitionTo(i,{'opacity':1}));
+        if(antModel !== null)EXP.TransitionTo(antModel.material,{'opacity':1});
+
+        await presentation.nextSlide();
+
+        EXP.TransitionTo(phaseJiggle,{'expr':(i,t,x,y,z) => [x+i*(19-i)/40*Math.cos(t),y+i*(19-i)/40*Math.sin(t)]});
+        await presentation.nextSlide();EXP.TransitionTo(phaseJiggle,{'expr':(i,t,x,y,z) => [x+i*(19-i)/40*1,y+i*(19-i)/40*1]});
+        await presentation.delay(1250);
+        EXP.TransitionTo(phaseJiggle,{'expr':(i,t,x,y,z) => [x,y]},2000);
+        await presentation.nextSlide();
+        EXP.TransitionTo(lerpBetweenPoints,{'expr': (i,t,lerpFactor) => EXP.Math.lerpVectors(lerpFactor, points.data[0],[points.data[1][0]%(Math.PI*2),points.data[1][1]%(Math.PI*2)])});
+
+        //show more direct path
+        EXP.TransitionTo(lerpBetweenPoints,{'expr': (i,t,lerpFactor) => EXP.Math.lerpVectors(lerpFactor, points.data[0],[points.data[1][0]%(Math.PI*2),points.data[1][1]%(Math.PI*2)])});
+        await presentation.nextSlide();
+        EXP.TransitionTo(pointsLine2,{'opacity':1});
+
+        await presentation.nextSlide();
+        let lerpFunc = (t) => (Math.sin(t)+1)/2;  
+        EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x+Math.sin(t+x*y)/(Math.abs(x)+2),y+Math.sin(y+x/5+t*3+0.2)/(Math.abs(y)+2),z+Math.cos(t*2+z)/(Math.abs(z)+2)]});     
+         await presentation.nextSlide();
+
+        //show a sphere
+
+        EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x,y,z]});
+	    EXP.TransitionTo(manifoldParametrization,{'expr': (i,t,theta1,theta2) => [2*(Math.cos(theta1))*Math.cos(theta2/2),2*(Math.cos(theta1))*Math.sin(theta2/2),2*Math.sin(theta1)]});
+
+         await presentation.nextSlide(); 
+        EXP.TransitionTo(phaseJiggle,{'expr':(i,t,x,y,z) => [x+i*(19-i)/40*Math.cos(t),y+i*(19-i)/40*Math.sin(t)]});
+
+        await presentation.delay(2000);
+        EXP.TransitionTo(phaseJiggle,{'expr':(i,t,x,y,z) => [x,y,z]},2000);
+        EXP.TransitionTo(lerpBetweenPoints2,{'expr': (i,t,lerpFactor) => EXP.Math.lerpVectors(lerpFactor, points.data[0],[i>0 ?points.data[1][0] %(Math.PI*2):points.data[1][0] ,points.data[1][1]])},2000);
+
+        await presentation.nextSlide();
+
+        EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x+lerpFunc(t*2)*Math.sin(1+x*y)/(Math.abs(x)+2),y+lerpFunc(t*2)*Math.sin(y+x/5+1*3+0.2)/(Math.abs(y)+2),z+lerpFunc(t*2)*Math.cos(1*2+z)/(Math.abs(z)+2)]},500); //back and forth
+       
+         await presentation.nextSlide();
+        //back to wobbly bagel for the summary
+        EXP.TransitionTo(manifoldParametrization,{'expr': (i,t,theta1,theta2) => [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]});
+
         EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x+Math.sin(t+x*y)/(Math.abs(x)+2),y+Math.sin(y+x/5+t*3+0.2)/(Math.abs(y)+2),z+Math.cos(t*2+z)/(Math.abs(z)+2)]});
+         await presentation.nextSlide();
+         await presentation.nextSlide();
+
+        //pac-man torus
+             points.data = [[2+(2*Math.PI),3],[5,3]];
+        EXP.TransitionTo(manifoldParametrization,{'expr': (i,t,theta1,theta2) => 
+		        [theta1,theta2-3,0]
+	        });
+        EXP.TransitionTo(lerpBetweenPoints,{'expr': (i,t,lerpFactor) => EXP.Math.lerpVectors(lerpFactor, points.data[0],[i>0 ?(points.data[1][0]):points.data[1][0] ,points.data[1][1]])},2000);
+        EXP.TransitionTo(lerpBetweenPoints2,{'expr': (i,t,lerpFactor) => EXP.Math.lerpVectors(lerpFactor, points.data[0],[i>0 ?points.data[1][0] %(Math.PI*2):points.data[1][0] ,points.data[1][1]])},2000);
+
+        EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x%(2*Math.PI+0.001),y%(2*Math.PI+0.001),0]},500); //wraparound effect
+
+         await presentation.nextSlide();
+
+        //back to wobbly bagel for finale
+        EXP.TransitionTo(manifoldParametrization,{'expr': (i,t,theta1,theta2) => [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]});
+
+        EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x+Math.sin(t+x*y)/(Math.abs(x)+2),y+Math.sin(y+x/5+t*3+0.2)/(Math.abs(y)+2),z+Math.cos(t*2+z)/(Math.abs(z)+2)]});
+
+         await presentation.nextSlide();
+
 
 	}
 	animate();
   </script>
 	<section id="label1" class="exp-label exp-slide">
-			<h1>Homotopy</h1>
-			<aside>Press the right arrow to advance.</aside>
+			<h1>What the Heck is a Torus?</h1>
+			<aside>
+            or, Mathematicians Discover Ants Understand Bagels Really Well
+            <br /><br />Press the right arrow to advance.</aside>
     </section>
 
-	<section id="label1" class="exp-label exp-slide">
-			This is a donut. It comes to you right out of the mathematical oven. Delicious!
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+			This is a torus - the mathematical word for "a bagel-shape". It comes to you right out of the mathematical oven. Delicious!
 	</section>
 
-	<section id="label1" class="exp-label exp-slide">
-			But what  we move it around a little bit? It feels like we should
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+			But right as you're about to eat your bagel, a passing mathematician bumps into you and the torus shape gets squished! Oh no!
 	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        Is this weird thing still bagel-shaped? Maybe you think this squished bagel carries enough bagel-ness to be called a bagel (especially if you're hungry). But where do you draw the line?
+
+<aside>This shape is definitely not given by the same equations as a normal torus, so writing down equations won't help us. </aside>
+	</section>
+
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        So: how do you define 'bagel-ness'? And can we find a definition that says our squished shape is still a bagel?
+    </section>
+
+    <section id="label1" class="exp-label exp-slide" style="opacity:0">It turns out one way of defining bagel-ness is to enlist the help of an ant and looking at the ways you can walk on its surface. Let's say you're a delivery ant, walking on the surface of our bagel, and we want to walk between points A and points B to deliver a package.
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        How do we get there? There's a bunch of different paths the ant can take to get from point A to point B. Which one should our intrepid delivery ant choose?
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+       We should probably choose the shortest path. Here's one way of finding it: start with any path, and imagine it's a rubber band, stretched taut. Then, let it go. Our path-rubber-band will get tighter and tighter, until eventually it's as tight as can be around our shape's surface. 
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+       But that's <u>not</u> actually the shortest path - this second path is shorter! These are two different shortest paths, according to this rubber band!
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        In fact, we know that the two paths are different because it's actually impossible to rubber-band-pull our way from the first path to the second without lifting the rubber band. One way to see this is that the first path goes through the donut hole, and the second path doesn't.
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        And squishing our shape doesn't change that fact: as long as there's a hole in a shape, there'll always be more than one shortest path, even if we squish our shape in weird ways. We have our answer: if you have a shape and can find two different paths, that can't be rubber-banded into each other, that shape is a bagel! 
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        Here's something even cooler: using rubber bands, we can find "bagelness", but we can also use the same technique to find out if a shape has "sphereness" too! 
+	</section>
+
+    <section id="label1" class="exp-label exp-slide" style="opacity:0">
+    On a sphere, every path can be rubber-banded into only <u>one</u> shortest path. It's not like a bagel, where there are at least two different paths. In other words: putting rubber bands on a surface can tell the difference between spheres and bagels.
+	</section>
+
+
+    <section id="label1" class="exp-label exp-slide" style="opacity:0">
+    And just like before, this technique works for squished spheres too. In other words: putting rubber bands on a surface can tell the difference between spheres and bagels, no matter how you squish them.
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        In other words, thanks to our friendly ant deliveryinsect, we now know have a recipe to tell if a shape has enough bagelness to be a squished bagel or not:
+        <br />
+    <b>Bagelness (adj): When you take a shape, find more than one rubber-band-shortest-path on its surface, and you can't turn one path into another without cutting one of them apart.</b>
+    <br />Great!
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        And that's how a mathematician defines bagel-ness: by the number of paths an ant walking on the bagel can take to make deliveries! In fact, sometimes when a mathematician is trying to understand some really complicated shape, instead of studying the shape itself, they'll try to study the ways you can draw paths in that shape instead (treating rubber-band-movable paths as the same thing). If it has rubber-band-paths like a bagel, then it's a bagel in a weird, squishy way.
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        We can even use it to detect disguised bagels in video games. In the original Pac-Man, for example, if you walk far enough left you emerge on the right side of the screen. That means there's two paths to walk to the same points that can't be shortened - so the video game world of Pac-Man is actually torus-shaped too!
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+			A quick side note: the bagel-ness of a shape always stays the same when you squish it smoothly, but if you squish in such a way that you tear something, or make a surface not three-dimensional, then it might not stay the same. Mathematicians like to stick to types of squishing where:
+            <ul>
+                <li>You can undo the squish
+                <li>The squish is continuous (nothing teleports)
+                <li>If you pause the squishing transformation, the partially-squished result is still be a smooth surface.
+            </ul>
+        Mathematicians call this kind of smooth transformation a "homotopy".
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+			In conclusion: if you want to be able to recognize shapes no matter how (smoothly) deformed and squished they might get, mathematicians look at the paths between points on that shape.
+
+<aside>*smoothly squished</aside>
+	</section>
+
+    <section class="exp-label exp-slide" style="opacity:0">
+
+    Thanks!
+    <br />
+    Credits: <a href="https://poly.google.com/view/9x6pGMV83jt">Ant model from Poly By Google</a>, CC-BY
+
+    </section>
 </body>
 </html>

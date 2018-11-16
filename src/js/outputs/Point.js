@@ -44,6 +44,7 @@ export default class Point{
 		let mat = this.mesh.material;
 		mat.opacity = opacity;
 		mat.transparent = opacity < 1;
+        mat.visible = opacity > 0;
 		this._opacity = opacity;
 	}
 	get opacity(){

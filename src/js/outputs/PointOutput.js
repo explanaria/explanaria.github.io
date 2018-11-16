@@ -30,7 +30,6 @@ class PointOutput extends OutputNode{
 			for(var i=this.points.length;i<this.numCallsPerActivation;i++){
 				this.points.push(new Point({width: 1,color:this._color, opacity:this._opacity}));
 				this.points[i].mesh.scale.setScalar(this._width); //set width by scaling point
-				this.points[i].mesh.visible = false; //instantiate the point
 			}
 		}
 	}
@@ -47,7 +46,6 @@ class PointOutput extends OutputNode{
 		if(x !== undefined)point.x = x;
 		if(y !== undefined)point.y = y;
 		if(z !== undefined)point.z = z;
-		point.mesh.visible = true;
 	}
 	getPoint(i){
 		return this.points[i];

@@ -55,6 +55,7 @@ class SurfaceOutput extends OutputNode{
 
 		this.opacity = this._opacity; // setter sets transparent flag if necessary
 		this.color = this._color; //setter sets color uniform
+		this._uniforms.opacity.value = this._opacity;
 		this._uniforms.gridSquares.value = this._gridSquares;
 		this._uniforms.showGrid.value = this._showGrid ? 1 : 0;
 		this._uniforms.showSolid.value = this._showSolid ? 1 : 0;
@@ -259,6 +260,7 @@ class SurfaceOutput extends OutputNode{
 		this.material.transparent = opacity < 1;
 		this.material.visible = opacity > 0;
 		this._opacity = opacity;
+        this._uniforms.opacity.value = opacity;
 	}
 	get opacity(){
 		return this._opacity;

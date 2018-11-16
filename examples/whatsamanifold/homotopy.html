@@ -183,6 +183,7 @@ exp-slide{
         EXP.TransitionTo(wobbleSpace, {'expr':(i,t,x,y,z) => [x+Math.sin(t+x*y)/(Math.abs(x)+2),y+Math.sin(y+x/5+t*3+0.2)/(Math.abs(y)+2),z+Math.cos(t*2+z)/(Math.abs(z)+2)]});
 
          await presentation.nextSlide();
+         await presentation.nextSlide();
 
 
 	}
@@ -206,7 +207,7 @@ exp-slide{
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
         Is this weird thing still bagel-shaped? Maybe you think this squished bagel carries enough bagel-ness to be called a bagel (especially if you're hungry). But where do you draw the line?
 
-<aside>This shape is definitely not given by the same equations as a normal torus, so writing down equations won't help us. </aside>
+<aside>(This shape is definitely not given by the same equations as a normal torus, so writing down equations won't help us.) </aside>
 	</section>
 
 
@@ -254,11 +255,15 @@ exp-slide{
         In other words, thanks to our friendly ant deliveryinsect, we now know have a recipe to tell if a shape has enough bagelness to be a squished bagel or not:
         <br />
     <b>Bagelness (adj): When you take a shape, find more than one rubber-band-shortest-path on its surface, and you can't turn one path into another without cutting one of them apart.</b>
-    <br />Great!
+    <br /><br />Great!
+
+
+         <aside>(I've only shown you spheres and toruses, and I'm glossing over the fact that there are even more complex surfaces out there, but this works for those too. )</aside>
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
         And that's how a mathematician defines bagel-ness: by the number of paths an ant walking on the bagel can take to make deliveries! In fact, sometimes when a mathematician is trying to understand some really complicated shape, instead of studying the shape itself, they'll try to study the ways you can draw paths in that shape instead (treating rubber-band-movable paths as the same thing). If it has rubber-band-paths like a bagel, then it's a bagel in a weird, squishy way.
+
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
@@ -272,13 +277,12 @@ exp-slide{
                 <li>The squish is continuous (nothing teleports)
                 <li>If you pause the squishing transformation, the partially-squished result is still be a smooth surface.
             </ul>
-        Mathematicians call this kind of smooth transformation a "homotopy".
+        <aside>(Mathematicians call this kind of smooth transformation a "homotopy".)</aside>
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
 			In conclusion: if you want to be able to recognize shapes no matter how (smoothly) deformed and squished they might get, mathematicians look at the paths between points on that shape.
 
-<aside>*smoothly squished</aside>
 	</section>
 
     <section class="exp-label exp-slide" style="opacity:0">

@@ -33,11 +33,10 @@
 	var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => 
 		[(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
 	});
-	var output = new EXP.SurfaceOutput({opacity:0.5, color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
+	var output = new EXP.SurfaceOutput({opacity:0.9, color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
 
 	torus.add(timeChange).add(manifoldParametrization).add(output);
 
-	console.warn("WARNING: THIS IS HORRIBLY BROKEN. FIX IT. DO YOUR DIFFERENTIAL TOPOLOGY PROPERLY")
 	function calc_torus_tangent_space(theta1, theta2){
 
 

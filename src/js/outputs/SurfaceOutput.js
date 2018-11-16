@@ -55,6 +55,7 @@ class SurfaceOutput extends OutputNode{
 
 		this.opacity = this._opacity; // setter sets transparent flag if necessary
 		this.color = this._color; //setter sets color uniform
+		this._uniforms.opacity.value = this._opacity;
 		this._uniforms.gridSquares.value = this._gridSquares;
 		this._uniforms.showGrid.value = this._showGrid ? 1 : 0;
 		this._uniforms.showSolid.value = this._showSolid ? 1 : 0;
@@ -221,10 +222,10 @@ class SurfaceOutput extends OutputNode{
 
 				//c is the index of the point 1 away in the x direction
 				if(j < this.itemDimensions[0]-1){
-					c = i + (j+1) * this.itemDimensions[0];
+					c = i + (j+1) * this.itemDimensions[1];
 				}else{
 					//end of the x axis, go backwards for tangents
-					c = i + (j-1) * this.itemDimensions[0];
+					c = i + (j-1) * this.itemDimensions[1];
 					negationFactor *= -1;
 				}
 
@@ -259,6 +260,7 @@ class SurfaceOutput extends OutputNode{
 		this.material.transparent = opacity < 1;
 		this.material.visible = opacity > 0;
 		this._opacity = opacity;
+        this._uniforms.opacity.value = opacity;
 	}
 	get opacity(){
 		return this._opacity;

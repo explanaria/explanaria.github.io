@@ -30,6 +30,7 @@ var fShader = [
 "uniform float lineWidth;",
 "uniform float showGrid;",
 "uniform float showSolid;",
+"uniform float opacity;",
 
 	//the following code from https://github.com/unconed/mathbox/blob/eaeb8e15ef2d0252740a74505a12d7a1051a61b6/src/shaders/glsl/mesh.fragment.shaded.glsl
 "vec3 offSpecular(vec3 color) {",
@@ -51,7 +52,7 @@ var fShader = [
 
 "  float rimLighting = max(min(1.0 - side*dot(normal, light), 1.0),0.0);",
 
-"	float specular = max(0.0, cosine - 0.5);",
+"	float specular = max(0.0, abs(cosine) - 0.5);", //double sided specular
 "   return vec4(diffuse*color + 0.9*rimLighting*color + 0.4*color2 * specular, rgba.a);",
 "}",
 
@@ -113,8 +114,8 @@ var fShader = [
 //"  //gl_FragColor = vec4(vNormal.xyz, 1.0); // view debug normals",
 //"  //if(vNormal.x < 0.0){gl_FragColor = vec4(offSpecular(color.rgb), 1.0);}else{gl_FragColor = vec4((color.rgb), 1.0);}", //view specular and non-specular colors
 //"  gl_FragColor = vec4(mod(vUv.xy,1.0),0.0,1.0); //show uvs
-"  vec4 materialColor = showSolid*getShadedColor(vec4(color.rgb, 1.0));",
-"  vec4 colorWithGridlines = renderGridlines(materialColor, vUv.xy, vec4(color.rgb, 1.0));",
+"  vec4 materialColor = showSolid*getShadedColor(vec4(color.rgb, opacity));",
+"  vec4 colorWithGridlines = renderGridlines(materialColor, vUv.xy, vec4(color.rgb, opacity));",
 "  gl_FragColor = colorWithGridlines;",	
 "}"].join("\n")
 
@@ -126,6 +127,10 @@ var uniforms = {
 	color: {
 		type: 'c',
 		value: new THREE.Color(0x55aa55),
+	},
+	opacity: {
+		type: 'f',
+		value: 0.1,
 	},
 	vLight: { //light direction
 		type: 'vec3',

@@ -5,14 +5,15 @@ function multiplyScalar(c, array){
 	return array
 }
 function vectorAdd(v1,v2){
+    let vec = clone(v1);
 	for(var i=0;i<v1.length;i++){
-		v1[i] += v2[i];
+		vec[i] += v2[i];
 	}
-	return v1
+	return vec
 }
 function lerpVectors(t, p1, p2){
 	//assumed t in [0,1]
-	return vectorAdd(multiplyScalar(t,p1),multiplyScalar(1-t,p2));
+	return vectorAdd(multiplyScalar(t,clone(p1)),multiplyScalar(1-t,clone(p2)));
 }
 function clone(vec){
 	var newArr = new Array(vec.length);

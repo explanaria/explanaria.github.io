@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - VectorOutput Testing</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" rel="stylesheet" href="../../src/style.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = EXP.setupThree(60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+    controls.enableKeys = false;
+
+	console.log("Loaded.");
+
+    class Pendulum{
+            constructor(length,g){
+            this.length = length;
+            this.theta = 1; //0 = neutral, on ground
+            this.acceleration_theta = 0;
+            this.v_theta = 0;
+            this.velocity = 0;
+            this.g = g;
+            this.centerPos = [0,0,10];
+            this.pointPos = [0,0,-length];
+
+            this.array = new EXP.Array({data: [this.centerPos,this.pointPos]});
+            this.array.add(new EXP.LineOutput({width:5,color:0x555555}));
+            this.array.add(new EXP.Transformation({expr:(i,t,x,y,z)=>i==0?[NaN]:[x,y,z]})).add(new EXP.PointOutput({color:0xffd701})); //bad hack to only display one point
+
+            this.t = 0;
+            this.paused=false;
+        }
+        activate(t){
+
+            let dt = Math.min(t - this.t,4);
+            this.t = t;
+    
+            
+            if(!this.paused){
+                //dynamics
+                this.acceleration_theta = -this.g*Math.sin(this.theta);
+                this.v_theta += this.acceleration_theta * dt;
+                this.velocity = this.v_theta; //non-angular velocity has a (fake) l=1.
+                this.theta += this.v_theta * dt;
+
+                if(this.theta > Math.PI * 4){
+                    this.theta -= Math.PI * 2 * 4;
+                }
+                if(this.theta < -Math.PI * 4){
+                    this.theta += Math.PI * 2 * 4;
+                }
+            }
+            
+            //render
+             this.pointPos[0] = this.length*Math.sin(this.theta) + this.centerPos[0];
+            this.pointPos[1] = this.centerPos[1];
+            this.pointPos[2] = -this.length*Math.cos(this.theta) + this.centerPos[2];
+
+            this.array.activate(0);
+        }
+    }
+    let g=9.8,m=1,l=1;
+    var pendulum = new Pendulum(2, g);
+
+
+    //note that the pendulum here is assumed to have length 1. for some reason when this is no longer the case, my math is wrong and my physics simulation no longer conserves energy
+	var pendulumparams = new EXP.Area({bounds: [[-5,5],[-2*Math.PI,2*Math.PI]],numItems: 16});
+
+    var dynamics = new EXP.Transformation({'expr':(i,t, velocity, theta) => [l*(1-Math.cos(theta)), velocity, theta]});
+    var KEandPE = new EXP.Transformation({'expr':(i,t,height,velocity, theta) => [m*(velocity*velocity)/2, m*height*g, velocity, theta]});
+	var plotPhase = new EXP.Transformation({'expr': (i,t,KE,PE,velocity,theta) => [theta,velocity,(PE+KE)/g]});
+	var output = new EXP.SurfaceOutput({color: 0x00ff00, opacity:0.7});
+	pendulumparams.add(dynamics).add(KEandPE).add(plotPhase).add(output); //phase surface
+
+	var pendulumPhasePoint = new EXP.Array({data: [[0]]});
+    var getParams = new EXP.Transformation({'expr':(i,t) => [pendulum.v_theta, pendulum.theta]});
+    let plotPhase2=plotPhase.makeLink();
+
+    pendulumPhasePoint.add(getParams).add(dynamics.makeLink()).add(KEandPE.makeLink()).add(plotPhase2);
+    let phasePointTrail = new EXP.LineOutput({color:0xffd700, width:10}), phasePointOutput = new EXP.PointOutput({color:0xffd700, width:0.5});
+    plotPhase2.add(phasePointOutput);
+    plotPhase2.add(new EXP.HistoryRecorder({recordFrameInterval:2,memoryLength:100})).add(phasePointTrail);
+//-------
+
+
+    plainPlane = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
+    plainPlane.add(new EXP.SurfaceOutput({color: 0x0000ff}));
+
+    let objects = [pendulumparams, plainPlane, pendulum, pendulumPhasePoint];
+	three.on("update",function(time){
+		objects.map((i)=>i.activate(time.t));
+		//controls.update();
+	});
+
+    var dir = new EXP.NonDecreasingDirector();
+
+	async function animate(){
+        await dir.begin();
+        /* hide surfaces */
+        [output,phasePointTrail,phasePointOutput].forEach((i)=>{i.opacity = 0});
+        three.camera.position.set(0,-12,8);
+        three.camera.rotation.set(Math.PI/2,0,0);
+
+
+        await dir.nextSlide();
+		await EXP.delay(5000);
+		//EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x/5+y*x/5,0]});
+
+        pendulum.paused=true;
+        await EXP.delay(500);
+        EXP.TransitionTo(pendulum, {'theta': 2,'v_theta':0});
+        await EXP.delay(2500);
+        pendulum.paused=false;
+
+//EXP.TransitionTo(dynamics,{'expr':(i,t, velocity, theta) => [theta, velocity, theta]})
+
+		await EXP.delay(10000);
+
+
+        pendulum.paused=true;
+        await EXP.delay(500);
+        EXP.TransitionTo(pendulum, {'theta': 2,'v_theta':6});
+        await EXP.delay(2500);
+        pendulum.paused=false;
+
+
+        //Notice, by the way, that this works no matter what quantities we choose to graph!
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[1-Math.cos(theta),velocity,(PE+KE)/g]});
+
+	}
+	animate();
+  </script>
+</body>
+</html>

@@ -58,6 +58,7 @@ class PointOutput extends OutputNode{
 			let mat = this.getPoint(i).mesh.material;
 			mat.opacity = opacity; //instantiate the point
 			mat.transparent = opacity < 1;
+            mat.visible = opacity > 0;
 		}
 		this._opacity = opacity;
 	}

@@ -52,7 +52,7 @@ var fShader = [
 
 "  float rimLighting = max(min(1.0 - side*dot(normal, light), 1.0),0.0);",
 
-"	float specular = max(0.0, cosine - 0.5);",
+"	float specular = max(0.0, abs(cosine) - 0.5);", //double sided specular
 "   return vec4(diffuse*color + 0.9*rimLighting*color + 0.4*color2 * specular, rgba.a);",
 "}",
 

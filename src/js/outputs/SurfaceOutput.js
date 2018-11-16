@@ -222,10 +222,10 @@ class SurfaceOutput extends OutputNode{
 
 				//c is the index of the point 1 away in the x direction
 				if(j < this.itemDimensions[0]-1){
-					c = i + (j+1) * this.itemDimensions[0];
+					c = i + (j+1) * this.itemDimensions[1];
 				}else{
 					//end of the x axis, go backwards for tangents
-					c = i + (j-1) * this.itemDimensions[0];
+					c = i + (j-1) * this.itemDimensions[1];
 					negationFactor *= -1;
 				}
 
@@ -242,6 +242,10 @@ class SurfaceOutput extends OutputNode{
 				this._normals[(i + j * this.itemDimensions[1])*3] = normalVec.x;
 				this._normals[(i + j * this.itemDimensions[1])*3+1] = normalVec.y;
 				this._normals[(i + j * this.itemDimensions[1])*3+2] = normalVec.z;
+
+                if(Number.isNaN(normalVec.z)){
+                    console.trace();
+                }
 			}
 		}
 		// don't forget to normalAttribute.needsUpdate = true after calling this!

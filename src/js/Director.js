@@ -6,6 +6,10 @@ dir.transitionTo(...)
 dir.delay()
 dir.nextSlide();
 
+into a sequence that only advances when the right arrow is pressed.
+
+Any divs with the exp-slide class will also be shown and hidden one by one.
+
 */
 
 import {Animation} from './Animation.js';
@@ -53,15 +57,17 @@ class NonDecreasingDirector{
 		this.undoStack = [];
 		this.undoStackIndex = 0;
 
-		this.slides = document.getElementsByClassName("exp-slide");
+		this.slides = [];
 		this.currentSlideIndex = 0;
 
 		this.nextSlideResolveFunction = null;
+        this.initialized = false;
 	}
 
 
 	async begin(){
 		await this.waitForPageLoad();
+        this.slides = document.getElementsByClassName("exp-slide");
 
 		this.rightArrow = new DirectionArrow();
 		document.body.appendChild(this.rightArrow.arrowImage);
@@ -71,6 +77,8 @@ class NonDecreasingDirector{
 			console.warn("WARNING: Horrible hack in effect to change slides. Please replace the pass-an-empty-function thing with something that actually resolves properly and does async.")
 			self.nextSlideResolveFunction();
 		}
+
+        this.initialized = true;
 
 	}
 
@@ -90,6 +98,8 @@ class NonDecreasingDirector{
 	}
 
 	async nextSlide(){
+        if(!this.initialized)throw new Error("ERROR: Use .begin() on a Director before calling any other methods!");
+
 		let self = this;
 
 		this.rightArrow.showSelf();

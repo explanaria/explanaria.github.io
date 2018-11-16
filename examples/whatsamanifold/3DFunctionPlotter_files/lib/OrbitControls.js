@@ -133,7 +133,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 		var lastPosition = new THREE.Vector3();
 		var lastQuaternion = new THREE.Quaternion();
 
-		return function update() {
+		return function update(delta) {
+
+            if(delta === undefined)delta = 1/60;
 
 			var position = scope.object.position;
 
@@ -147,7 +149,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 			if ( scope.autoRotate && state === STATE.NONE ) {
 
-				rotateLeft( getAutoRotationAngle() );
+				rotateLeft( getAutoRotationAngle(delta) );
 
 			}
 
@@ -276,9 +278,11 @@ THREE.OrbitControls = function ( object, domElement ) {
 	var dollyEnd = new THREE.Vector2();
 	var dollyDelta = new THREE.Vector2();
 
-	function getAutoRotationAngle() {
+	function getAutoRotationAngle(delta) {
 
-		return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
+        let multFactor = delta/(1/60); //if delta < 60fps, move less. if delta > 60fps, move more.
+
+		return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed * multFactor;
 
 	}
 

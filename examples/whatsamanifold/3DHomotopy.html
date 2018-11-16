@@ -79,7 +79,7 @@
 
 <body>
 
-	<div id="container"><canvas width="1360" height="827" style="width: 1360px; height: 827px; position: absolute; top: 0px; left: 0px;"></canvas><div style="position: fixed; top: 0px; left: 0px; cursor: pointer; opacity: 0.9; z-index: 10000;"><canvas width="80" height="48" style="width: 80px; height: 48px; display: block;"></canvas><canvas width="80" height="48" style="width: 80px; height: 48px; display: none;"></canvas></div></div>
+	<div id="container"><canvas width="1360" height="827" style="width: 1360px; height: 827px; position: absolute; top: 0px; left: 0px;"></canvas></div>
 	<!-- code from <a href="https://threejs.org/examples/webgl_marchingcubes.html" target="_blank" rel="noopener">threejs.org examples</a> -->
 	</div>
 
@@ -109,7 +109,7 @@
 		var SCREEN_WIDTH = window.innerWidth;
 		var SCREEN_HEIGHT = window.innerHeight - 2 * MARGIN;
 
-		var container, stats;
+		var container;
 
 		var camera, scene, renderer;
 
@@ -199,13 +199,15 @@ var paused = false;
 			// CONTROLS
 
 			controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-			// STATS
-			stats = new Stats();
-			container.appendChild( stats.dom );
+			controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+				controls.dampingFactor = 0.80;
+            controls.autoRotate=true;
 
 			// GUI
 			setupGui();
+			// STATS
+			stats = new Stats();
+			container.appendChild( stats.dom );
 
 			// EVENTS
 			window.addEventListener( 'resize', onWindowResize, false );
@@ -225,12 +227,12 @@ var paused = false;
 			requestAnimationFrame( animate );
 
 			render();
+            
 			stats.update();
 
 		}
 
-        var last10Deltas = [0,0,0,0,0,0,0,0,0,0];
-        var sampletimer = 0;
+        var last3Deltas = [0,0,0];
 
 		function render() {
 
@@ -239,14 +241,11 @@ var paused = false;
 			if(!paused)time += delta * effectController.speed * 0.5;
 
             //if fps is choppy (below 10fps) decrease resolution
-            if(sampletimer++ > 2){
-                sampletimer = 0;
-                last10Deltas.shift();
-                last10Deltas.push(delta);
-            }
-            if(last10Deltas.reduce((accum, currentVal)=>accum + currentVal/10) > 1/20 && effectController.resolution > 30){ 
+            last3Deltas.shift();
+            last3Deltas.push(delta);
+            if(last3Deltas.reduce((accum, currentVal)=>accum + currentVal/10) > 1/30 && effectController.resolution > 30){ 
                 effectController.resolution-=5;
-                gui.__folders['Simulation'].__controllers[1].domElement.childNodes[0].children[0].value -= 2;
+                gui.__folders['Simulation'].__controllers[1].domElement.childNodes[0].children[0].value -= 5;
             }
 
 			// marching cubes
@@ -278,6 +277,7 @@ var paused = false;
 
 			pointLight.color.setHSL( effectController.lhue, effectController.lsaturation, effectController.llightness );
 
+            controls.update(delta);
 			// render
 				//renderer.clearColor();
 				renderer.render( scene, camera );

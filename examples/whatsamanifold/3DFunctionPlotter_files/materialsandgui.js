@@ -9,7 +9,7 @@ var gui = null;
 			"matte" :
 			{
 				m: new THREE.MeshPhongMaterial( { color: 0x000000, specular: 0x111111, shininess: 1, side: THREE.DoubleSide } ),
-				h: 0, s: 0, l: 0.175
+				h: 0, s: 0.5, l: 0.175
 			},
 
 			"flat" :
@@ -95,50 +95,51 @@ var gui = null;
 
 			var h, m_h, m_s, m_l;
 
-			gui = new dat.GUI();
 
-			// material (type)
+		    gui = new dat.GUI();
 
-			h = gui.addFolder( "Materials" );
+		    // material (type)
 
-			for ( var m in materials ) {
+		    h = gui.addFolder( "Materials" );
 
-				effectController[ m ] = createHandler( m );
-				h.add( effectController, m ).name( m );
+		    for ( var m in materials ) {
 
-			}
+			    effectController[ m ] = createHandler( m );
+			    h.add( effectController, m ).name( m );
 
-			// material (color)
+		    }
 
-			h = gui.addFolder( "Material color" );
+		    // material (color)
 
-			m_h = h.add( effectController, "hue", 0.0, 1.0, 0.025 );
-			m_s = h.add( effectController, "saturation", 0.0, 1.0, 0.025 );
-			m_l = h.add( effectController, "lightness", 0.0, 1.0, 0.025 );
+		    h = gui.addFolder( "Material color" );
+
+		    m_h = h.add( effectController, "hue", 0.0, 1.0, 0.025 );
+		    m_s = h.add( effectController, "saturation", 0.0, 1.0, 0.025 );
+		    m_l = h.add( effectController, "lightness", 0.0, 1.0, 0.025 );
             m_shiny = h.add( effectController, "shininess", 1.0, 250.0, 0.025 );
 
-			// light (point)
+		    // light (point)
 
-			h = gui.addFolder( "Point light color" );
+		    h = gui.addFolder( "Point light color" );
 
-			h.add( effectController, "lhue", 0.0, 1.0, 0.025 ).name("hue");
-			h.add( effectController, "lsaturation", 0.0, 1.0, 0.025 ).name("saturation");
-			h.add( effectController, "llightness", 0.0, 1.0, 0.025 ).name("lightness");
+		    h.add( effectController, "lhue", 0.0, 1.0, 0.025 ).name("hue");
+		    h.add( effectController, "lsaturation", 0.0, 1.0, 0.025 ).name("saturation");
+		    h.add( effectController, "llightness", 0.0, 1.0, 0.025 ).name("lightness");
 
-			// light (directional)
+		    // light (directional)
 
-			h = gui.addFolder( "Directional light orientation" );
+		    h = gui.addFolder( "Directional light orientation" );
 
-			h.add( effectController, "lx", -1.0, 1.0, 0.025 ).name("x");
-			h.add( effectController, "ly", -1.0, 1.0, 0.025 ).name("y");
-			h.add( effectController, "lz", -1.0, 1.0, 0.025 ).name("z");
+		    h.add( effectController, "lx", -1.0, 1.0, 0.025 ).name("x");
+		    h.add( effectController, "ly", -1.0, 1.0, 0.025 ).name("y");
+		    h.add( effectController, "lz", -1.0, 1.0, 0.025 ).name("z");
 
-			// simulation
+		    // simulation
 
-			h = gui.addFolder( "Simulation" );
+		    h = gui.addFolder( "Simulation" );
 
-			h.add( effectController, "speed", 0.1, 8.0, 0.05 );
-			h.add( effectController, "resolution", 14, 100, 1 );
+		    h.add( effectController, "speed", 0.1, 8.0, 0.05 );
+		    h.add( effectController, "resolution", 14, 100, 1 );
 
 		}
 

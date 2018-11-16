@@ -9,10 +9,14 @@ dir.nextSlide();
 */
 
 import {Animation} from './Animation.js';
+import explanarianArrowSVG from './DirectorImageConstants.js';
 
 class DirectionArrow{
 	constructor(faceRight){
-		this.arrowImage = DirectionArrow.arrowImage; //this should be changed once I want to make multiple arrows at once
+		this.arrowImage = new Image();
+        this.arrowImage.src = explanarianArrowSVG;
+
+        this.arrowImage.classList.add("exp-arrow");
 
 		faceRight = faceRight===undefined ? true : faceRight;
 
@@ -40,22 +44,7 @@ class DirectionArrow{
 		this.arrowImage.style.opacity = 0;
 		this.arrowImage.style.pointerEvents = 'none';
 	}
-	static async loadImage(){
-		return new Promise(
-			(function(resolve, reject){
-				if(this.arrowImage && this.arrowImage.width != 0){
-					return resolve(); //quit early
-				}
-				this.arrowImage = new Image();
-				this.arrowImage.onload = resolve;
-				
-				this.arrowImage.src = 
-this.arrowImage.baseURI.substring(0,this.arrowImage.baseURI.search("explanaria")) + "explanaria/src/ExplanarianNextArrow.svg";
-				this.arrowImage.className = "exp-arrow";
-			}).bind(this));
-	}
 }
-DirectionArrow.loadImage(); // preload
 
 
 class NonDecreasingDirector{

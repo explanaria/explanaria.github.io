@@ -242,10 +242,6 @@ class SurfaceOutput extends OutputNode{
 				this._normals[(i + j * this.itemDimensions[1])*3] = normalVec.x;
 				this._normals[(i + j * this.itemDimensions[1])*3+1] = normalVec.y;
 				this._normals[(i + j * this.itemDimensions[1])*3+2] = normalVec.z;
-
-                if(Number.isNaN(normalVec.z)){
-                    console.trace();
-                }
 			}
 		}
 		// don't forget to normalAttribute.needsUpdate = true after calling this!

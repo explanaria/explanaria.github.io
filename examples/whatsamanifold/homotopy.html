@@ -39,6 +39,9 @@ exp-slide{
 	let blue = 0x0070f0;
 	let green = 0x50d050;
 
+    let antLineColor = 0xaaaa00//
+    antLineColor = 0x000000
+
 	console.log("Loaded.");
 
 	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]], numItems: [33,25]});
@@ -50,7 +53,7 @@ exp-slide{
 	});
     var wobbleSpace = new EXP.Transformation({'expr':(i,t,x,y,z) => [x,y,z]});
 	var output = new EXP.SurfaceOutput({opacity:0.6, color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
-
+    output.material.depthWrite = false; //make ant show up behind
 	torus.add(timeChange).add(manifoldParametrization).add(wobbleSpace).add(output);
 
     //two endpoints of the path
@@ -85,8 +88,8 @@ exp-slide{
     var lineConnectingPoints = new EXP.Area({bounds: [[0,1]], numItems: [20]});
     var lerpBetweenPoints = new EXP.Transformation({'expr': (i,t,lerpFactor) => EXP.Math.lerpVectors(lerpFactor, points.data[0],points.data[1])});
     var lerpBetweenPoints2 = lerpBetweenPoints.clone();
-    let pointsLine = new EXP.LineOutput({width:20,color: 0xaaaa00,opacity:0});
-    let pointsLine2 = new EXP.LineOutput({width:20,color: 0xaaaa00,opacity:0});
+    let pointsLine = new EXP.LineOutput({width:20,color: antLineColor,opacity:0});
+    let pointsLine2 = new EXP.LineOutput({width:20,color: antLineColor,opacity:0});
     let phaseJiggle = new EXP.Transformation({'expr':(i,t,x1,x2)=>[x1,x2]});
     //line 2 - 1 wrap
     lineConnectingPoints.add(lerpBetweenPoints2).add(phaseJiggle.makeLink())
@@ -104,6 +107,17 @@ exp-slide{
 			x.activate(time.t);
 		}
 		controls.update();
+
+
+        if(controls.getAzimuthalAngle() < -0.3 && controls.autoRotateSpeed > -2){
+             controls.autoRotateSpeed -= 0.02;
+        }
+
+        if(controls.getAzimuthalAngle() > 0.3 && controls.autoRotateSpeed < 2){
+            controls.autoRotateSpeed += 0.02;
+        }
+
+
 	});
 
     var presentation = new EXP.NonDecreasingDirector();
@@ -297,7 +311,6 @@ exp-slide{
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
 			In conclusion: if you want to be able to recognize shapes no matter how (smoothly) deformed and squished they might get, mathematicians look at the paths between points on that shape.
-
 	</section>
 
     <section class="exp-label exp-slide" style="opacity:0">

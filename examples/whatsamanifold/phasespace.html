@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - Phase Space Manifolds</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" rel="stylesheet" href="../../src/style.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+    <style>
+    aside{
+        font-size:70%;
+    }
+    .exp-label{
+        font-size: 1.5em;
+    }
+    .exp-slide{
+        font-size: 1.5em;
+    }
+    </style>
+</head>
+<body>
+  <script>
+	var three = EXP.setupThree(60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+    //controls.enableKeys = false;
+
+	console.log("Loaded.");
+
+    class Pendulum{
+        constructor(length,g, color, width){
+            this.length = length;
+            this.theta = 1; //0 = neutral, on ground
+            this.acceleration_theta = 0;
+            this.v_theta = 0;
+            this.velocity = 0;
+            this.g = g;
+            this.centerPos = [0,0,10];
+            this.pointPos = [0,0,-length];
+
+            this.color = color===undefined?0xffd701 : color;
+            this.width = width===undefined? 1 : width;
+
+            this.array = new EXP.Array({data: [this.centerPos,this.pointPos]});
+            this.array.add(new EXP.LineOutput({width:5,color:0x555555}));
+            this.array.add(new EXP.Transformation({expr:(i,t,x,y,z)=>i==0?[NaN]:[x,y,z]})).add(new EXP.PointOutput({color:this.color, width:this.width})); //bad hack to only display one point
+
+            this.t = 0;
+            this.paused=false;
+            this.renderSideways = false; //used to move
+        }
+        renderSideways(){
+            this.renderSideways = true;
+        }
+
+        eraseSelf(){
+            EXP.TransitionTo(this.array.children[0],{'opacity':0});
+            EXP.TransitionTo(this.array.children[1].children[0],{'opacity':0});
+            window.setTimeout(function(){
+                this.array.children[0].removeSelfFromScene();
+                this.array.children[1].children[0].removeSelfFromScene();
+            }.bind(this),1050);
+        }
+        activate(t){
+            let dt = Math.min(t - this.t,4);
+            this.t = t;
+            
+            if(!this.paused){
+                //dynamics
+                this.acceleration_theta = -this.g*Math.sin(this.theta);
+                this.v_theta += this.acceleration_theta * dt;
+                this.velocity = this.v_theta; //non-angular velocity has a (fake) l=1.
+                this.theta += this.v_theta * dt;
+
+                if(this.theta > Math.PI * 2){
+                    this.theta -= Math.PI * 2 * 2;
+                }
+                if(this.theta < -Math.PI * 2){
+                    this.theta += Math.PI * 2 * 2;
+                }
+            }
+            
+            //render
+            if(!this.renderSideways){
+                this.pointPos[0] = this.length*Math.sin(this.theta) + this.centerPos[0];
+                this.pointPos[1] = this.centerPos[1];
+                this.pointPos[2] = -this.length*Math.cos(this.theta) + this.centerPos[2];
+            }else{
+                this.pointPos[0] = this.length*Math.sin(this.theta) + this.centerPos[0];
+                this.pointPos[1] = -this.length*Math.cos(this.theta) + this.centerPos[1];
+                this.pointPos[2] =  this.centerPos[2];
+
+            }
+
+            this.array.activate(0);
+        }
+    }
+    let g=9.8,m=1,l=1;
+    var pendulum = new Pendulum(2, g);
+
+    //labels, which are just textured planes. I should really generate these dynamically
+    function makeTexPlane(textureName, width, height, apparentWidth){
+
+        var tex = new THREE.TextureLoader().load( textureName );
+        var plane = new THREE.Mesh(new THREE.PlaneGeometry(apparentWidth, apparentWidth*height/width,1,1), new THREE.MeshBasicMaterial({ opacity: 0.0, transparent: true, side: THREE.BothSides, map:tex}));
+        three.scene.add(plane);
+        return plane;
+    }
+
+    var angleLabel = makeTexPlane('angle.png',189,72, 2);
+    angleLabel.position.set(0,-10,0.1);
+
+    var velocityLabel = makeTexPlane('velocity.png',270,81, 2.5);
+    velocityLabel.position.set(-9,0,0.1);
+
+    var angleZero = makeTexPlane('zero.png',51,52, 1);
+    //angleZero.position.set(0,-5.8,0.1);
+    angleZero.position.set(0,-9,0.1);
+
+    var velocityZero = makeTexPlane('zero.png',51,52, 1);
+    velocityZero.position.set(-7,0,0.1);
+
+    var zeroGridLine = new THREE.Mesh(new THREE.PlaneGeometry(10, 0.2,1,1), new THREE.MeshBasicMaterial({ color:0x000000}));
+    zeroGridLine.add(new THREE.Mesh(new THREE.PlaneGeometry(0.2, 10,1,1), new THREE.MeshBasicMaterial({ color:0x000000})));
+    three.scene.add(zeroGridLine);
+    zeroGridLine.position.z = 0.1;
+
+
+
+    //note that the pendulum here is assumed to have length 1. for some reason when this is no longer the case, my math is wrong and my physics simulation no longer conserves energy
+	var pendulumparams = new EXP.Area({bounds: [[-8,8],[-2*Math.PI,2*Math.PI]],numItems: 16});
+
+    var dynamics = new EXP.Transformation({'expr':(i,t, velocity, theta) => [l*(1-Math.cos(theta)), velocity, theta]});
+    var KEandPE = new EXP.Transformation({'expr':(i,t,height,velocity, theta) => [m*(velocity*velocity)/2, m*height*g, velocity, theta]});
+	var plotPhase = new EXP.Transformation({'expr': (i,t,KE,PE,velocity,theta) => [theta,velocity,(PE+KE)/g]});
+	var output = new EXP.SurfaceOutput({color: 0x00ff00, opacity:0.7});
+	pendulumparams.add(dynamics).add(KEandPE).add(plotPhase).add(output); //phase surface
+
+	var pendulumPhasePoint = new EXP.Array({data: [[0]]});
+    var getParams = new EXP.Transformation({'expr':(i,t) => [pendulum.v_theta, pendulum.theta]});
+    let plotPhase2=plotPhase.makeLink();
+
+    pendulumPhasePoint.add(getParams).add(dynamics.makeLink()).add(KEandPE.makeLink()).add(plotPhase2);
+    let phasePointTrail = new EXP.LineOutput({color:0xffd700, width:10}), phasePointOutput = new EXP.PointOutput({color:0xffd700, width:0.5});
+    plotPhase2.add(phasePointOutput);
+    plotPhase2.add(new EXP.HistoryRecorder({recordFrameInterval:2,memoryLength:100})).add(phasePointTrail);
+//-------
+
+
+    plainPlane = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
+    let planeDefinition = plainPlane.add(new EXP.Transformation({'expr':(i,t,x,y)=>[x,y,0]}));
+    planeDefinition.add(new EXP.SurfaceOutput({color: 0x0000ff}));
+
+    let objects = [pendulumparams, plainPlane, pendulum, pendulumPhasePoint];
+	three.on("update",function(time){
+		objects.map((i)=>i.activate(time.t));
+		//controls.update();
+	});
+
+    var dir = new EXP.NonDecreasingDirector();
+
+	async function animate(){
+        await dir.begin();
+        /* hide surfaces */
+        [output,phasePointTrail,phasePointOutput].forEach((i)=>{i.opacity = 0});
+        three.camera.position.set(0,-12,8);
+        three.camera.rotation.set(Math.PI/2,0,0);
+
+
+        await dir.nextSlide();
+
+        await dir.nextSlide();
+        pendulum.paused=true;
+        EXP.TransitionTo(pendulum, {'theta': 1.6,'v_theta':0},500);
+
+        await dir.delay(1000);
+        pendulum2 = new Pendulum(2,g, 0xffd701 - 0x220000, 0.9);
+        objects.push(pendulum2);
+
+        pendulum3 = new Pendulum(2,g, 0xffd701 - 0x002200, 0.9);
+        objects.push(pendulum3);
+
+        pendulum2.theta = 1.6;
+        pendulum3.theta = 1.6;
+
+        pendulum2.v_theta = 4.3;
+        pendulum3.v_theta = 7;
+
+        [pendulum,pendulum2,pendulum3].forEach((i)=>{i.paused=true;})
+
+        await dir.nextSlide();
+        [pendulum,pendulum2,pendulum3].forEach((i)=>{i.paused=false;})
+
+//EXP.TransitionTo(dynamics,{'expr':(i,t, velocity, theta) => [theta, velocity, theta]})
+
+		await dir.nextSlide();
+        //fade out pendulums
+        [pendulum2,pendulum3].forEach((i)=>{i.eraseSelf()})
+
+        await dir.nextSlide();//"How about we graph them?"
+        //remove extra pendulums from objects array since they're now dead
+        objects.splice(objects.indexOf(pendulum2), 1);
+        objects.splice(objects.indexOf(pendulum3), 1);
+        EXP.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
+        EXP.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},3000);
+
+        pendulum.renderSideways=true;
+        EXP.TransitionTo(pendulum.centerPos,{0:9.5,1:0,2:0}); //I really need an array-transition feature
+
+        await dir.nextSlide();
+        EXP.TransitionTo(phasePointOutput, {"opacity":1});
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,0,0]},1);
+        EXP.TransitionTo(angleLabel.material,{'opacity':1});
+        EXP.TransitionTo(angleZero.material,{'opacity':1});
+
+       await dir.nextSlide();
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,0,0]},500);
+        EXP.TransitionTo(velocityLabel.material,{'opacity':1});
+        EXP.TransitionTo(velocityZero.material,{'opacity':1});
+        await EXP.delay(600);
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,velocity,0]},500);
+
+       await dir.nextSlide();
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,0.01]});
+        EXP.TransitionTo(output, {"opacity":0.7});
+        EXP.TransitionTo(phasePointTrail, {"opacity":1});
+
+       await dir.nextSlide();
+
+        await dir.nextSlide();
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
+
+        await dir.nextSlide();
+      EXP.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':1.3},2000);
+        EXP.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.1,'y':0,'z':0},2000);
+
+        await EXP.delay(2000);
+        new EXP.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x,y,1.0]});
+
+        await dir.nextSlide();
+        EXP.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
+        EXP.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},3000);
+        await dir.nextSlide();
+        EXP.TransitionTo(three.camera.position,{'x':0,'y':1.5,'z':20},3000);
+
+        //give pendulum more energy
+        pendulum.paused=true;
+        EXP.TransitionTo(pendulum, {'theta': 2,'v_theta':6});
+        EXP.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x*1.2,y*2,3.1]});
+        await EXP.delay(1500);
+        pendulum.paused=false;
+
+        await dir.nextSlide();
+        await dir.nextSlide();
+        await dir.nextSlide();
+        //different hamiltonian, measured in height
+
+        EXP.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
+
+        pendulum.paused = true;
+        EXP.TransitionTo(pendulum, {'theta': 1.6,'v_theta':0},500);
+        await EXP.delay(1000);
+        pendulum.paused=false;
+        
+        EXP.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x*1.2,y*2,1]});
+        //Notice, by the way, that this works no matter what quantities we choose to graph!
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[1-Math.cos(theta),velocity,(PE+KE)/g]});
+        await dir.nextSlide();
+        await dir.nextSlide();
+
+        //cool glamour shot
+      EXP.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':10},2000);
+        EXP.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.5,'y':0,'z':0},2000);
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
+        await dir.nextSlide();
+        await dir.nextSlide();
+
+	}
+	animate();
+  </script>
+
+	<section id="label1" class="exp-label exp-slide">
+			How Manifolds help Aim Wrecking Balls: Hamiltonian Mechanics
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+			This is a pendulum, a stick with a weight on the end. I'm going to tell you about a cool technique that lets you predict where a pendulum will swing.
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        <div style="position:relative"><img style="position:fixed;top:5%;left:5%;" src="pause-small.png"></img></div>
+
+			As you can see, as it moves, the angle the pendulum makes with the horizontal plane changes. If I take a pendulum at this angle and let this pendulum go, how do you think it'll move?
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        Trick question! I never told you the pendulum's speed. Depending on how fast the ball's moving, it could swing with a longer interval, or even pass over the top in a circle forever. You can't tell where a pendulum will go from just its angle.
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+         In other words, if we want to predict where a pendulum will swing, we need <u>two</u> numbers: its angle, and its velocity. 
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        OK - we've got those measurements. Let's use a time-honored mathematical technique: generalizing. Instead of figuring out what'll hapen with these particular numbers, sometimes in math it's easier to solve for <u>every</u> value at the same time, then pick out one specific values once you're done. In this case, we've got two numbers. How about we graph them?
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        Let's make the x coordinate represent the angle of the pendulum.
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        And let's graph the y coordinate to match its speed.
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        If we let the pendulum go, we get something interesting: on this new graph, the pendulum's measurements trace out an ellipse! But why?
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        It took a mathematician named William Rowan Hamilton to figure out a cool way of showing why. Remember from physics how energy can't be created or destroyed? There are two types of energy in this pendulum: kinetic energy, which we can calculate from the pendulum's velocity, and potential energy, which we can calculate from the pendulum's height - or in other words, its angle.
+	</section>
+
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        So we've got a third dimension. Let's also graph energy on the z axis. When we do that, we get a kind of curvy surface. It repeats because we're allowing angles greater than 360 degrees.
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        But more importantly: if we look at all the points with the same energy as what we started with, our ellipse appears! Our path in phase space is actually a slice of this weird "energy surface", the one with the same energy as what we started with. That's the power of "hamiltonian mechanics": it's weaponised conservation of energy!
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        With this energy surface, now we can see we can see what happens if we give the pendulum too much extra speed:
+	</section>
+
+    <section class="exp-label exp-slide" style="opacity:0">
+     With this much energy, the slice gets high enough that its border becomes infinitely big. And that tells us that angle will get bigger and bigger, and this corresponds to the over-the-top pendulum motion we saw earlier!
+	</section>
+	<section class="exp-label exp-slide" style="opacity:0">
+        This green "energy graph" you're looking at right now is called "phase space". But more importantly - it's also a two-dimensional manifold!
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        You might wonder: why did we choose angle and velocity as our two numbers? Why not, for example height? 
+	</section>
+
+<section class="exp-label exp-slide" style="opacity:0">
+        But the cool thing about Hamiltonian mechanics is that the exact things you measure don't matter too much. Here I'll measure height instead of angle - the slicing strategy of hamiltonian mechanics still gives you the path the pendulum follows in phase space.
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        That's the curious thing about manifolds: you can transform them in weird ways, but some properties  - such as the path a pendulum takes - stay the same even if you deform it.
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        So what the heck is a manifold? A 2D manifold is a surface which you can get by plugging in two coordinates (such as angle and velocity) into a nice and smooth function.
+    <br />
+    <br />
+	</section>
+
+	<section class="exp-label exp-slide" style="opacity:0">
+        So what the heck is a manifold? A 2D manifold is a surface which you can get by plugging in two coordinates (such as angle and velocity) into a nice and smooth function.
+
+        <br />
+        <!--Let's go look at some now!-->
+	</section>
+</body>
+</html>

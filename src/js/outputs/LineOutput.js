@@ -35,6 +35,7 @@ class LineOutput extends OutputNode{
 
 		threeEnvironment.scene.add(this.mesh);
 	}
+
 	makeGeometry(){
 		// follow http://blog.cjgammon.com/threejs-geometry
 		// or mathbox's lineGeometry
@@ -132,6 +133,9 @@ class LineOutput extends OutputNode{
 		positionAttribute.needsUpdate = true;
 		this._currentPointIndex = 0; //reset after each update
 	}
+    removeSelfFromScene(){
+        threeEnvironment.scene.remove(this.mesh);
+    }
 	set color(color){
 		//currently only a single color is supported.
 		//I should really make it possible to specify color by a function.

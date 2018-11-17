@@ -136,6 +136,12 @@ export class VectorOutput extends LineOutput{
 
 		}
 	}
+    removeSelfFromScene(){
+        threeEnvironment.scene.remove(this.mesh);
+		for(var i=0;i<this.numArrowheads;i++){
+			threeEnvironment.scene.remove(this.arrowheads[i]);
+		}
+    }
 	clone(){
 		return new VectorOutput({width: this.width, color: this.color, opacity: this.opacity});
 	}

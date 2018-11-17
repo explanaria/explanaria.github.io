@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - Manifolds in 3D</title>
+  <script src="../../src/lib/three.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+  <script src="./lib/GLTFLoader.js"></script>
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+    <style>
+aside{
+    font-size:70%;
+}
+exp-label{
+    font-size: 1.5em;
+}
+exp-slide{
+    font-size: 1.5em;
+}
+
+</style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = EXP.setupThree(60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+    controls.enableKeys = false;
+
+	three.camera.position.z = 5;
+
+	let blue = 0x0070f0;
+	let green = 0x50d050;
+
+	console.log("Loaded.");
+
+    var cubeGridTex = new THREE.TextureLoader().load( 'gridblue.png' );
+    var cube = new THREE.Mesh(new THREE.BoxBufferGeometry(5,5,5), new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, map:cubeGridTex}));
+    var collisionCube = new THREE.Mesh(new THREE.BoxBufferGeometry(5,5,5), new THREE.MeshBasicMaterial({side: THREE.BothSides}));
+    three.scene.add(cube);
+
+    class FlyingAnt{
+            constructor(ambientManifoldMesh){
+            this.velocity = new THREE.Vector3(0,1,0);
+            this.position = new THREE.Vector3(0,0,0);
+            this.raycaster = new THREE.Raycaster();
+
+            this.point = new THREE.Mesh(new THREE.SphereGeometry(1/2 * 0.2,5,5), new THREE.MeshBasicMaterial({color: 0x000000}));
+            three.scene.add(this.point);
+
+            this.ambientManifoldMesh = ambientManifoldMesh;
+
+            this.t = 0;
+            this.paused=false;
+        }
+        activate(t){
+            let dt = Math.min(t - this.t,4);
+            this.t = t;
+    
+            
+            if(!this.paused){
+                //dynamics
+                this.position.add(this.velocity.clone().multiplyScalar(dt));
+
+                //if through the side of the manifold, teleport
+                this.raycaster.set(this.position, this.velocity.normalize());
+				var intersects = this.raycaster.intersectObject( this.ambientManifoldMesh );
+                //console.log(intersects);
+				// Toggle rotation bool for meshes that we clicked
+				if ( intersects.length > 0 ) {
+                    let distanceTo = this.position.clone().sub(intersects[ 0 ].point);
+                    console.log(distanceTo.lengthSq());
+                    if(distanceTo.lengthSq() < 0.1){
+					    /*helper.position.set( 0, 0, 0 );
+					    helper.lookAt( intersects[ 0 ].face.normal );
+					    helper.position.copy( intersects[ 0 ].point );*/;
+                        this.position.add(intersects[ 0 ].face.normal);
+                    }
+				}
+
+                //above isn't working, fake it
+                if(this.position.y > 2.5){
+                    this.position.y -= 5;
+                }
+            }
+            
+            //render
+             this.point.position.copy(this.position);
+        }
+    }
+    var flyingant = new FlyingAnt(collisionCube);
+
+
+
+    let objects = [flyingant];
+	three.on("update",function(time){
+		for(var x of objects){
+			x.activate(time.t);
+		}
+		controls.update();
+        
+	});
+
+    var presentation = new EXP.NonDecreasingDirector();
+	async function animate(){
+        await presentation.begin();
+    controls.autoRotate=true;
+        await presentation.nextSlide();
+        await presentation.nextSlide();
+
+
+	}
+	animate();
+  </script>
+	<section id="label1" class="exp-label exp-slide">
+			<h1>Manifolds in 3D (and 4D, and 5D...)</h1>
+			<aside>
+            <br /><br />Press the right arrow to advance.</aside>
+    </section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+			I've already shown you a lot of manifolds, but they've all had one thing in common: they're all 2D. One of the reasons manifolds are so interesting is that manifolds are the way mathematicians study things like four dimensions!
+	</section>
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        Remember, for a 2D manifold, every point looks like flat 2D space if you zoom in far enough. In other words, an ant on the surface can move both forward/backward and left/right, and they wouldn't be able to tell the surface is curved - it would just look flat.
+
+        Here's an example: the earth looks flat! If this sounds weird, remember that the earth is a manifold! It's actually curved, but we're so small that the world looks flat to us.
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        A 3D manifold is some type of space where every point looks like flat <u>3D</u> space!
+
+            You can also get 3D manifolds by taking a continuous function involving four variables and setting it equal to zero. For example, x^2+y^2+z^2=5 is a sphere in 3D, so x^2+y^2+z^2+w^2=5 is a 4D sphere, whatever that means.
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        OK, but how do you make a manifold? In fact, you can build 2D manifolds yourself by patching together flat 2D pieces. In fact, sewing is literally making 2D manifolds out of flat pieces of fabric!
+	</section>
+
+	<section id="label1" class="exp-label exp-slide" style="opacity:0">
+        A 2D manifold is made out of sewing together squares... so a 3D manifold can be made by sewing together cubes!
+	</section>
+
+</body>
+</html>

@@ -50,6 +50,11 @@ class PointOutput extends OutputNode{
 	getPoint(i){
 		return this.points[i];
 	}
+    removeSelfFromScene(){
+		for(var i=0;i<this.points.length;i++){
+			this.points[i].removeSelfFromScene();
+		}
+    }
 	set opacity(opacity){
 		//technically this will set all points of the same color, and it'll be wiped with a color change. But I'll deal with that sometime later.
 		for(var i=0;i<this.numCallsPerActivation;i++){

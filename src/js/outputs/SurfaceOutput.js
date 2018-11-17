@@ -246,6 +246,9 @@ class SurfaceOutput extends OutputNode{
 		}
 		// don't forget to normalAttribute.needsUpdate = true after calling this!
 	}
+    removeSelfFromScene(){
+        threeEnvironment.scene.remove(this.mesh);
+    }
 	set color(color){
 		//currently only a single color is supported.
 		//I should really make this a function

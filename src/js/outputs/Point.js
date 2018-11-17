@@ -22,6 +22,9 @@ export default class Point{
 		this.y = options.y || 0;
 		this.z = options.z || 0;
 	}
+	removeSelfFromScene(){
+		threeEnvironment.scene.remove(this.mesh);
+	}
 	set x(i){
 		this.mesh.position.x = i;
 	}

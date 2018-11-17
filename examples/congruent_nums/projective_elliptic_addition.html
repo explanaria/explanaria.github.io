@@ -116,6 +116,9 @@
 
 		EXP.TransitionTo(pt3output,{opacity:1, width:0.2},400);
 		await EXP.delay(500);
+        
+		await EXP.delay(1000);
+		EXP.TransitionTo(projpt3,{'expr':(i,t,a,b,c) => [a,-b,c]});
 
 		showToProjectiveCoords = async function(){
 			//todo: extend addition line

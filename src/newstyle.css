@@ -18,7 +18,7 @@ body{
 }
 #mainiframe{
     width:100%;
-    height:70vh; /* 60% of height */
+    height:60vh; /* 60% of height */
     border: none;
     margin: 0;
     overflow: hidden;
@@ -28,7 +28,7 @@ body{
 .mainheader{
     background-color: #222;
     color: #eee;
-    padding: 2em 0 1em 0;
+    padding: 0.25em 0 1em 0;
 	font-family: "Computer Modern Sans", serif;
 	text-align:center;
     line-height:0.9;
@@ -40,6 +40,7 @@ body{
 }  
 .mainheader aside{
     font-size: 1em;
+    margin: 0.025em;
 }  
 
 #examplecontainer{

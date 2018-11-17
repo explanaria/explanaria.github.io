@@ -54,7 +54,7 @@
         }
         #inputbox input{
             font-size:inherit;
-            margin:0.5em; padding:0.25em;background-color:inherit;border:none; border-bottom: 3px solid gray;
+            margin:0.25em; padding:0.25em;background-color:inherit;border:none; border-bottom: 3px solid gray;
         }
         #functionTextRHS{
             width:25%;
@@ -74,16 +74,29 @@
         .preset{
             width:100%;
         }
+
+        #latexrenderingcontainer{
+            width: 100%;
+            pointer-events: none;
+            z-index:1000;
+            position:absolute;
+            bottom:1%;
+            text-align: center; 
+            background-color: #eee;
+            color: black;
+            font-size:2em;
+        }
+        #latexrendering{
+            margin:0.25em; padding:0.25em;
+        }
 	</style>
-</head>
 
-<body>
-
-	<div id="container"><canvas width="1360" height="827" style="width: 1360px; height: 827px; position: absolute; top: 0px; left: 0px;"></canvas></div>
-	<!-- code from <a href="https://threejs.org/examples/webgl_marchingcubes.html" target="_blank" rel="noopener">threejs.org examples</a> -->
-	</div>
 
 	<script src="3DFunctionPlotter_files/lib/three.js"></script>
+
+	<script src="3DFunctionPlotter_files/lib/jquery.min.js"></script>
+    <script src="mathquill.js"></script>
+    <link type="text/css" href="mathquill.css" rel="stylesheet" />
 
 	<script src="3DFunctionPlotter_files/lib/OrbitControls.js"></script>
 
@@ -95,6 +108,15 @@
 	<script src="3DFunctionPlotter_files/MarchingCubes.js"></script>
     <script src="3DFunctionPlotter_files/implicitFunctionTextBoxInput.js"></script>
     <script src="3DFunctionPlotter_files/materialsandgui.js"></script>
+</head>
+
+<body>
+
+	<div id="container"><canvas width="1360" height="827" style="width: 1360px; height: 827px; position: absolute; top: 0px; left: 0px;"></canvas></div>
+	<!-- code from <a href="https://threejs.org/examples/webgl_marchingcubes.html" target="_blank" rel="noopener">threejs.org examples</a> -->
+	</div>
+
+
 
 
 	<script>
@@ -301,6 +323,16 @@ var paused = false;
 		}
         init();
         animate();
+
+        //hide fancy latex display when moused over
+        document.getElementById("inputbox").addEventListener("mouseover",function(){
+            document.getElementById("latexrenderingcontainer").style.display = "none";
+        });
+        document.getElementById("inputbox").addEventListener("mouseout",function(){
+            document.getElementById("latexrenderingcontainer").style.display = "";
+        });
+        
+        updateFancyLatexDisplay();
         setupPresetButtons();
 	}
 	window.onload = function(){
@@ -311,13 +343,32 @@ var paused = false;
 
 </script>
 <div id="label" style="width: 100%;pointer-events: all;z-index:999;position:absolute;bottom:1%;">
+
         <div id="inputbox">
 		    <div id="errormessage"></div>
-		    <input id="functionTextLHS" type="textarea" value="x+y+z+sin(x)" onkeyup="queueTextUpdate()"></input>=<input id="functionTextRHS" type="textarea" value="0" onkeyup="queueTextUpdate()"></input>
+		    <input type="text" class="mathinput" value="x+y+z+sin(x)" id="functionTextLHS" onkeyup="queueTextUpdate()"></input>=<input type="text" class="mathinput" id="functionTextRHS" value="0" onkeyup="queueTextUpdate()"></input>
         </div>
 </div>
+<div id="latexrenderingcontainer"><span id="latexrendering"></span></div>
 
 <script>
+let MQ = MathQuill.getInterface(2);
+function updateFancyLatexDisplay(){
+
+		var lhsText = document.getElementById("functionTextLHS").value;
+        var rhsText = document.getElementById("functionTextRHS").value;
+   
+        var totalEquation = lhsText + "=" + rhsText;
+        totalEquation = totalEquation.replace(/[*]/g,""); //a^b -> a**b, to use JS's exponent
+		for(var name of ['sin','cos','atan','tan','sqrt','exp','abs']){
+			 totalEquation = totalEquation.replace(new RegExp(name,'g'),"\\text{"+name+'}');
+		}
+        totalEquation = totalEquation.replace(/time/g,'t');
+        var elem = document.getElementById('latexrendering');
+        elem.innerHTML = totalEquation;
+
+        MQ.StaticMath(elem);
+}
 
 function setupPresetButtons(){
     var elems = document.getElementsByClassName("preset");
@@ -336,7 +387,7 @@ function setupPresetButtons(){
 </script>
 
 <div id='presets'>
-    <input class='preset' type="button" value="Cylinder homotopy" data-eqn="(abs(sin(time)))*(x^2+y^2+z*y*3) + (1-abs(sin(time)))*(x^2+y^2)=5"></input>
+    <input class='preset' type="button" value="Cylinder homotopy" data-eqn="(abs(sin(time)))*(x^2+y^2+3*z*y) + (1-abs(sin(time)))*(x^2+y^2)=5"></input>
     <input class='preset' type="button" value="Diagonal cylinder" data-eqn="x^2+((z+y)^2)/2=5"></input>
 
     <input class='preset' type="button" value="Sphere" data-eqn="x^2+y^2+z^2=5"></input>

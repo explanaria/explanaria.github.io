@@ -1,3 +1,7 @@
+    function providedFunc(){
+        return 0;
+    }
+
 
 	// parametric function code.
 	function updateText(){
@@ -7,7 +11,7 @@
 		var lhsText = document.getElementById("functionTextLHS").value;
         var rhsText = document.getElementById("functionTextRHS").value;
    
-        var totalEquation = lhsText + "-" + rhsText; //to solve a=b, solve a-b=0
+        var totalEquation = lhsText + "-(" + rhsText + ")"; //to solve a=b, solve a-b=0
         totalEquation = totalEquation.replace(/\^/g,"**"); //a^b -> a**b, to use JS's exponent
 
 		objects = [];
@@ -29,8 +33,9 @@
 
 		//sanity test: no undefineds
 		if(success){
+            success = false;
 			var result = window.providedFunc(0,0,0,0);
-			if(result.constructor === Number){
+			if(result && result.constructor === Number){
                 success = true;
                /// if(result === Nan){
                    /// success = false;
@@ -47,6 +52,7 @@
 			for(var i=0;i<elems.length;i++){
 				elems[i].style.color = "";
 			}
+            updateFancyLatexDisplay();
 			document.getElementById("functionTextLHS").style.backgroundColor = "";
             document.getElementById("functionTextRHS").style.backgroundColor = "";
 
@@ -62,16 +68,3 @@
             document.getElementById("functionTextRHS").style.backgroundColor = "rgba(255,0,0,1)";
 		}
 	}
-
-	function queueTextUpdate(){
-		window.setTimeout(updateText,1); //hack because I still don't know how to wait
-	}
-	function setup(){
-		queueTextUpdate();
-
-		//provided functions
-		for(var name of ['sin','cos','atan','tan','sqrt','exp','abs']){
-			window[name] = Math[name];
-		}
-	}
-	window.onload = setup();

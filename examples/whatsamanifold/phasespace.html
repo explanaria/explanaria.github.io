@@ -118,8 +118,14 @@
     var angleLabel = makeTexPlane('angle.png',189,72, 2);
     angleLabel.position.set(0,-10,0.1);
 
+    var heightLabel = makeTexPlane('height.png',243,93, 2);
+    heightLabel.position.set(0,-10,0.1);
+
     var velocityLabel = makeTexPlane('velocity.png',270,81, 2.5);
     velocityLabel.position.set(-9,0,0.1);
+
+    var momentumLabel = makeTexPlane('momentum.png',417,207, 3);
+    momentumLabel.position.set(-9,0,0.1);
 
     var angleZero = makeTexPlane('zero.png',51,52, 1);
     //angleZero.position.set(0,-5.8,0.1);
@@ -231,7 +237,7 @@
 
        await dir.nextSlide();
         EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,0,0]},500);
-        EXP.TransitionTo(velocityLabel.material,{'opacity':1});
+        EXP.TransitionTo(momentumLabel.material,{'opacity':1});
         EXP.TransitionTo(velocityZero.material,{'opacity':1});
         await EXP.delay(600);
         EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,velocity,0]},500);
@@ -262,7 +268,7 @@
         //give pendulum more energy
         pendulum.paused=true;
         EXP.TransitionTo(pendulum, {'theta': 2,'v_theta':6});
-        EXP.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x*1.2,y*2,3.1]});
+        EXP.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x*1.2,y*1.6,3.1]});
         await EXP.delay(1500);
         pendulum.paused=false;
 
@@ -271,6 +277,10 @@
         await dir.nextSlide();
         //different hamiltonian, measured in height
 
+        EXP.TransitionTo(momentumLabel.material,{'opacity':0});
+        EXP.TransitionTo(velocityLabel.material,{'opacity':1});
+        EXP.TransitionTo(angleLabel.material,{'opacity':0});
+        EXP.TransitionTo(heightLabel.material,{'opacity':1});
         EXP.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
 
         pendulum.paused = true;
@@ -285,6 +295,11 @@
         await dir.nextSlide();
 
         //cool glamour shot
+
+        EXP.TransitionTo(momentumLabel.material,{'opacity':1});
+        EXP.TransitionTo(velocityLabel.material,{'opacity':0});
+        EXP.TransitionTo(angleLabel.material,{'opacity':1});
+        EXP.TransitionTo(heightLabel.material,{'opacity':0});
     EXP.TransitionTo(planeDefinition.children[0], {'opacity':0});
       EXP.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':10},2000);
         EXP.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.5,'y':0,'z':0},2000);
@@ -311,11 +326,11 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        Trick question! I never told you the pendulum's speed. Depending on how fast the ball's moving, it could swing with a longer interval, or even pass over the top in a circle forever. You can't tell where a pendulum will go from just its angle.
+        Trick question! I never told you if the pendulum was moving. Depending on the pendulum's momentum, it could swing with a longer interval, or even pass over the top in a circle forever. You can't tell where a pendulum will go from just its angle.
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-         In other words, if we want to predict where a pendulum will swing, we need <u>two</u> numbers: its angle, and its velocity. 
+         In other words, if we want to predict where a pendulum will swing, we need <u>two</u> numbers: its angle, and its momentum.
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
@@ -327,7 +342,7 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        And let's graph the y coordinate to match its speed. 
+        And let's graph the y coordinate to match its momentum. 
         <br />
         <aside>(A positive y coordinate denotes moving right, and a negative y coordinate denotes the pendulum moving left.)</aside>
 	</section>
@@ -337,7 +352,7 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        It took a mathematician named William Rowan Hamilton to figure out a cool way of showing why. Remember from physics how energy can't be created or destroyed? There are two types of energy in this pendulum: kinetic energy, which we can calculate from the pendulum's velocity, and potential energy, which we can calculate from the pendulum's height - or in other words, its angle.
+        It took a mathematician named William Rowan Hamilton to figure out a cool way of showing why. Remember from physics how energy can't be created or destroyed? There are two types of energy in this pendulum: kinetic energy, which we can calculate from the pendulum's momentum, and potential energy, which we can calculate from the pendulum's height - or in other words, its angle.
 	</section>
 
 
@@ -350,7 +365,7 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        With this energy surface, now we can see we can see what happens if we give the pendulum too much extra speed:
+        With this energy surface, now we can see we can see what happens if we give the pendulum too much extra momentum:
 	</section>
 
     <section class="exp-label exp-slide" style="opacity:0">
@@ -361,11 +376,11 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        You might wonder: why did we choose angle and velocity as our two numbers? Why not, for example height? 
+        You might wonder: why did we choose angle and momentum as our two numbers to measure? Why not, for example height and velocity? 
 	</section>
 
 <section class="exp-label exp-slide" style="opacity:0">
-        But the cool thing about Hamiltonian mechanics is that the exact things you measure don't matter too much. Here I'll measure height instead of angle - the slicing strategy of hamiltonian mechanics still gives you the path the pendulum follows in phase space.
+        But the cool thing about manifolds is that the coordinates you choose don't change the underlying mathematical space. Here I'll measure height instead of angle - the slicing strategy of hamiltonian mechanics still gives you the path the pendulum follows in phase space.
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
@@ -373,7 +388,7 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        So what is a manifold? The answer: A (2D) manifold is a surface which you can get by plugging in two coordinates (such as angle and velocity) into a nice and smooth function.
+        So what is a manifold? The answer: A (2D) manifold is a surface which you can get by plugging in two coordinates (such as angle and momentum) into a nice and smooth function.
 	</section>
 </body>
 </html>

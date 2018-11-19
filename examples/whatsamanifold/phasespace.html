@@ -31,6 +31,7 @@
 	var three = EXP.setupThree(60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
     controls.enableKeys = false;
+    //controls.enableRotate = false;
 
 	console.log("Loaded.");
 
@@ -69,7 +70,7 @@
             }.bind(this),1050);
         }
         activate(t){
-            let dt = Math.min(t - this.t,4);
+            let dt = Math.min(t - this.t,1/10);
             this.t = t;
             
             if(!this.paused){
@@ -206,15 +207,23 @@
 
         await dir.nextSlide();//"How about we graph them?"
         //remove extra pendulums from objects array since they're now dead
+
+        let cameraTarget = new THREE.Vector3(0,-1.5,0);
+        let cameraPos = new THREE.Vector3(0,-1.5,15);
+
         objects.splice(objects.indexOf(pendulum2), 1);
         objects.splice(objects.indexOf(pendulum3), 1);
-        EXP.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
-        EXP.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},3000);
+        EXP.TransitionTo(three.camera.position,{'x':cameraPos.x,'y':cameraPos.y,'z':cameraPos.z},1500);
+        EXP.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},1500);
 
         pendulum.renderSideways=true;
         EXP.TransitionTo(pendulum.centerPos,{0:9.5,1:0,2:0}); //I really need an array-transition feature
+        await EXP.delay(1500);
 
         await dir.nextSlide();
+        controls.target.copy(cameraTarget);
+        controls.enableRotate = true;
+
         EXP.TransitionTo(phasePointOutput, {"opacity":1});
         EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,0,0]},1);
         EXP.TransitionTo(angleLabel.material,{'opacity':1});
@@ -276,11 +285,11 @@
         await dir.nextSlide();
 
         //cool glamour shot
+    EXP.TransitionTo(planeDefinition.children[0], {'opacity':0});
       EXP.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':10},2000);
         EXP.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.5,'y':0,'z':0},2000);
         EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
-        await dir.nextSlide();
-        await dir.nextSlide();
+        //await dir.nextSlide();
 
 	}
 	animate();
@@ -318,7 +327,9 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        And let's graph the y coordinate to match its speed.
+        And let's graph the y coordinate to match its speed. 
+        <br />
+        <aside>(A positive y coordinate denotes moving right, and a negative y coordinate denotes the pendulum moving left.)</aside>
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
@@ -362,16 +373,7 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        So what the heck is a manifold? A 2D manifold is a surface which you can get by plugging in two coordinates (such as angle and velocity) into a nice and smooth function.
-    <br />
-    <br />
-	</section>
-
-	<section class="exp-label exp-slide" style="opacity:0">
-        So what the heck is a manifold? A 2D manifold is a surface which you can get by plugging in two coordinates (such as angle and velocity) into a nice and smooth function.
-
-        <br />
-        <!--Let's go look at some now!-->
+        So what is a manifold? The answer: A (2D) manifold is a surface which you can get by plugging in two coordinates (such as angle and velocity) into a nice and smooth function.
 	</section>
 </body>
 </html>

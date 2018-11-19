@@ -18,6 +18,11 @@
   .selectionarea{
     pointer-events: all;
   }
+
+    .exp-text{
+        bottom: 5%;
+    }
+
 	.invalid{
 		border: 2px solid red;
 	}
@@ -96,9 +101,11 @@
 				}
 				if(result.length == 2){
 					document.getElementById("errormessage").innerHTML = "Warning: this function isn't 3D! It's so thin you can't see it. Try adding ',u' to the end!";
+                    success=false;
 				}
 				if(result.length == 1){
 					document.getElementById("errormessage").innerHTML = "This 1D function won't show up in 3D. Try adding ', u, v' to the end!";
+                    success=false;
 				}
 			}
 		}

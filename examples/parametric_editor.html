@@ -36,6 +36,7 @@
   <script>
 	var three = EXP.setupThree(60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+    controls.enableKeys = false;
 
 	three.camera.position.z = 10;
 
@@ -59,16 +60,15 @@
 		controls.update();
 	});
 
+    let functionNumber = 0;
+
 
 	// parametric function code.
 	function updateText(){
 		document.getElementById("errormessage").innerHTML = "";
 
-
 		var providedText = document.getElementById("parametricText").value;
 		console.log(providedText);
-
-		objects = [];
 
 		var functionText = ["function providedFunc(i,t,u,v){",
 		"return [" + providedText + "];",
@@ -106,8 +106,8 @@
 		if(success && window.providedFunc && typeof(providedFunc) == "function"){
 
 			console.log("Success!");
-			parametricSurface.expr = providedFunc;
-			objects.push(range);
+            let workingFunc = providedFunc;
+            EXP.TransitionTo(parametricSurface,{'expr':workingFunc}, 500);
 
 			var elems = document.getElementsByClassName("highlight-if-invalid");
 			for(var i=0;i<elems.length;i++){

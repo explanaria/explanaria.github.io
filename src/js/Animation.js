@@ -32,6 +32,8 @@ r
 		this.duration = duration === undefined ? 1 : duration; //in s
 		this.elapsedTime = 0;
 
+        this.prevTrueTime = 0;
+
 
 		if(target.constructor === Transformation){
 			//find out how many objects are passing through this transformation
@@ -51,7 +53,7 @@ r
 		threeEnvironment.on("update",this._updateCallback);
 	}
 	update(time){
-		this.elapsedTime += time.delta;	
+		this.elapsedTime += time.realtimeDelta;	
 
 		let percentage = this.elapsedTime/this.duration;
 

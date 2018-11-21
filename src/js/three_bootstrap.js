@@ -61,6 +61,7 @@ function ThreeasyEnvironment(canvasContainer = null){
 
 	this.timeScale = 1;
 	this.elapsedTime = 0;
+	this.trueElapsedTime = 0;
 
 	this.container = this.shouldCreateContainer ? document.createElement( 'div' ) : canvasContainer;
 	this.container.appendChild( this.renderer.domElement );
@@ -141,11 +142,13 @@ ThreeasyEnvironment.prototype.onWindowResize= function() {
 }
 ThreeasyEnvironment.prototype.listeners = {"update": [],"render":[]}; //update event listeners
 ThreeasyEnvironment.prototype.render = function(timestep){
-	var delta = this.clock.getDelta()*this.timeScale;
+    var realtimeDelta = this.clock.getDelta();
+	var delta = realtimeDelta*this.timeScale;
 	this.elapsedTime += delta;
+    this.trueElapsedTime += realtimeDelta;
 	//get timestep
 	for(var i=0;i<this.listeners["update"].length;i++){
-		this.listeners["update"][i]({"t":this.elapsedTime,"delta":delta});
+		this.listeners["update"][i]({"t":this.elapsedTime,"delta":delta,'realtimeDelta':realtimeDelta});
 	}
 
 	this.renderer.render( this.scene, this.camera );

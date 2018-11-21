@@ -86,24 +86,26 @@
 		await EXP.delay(400); //without this the circle gets caught at the end of the period and it looks bad
 
 		//slowmo!
-		EXP.TransitionTo(three,{timeScale:0.05},400);
+		EXP.TransitionTo(three,{timeScale:0.07},700);
 
 		await EXP.delay(700);
 
-		yaxis.reveal(150/4);
+		yaxis.reveal(400);
 
 		await EXP.delay(400);
 
-		xaxis.reveal(150/4);
+		xaxis.reveal(400);
 
 		await EXP.delay(400);
-		hypotenuse.reveal(150/4);
+		hypotenuse.reveal(400);
 
-		await EXP.delay(300);
+		await EXP.delay(400);
 
-		EXP.TransitionTo(circleReveal,{'expr':(i,t,x)=>[x]},1000/4);
+		EXP.TransitionTo(circleReveal,{'expr':(i,t,x)=>[x]},1000);
 
-		EXP.TransitionTo(three,{timeScale:1},500);
+        await EXP.delay(500);
+
+		EXP.TransitionTo(three,{timeScale:1},750);
 		
 
 	}

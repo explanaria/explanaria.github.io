@@ -241,11 +241,14 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 		this.render();
 	}
 	render(timestep){
-		var delta = 1/this.fps*this.timeScale; //ignoring the true time, calculate the delta
+        var realtimeDelta = 1/this.fps;//ignoring the true time, calculate the delta
+		var delta = realtimeDelta*this.timeScale; 
+		this.elapsedTime += delta;
+        this.trueElapsedTime += realtimeDelta;
 
 		//get timestep
 		for(var i=0;i<this.listeners["update"].length;i++){
-			this.listeners["update"][i]({"t":this.elapsedTime,"delta":delta});
+			this.listeners["update"][i]({"t":this.elapsedTime,"delta":delta, 'realtimeDelta':realtimeDelta});
 		}
 
 		this.renderer.render( this.scene, this.camera );
@@ -258,7 +261,6 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 		this.record_frame();
 		this.recording_icon.style.borderRadius = '10px';
 
-		this.elapsedTime += delta;
 		window.requestAnimationFrame(this.render.bind(this));
 	}
 	record_frame(){

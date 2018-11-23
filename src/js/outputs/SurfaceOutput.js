@@ -9,12 +9,12 @@ class SurfaceOutput extends OutputNode{
 		/* should be .add()ed to a Transformation to work
 			options:
 			{
-				width: number
 				opacity: number
 				color: hex code or THREE.Color()
 				showGrid: boolean. If true, will display a grid over the surface. Default: true
 				showSolid: boolean. If true, will display a solid surface. Default: true
 				gridSquares: number representing how many squares per dimension to use in a rendered grid
+				gridLineWidth: number representing how many squares per dimension to use in a rendered grid
 			}
 		*/
 		this._opacity = options.opacity !== undefined ? options.opacity : 1;

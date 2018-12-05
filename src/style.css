@@ -105,7 +105,7 @@ body{
 }
 
 
-@media (max-width: 39em) {
+@media (max-width: 45em) {
 	.exp-text{
 		font-size: 1em; 
 		bottom:5%; 

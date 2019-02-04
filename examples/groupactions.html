@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
-  <title>Explanarian - Cyclical Snake</title>
+  <title>Explanarian - Group Actions</title>
   <script src="../src/lib/three.min.js"></script>
   <script src="../src/lib/OrbitControls.js"></script>
   <script src="../build/explanaria-bundle.js"></script>
@@ -101,11 +101,10 @@
 	}
 
 	var somethingelse = new EXP.Array({data: genRandomPoints()});
-	var g2 = new EXP.Transformation({'expr': (i,t,x,y) => [x,y]});
 	var postTransform2 = new EXP.Transformation({'expr': (i,t,x,y) => [x*3+5,y*3]});
 	var output2 = new EXP.PointOutput({width:0.2, color: 0x55aaff});
 
-	somethingelse.add(g2).add(postTransform2).add(output2);
+	somethingelse.add(g.makeLink()).add(postTransform2).add(output2);
 
 	var sceneElements = [polyhedron, somethingelse, polyhedronshadow]
 	three.on("update",function(time){
@@ -122,27 +121,27 @@
 		arrow.reveal(0,0);
 		await EXP.delay(1000);
 
-		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => [-x,y]}, 1000));
+		EXP.TransitionTo(g, {'expr': (i,t,x,y) => [-x,y]}, 1000);
 
 		await EXP.delay(2000);
 
-		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => [-x,-y]}, 1000));
+		EXP.TransitionTo(g, {'expr': (i,t,x,y) => [-x,-y]}, 1000);
 
 		await EXP.delay(2000);
 
-		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, Math.PI/3)}, 1000, 0.0));
+		EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, Math.PI/3)}, 1000, 0.0);
 
 		await EXP.delay(2000);
 
-		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, 4*Math.PI/3)}, 1000, 0.4));
+		EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, 4*Math.PI/3)}, 1000, 0.4);
 
 		await EXP.delay(2000);
 
-		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => rotate(x, y, Math.PI)}, 1000, 0.0));
+		EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, Math.PI)}, 1000, 0.0);
 
 		await EXP.delay(2000);
 
-		[g, g2].forEach(i => EXP.TransitionTo(i, {'expr': (i,t,x,y) => [x,y]}, 1000));
+		EXP.TransitionTo(g, {'expr': (i,t,x,y) => [x,y]}, 1000);
 
 		await EXP.delay(1000);
 

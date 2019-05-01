@@ -84,7 +84,7 @@ body{
 	z-index: 1;
 	bottom: 2%;
 	position: absolute;
-	width: 10vw;
+	width: 15vw;
 	max-width: 5em;
 	transition: opacity 0.5s ease-in-out;
 }
@@ -95,6 +95,20 @@ body{
 	left: 2%;
 }
 .exp-arrow:hover{
+	transform: scale(1.1);
+}
+
+.exp-backbtn{
+    width: 15%;
+    max-width: 4em;
+    height: 15%;
+    max-height: 4em;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding:0.5em;
+}
+.exp-backbtn:hover{
 	transform: scale(1.1);
 }
 

@@ -31,7 +31,7 @@
 	var three = EXP.setupThree(60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
     controls.enableKeys = false;
-    //controls.enableRotate = false;
+    controls.enableRotate = false;
 
 	console.log("Loaded.");
 
@@ -334,7 +334,7 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        OK - we've got those measurements. Let's use a time-honored mathematical technique: generalizing. Instead of figuring out what'll hapen with these particular numbers, sometimes in math it's easier to solve for <u>every</u> value at the same time, then pick out one specific values once you're done. In this case, we've got two numbers. How about we graph them?
+        OK - we know we need both a pendulum's angle and momentum. Let's use a time-honored mathematical technique: generalizing. Instead of figuring out what'll happen with these particular numbers, sometimes in math it's easier to solve for <u>every</u> value at the same time, then pick out the solution for your specific measurements once you're done. In this case, every pendulum is described by two numbers: angle and momentum. How about we graph them?
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
@@ -342,34 +342,36 @@
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        And let's graph the y coordinate to match its momentum. 
+        And let's graph the y coordinate to match the pendulum's momentum. 
         <br />
         <aside>(A positive y coordinate denotes moving right, and a negative y coordinate denotes the pendulum moving left.)</aside>
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        If we let the pendulum go, we get something interesting: on this new graph, the pendulum's measurements trace out an ellipse! But why?
+        Now let's graph both numbers at the same time as the pendulum moves. If we let the pendulum go, we get something interesting: on this new graph, the pendulum's measurements trace out an ellipse! But why?
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        It took a mathematician named William Rowan Hamilton to figure out a cool way of showing why. Remember from physics how energy can't be created or destroyed? There are two types of energy in this pendulum: kinetic energy, which we can calculate from the pendulum's momentum, and potential energy, which we can calculate from the pendulum's height - or in other words, its angle.
+        It took a mathematician named William Rowan Hamilton to figure out a cool way of showing why. Remember from physics how energy can't be created or destroyed? There are two types of energy in this pendulum: kinetic energy, which we can calculate from the pendulum's momentum, and potential energy, which we can calculate from the pendulum's height - and we can calculate the pendulum's height from its angle.
 	</section>
 
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        So we've got a third dimension. Let's also graph energy on the z axis. When we do that, we get a kind of curvy surface. It repeats because we're allowing angles greater than 360 degrees.
+        So we've got a third dimension. For each point on this graph, with X coordinate a certain angle and Y coordinate a certain momentum, let's calculate the total energy the pendulum has and graph that as the Z axis of every point on this surface. (It seems to repeat because an x-coordinate 5° and 365° represent the same angle)
+        <br />
+        <aside>(Click and drag to rotate the graph)</aside>
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        But more importantly: if we look at all the points with the same energy as what we started with, our ellipse appears! Our path in phase space is actually a slice of this weird "energy surface", the one with the same energy as what we started with. That's the power of "hamiltonian mechanics": it's weaponised conservation of energy!
+        But more importantly: energy is neither created or destroyed. If we look at all the points with the same energy as what we started with, our ellipse appears! Our path in phase space is actually a slice of this weird "energy surface": the slice consisting of all points with the same energy as what we started with. That's the power of "hamiltonian mechanics": it's weaponised conservation of energy!
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        With this energy surface, now we can see we can see what happens if we give the pendulum too much extra momentum:
+        With this energy surface, now we can see we can see what happens if we give the pendulum too much extra momentum, and therefore more energy:
 	</section>
 
     <section class="exp-label exp-slide" style="opacity:0">
-     With this much energy, the slice gets high enough that its border becomes infinitely big. And that tells us that angle will get bigger and bigger, and this corresponds to the over-the-top pendulum motion we saw earlier!
+     With this much energy, the slice gets high enough that the path the pendulum takes stops being an ellipse and instead becomes an infinitely long line. And that tells us that angle will get bigger and bigger, and this corresponds to the over-the-top pendulum motion we saw earlier!
 	</section>
 	<section class="exp-label exp-slide" style="opacity:0">
         This green "energy graph" you're looking at right now is called "phase space". But more importantly - it's also a two-dimensional manifold!
@@ -380,7 +382,7 @@
 	</section>
 
 <section class="exp-label exp-slide" style="opacity:0">
-        But the cool thing about manifolds is that the coordinates you choose don't change the underlying mathematical space. Here I'll measure height instead of angle - the slicing strategy of hamiltonian mechanics still gives you the path the pendulum follows in phase space.
+        But the cool thing about manifolds is that the coordinates you choose don't change the underlying mathematical space. Here I'll measure height on the x-axis instead of angle - the slicing strategy of hamiltonian mechanics still gives you the path the pendulum follows in phase space.
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">

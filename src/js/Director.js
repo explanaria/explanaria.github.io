@@ -253,7 +253,8 @@ class UndoCapableDirector extends NonDecreasingDirector{
         }
         // if we get to here, we've previously done an undo and we need to catch up
 
-        this.undoStackIndex += 1;
+        if(this.undoStackIndex < this.undoStack.length-1) this.undoStackIndex += 1;
+
         while(this.undoStack[this.undoStackIndex].constructor !== NewSlideUndoItem){
             //loop through undo stack and redo each undo
 

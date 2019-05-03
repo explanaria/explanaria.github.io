@@ -104,9 +104,9 @@ class LineOutput extends OutputNode{
 
 		let index = this._currentPointIndex*this._outputDimensions;
 
-		if(x !== undefined)this._vertices[index] = x;
-		if(y !== undefined)this._vertices[index+1] = y;
-		if(z !== undefined)this._vertices[index+2] = z;
+	    this._vertices[index]   = x === undefined ? 0 : x;
+		this._vertices[index+1] = y === undefined ? 0 : y;
+		this._vertices[index+2] = z === undefined ? 0 : z;
 
 		this._currentPointIndex++;
 
@@ -120,9 +120,9 @@ class LineOutput extends OutputNode{
 		let firstCoordinate = i % this.itemDimensions[this.itemDimensions.length-1];
 
 		if(!(firstCoordinate == 0 || firstCoordinate == this.itemDimensions[this.itemDimensions.length-1]-1)){
-			if(x !== undefined)this._vertices[index+this._outputDimensions] = x;
-			if(y !== undefined)this._vertices[index+this._outputDimensions+1] = y;
-			if(z !== undefined)this._vertices[index+this._outputDimensions+2] = z;
+			this._vertices[index+this._outputDimensions]   = x === undefined ? 0 : x;
+			this._vertices[index+this._outputDimensions+1] = y === undefined ? 0 : y;
+			this._vertices[index+this._outputDimensions+2] = z === undefined ? 0 : z;
 			this._currentPointIndex++;
 		}
 

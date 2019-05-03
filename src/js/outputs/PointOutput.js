@@ -43,9 +43,9 @@ class PointOutput extends OutputNode{
 		}
 		//it's assumed i will go from 0 to this.numCallsPerActivation, since this should only be called from an Area.
 		var point = this.getPoint(i);
-		if(x !== undefined)point.x = x;
-		if(y !== undefined)point.y = y;
-		if(z !== undefined)point.z = z;
+		point.x = x === undefined ? 0 : x;
+		point.y = y === undefined ? 0 : y;
+		point.z = z === undefined ? 0 : z;
 	}
 	getPoint(i){
 		return this.points[i];

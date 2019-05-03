@@ -69,9 +69,23 @@ class NonDecreasingDirector{
 		await this.waitForPageLoad();
         this.slides = document.getElementsByClassName("exp-slide");
 
+        //hide all slides except first one
+		for(var i=0;i<this.slides.length;i++){
+            this.slides[i].style.opacity = 0; 
+			this.slides[i].style.display = 'none';//opacity=0 alone won't be instant because of the 1s CSS transition
+		}
+		let self = this;
+        //undo setting display-none after a bit of time
+        window.setTimeout(function(){
+		    for(var i=0;i<self.slides.length;i++){
+			    self.slides[i].style.display = '';
+		    }
+        },1);
+
+        this.showSlide(0); //unhide first one
+
 		this.rightArrow = new DirectionArrow();
 		document.body.appendChild(this.rightArrow.arrowImage);
-		let self = this;
 		this.rightArrow.onclickCallback = function(){
 			self._changeSlide(1, function(){}); // this errors without the empty function because there's no resolve. There must be a better way to do things.
 			console.warn("WARNING: Horrible hack in effect to change slides. Please replace the pass-an-empty-function thing with something that actually resolves properly and does async.")
@@ -84,15 +98,16 @@ class NonDecreasingDirector{
 
 	async waitForPageLoad(){
 		return new Promise(function(resolve, reject){
-			//window.addEventListener("load",resolve);
-			window.setTimeout(resolve,1);
-			resolve()
+            if(document.readyState == 'complete'){
+                resolve();
+            }
+			window.addEventListener("DOMContentLoaded",resolve);
 		});
 	}
 
 	showSlide(slideNumber){
 		for(var i=0;i<this.slides.length;i++){
-			this.slides[i].style.opacity = 0;
+			if(i != slideNumber)this.slides[i].style.opacity = 0;
 		}
 		this.slides[slideNumber].style.opacity = 1;
 	}

@@ -30,14 +30,11 @@ class DirectionArrow{
 			this.arrowImage.classList.add("exp-arrow-left")
 		}
 		this.arrowImage.onclick = (function(){
-			this.onclick();
+		    this.hideSelf();
+		    this.onclickCallback();
 		}).bind(this);
 
 		this.onclickCallback = null; // to be set externally
-	}
-	onclick(){
-		this.hideSelf();
-		this.onclickCallback();
 	}
 	showSelf(){
 		this.arrowImage.style.pointerEvents = '';
@@ -84,6 +81,14 @@ class NonDecreasingDirector{
 
         this.showSlide(0); //unhide first one
 
+        this.setupClickables();
+
+        this.initialized = true;
+	}
+
+    setupClickables(){
+        let self = this;
+
 		this.rightArrow = new DirectionArrow();
 		document.body.appendChild(this.rightArrow.arrowImage);
 		this.rightArrow.onclickCallback = function(){
@@ -92,9 +97,7 @@ class NonDecreasingDirector{
 			self.nextSlideResolveFunction();
 		}
 
-        this.initialized = true;
-
-	}
+    }
 
 	async waitForPageLoad(){
 		return new Promise(function(resolve, reject){
@@ -106,13 +109,13 @@ class NonDecreasingDirector{
 	}
 
 	showSlide(slideNumber){
-		for(var i=0;i<this.numHTMLSlides;i++){
-			if(i != slideNumber)this.slides[i].style.opacity = 0;
-		}
         if(slideNumber >= this.numHTMLSlides){
             console.error("Tried to show slide #"+slideNumber+", but only " + this.numHTMLSlides + "HTML elements with exp-slide were found! Make more slides?");
             return;
         }
+		for(var i=0;i<this.numHTMLSlides;i++){
+			if(i != slideNumber)this.slides[i].style.opacity = 0;
+		}
 		this.slides[slideNumber].style.opacity = 1;
 	}
 
@@ -159,7 +162,7 @@ class NonDecreasingDirector{
 			if(this.currentSlideIndex == 0 && slideDelta == -1){
 				return; //no going past the beginning
 			}
-			if(this.currentSlideIndex == this.slides.length-1 && slideDelta == 1){
+			if(this.currentSlideIndex == this.numHTMLSlides-1 && slideDelta == 1){
 				return; //no going past the end
 			}
 			this.currentSlideIndex += slideDelta;
@@ -197,13 +200,11 @@ class UndoCapableDirector extends NonDecreasingDirector{
 		this.undoStack = [];
 		this.undoStackIndex = 0; //increased by one every time either this.TransitionTo is called or this.nextSlide() is called
 
-		this.leftArrow = new DirectionArrow(false);
-		document.body.appendChild(this.leftArrow.arrowImage);
-		this.leftArrow.onclickCallback = function(){} //todo: put this in
-
-        this.nextSlideResolveFunction = function(){} //if you press right before the first director.nextSlide(), don't error
-
         let self = this;
+
+        //if you press right before the first director.nextSlide(), don't error
+        this.nextSlideResolveFunction = function(){} 
+
         function keyListener(e){
 	    	if(e.repeat)return; //keydown fires multiple times but we only want the first one
 			let slideDelta = 0;
@@ -211,34 +212,45 @@ class UndoCapableDirector extends NonDecreasingDirector{
 			  case 34:
 			  case 39:
 			  case 40:
-				slideDelta = 1;
+				self.handleForwardsPress();
 				break;
               case 33:
               case 37:
               case 38:
-                slideDelta = -1;
+                self.handleBackwardsPress();
 			  default:
 				break;
-			}
-			if(slideDelta != 0){
-                if(slideDelta == 1){
-                    self.handleForwardsPress();
-                }else if(slideDelta == -1){
-                    self.handleBackwardsPress();
-                }
 			}
 		}
 
 		window.addEventListener("keydown", keyListener);
 	}
 
+    setupClickables(){
+        let self = this;
+
+		this.leftArrow = new DirectionArrow(false);
+        this.leftArrow.hideSelf();
+		document.body.appendChild(this.leftArrow.arrowImage);
+		this.leftArrow.onclickCallback = function(){
+            self.handleBackwardsPress();
+        }
+
+		this.rightArrow = new DirectionArrow(true);
+		document.body.appendChild(this.rightArrow.arrowImage);
+		this.rightArrow.onclickCallback = function(){
+            self.handleForwardsPress();
+        }
+    }
+
     moveFurtherIntoPresentation(){
-            //when not in the past (and therefore with nothing to redo), advance further.
+            //if there's nothing to redo, (so we're not in the past of the undo stack), advance further.
             //if there are less HTML slides than calls to director.newSlide(), complain in the console but allow the presentation to proceed
             if(this.currentSlideIndex < this.numSlides){
                 this.undoStackIndex += 1; //advance past the NewSlideUndoItem
                 this.furthestSlideIndex += 1; 
-                this.currentSlideIndex += 1; //should still equal furthestSlideIndex
+                this.currentSlideIndex += 1;
+                this.showArrows(); //showArrows must come before this.currentSlideIndex advances or else we won't be able to tell if we're at the end or not
             }
 
             this.showSlide(this.currentSlideIndex); //this will complain in the console window if there are less slides than newSlide() calls
@@ -246,8 +258,10 @@ class UndoCapableDirector extends NonDecreasingDirector{
     }
 
     handleForwardsPress(){
+        this.rightArrow.hideSelf();
+
         if(this.furthestSlideIndex == this.currentSlideIndex){
-            //unpause code execution and show next slide
+            //if nothing to redo
             this.moveFurtherIntoPresentation();
             return;
         }
@@ -258,23 +272,36 @@ class UndoCapableDirector extends NonDecreasingDirector{
         while(this.undoStack[this.undoStackIndex].constructor !== NewSlideUndoItem){
             //loop through undo stack and redo each undo
 
-            if(this.undoStackIndex == this.undoStack.length){
-                //fully undone and at current slide
-                break;
+            let redoItem = this.undoStack[this.undoStackIndex]
+            switch(redoItem.type){
+                case DELAY:
+                    //while redoing, skip any delays
+                    break;
+                case TRANSITIONTO:
+                    var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.durationMS === undefined ? undefined : redoItem.durationMS/1000);
+                  //and now redoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
+                    break;
+                case NEWSLIDE:
+                    break;
+                default:
+                    break;
             }
 
-            //redo transformation in this.undoStack[this.undoStackIndex]
-            let redoItem = this.undoStack[this.undoStackIndex]
-            var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.durationMS === undefined ? undefined : redoItem.durationMS/1000);
-            //and now redoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
-
+            if(this.undoStackIndex == this.undoStack.length-1){
+                //fully redone and at current slide
+                break;
+            }
+            
             this.undoStackIndex += 1;
+
         }
         this.currentSlideIndex += 1;
         this.showSlide(this.currentSlideIndex);
+        this.showArrows();
     }
 
     handleBackwardsPress(){
+        this.leftArrow.hideSelf();
 
         if(this.undoStackIndex == 0 || this.currentSlideIndex == 0){
             return;
@@ -291,16 +318,39 @@ class UndoCapableDirector extends NonDecreasingDirector{
 
             //undo transformation in this.undoStack[this.undoStackIndex]
             let undoItem = this.undoStack[this.undoStackIndex];
-            let duration = undoItem.durationMS === undefined ? 1 : undoItem.durationMS/1000;
-            duration = Math.min(duration / 2, 1); //undoing should be faster, so cut it in half - but cap durations at 1s
-            var undoAnimation = new Animation(undoItem.target, undoItem.fromValues, duration);
-            //and now undoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
-
+            switch(undoItem.type){
+                case DELAY:
+                    //while undoing, skip any delays
+                    break;
+                case TRANSITIONTO:
+                    let duration = undoItem.durationMS === undefined ? 1 : undoItem.durationMS/1000;
+                    duration = Math.min(duration / 2, 1); //undoing should be faster, so cut it in half - but cap durations at 1s
+                    var undoAnimation = new Animation(undoItem.target, undoItem.fromValues, duration);
+                    //and now undoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
+                    break;
+                case NEWSLIDE:
+                    break;
+                default:
+                    break;
+            }
             this.undoStackIndex -= 1;
         }
         this.currentSlideIndex -= 1;
         this.showSlide(this.currentSlideIndex);
+        this.showArrows();
+    }
 
+    showArrows(){
+        if(this.currentSlideIndex > 0){
+            this.leftArrow.showSelf();
+        }else{
+            this.leftArrow.hideSelf();
+        }
+        if(this.currentSlideIndex < this.numSlides){
+            this.rightArrow.showSelf();
+        }else{
+            this.rightArrow.hideSelf();
+        }
     }
 
 	async nextSlide(){
@@ -309,12 +359,13 @@ class UndoCapableDirector extends NonDecreasingDirector{
         B) if the user presses the left arrow key, they can undo and go back in time, and every TransitionTo() call before that will be undone until it reaches a previous nextSlide() call. Any normal javascript assignments won't be caught in this :(
         C) if undo
         */
+        if(!this.initialized)throw new Error("ERROR: Use .begin() on a Director before calling any other methods!");
+
         
         this.numSlides++;
         this.undoStack.push(new NewSlideUndoItem(this.currentSlideIndex));
+        this.showArrows();
 
-
-        if(!this.initialized)throw new Error("ERROR: Use .begin() on a Director before calling any other methods!");
 
 		let self = this;
 
@@ -326,6 +377,12 @@ class UndoCapableDirector extends NonDecreasingDirector{
 		});
 
 	}
+
+	async delay(waitTime){
+        this.undoStack.push(new DelayUndoItem(waitTime));
+		this.undoStackIndex++;
+		await super.delay(waitTime);
+	}
 	TransitionTo(target, toValues, durationMS){
 		var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000);
 		let fromValues = animation.fromValues;
@@ -335,19 +392,34 @@ class UndoCapableDirector extends NonDecreasingDirector{
 }
 
 
+//discount enum
+const TRANSITIONTO = 0;
+const NEWSLIDE = 1;
+const DELAY=2;
 
+//things that can be stored in a UndoCapableDirector's .undoStack[]
 class UndoItem{
 	constructor(target, toValues, fromValues, durationMS){
 		this.target = target;
 		this.toValues = toValues;
 		this.fromValues = fromValues;
 		this.durationMS = durationMS;
+        this.type = TRANSITIONTO;
 	}
 }
+
 class NewSlideUndoItem{
 	constructor(slideIndex){
         this.slideIndex = slideIndex;
+        this.type = NEWSLIDE;
 	}
+}
+
+class DelayUndoItem{
+    constructor(waitTime){
+        this.waitTime = waitTime;
+        this.type = DELAY;
+    }
 }
 
 export { NonDecreasingDirector, DirectionArrow, UndoCapableDirector };

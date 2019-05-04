@@ -93,9 +93,13 @@ body{
 }
 .exp-arrow-left{
 	left: 2%;
+    transform: scale(-1, 1);
 }
-.exp-arrow:hover{
+.exp-arrow-right:hover{
 	transform: scale(1.1);
+}
+.exp-arrow-left:hover{
+	transform: scale(-1.1, 1.1);
 }
 
 .exp-backbtn{

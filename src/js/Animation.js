@@ -87,7 +87,10 @@ r
 				return math.lerpVectors(t,toValue(i, ...coords),fromValue(i, ...coords))
 			}).bind(this);
 			return;
-		}else{
+		}else if(typeof(toValue) === "boolean" && typeof(fromValue) === "boolean"){
+            let t = this.interpolationFunction(percentage);
+            this.target[propertyName] = t > 0.5 ? toValue : fromValue;
+        }else{
 			console.error("Animation class cannot yet handle transitioning between things that aren't numbers or functions!");
 		}
 

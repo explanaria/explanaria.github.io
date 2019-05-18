@@ -113,10 +113,6 @@
 	var blueportal = new Line([-1,-1,0],[1,-1,0], 0x4edfed);
 	var orangeportal = new Line([-1,1,0],[1,1,0],0xfcc255);
 
-	var firstPoint = new EXP.Area({bounds: [[0, 1]], numItems:5});
-	var firstPointCoords = new EXP.Transformation({expr: (i,t) => [0,0]});
-	firstPoint.add(firstPointCoords).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
-
 	class PhysicsEnginePoint{
 		constructor(options){
 			this.updateFunc = options.updateFunc;
@@ -128,26 +124,42 @@
 			this.array.add(new EXP.Transformation({expr: (i,t,x,y) => [x,y]})).add(new EXP.PointOutput({color: 0x000000, width:0.1, opacity:0}));
 
 			this.velocityVector = new EXP.Array({data:[[0],[0]]});
-			this.velocityVector.add(new EXP.VectorOutput({color: 0x00f000, width:2, opacity:1}));
+			this.velocityVector.add(new EXP.VectorOutput({color: 0x00f000, width:2, opacity:0}));
 
-			this.t = 0;
+			this.last_t = 0;
+            this.t = 0;
+            this.running = false;
+
+            this._opacity = 0;
 		}
 		activate(t){
-			let dt = t - this.t;
+			let dt = Math.min(t - this.last_t,0.5);
 			this.update(dt);
+
+			this.last_t = t;
+			if(!this.running) return;
+            this.t += dt;
 
 			this.array.data[0] = this.position;
 			this.array.activate(t);
 
 			this.velocityVector.activate(t);
 
-			this.t = t;
 		}
+        get opacity(){
+            return this._opacity;
+        }
+        set opacity(val){
+            this.array.children[0].children[0].opacity = val;
+            this.velocityVector.children[0].opacity = val;
+            this._opacity = val;
+        }
 		updateVelocityVector(){
 			this.velocityVector.data[0] = this.position;
 			this.velocityVector.data[1] = EXP.Math.vectorAdd(EXP.Math.clone(this.position), EXP.Math.clone(this.velocity));
 		}
 		update(dt){
+			if(!this.running) return;
 			if(this.updateFunc !== undefined)this.updateFunc(this, dt);
 
 			// Apply the effect of the portals. Cut this part out to generalize.
@@ -156,7 +168,7 @@
 			const topYPos = 1;
 			const bottomYPos = -1;
 			//top portal
-			if(this.velocity[1] > 0 && currentY < topYPos && nextY >= topYPos){
+			if(this.velocity[1] >= 0 && currentY < topYPos && nextY >= topYPos){
 				this.position[1] -= 2; //teleport to bottom portal
 			}
 			//bottom portal
@@ -186,7 +198,7 @@
 		}
 	});
 
-	var presentation = new EXP.NonDecreasingDirector();
+	var presentation = new EXP.UndoCapableDirector();
 
 	async function animate(){
 		controls.enableRotate = false;
@@ -205,16 +217,16 @@
 		earth.revealSelf(presentation);
 
 		controls.enableRotate = true;
-		presentation.TransitionTo(firstPointCoords.children[0], {'opacity': 1});
+		presentation.TransitionTo(pointWithGravity, {'opacity': 1});
 
 		await presentation.nextSlide();
 
 		let ramp = (x) => (((x)%1)+1)%1
 		let toPortalCoords = (x)=>(1-ramp(x)*2);
 
-		presentation.TransitionTo(pointWithGravity.position, {"1": 0.5},250);
 		await presentation.delay(500);
-		pointWithGravity.updateFunc = (self, dt, t)=>(self.position[1] = toPortalCoords(Math.sin(3*self.t)*0.5+2));
+		pointWithGravity.updateFunc = (self, dt, t)=>(self.position[1] = toPortalCoords(Math.cos(3*self.t)*0.5+2));
+		pointWithGravity.running = true;
 
 		await presentation.nextSlide(); // 4
 
@@ -224,10 +236,6 @@
 		await presentation.delay(1000);
 
 		//show physics point and not other point
-		
-		//presentation.TransitionTo(firstPointCoords.children[0], {"opacity":0});
-		//presentation.TransitionTo(pointWithGravity, {'opacity': 1});
-		//this fails because the material is shared among PointOutputs. whoops
 
 		let a = 1;
 		pointWithGravity.updateFunc = (self, dt)=>(self.velocity[1] -= 0.5*dt);
@@ -238,20 +246,21 @@
 		//show force
 
 		await presentation.nextSlide();
-	
-		pointWithGravity.updateFunc = (self, dt)=>(self.velocity[1]=3*dt*(0-self.position[1]));
+
+		presentation.TransitionTo(pointWithGravity, {"running":false});
 
 		//at this point I gave up trying to animate things and started using images instead
 		for(var i=0;i<7;i++){
 			await presentation.nextSlide();
 		}
 
-
 		
 		//	Problems now:
-		//	1) add a left arrow
+		//	1) add a left arrow 
 		//	2) t is global, not from the start of the transformation. This is not useful for parametric physics. Really explanaria is not built for physics engines.
 		//	...but it could work if a function could feed back into itself.
+
+        //(note from the future: both of the above problems are SOLVED.)
 		
 
 		await presentation.delay(2000);
@@ -262,7 +271,10 @@
   </script>
 
 		<section id="label1" class="exp-label exp-slide">
-			<h1>Portals and Conservation of Energy</h1>
+			<h1>Portals and Conservation of Energy
+                <br />
+                <span style="font-weight: normal; font-size: 80%;">April 2018</span>
+            </h1>
 			<aside>Press the right arrow to advance.</aside>
 		</section>
 		<section id="label2" class="exp-text exp-slide" style="opacity: 0">
@@ -272,7 +284,7 @@
 			Let's say we have two portals hovering above earth. 
 		</section>
 		<section id="label4" class="exp-text exp-slide" style="opacity: 0">
-			Anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity. Ideally, space should be smoothly connected - each neighborhood looks Euclidean. <aside>(except perhaps the portal's edges, which I'm ignoring for now.)</aside>
+			Anything that goes into one portal should come out of the same spot on the other one, maintaining its velocity. Ideally, space should still be smooth - zoom in anywhere far enough and it looks like normal, flat Euclidean space. <aside>(except perhaps the portal's edges, which I'm ignoring for now.)</aside>
 		</section>
 		<section id="label5" class="exp-text exp-slide" style="opacity: 0">
 			Assume we're in space, above earth. Newtonian gravity says there should be a force downwards, calculated from the distance r between a particle and the earth. 
@@ -280,7 +292,7 @@
 		</section>
 
 		<section class="exp-text exp-slide" style="opacity: 0">
-			Notice how because of the portals, this acceleration can keep accumularing for an infinitely long time, so the particle can gain infinite amounts of energy. Obviously, this violates the conservation of energy.
+			Notice how because of the portals, this acceleration can keep accumulating for an infinitely long time, so the particle can gain infinite amounts of energy. Obviously, this violates conservation of energy.
 		</section>
 
 
@@ -289,7 +301,7 @@
 				<img src="portalDiagram1small.png" class="centered-image"></img>
 				<br>
 
-				But <i>why</i> is the particle able to attain infinite energy? Usually, gravity is a conservative force: potential energy is the same no matter the path one takes to get from A to B. But consider two points, each ε away from a portal. Through the portal, they're only a tiny distance of 2ε away from one another, so they <i>should</i> feel the same force of gravity.
+				But <i>why</i> is the particle able to get infinite energy? Usually, gravity is a conservative force: potential energy is the same no matter the path one takes to get from A to B. But consider two points, each a small distance ε away from a portal. Through the portal, they're only a tiny distance of 2ε away from one another, so they <i>should</i> feel the same force of gravity - but they don't, since the lower point is closer to earth.
 				<!-- show two points, with dashed paths to Earth -->
 			</div>
 		</section>
@@ -298,7 +310,7 @@
 			<div class="bg-img-container">
 				<img src="portalDiagram2small.png" class="centered-image"></img>
 				<br>
-				Newtonian gravity says the force F is proportional to 1/r<sup>2</sup>, where r is the distance from the point to Earth. Therefore, since the top point is farther from Earth, Newtonian physics says it experiences less gravity. Can we change how we define r to fix the problem?
+				Newtonian gravity says the force F is proportional to 1/r<sup>2</sup>, where r is the distance from the point to Earth. So since the top point is farther from Earth, Newtonian physics says it experiences less gravity. Can we change how r is defined to fix the problem?
 			</div>
 		</section>
 
@@ -307,15 +319,16 @@
 			<div class="bg-img-container">
 				<img src="portalDiagram2.5small.png" class="centered-image"></img>
 				<br>
-			Let's <i>allow gravity to flow through portals</i>. We can do this by defining the force of gravity as k/r<sup>2</sup> again; but this time, let's define r as the length of <u>shortest</u> path to Earth, and make the resulting force the vector sum of all possible paths. This seems to fix the problem where a particle could falling infinitely long - anything near the top portal would feel a force of gravity <u>upwards</u> through that portal.
+			Let's <i>let gravity flow through portals</i>. What if we define gravity as k/r<sup>2</sup> again; but this time, let's define r as the length of the <u>shortest</u> path to Earth, and the total force of gravity is the vector sum along all possible paths. This seems to fix the problem where a particle could be falling infinitely long - anything near the top portal would feel a force of gravity <u>upwards</u> through that portal.
 		</section>
 
 
 		<section class="exp-text exp-slide highlight-over-bg" style="opacity: 0">
 			<div class="bg-img-container">
 				<img src="portalDiagram3small.png" class="centered-image"></img>
-				<br>
-				Interestingly, this also means that it's possible to exactly balance a point in gravity in such a way that the <span style="color: #00f000">force of gravity</span> exactly balances itself out out, meaning a point can hover there forever until it's perturbed.
+   				<br>
+
+                Interestingly, with this definition it's possible to levitate a particle if you carefully balance the <span style="color: #00f000">force of gravity</span> so it cancels itself out. It can hang there forever until it's moved.
 			</div>
 		</section>
 
@@ -323,10 +336,10 @@
 			<div class="bg-img-container">
 				<img src="portalDiagram4small.png" class="centered-image"></img>
 				<br>
-			This vector summation rule also accounts for paths that take multiple trips through the portal! Let d be the distance between the two portals. If a path loops through the portals n times, each time, the resulting distance r is increased by d. The resulting force is the infinite sum 
+			This vector summation rule also accounts for paths that take multiple trips through the portal! Let d be the distance between the two portals. If a path has distance <i>r</i>, each detour through a portal adds <i>d</i> to the initial distance <r> to earth. The resulting force is the infinite sum 
 		<br><span style="color: #00f000">F<sub>total</sub></span> = 1/(<span style="color: #af3232">r</span>)<sup>2</sup> + 1/(<span style="color: #daa2a2">r+d</span>)<sup>2</sup> + ... + 1/(r+nd)<sup>2</sup>
 		<br>
-		and this sum converges!
+		and this sum converges: no nasty infinite forces here!
 
 		<aside></aside>
 		</section>
@@ -336,7 +349,7 @@
 			<div class="bg-img-container">
 				<img src="portalDiagram4small.png" class="centered-image"></img>
 				<br>
-			There's a lot of questions to ask. How would one calculate a particle's force? These evenly-spaced lines almost remind me of waves. Could we divide space into an infinitesmal grid, give each grid square a potential, and then use something similar to the heat equation to update each square's potential based on its neighbors? In that model, maybe the portal's surgery could be represented by changing which squares are neighbors? I'm not sure!
+			There's a lot of questions to ask. How would one calculate a particle's force? These evenly-spaced lines almost remind me of waves. Could we divide space into an infinitesmal grid, give each grid square a potential, and then use something similar to the heat equation to update each square's potential based on its neighbors? In that model, maybe the portal could be represented by changing which squares are neighbors? I'm not sure!
 		</section>
 
 
@@ -351,6 +364,6 @@
 
 		<p>Thank you!</p>
 		</section>
-    <a href="#" onclick="history.back(-1)" role="button"><img src="../BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
+    <a href="../../index.html" role="button"><img src="../BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
 </body>
 </html>

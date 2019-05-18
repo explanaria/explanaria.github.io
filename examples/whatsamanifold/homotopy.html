@@ -17,12 +17,6 @@
 aside{
     font-size:70%;
 }
-exp-label{
-    font-size: 1.5em;
-}
-exp-slide{
-    font-size: 1.5em;
-}
 
 </style>
 
@@ -212,7 +206,7 @@ exp-slide{
 	}
 	animate();
   </script>
-    <a href="#" onclick="history.back(-1)" role="button"><img src="../BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
+    <a href="../../index.html"role="button"><img src="../BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
 
 	<section id="label1" class="exp-label exp-slide">
 			<h1>What the Heck is a Torus?</h1>
@@ -254,7 +248,7 @@ exp-slide{
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
-       We should probably choose the shortest path. Here's one way of finding it: start with any path, and imagine it's a rubber band, stretched taut. Then, let it go. Our path-rubber-band will get tighter and tighter, until eventually it's as tight as can be around our shape's surface. 
+       We should probably choose the shortest path. Here's one way of finding the shortest one: start with any path, and imagine it's a rubber band, stretched taut. Then, let it go. Our path-rubber-band will get tighter and tighter, until eventually it's as tight as can be around our shape's surface. 
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
@@ -285,11 +279,11 @@ exp-slide{
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
         In other words, thanks to our friendly deliveryant, we now know have a recipe to tell if a shape is a squished bagel or not:
         <br />
-    <b>Bagelness (adj): When a surface has multiple different shortest-after-rubber-band-pull paths (and they really are different, meaning you can't turn one path into another without cutting one of them apart)</b>
+    <b>Bagelness (adj): When a surface has <i>multiple</i> different shortest-after-rubber-band-pull paths (and they really are different, meaning you can't turn one path into another without cutting one of them apart)</b>
     <br /><br />Great!
 
 <br /><br />
-         <aside>(I've only shown you spheres and toruses here, and I'm glossing over the fact that there are even more complicated surfaces out there. This technique works on complicated surfaces too, but to analyze them you'll need more nuance than "multiple paths=not sphere" - and one way to study different types of "multiple" is via group theory! Combine these techniques, and you get the field of algebraic topology!)</aside>
+         <aside>(I've only shown you spheres and tori here, and I'm glossing over the fact that there are even more complicated surfaces out there. This technique works on complicated surfaces too, but to analyze them you'll need more nuance than "multiple paths=not sphere" - and one way to study different types of "multiple" is via group theory! Combine these techniques, and you get the field of algebraic topology!)</aside>
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
@@ -298,7 +292,7 @@ exp-slide{
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
-        We can even use it to detect disguised toruses in video games. In the original Pac-Man, for example, if you walk far enough left you emerge on the right side of the screen. That means there's two paths to walk to the same points that can't be shortened - so the video game world of Pac-Man is actually torus-shaped too!
+        We can even use it to detect disguised tori in video games. In the original Pac-Man, for example, if you walk far enough left you emerge on the right side of the screen. That means there's two paths along which Pac-Man can walk to deliver a package, and they can't be shortened - so Pac-Man's video game world is actually torus-shaped too!
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">

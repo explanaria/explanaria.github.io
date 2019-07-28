@@ -104,62 +104,66 @@
 
 	async function animate(){
 
-	
-		//from sine_definition.html
-		EXP.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},1000)
+        controls.enableRotate = false;
+        await presentation.begin();
 
-		EXP.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5,z]},10);
-		EXP.TransitionTo(line7PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5]},750);
-		EXP.TransitionTo(params,{'radius': 5},1000)
+		presentation.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},1000)
+
+		presentation.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5,z]},10);
+		presentation.TransitionTo(line7PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2+3.5]},750);
+		presentation.TransitionTo(params,{'radius': 5},1000)
 
 		await EXP.delay(500);
 
 		//reveal line 2
-		EXP.TransitionTo(revealTransform5,{'expr': (i,t,x) => [x]},750)
-		EXP.TransitionTo(linePostTransform5,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
+		presentation.TransitionTo(revealTransform5,{'expr': (i,t,x) => [x]},750)
+		presentation.TransitionTo(linePostTransform5,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
 
 		//reveal arrows 2
-		await EXP.delay(3000);
-		EXP.TransitionTo(line6PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
-		EXP.TransitionTo(line6PostTransform.children[0], {'opacity': 1},1000);
+        await presentation.nextSlide();
 
-		await EXP.delay(1000);
+        await presentation.nextSlide();
+		presentation.TransitionTo(line6PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2-3.5]},10);
+		presentation.TransitionTo(line6PostTransform.children[0], {'opacity': 1},1000);
+
+		await EXP.delay(250);
 		//reveal red arrows
-		EXP.TransitionTo(line7Output, {'opacity': 1},1000);
+		presentation.TransitionTo(line7Output, {'opacity': 1},1000);
 
-		await EXP.delay(3000);
-		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},1000));
+        await presentation.nextSlide();
+		[output4,output5].forEach((i)=>presentation.TransitionTo(i, {'opacity': 0},1000));
 
-		await EXP.delay(3000);
+
+        await presentation.nextSlide();
 		//move lines on top of one another
-		[linePostTransform5,linePostTransform, line6PostTransform, line7PostTransform].forEach((i) => {console.log(i);EXP.TransitionTo(i, {'expr': (i,t,x,y,z) => [(x+6)/2,y/2]},1000)});
+		[linePostTransform5,linePostTransform, line6PostTransform, line7PostTransform].forEach((i) => {console.log(i);presentation.TransitionTo(i, {'expr': (i,t,x,y,z) => [(x+6)/2,y/2]},1000)});
 		//await EXP.delay(3000);
 
 		//show combined wave
-		EXP.TransitionTo(line7Definition,{'expr':(i,t,x,y) => {
+		presentation.TransitionTo(line7Definition,{'expr':(i,t,x,y) => {
 			let wave1 = (params.radius)*Math.sin(params.freq*(t + x));
 			let wave2 = (params.radius)*Math.sin(params.freq2*(t + x));
 
 			return 1-y<0.1 ? [x,wave1+wave2] : [x,wave2];
 			}},1000);
 
-		await EXP.delay(5000);
+        await presentation.nextSlide();
 		//fade out original two waves and show combined wave
-		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0.7},1000));
+		[line6PostTransform.children[0],line7Output].forEach((i)=>presentation.TransitionTo(i, {'opacity': 0.7},1000));
 
-		EXP.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2,0.07]},10);
-		EXP.TransitionTo(output8, {'opacity': 1},1000);
+		presentation.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+6)/2,y/2,0.07]},10);
+		presentation.TransitionTo(output8, {'opacity': 1},1000);
 
 		//and that's how you add. show addition equation
-		await EXP.delay(5000);
-		[line6PostTransform.children[0],line7Output].forEach((i)=>EXP.TransitionTo(i, {'opacity': 0},1000));
+        await presentation.nextSlide();
+		[line6PostTransform.children[0],line7Output].forEach((i)=>presentation.TransitionTo(i, {'opacity': 0},1000));
 		await EXP.delay(3000);
-		[output4,output5].forEach((i)=>EXP.TransitionTo(i, {'opacity': 1},1000));
+		[output4,output5].forEach((i)=>presentation.TransitionTo(i, {'opacity': 1},1000));
 
-		EXP.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+18)/2,y/2,0.07]},1000);
+		presentation.TransitionTo(line8PostTransform,{'expr': (i,t,x,y,z) => [(x+18)/2,y/2,0.07]},1000);
 
-		EXP.TransitionTo(linePostTransform, {'expr': (i,t,x,y,z) => [(x-6)/2,y/3+3.5]},1000);
-		EXP.TransitionTo(linePostTransform5, {'expr': (i,t,x,y,z) => [(x-6)/2,y/3-3.5]},1000);
+		presentation.TransitionTo(linePostTransform, {'expr': (i,t,x,y,z) => [(x-6)/2,y/3+3.5]},1000);
+		presentation.TransitionTo(linePostTransform5, {'expr': (i,t,x,y,z) => [(x-6)/2,y/3-3.5]},1000);
 
 
 		await EXP.delay(1000);
@@ -178,16 +182,24 @@
 			<aside>Press the right arrow to advance.</aside>
 		</section>
 		<section class="exp-text exp-slide" style="opacity: 0">
-			Sine waves alone are only so interesting - the real reason they're useful is that it's easy to add sine waves together.
+			Sine waves are only so useful by themselves - the real reason sine waves are useful is that it's easy to add sine waves together to make even more complicated waves.</section>
+		<section class="exp-text exp-slide" style="opacity: 0">
+			To add two sine waves, first look at the height of each wave - it's the distance between each point on a wave and zero.
 		</section>
 		<section class="exp-text exp-slide" style="opacity: 0">
-			To add two sine waves, treat each sine wave as a distance from zero.
+			 I'm drawing heights as arrows here to remind you that heights can be negative numbers (which happens when the arrow points down), but it's an oversimplification: ideally there should be infinitely many arrows.
 		</section>
 		<section class="exp-text exp-slide" style="opacity: 0">
-			Then stack each arrow tip-to-toe. This is just adding together the heights at each point.
+			Then, to add sine waves, add their heights. Visually, this is stacking each arrow tip-to-toe, so the<span style="color: #ff7070; font-weight: bold">red</span> arrows begin where the <span style="color: #0070f0; font-weight: bold">blue</span> arrows end. This is just adding together the heights at each point.
+        <aside> (You can see that sometimes the arrows point in the same direction, adding together to form a taller wave, and sometimes they oppose each other, causing a smaller wave. That's interference at work - but it's really just subtraction!)</aside>
 		</section>
 		<section class="exp-text exp-slide" style="opacity: 0">
-			The result traces out a new type of wave, one that's more complex than any single sine wave can be.
+			The tips of the combined arrows trace out a <span style="color: #ffeb59">new wave</span> - what you get by adding together the other two.
+		</section>
+		<section class="exp-text exp-slide" style="opacity: 0">
+			And that's how to add sine waves: just add together the height of each wave point-by-point. Mathematically, all of that is captured in one simple equation:
+            <br />
+             <span style="color: #ffeb59; font-weight: bold">combined</span>(x) = <span style="color: #0070f0; font-weight: bold">f</span>(x) + <span style="color: #ff7070; font-weight: bold">g</span>(x)
 		</section>
 </body>
 </body>

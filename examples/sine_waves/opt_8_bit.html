@@ -70,7 +70,7 @@
 	params.freqs = genCoeffs(randFC); //freq, amplitude
 	params.freqs = genCoeffs(sawFC);
 
-	var totalWave = new SineWave(0.5, 5, orangered, three.IS_RECORDING ? 1500 : 80);
+	var totalWave = new SineWave(0.5, 5, orangered, three.IS_RECORDING ? 1250 : 80);
 
 	let quantNumber = 16;
 	let eightBitSine = (t,x,freq,amplit,quantNumber) => { // to be used with a much higher line density
@@ -83,11 +83,11 @@
 	async function changeWave(newFunc, odd){
 		console.log(odd);
 		let originalTransform = totalWave.postTransform.expr;
-		EXP.TransitionTo(totalWave.postTransform, {'expr':(i,t,x,y) => {let a = originalTransform(i,t,x,y);a[1]=0;return a;}},500);
-		await EXP.delay(500);
+		EXP.TransitionTo(totalWave.postTransform, {'expr':(i,t,x,y) => {let a = originalTransform(i,t,x,y);a[1]=0;return a;}},250);
+		await EXP.delay(250);
 		params.freqs = odd ? genOddCoeffs(newFunc) : genCoeffs(newFunc); //new wave
-		EXP.TransitionTo(totalWave.postTransform, {'expr':(i,t,x,y) => originalTransform(i,t,x,y)},500);
-		await EXP.delay(500);
+		EXP.TransitionTo(totalWave.postTransform, {'expr':(i,t,x,y) => originalTransform(i,t,x,y)},250);
+		await EXP.delay(250);
 	}
 
 	var sceneItems = [totalWave.area]
@@ -103,17 +103,17 @@
 		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,4)},1000);
 		await EXP.delay(6000);
 
-		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,8)},1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,8)},250);
 		await EXP.delay(1000);
-		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,16)},1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,16)},250);
 		await EXP.delay(1000);
-		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,32)},1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,32)},250);
 		await EXP.delay(1000);
-		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,64)},1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,64)},250);
 		await EXP.delay(1000);
-		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,128)},1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,128)},250);
 		await EXP.delay(1000);
-		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,256)},1000);
+		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,256)},250);
 		await EXP.delay(1000);
 
 	}

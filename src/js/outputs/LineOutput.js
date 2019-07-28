@@ -73,7 +73,13 @@ class LineOutput extends OutputNode{
 	}
 	_onAdd(){
 		//climb up parent hierarchy to find the Domain node we're rendering from
-        let root = this.getClosestDomain();
+        let root = null;
+        try{
+           root = this.getClosestDomain();
+        }catch(error){
+            console.warn(error);
+            return;
+        }
 	
 		//todo: implement something like assert root typeof RootNode
 

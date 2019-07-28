@@ -100,6 +100,8 @@
 		sceneItems.map(i => i.activate(time.t));
 	});
 
+	var presentation = new EXP.UndoCapableDirector();
+
 	async function animate(){
 
 	
@@ -171,5 +173,22 @@
 	}
 	window.onload = animate;
   </script>
+		<section id="label1" class="exp-label exp-slide">
+			<h1>Adding Sine Waves</h1>
+			<aside>Press the right arrow to advance.</aside>
+		</section>
+		<section class="exp-text exp-slide" style="opacity: 0">
+			Sine waves alone are only so interesting - the real reason they're useful is that it's easy to add sine waves together.
+		</section>
+		<section class="exp-text exp-slide" style="opacity: 0">
+			To add two sine waves, treat each sine wave as a distance from zero.
+		</section>
+		<section class="exp-text exp-slide" style="opacity: 0">
+			Then stack each arrow tip-to-toe. This is just adding together the heights at each point.
+		</section>
+		<section class="exp-text exp-slide" style="opacity: 0">
+			The result traces out a new type of wave, one that's more complex than any single sine wave can be.
+		</section>
+</body>
 </body>
 </html>

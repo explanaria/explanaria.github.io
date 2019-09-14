@@ -14,14 +14,21 @@
 		type: flex
 		divisions: 5
 	}
+	/*
 	.infopart: 0-2
 	.demopart: 3-5
-	/*
 	.textcontainer{
 		border: 1px solid #ccc;
 		border-radius: 20px;
 		background-color: rgba(255,255,255, 0.5);
 	}*/
+
+    .emailPart2{
+        height:0.8em;
+    }
+    #emailPart1::before{
+        content: "aria";
+    }
 
   </style>
 </head>
@@ -33,58 +40,67 @@
 		    <aside>A framework for building animated explanations of math</aside>
        </header>
 
-    <div id="mainiframecontainer">
-    <iframe id="mainiframe" src="examples/fancier_transformations.html" scrolling='no' title="Explanaria example, showing animated interactive points swirling about"></iframe>
+        <div id="mainiframecontainer">
+            <iframe id="mainiframe" src="examples/fancier_transformations.html" scrolling='no' title="Explanaria example, showing animated interactive points swirling about"></iframe>
+        </div>
+
+        <div id="examplecontainer">
+
+            <h2>Full-Length Explanations of Math Concepts</h2>
+
+	        <div class="row">
+                    <article class="examplelink"><a href="examples/whatsamanifold/phasespace.html">
+                        <img class="examplepic" src="examples/example_thumbnails/manifold_phasespace.png">
+                        <p>
+                            Aiming Wrecking Balls with Manifolds
+                            <br />
+                            <span style="font-size:80%; padding:0px">(Manifolds, Part 1)</span>
+                        </p>
+                    </a></article>
+
+                    <article class="examplelink"><a href="examples/whatsamanifold/homotopy.html">
+                        <img class="examplepic" src="examples/example_thumbnails/manifold_homotopy.png">
+                        <p>Defining Bagelness With Ants
+                            <br />
+                            <span style="font-size:80%; padding:0px">(Manifolds, Part 2)</span>
+                        </p>
+                    </a></article>
+
+			        <article class="examplelink"><a href="examples/explained_sine_definition.html">
+                        <img class="examplepic" src="examples/example_thumbnails/explained_sine_definition.png"></img>
+                        <p>A Visual Definition of Sine Waves</p>
+                    </a></article>
+
+
+			        <article class="examplelink"><a href="examples/portal_problem/index.html">
+                        <img class="examplepic" src="examples/example_thumbnails/portal_problem.png">
+                        <p>A Question About Portals and Conservation of Energy</p>
+                    </a></article>
+	        </div>
+
+            <h2>Interactive Visual Illustrations</h2>
+
+	        <div class="row">
+
+                    <article class="examplelink"><a href="examples/manifolds.html"><img class="examplepic" src="examples/example_thumbnails/manifolds.png"></img><p>The Tangent Plane of a Manifold</p></a></article>
+
+			        <article class="examplelink"><a href="examples/complex_inversion.html"><img class="examplepic" src="examples/example_thumbnails/complex_inversion.png"></img><p>What does f(z)=1/z do to the complex plane?</p></a></article>
+
+			        <article class="examplelink"><a href="examples/winding_number.html"><img class="examplepic" src="examples/example_thumbnails/winding_number.png"></img><p>The Winding Number</p></a></article>
+
+			        <article class="examplelink"><a href="examples/helix_tangent_space.html"><img class="examplepic" src="examples/example_thumbnails/helix_tangent_space.png"></img><p>The Tangent Space of a Helical Curve</p></a></article>
+
+			        <article class="examplelink"><a href="examples/groupactions.html"><img class="examplepic" src="examples/example_thumbnails/groupactions.png"></img><p>Group Actions</p></a></article>
+	        </div>
+        </div>
+
+        <footer class="footer">
+            <h1> Contact: 
+                <script>window.setTimeout(function(){document.getElementById("emailPart1").innerHTML+="gm"},1)</script>
+                explan<span id="emailPart1"> at </span>ail dot com
+            </h1>
+        </footer>
     </div>
 
-    <div id="examplecontainer">
-
-        <h2>Full-Length Explanations of Math Concepts</h2>
-
-	    <div class="row">
-                <article class="examplelink"><a href="examples/whatsamanifold/phasespace.html">
-                    <img class="examplepic" src="examples/example_thumbnails/manifold_phasespace.png">
-                    <p>
-                        Aiming Wrecking Balls with Manifolds
-                        <br />
-                        <span style="font-size:80%; padding:0px">(Manifolds, Part 1)</span>
-                    </p>
-                </a></article>
-
-                <article class="examplelink"><a href="examples/whatsamanifold/homotopy.html">
-                    <img class="examplepic" src="examples/example_thumbnails/manifold_homotopy.png">
-                    <p>Defining Bagelness With Ants
-                        <br />
-                        <span style="font-size:80%; padding:0px">(Manifolds, Part 2)</span>
-                    </p>
-                </a></article>
-
-			    <article class="examplelink"><a href="examples/explained_sine_definition.html">
-                    <img class="examplepic" src="examples/example_thumbnails/explained_sine_definition.png"></img>
-                    <p>A Visual Definition of Sine Waves</p>
-                </a></article>
-
-
-			    <article class="examplelink"><a href="examples/portal_problem/index.html">
-                    <img class="examplepic" src="examples/example_thumbnails/portal_problem.png">
-                    <p>A Question About Portals and Conservation of Energy</p>
-                </a></article>
-	    </div>
-
-        <h2>Interactive Visual Illustrations</h2>
-
-	    <div class="row">
-
-                <article class="examplelink"><a href="examples/manifolds.html"><img class="examplepic" src="examples/example_thumbnails/manifolds.png"></img><p>The Tangent Plane of a Manifold</p></a></article>
-
-			    <article class="examplelink"><a href="examples/complex_inversion.html"><img class="examplepic" src="examples/example_thumbnails/complex_inversion.png"></img><p>What does f(z)=1/z do to the complex plane?</p></a></article>
-
-			    <article class="examplelink"><a href="examples/winding_number.html"><img class="examplepic" src="examples/example_thumbnails/winding_number.png"></img><p>The Winding Number</p></a></article>
-
-			    <article class="examplelink"><a href="examples/helix_tangent_space.html"><img class="examplepic" src="examples/example_thumbnails/helix_tangent_space.png"></img><p>The Tangent Space of a Helical Curve</p></a></article>
-
-			    <article class="examplelink"><a href="examples/groupactions.html"><img class="examplepic" src="examples/example_thumbnails/groupactions.png"></img><p>Group Actions</p></a></article>
-	    </div>
-    </div>
 </body>
 </html>

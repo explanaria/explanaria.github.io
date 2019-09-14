@@ -33,6 +33,8 @@ body{
 	text-align:center;
     line-height:0.9;
 }  
+
+
 .mainheader h1{
     font-size: 3em;
     margin: 0em;
@@ -41,6 +43,16 @@ body{
 .mainheader aside{
     font-size: 1em;
     margin: 0.025em;
+}  
+
+.footer{
+    background-color: #222;
+    color: #eee;
+    padding: 0.25em 0 0.25em 0;
+	font-family: "Computer Modern Sans", serif;
+	text-align:center;
+    font-size: 70%;
+    margin-top: 5em;
 }  
 
 #examplecontainer{

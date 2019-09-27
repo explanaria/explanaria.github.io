@@ -3,4 +3,7 @@ var threeEnvironment = null;
 function setThreeEnvironment(newEnv){
     threeEnvironment = newEnv;
 }
-export {setThreeEnvironment, threeEnvironment};
+function getThreeEnvironment(){
+    return threeEnvironment;
+}
+export {setThreeEnvironment, getThreeEnvironment, threeEnvironment};

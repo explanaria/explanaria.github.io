@@ -5,11 +5,11 @@
 
 import CCapture from 'ccapture.js';
 import { Detector } from '../lib/WebGL_Detector.js';
-import { setThreeEnvironment } from './ThreeEnvironment.js';
+import { setThreeEnvironment, getThreeEnvironment } from './ThreeEnvironment.js';
 
-function ThreeasyEnvironment(canvasContainer = null){
+function ThreeasyEnvironment(canvasElem = null){
 	this.prev_timestep = 0;
-    this.shouldCreateContainer = (canvasContainer === null);
+    this.shouldCreateCanvas = (canvasElem === null);
 
 	if(!Detector.webgl)Detector.addGetWebGLMessage();
 
@@ -46,6 +46,10 @@ function ThreeasyEnvironment(canvasContainer = null){
 	//renderer
 	let rendererOptions = { antialias: true};
 
+    if(!this.shouldCreateCanvas){
+        rendererOptions.canvas = canvasElem;
+    }
+
 	this.renderer = new THREE.WebGLRenderer( rendererOptions );
 	this.renderer.setPixelRatio( window.devicePixelRatio );
 	this.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
@@ -63,8 +67,10 @@ function ThreeasyEnvironment(canvasContainer = null){
 	this.elapsedTime = 0;
 	this.trueElapsedTime = 0;
 
-	this.container = this.shouldCreateContainer ? document.createElement( 'div' ) : canvasContainer;
-	this.container.appendChild( this.renderer.domElement );
+    if(this.shouldCreateCanvas){
+	    this.container = document.createElement( 'div' );
+	    this.container.appendChild( this.renderer.domElement );
+    }
 
 	this.renderer.domElement.addEventListener( 'mousedown', this.onMouseDown.bind(this), false );
 	this.renderer.domElement.addEventListener( 'mouseup', this.onMouseUp.bind(this), false );
@@ -86,7 +92,7 @@ function ThreeasyEnvironment(canvasContainer = null){
 
 	this.IS_RECORDING = false; // queryable if one wants to do things like beef up particle counts for render
 
-    if(!this.shouldCreateContainer && canvasContainer.offsetWidth){
+    if(!this.shouldCreateCanvas && canvasElem.offsetWidth){
         //If the canvasElement is already loaded, then the 'load' event has already fired. We need to trigger it ourselves.
         this.onPageLoad();
     }
@@ -94,7 +100,7 @@ function ThreeasyEnvironment(canvasContainer = null){
 
 ThreeasyEnvironment.prototype.onPageLoad = function() {
 	console.log("Threeasy_Setup loaded!");
-	if(this.shouldCreateContainer){
+	if(this.shouldCreateCanvas){
 		document.body.appendChild( this.container );
 	}
 
@@ -127,18 +133,25 @@ ThreeasyEnvironment.prototype.onPointerUnrestricted= function() {
 }
 ThreeasyEnvironment.prototype.evenify = function(x){
 	if(x % 2 == 1){
-		return x+1
-	};
+		return x+1;
+	}
 	return x;
 }
 ThreeasyEnvironment.prototype.onWindowResize= function() {
+
     let width = window.innerWidth;
     let height = window.innerHeight;
+    
+    if(!this.shouldCreateCanvas){ // a canvas was provided externally
+
+        width = this.renderer.domElement.clientWidth;
+        height = this.renderer.domElement.clientHeight;
+    }
 
 	this.camera.aspect = width / height;
 	this.aspect = this.camera.aspect;
 	this.camera.updateProjectionMatrix();
-	this.renderer.setSize( this.evenify(width),this.evenify(height) );
+	this.renderer.setSize( this.evenify(width), this.evenify(height) );
 }
 ThreeasyEnvironment.prototype.listeners = {"update": [],"render":[]}; //update event listeners
 ThreeasyEnvironment.prototype.render = function(timestep){
@@ -196,9 +209,9 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 	// ffmpeg -i video.mp4 -vcodec libx264 -pix_fmt yuv420p -strict -2 -acodec aac finished_video.mp4
 	//check with ffmpeg -i finished_video.mp4
 
-	constructor(fps=30, length = 5, canvasContainer = null){
+	constructor(fps=30, length = 5, canvasElem = null){
 		/* fps is evident, autostart is a boolean (by default, true), and length is in s.*/
-		super(canvasContainer);
+		super(canvasElem);
 		this.fps = fps;
 		this.elapsedTime = 0;
 		this.frameCount = fps * length;
@@ -297,7 +310,7 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 	}
 }
 
-function setupThree(fps=30, length = 5, canvasContainer = null){
+function setupThree(fps=30, length = 5, canvasElem = null){
 	/* Set up the three.js environment. Switch between classes dynamically so that you can record by appending "?record=true" to an url. Then EXP.threeEnvironment.camera and EXP.threeEnvironment.scene work, as well as EXP.threeEnvironment.on('event name', callback). Only one environment exists at a time.
 
     The returned object is a singleton: multiple calls will return the same object: EXP.threeEnvironment.*/
@@ -313,15 +326,15 @@ function setupThree(fps=30, length = 5, canvasContainer = null){
         is_recording = (recordString == "true" || recordString == "1");
     }
 
-    if(EXP.threeEnvironment !== null){//singleton has already been created
-        return EXP.threeEnvironment;
+    let threeEnvironment = getThreeEnvironment();
+    if(threeEnvironment !== null){//singleton has already been created
+        return threeEnvironment;
     }
 
-    let threeEnvironment = null;
 	if(is_recording){
-		threeEnvironment = new ThreeasyRecorder(fps, length, canvasContainer);
+		threeEnvironment = new ThreeasyRecorder(fps, length, canvasElem);
 	}else{
-		threeEnvironment = new ThreeasyEnvironment(canvasContainer);
+		threeEnvironment = new ThreeasyEnvironment(canvasElem);
 	}
     setThreeEnvironment(threeEnvironment);
     return threeEnvironment;

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Direct Sums</title>
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+
+  <style>
+    #canvasContainer{
+
+    }
+    #canvasContainer canvas{
+        width: 100%;
+        height: 100%;
+    }
+    #textArea{
+
+    }
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <div id="canvasContainer"> 
+    <canvas id="canvas">
+
+    </canvas>
+  </div>
+  <div id="textArea">
+
+	<div class="exp-slide">
+		One way of representing a torus is using two circle coordinates.
+	</div>
+  </div>
+  <script src="directsum.js"></script>
+</body>
+</html>

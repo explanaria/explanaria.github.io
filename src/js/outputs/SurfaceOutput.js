@@ -1,6 +1,6 @@
 import {OutputNode} from '../Node.js';
 import {LineOutput} from './LineOutput.js';
-import { threeEnvironment } from '../ThreeEnvironment.js';
+import { getThreeEnvironment } from '../ThreeEnvironment.js';
 import { vShader, fShader, uniforms } from './SurfaceOutputShaders.js';
 
 class SurfaceOutput extends OutputNode{
@@ -63,7 +63,7 @@ class SurfaceOutput extends OutputNode{
 
 		if(!this.showSolid)this.material.transparent = true;
 
-		threeEnvironment.scene.add(this.mesh);
+		getThreeEnvironment().scene.add(this.mesh);
 	}
 	makeGeometry(){
 

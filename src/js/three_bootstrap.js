@@ -151,7 +151,7 @@ ThreeasyEnvironment.prototype.onWindowResize= function() {
 	this.camera.aspect = width / height;
 	this.aspect = this.camera.aspect;
 	this.camera.updateProjectionMatrix();
-	this.renderer.setSize( this.evenify(width), this.evenify(height) );
+	this.renderer.setSize( this.evenify(width), this.evenify(height),this.shouldCreateCanvas );
 }
 ThreeasyEnvironment.prototype.listeners = {"update": [],"render":[]}; //update event listeners
 ThreeasyEnvironment.prototype.render = function(timestep){

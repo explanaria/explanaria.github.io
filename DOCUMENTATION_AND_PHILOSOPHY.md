@@ -261,6 +261,7 @@ Using setupThree() also allows an animation to be recorded on a frame-by-frame b
 	Parameters:
 	* fps: frames per second to record, if recording.
 	* seconds: seconds of footage to record, if recording.
+    * canvasElem (optional): An existing <canvas> element to render inside.
 
 This also starts a render loop. To use it, call `three.on("render", callback)` or `three.on("update", callback)`. Think of this as an event listener.
 

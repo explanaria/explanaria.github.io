@@ -255,7 +255,9 @@ There are a few helper functions defined in EXP.Math and EXP.Utils that may be h
 
 Explanaria comes with a standalone helper function to setup a three.js environment easily. Simply call `EXP.setupThree()` to create a three.js environment and renderer, as well as a render loop and an update loop.
 
-Using setupThree() also allows an animation to be recorded on a frame-by-frame basis. See the "Recording with Explanaria" section below. Appending `?record=true` to the URL will cause Explanaria to automatically record a canvas using [https://github.com/spite/ccapture.js/](CCapture). This will automatically render and download a TAR file of PNGs, which can be compiled into a video file using ffmpeg or a video editor of your choice. If you want to increase the resolution of an explanarian while recording, there is an `IS_RECORDING` boolean variable is set to true if recording and false otherwise.
+Call `setupThree()` before creating any `EXP.*Output`s, or else the outputs will not render.
+
+Using `setupThree()` also allows an animation to be recorded on a frame-by-frame basis. See the "Recording with Explanaria" section below. Appending `?record=true` to the page URL will cause Explanaria to automatically record a canvas using [https://github.com/spite/ccapture.js/](CCapture). This will automatically render and download a TAR file of PNGs, which can be compiled into a video file using ffmpeg or a video editor of your choice. If you want to increase the resolution of an explanarian while recording, there is an `IS_RECORDING` boolean variable is set to true if recording and false otherwise.
 
 * EXP.setupThree()
 	Parameters:

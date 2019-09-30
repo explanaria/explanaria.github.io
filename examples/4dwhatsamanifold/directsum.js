@@ -91,8 +91,8 @@ class CircleSlider{
 
         this.context = this.canvas.getContext("2d");
 
-        this.canvas.height = 300;
-        this.canvas.width = 300;
+        this.canvas.height = 150;
+        this.canvas.width = 150;
 
         this.valueGetter = valueGetter; //call every frame to change the display
         this.valueSetter = valueSetter;

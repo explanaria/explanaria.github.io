@@ -107,11 +107,18 @@ class CircleSlider{
         this.pointRadius = 20;
         this.pointColor = color
 
+        
+        this.canvas.addEventListener("mousedown",this.onmousedown.bind(this));
+        this.canvas.addEventListener("mouseup",this.onmouseup.bind(this));
+        this.canvas.addEventListener("mousemove",this.onmousemove.bind(this));
+        this.canvas.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
+        this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
+
         //this.update();
     }
     activate(){
         if(this.dragging){
-            //this.valueSetter(this.pointAngle);
+            this.valueSetter(this.pointAngle);
         }else{
             this.pointAngle = this.valueGetter();
         }
@@ -131,16 +138,43 @@ class CircleSlider{
         drawCircleStroke(this.context, this.pos[0],this.pos[1],this.radius);
 
         this.context.fillStyle = "orange"
+        if(this.dragging){
+            this.context.fillStyle = "darkorange"
+        }
         drawCircle(this.context, this.pos[0] + this.radius*Math.cos(this.pointAngle), this.pos[1] + this.radius*Math.sin(this.pointAngle), this.pointRadius);
     }
-    onmousedown(x,y){
-        let ptX = this.pos[0] + Math.cos(this.pointAngle);
-        let ptY = this.pos[1] + Math.sin(this.pointAngle);
-        if(dist(x,y, ptX, ptY) < this.pointRadius + 20){
+    ontouchstart(event){
+        if(event.target == this.canvas)event.preventDefault();
+
+        let rect = this.canvas.getBoundingClientRect();
+
+        for(var i=0;i<event.touches.length;i++){
+            let touch = event.touches[i];
+            this.onmousedown({x: touch.clientX - rect.left, y: touch.clientY- rect.top});
+        }
+    }
+
+    ontouchmove(event){
+        event.preventDefault();
+
+        let rect = this.canvas.getBoundingClientRect();
+        
+        for(var i=0;i<event.touches.length;i++){
+            let touch = event.touches[i];
+            this.onmousemove({x: touch.clientX - rect.left, y: touch.clientY- rect.top});
+        }
+    }
+
+    onmousedown(event){
+        let x = event.x;
+        let y = event.y;
+        let ptX = this.pos[0] + this.radius*Math.cos(this.pointAngle);
+        let ptY = this.pos[1] + this.radius*Math.sin(this.pointAngle);
+        if(dist(x,y, ptX, ptY) < this.pointRadius + 10){
             this.dragging = true;
         }
     }
-    onmouseup(x,y){
+    onmouseup(event){
         this.dragging = false;
     }
     angleDiff(a,b){
@@ -148,7 +182,9 @@ class CircleSlider{
         const dist = Math.abs(a-b)%pi2
         return dist > Math.PI ? (pi2-dist) : dist
     }
-    onmousemove(x,y){
+    onmousemove(event){
+        let x = event.x;
+        let y = event.y;
         //convert mouse angle to this
 
         if(this.dragging){
@@ -171,6 +207,9 @@ function drawCircle(context, x,y,radius){
     context.beginPath();
     context.arc(x,y, radius, 0, 2 * Math.PI);
     context.fill();
+}
+function dist(a,b,c,d){
+    return Math.sqrt((b-d)*(b-d)+(c-a)*(c-a))
 }
 
 

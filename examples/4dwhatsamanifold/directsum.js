@@ -1,6 +1,6 @@
 let three, controls, objects, knotParams;
 
-let userPointParams = {x1:0,x2:0};
+let userPointParams = {x1:0,x2:0,factors:['circle','circle']};
 
 function setup(){
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
@@ -30,9 +30,33 @@ function setup(){
     var b=2;
     function manifoldEmbeddingIntoR3(i,t,theta1,theta2){
 
-        //if productType1 == 'circle' and productType2 == 'circle'
-        return [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)];
+        //todo: make this dynamic
 
+        //circle 2:
+        // x*cos(t2), y*cos(t2), a*sin(t1)
+        //cylinder
+        // x,y, z
+
+
+        if(userPointParams.factors[0] == 'circle'){
+
+            if(userPointParams.factors[1] == 'circle'){
+                return [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)];
+            }else{
+                return [b*Math.cos(theta2),b*Math.sin(theta2),theta1];
+            }
+
+        }else{
+
+            if(userPointParams.factors[1] == 'circle'){
+                return 0 //todo, but its a cylinder in the other direction
+            }else{
+                //plane
+                return [theta2, theta1, 0];
+            }
+
+
+        }
     }
 
     var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]], numItems: [17,17]});
@@ -81,138 +105,6 @@ function setup(){
 
     objects = [knotLine, torus, coord1, coord2, userPoint1, coord1Slider, coord2Slider];
 }
-
-
-class CircleSlider{
-    constructor(color, containerID, valueGetter, valueSetter){
-
-        this.canvas = document.createElement("canvas");
-        document.getElementById(containerID).appendChild(this.canvas);
-
-        this.context = this.canvas.getContext("2d");
-
-        this.canvas.height = 150;
-        this.canvas.width = 150;
-
-        this.valueGetter = valueGetter; //call every frame to change the display
-        this.valueSetter = valueSetter;
-
-    
-        this.dragging = false;
-        this.pointAngle = 0;
-    
-        this.pos = [this.canvas.width/2,this.canvas.height/2];
-
-        this.radius = 50;
-        this.pointRadius = 20;
-        this.pointColor = color
-
-        
-        this.canvas.addEventListener("mousedown",this.onmousedown.bind(this));
-        this.canvas.addEventListener("mouseup",this.onmouseup.bind(this));
-        this.canvas.addEventListener("mousemove",this.onmousemove.bind(this));
-        this.canvas.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
-        this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
-
-        //this.update();
-    }
-    activate(){
-        if(this.dragging){
-            this.valueSetter(this.pointAngle);
-        }else{
-            this.pointAngle = this.valueGetter();
-        }
-        
-        this.draw();
-        //window.requestAnimationFrame(this.update.bind(this)); //ugly but works.
-    }
-    draw(){
-
-        //let hueVal = (angle/Math.PI/2 + 0.5)*360;
-        //context.fillStyle = "hsl("+hueVal+",50%,50%)";
-
-        this.canvas.width = this.canvas.width;
-        this.context.lineWidth = 10;
-
-        this.context.strokeStyle = this.pointColor;
-        drawCircleStroke(this.context, this.pos[0],this.pos[1],this.radius);
-
-        this.context.fillStyle = "orange"
-        if(this.dragging){
-            this.context.fillStyle = "darkorange"
-        }
-        drawCircle(this.context, this.pos[0] + this.radius*Math.cos(this.pointAngle), this.pos[1] + this.radius*Math.sin(this.pointAngle), this.pointRadius);
-    }
-    ontouchstart(event){
-        if(event.target == this.canvas)event.preventDefault();
-
-        let rect = this.canvas.getBoundingClientRect();
-
-        for(var i=0;i<event.touches.length;i++){
-            let touch = event.touches[i];
-            this.onmousedown({x: touch.clientX - rect.left, y: touch.clientY- rect.top});
-        }
-    }
-
-    ontouchmove(event){
-        event.preventDefault();
-
-        let rect = this.canvas.getBoundingClientRect();
-        
-        for(var i=0;i<event.touches.length;i++){
-            let touch = event.touches[i];
-            this.onmousemove({x: touch.clientX - rect.left, y: touch.clientY- rect.top});
-        }
-    }
-
-    onmousedown(event){
-        let x = event.x;
-        let y = event.y;
-        let ptX = this.pos[0] + this.radius*Math.cos(this.pointAngle);
-        let ptY = this.pos[1] + this.radius*Math.sin(this.pointAngle);
-        console.log(dist(x,y, ptX, ptY));
-        if(dist(x,y, ptX, ptY) < (this.pointRadius*this.pointRadius) + 10){
-            this.dragging = true;
-        }
-    }
-    onmouseup(event){
-        this.dragging = false;
-    }
-    angleDiff(a,b){
-        const pi2 = Math.PI*2;
-        const dist = Math.abs(a-b)%pi2
-        return dist > Math.PI ? (pi2-dist) : dist
-    }
-    onmousemove(event){
-        let x = event.x;
-        let y = event.y;
-        //convert mouse angle to this
-
-        if(this.dragging){
-            let mouseAngle = Math.atan2(y-this.pos[1],x-this.pos[0]);
-            this.pointAngle = mouseAngle;
-            this.valueSetter(this.pointAngle);
-        }
-    }
-}
-
-
-
-//helper func
-function drawCircleStroke(context, x,y,radius){
-    context.beginPath();
-    context.arc(x,y, radius, 0, 2 * Math.PI);
-    context.stroke();
-}
-function drawCircle(context, x,y,radius){
-    context.beginPath();
-    context.arc(x,y, radius, 0, 2 * Math.PI);
-    context.fill();
-}
-function dist(a,b,c,d){
-    return Math.sqrt((b-d)*(b-d)+(c-a)*(c-a))
-}
-
 
 
 

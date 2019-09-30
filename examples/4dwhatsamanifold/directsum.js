@@ -170,7 +170,8 @@ class CircleSlider{
         let y = event.y;
         let ptX = this.pos[0] + this.radius*Math.cos(this.pointAngle);
         let ptY = this.pos[1] + this.radius*Math.sin(this.pointAngle);
-        if(dist(x,y, ptX, ptY) < this.pointRadius + 10){
+        console.log(dist(x,y, ptX, ptY));
+        if(dist(x,y, ptX, ptY) < (this.pointRadius*this.pointRadius) + 10){
             this.dragging = true;
         }
     }
@@ -188,7 +189,7 @@ class CircleSlider{
         //convert mouse angle to this
 
         if(this.dragging){
-            let mouseAngle = Math.atan2(y-this.centerPos[1],x-this.centerPos[0]);
+            let mouseAngle = Math.atan2(y-this.pos[1],x-this.pos[0]);
             this.pointAngle = mouseAngle;
             this.valueSetter(this.pointAngle);
         }

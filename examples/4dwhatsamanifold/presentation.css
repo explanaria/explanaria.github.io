@@ -1,0 +1,52 @@
+.grid{
+    width: 100%;
+    height: 100%;
+    position:absolute;
+}
+
+
+.headerPart{
+    width: 100%;
+    /*height: 3%;*/
+    /*background-color: red;*/
+}
+
+.threeDPart{
+    height: 64%;
+    width: 100%;
+    /*background-color: green;*/
+    min-height: 2;
+}
+
+.non3DFooterPart{
+    height: 33%;
+    width: 100%;
+    overflow-y: scroll;
+    padding: 0.5em;
+    border-top: 1px solid #ccc;
+}
+
+@media screen and (max-height:600px){
+    .threeDPart{
+        width: 66%;
+        height:100%;
+        float:left
+    }
+
+    .non3DFooterPart{
+        width: calc(33% - 0.5em);
+        height: 100%;
+        float:right;
+        bottom:0%;
+        border-top: none;
+        border-left: 1px solid #ccc;
+    }
+    
+}
+
+
+
+    #canvasContainer canvas{
+        width: 100%;
+        height: 100%;
+    }

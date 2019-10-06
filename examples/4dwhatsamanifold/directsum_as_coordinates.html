@@ -4,14 +4,21 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
   <title>Explanarian - Direct Sums</title>
+
   <script src="../../src/lib/three.min.js"></script>
   <script src="../../src/lib/socket.io.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
 
 
+  <script src="sliders.js"></script>
+  <script src="DecalGeometry.js"></script>
+  <script src="directsum.js"></script>
+
+
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
   <link type="text/css" href="./presentation.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
 
   <style>
     #canvasContainer{
@@ -24,12 +31,15 @@
     .grid{
     }
 
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
   </style>
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 
-  <script src="sliders.js"></script>
-  <script src="directsum.js"></script>
 </head>
 <body>
   <div class="grid">
@@ -42,7 +52,7 @@
       <div id="textArea" class="non3DFooterPart">
 	    <p>One way of representing a torus is using two circle coordinates.</p>
 
-	    <div class="exp-slide columns">
+	    <div class="exp-slide columns is-mobile">
             <div id="circleContainer1" class="column"> </div>
             <div id="circleContainer2" class="column"> </div>
 	    </div>

@@ -1,6 +1,8 @@
 let three, controls, objects=[], knotParams={a:2,b:3};
 let userPointParams = {x1:0,x2:0,factors:['circle','circle']};
 
+let atlas = null;
+
 
 
 var meshBeingCoveredInCharts;
@@ -14,29 +16,9 @@ var intersection = {
 };
 var mouse = new THREE.Vector2();
 
-var textureLoader = new THREE.TextureLoader();
-var decalDiffuse = textureLoader.load('decal-diffuse.png');
-var decalNormal = textureLoader.load('decal-normal.jpg');
-
-var decalMaterial = new THREE.MeshBasicMaterial({
-	specular: 0x444444,
-	map: decalDiffuse,
-	normalMap: decalNormal,
-	normalScale: new THREE.Vector2( 1, 1 ),
-	shininess: 30,
-	transparent: false,
-	depthTest: true,
-	depthWrite: false,
-	polygonOffset: true,
-	polygonOffsetFactor: - 4,
-	wireframe: false
-} );
-
-var decals = [];
 var mouseHelper;
 var position = new THREE.Vector3();
 var orientation = new THREE.Euler();
-var newChartSize = new THREE.Vector3( 2, 2, 2 );
 
 function setup() {
     
@@ -64,6 +46,10 @@ function setup() {
 	three.scene.add( normalLine );
 
 	loadMeshBeingCoveredInCharts();
+
+
+
+    atlas = new Atlas(meshBeingCoveredInCharts); //will hold all the charts
 
 	raycaster = new THREE.Raycaster();
 
@@ -198,23 +184,13 @@ function shootNewDecal() {
 	position.copy( intersection.point );
 	orientation.copy( mouseHelper.rotation );
 
-    //give the decal a random color
-	var material = decalMaterial.clone();
-	material.color.setHex( Math.random() * 0xffffff );
-
-	var m = new THREE.Mesh( new DecalGeometry( meshBeingCoveredInCharts, position, orientation, newChartSize ), material );
-
-	decals.push( m );
-	three.scene.add( m );
+    var chart = new CoordinateChart2D(atlas, position, orientation);
+    atlas.addChart(chart);
 
 }
 
-function removeAllDecals() {
-
-	decals.forEach( function ( d ) {
-		scene.remove( d );
-	} );
-	decals = [];
+function removeAllCharts() {
+    atlas.removeAllCharts();
 }
 
 

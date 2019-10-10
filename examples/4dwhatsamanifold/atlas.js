@@ -7,6 +7,10 @@ class Atlas{
         this.raycaster = new THREE.Raycaster();
 
         this.threeDPointPos = new THREE.Vector3();
+        this.threeDPointNormal = new THREE.Vector3(0,0,1);
+
+        this.threeDPointRotationHelper = new THREE.Object3D(); //used when making new charts
+
         this.threeDPointMesh = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshBasicMaterial({color: 0xFFA500})); //the mesh representing the 3D point
         three.scene.add(this.threeDPointMesh);
 
@@ -46,8 +50,11 @@ class Atlas{
         this.charts = [];
     }
 
-    addChartCenteredAtPosition(position){
-        //todo.
+    addChartCenteredAtCurrentPosition(){
+        this.threeDPointRotationHelper.lookAt(this.threeDPointNormal)
+
+        let chart = new CoordinateChart2D(this, this.threeDPointPos, this.threeDPointRotationHelper.rotation);
+        this.addChart(chart);
     }
 
     addChart(chart){
@@ -60,6 +67,7 @@ class Atlas{
 
         //change displayed point position
         this.threeDPointPos.copy(nearestManifoldPoint);
+        this.threeDPointNormal.copy(normalDirection);
 
         nearestManifoldPoint.addScaledVector(normalDirection, 0.25); //step back slightly to better hit the manifold.
 

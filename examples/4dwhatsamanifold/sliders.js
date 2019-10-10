@@ -258,7 +258,6 @@ class PlaneSlider extends Slider{
         this.context.lineTo(this.pos[0]-this.size/2, this.pos[1]+this.size/2) //go again to avoid ugly mitering
         this.context.stroke();
 
-        if(this.showDraggables){
             //ok, axes time
             this.context.lineWidth = 10
             this.context.strokeStyle = this.lineColor;
@@ -269,7 +268,7 @@ class PlaneSlider extends Slider{
             this.context.beginPath();
 
             //left arrow
-            let lineY = this.pos[1] + this.values[1]*this.size/2;
+            let lineY = this.pos[1]// + this.values[1]*this.size/2;
             this.context.moveTo(this.pos[0]-this.size/2 + arrowWidth, lineY-arrowHeight)
             this.context.lineTo(this.pos[0]-this.size/2, lineY)
             this.context.lineTo(this.pos[0]-this.size/2 + arrowWidth, lineY+arrowHeight)
@@ -284,7 +283,7 @@ class PlaneSlider extends Slider{
             this.context.lineTo(this.pos[0]+this.size/2 - arrowWidth,lineY + arrowHeight)
 
             //up/down axis now. bottom arrow:
-            let lineX = this.pos[0] + this.values[0]*this.size/2;
+            let lineX = this.pos[0]// + this.values[0]*this.size/2;
             this.context.moveTo(lineX-arrowHeight, this.pos[1]-this.size/2 + arrowWidth)
             this.context.lineTo(lineX,this.pos[1]-this.size/2)
 
@@ -303,6 +302,7 @@ class PlaneSlider extends Slider{
             this.context.stroke();
 
 
+        if(this.showDraggables){
             //point
             this.context.fillStyle = "orange"
             if(this.dragging){

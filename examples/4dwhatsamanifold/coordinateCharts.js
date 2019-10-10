@@ -52,6 +52,8 @@ function setup() {
     atlas = new Atlas(meshBeingCoveredInCharts); //will hold all the charts
     objects.push(atlas);
 
+    shootFirstDecal();
+
 	raycaster = new THREE.Raycaster();
 
 	mouseHelper = new THREE.Mesh( new THREE.BoxBufferGeometry( 1, 1, 10 ), new THREE.MeshNormalMaterial() );
@@ -181,6 +183,16 @@ function loadMeshBeingCoveredInCharts() {
     );
 
     three.scene.add(meshBeingCoveredInCharts);
+}
+
+function shootFirstDecal(){
+
+    let firstPoint = new THREE.Vector3(0,-1.5,1);
+    let firstOrientation = new THREE.Euler(0,0,0); //euler angles.
+
+    var chart = new CoordinateChart2D(atlas, firstPoint, firstOrientation);
+    atlas.addChart(chart);
+    atlas.threeDPointPos = firstPoint;
 }
 
 function shootNewDecal() {

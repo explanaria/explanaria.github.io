@@ -34,6 +34,10 @@
         display: block;
     }
 
+        .chartCanvases{
+
+    }
+
   </style>
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -48,7 +52,9 @@
         </canvas>
       </div>
       <div id="textArea" class="non3DFooterPart">
-	    <p>Click to make a coordinate chart. Set up lots of overlapping coordinate charts and you can move around the manifold - navigating by coordinate charts, which are nice simple planes!</p>
+	    <button class="button" onclick="atlas.addChartCenteredAtCurrentPosition()"><span>Click to make a coordinate chart centered at the <span style="color:orange;">current point</span>.</span> </button>
+
+        <p> Set up lots of overlapping coordinate charts and you can move around the manifold - navigating by coordinate charts, which are nice simple planes!</p>
 	    <div class="exp-slide columns is-mobile">
             <div id="chartCanvases" class="column tile is-ancestor"> </div>
 	    </div>

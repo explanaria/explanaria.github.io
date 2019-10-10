@@ -214,7 +214,7 @@ class PlaneSliderWithANewCanvas extends PlaneSlider{
         this.canvas = document.createElement("canvas");
 
         let container = document.createElement("div")
-        container.className = "chart";
+        container.className = "tile";
         container.appendChild(this.canvas);
         document.getElementById(containerID).appendChild(container);
     }

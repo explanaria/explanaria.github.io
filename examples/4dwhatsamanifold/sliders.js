@@ -220,8 +220,11 @@ class PlaneSlider extends Slider{
         this.lineColor = color;
 
         this.values = [0,0];
+        this.lastValues = [0,0];
 
         this.showDraggables = true;
+
+        this.maxDraggableRadius = 1; //draggable values will be clamped to -maxradius and +maxradius.
     }
     activate(){
         if(this.dragging){
@@ -322,9 +325,10 @@ class PlaneSlider extends Slider{
     onmousemove(x,y){
         if(this.dragging){
             let mouseAngle = Math.atan2(y-this.pos[1],x-this.pos[0]);
+            this.lastValues = this.values;
             this.values = [
-                2*(x - this.pos[0])/this.size, //-1 to 1
-                2*(y - this.pos[1])/this.size,
+                clamp(2*(x - this.pos[0])/this.size, -this.maxDraggableRadius, this.maxDraggableRadius), //-1 to 1
+                clamp(2*(y - this.pos[1])/this.size, -this.maxDraggableRadius, this.maxDraggableRadius),
             ]
             this.valueSetter(this.values[0],this.values[1]);
         }
@@ -344,5 +348,8 @@ function drawCircle(context, x,y,radius){
 }
 function dist(a,b,c,d){
     return Math.sqrt((b-d)*(b-d)+(c-a)*(c-a))
+}
+function clamp(val, min, max){
+    return Math.min(Math.max(val, min),max);
 }
 

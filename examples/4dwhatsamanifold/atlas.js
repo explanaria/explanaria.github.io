@@ -88,25 +88,6 @@ class Atlas{
             this.charts[i].updateDrawnPointLocation(uvCoords);
         }
 
-        /*
-        mouse to mesh + normal intersection code
-	    var p = intersects[ 0 ].point;
-	    mouseHelper.position.copy( p );
-	    intersection.point.copy( p );
-
-	    var n = intersects[ 0 ].face.normal.clone();
-	    n.transformDirection( meshBeingCoveredInCharts.matrixWorld );
-	    n.multiplyScalar( 10 );
-	    n.add( intersects[ 0 ].point );
-
-	    intersection.normal.copy( intersects[ 0 ].face.normal );
-	    mouseHelper.lookAt( n );
-
-	    var positions = normalLine.geometry.attributes.position;
-	    positions.setXYZ( 0, p.x, p.y, p.z );
-	    positions.setXYZ( 1, n.x, n.y, n.z );
-	    positions.needsUpdate = true;
-        */
     }
 }
 
@@ -152,10 +133,6 @@ class CoordinateChart2D{
             (x,y) => {this.onSliderTick(x,y)}
         )
         this.twoDslider.activate();
-
-
-        this.debugPoint = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshBasicMaterial({color: 0x99A500})); //the mesh representing the 3D point
-        three.scene.add(this.debugPoint);
     }
     onSliderTick(x,y){
         //called every frame.
@@ -197,6 +174,7 @@ class CoordinateChart2D{
              //oops. guess the coordinate chart doesn't cover this part. guess the linear approximation will have to do. no updates. should really raise an error I guess
 
             //this.twoDslider.disallowMovementIntoThisSpot();
+            this.twoDslider.values = this.twoDslider.lastValues;
             return
         }
            
@@ -213,7 +191,6 @@ class CoordinateChart2D{
         if(this.twoDslider.dragging)return;
         this.pointPos[0] = (uvCoords.x - 0.5)*2; //change from 0-1 to -1-1.
         this.pointPos[1] = (uvCoords.y - 0.5)*2;
-        console.log("Set to u,v of"+uvCoords.x + ','+uvCoords.y);
     }
     hideDraggables(){
         this.twoDslider.showDraggables = false;
@@ -228,6 +205,8 @@ class CoordinateChart2D{
 class PlaneSliderWithANewCanvas extends PlaneSlider{
     constructor(color, containerID, valueGetter, valueSetter){
         super(color, containerID, valueGetter, valueSetter);
+
+        this.maxDraggableRadius = 0.9;
     }
 
     setupCanvas(containerID){

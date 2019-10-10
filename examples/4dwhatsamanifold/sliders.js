@@ -44,16 +44,18 @@ class Slider{
 
         for(var i=0;i<event.touches.length;i++){
             let touch = event.touches[i];
-            this.onmousedown({x: touch.clientX, y: touch.clientY});
+            this.onmousedown(touch.clientX - rect.left, touch.clientY - rect.top);
         }
     }
 
     ontouchmove(event){
         event.preventDefault();
         
+        let rect = this.canvas.getBoundingClientRect();
+
         for(var i=0;i<event.touches.length;i++){
             let touch = event.touches[i];
-            this.onmousemove({x: touch.clientX, y: touch.clientY});
+            this.onmousemove(touch.clientX - rect.left, touch.clientY - rect.top);
         }
     }
 

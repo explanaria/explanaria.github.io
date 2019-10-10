@@ -2,9 +2,7 @@
 class Slider{
     constructor(containerID, valueGetter, valueSetter){
 
-        this.canvas = document.createElement("canvas");
-        document.getElementById(containerID).appendChild(this.canvas);
-
+        this.setupCanvas(containerID);
         this.context = this.canvas.getContext("2d");
 
         this.canvas.height = 150;
@@ -22,6 +20,11 @@ class Slider{
         this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
 
         //this.update();
+    }
+    setupCanvas(containerID){
+        //setup this.canvas. used in a separate function so subclasses can override it.
+        this.canvas = document.createElement("canvas");
+        document.getElementById(containerID).appendChild(this.canvas);
     }
     activate(){
         if(this.dragging){
@@ -141,7 +144,7 @@ class RealNumberSlider extends Slider{
 
         this.width = 100;
         this.pointRadius = 20;
-        this.lineColor = color
+        this.lineColor = color;
     }
     draw(){
 
@@ -200,6 +203,130 @@ class RealNumberSlider extends Slider{
             let mouseAngle = Math.atan2(y-this.pos[1],x-this.pos[0]);
             this.value = 2*(x - this.pos[0])/this.width; //-1 to 1
             this.valueSetter(this.value);
+        }
+    }
+}
+
+class PlaneSlider extends Slider{
+    constructor(color, containerID, valueGetter, valueSetter){
+        super(containerID, valueGetter, valueSetter);
+    
+        this.dragging = false;
+    
+        this.pos = [this.canvas.width/2,this.canvas.height/2];
+
+        this.size = 130;
+        this.pointRadius = 20;
+        this.lineColor = color;
+
+        this.values = [0,0];
+
+        this.showDraggables = true;
+    }
+    activate(){
+        if(this.dragging){
+            this.valueSetter(this.values[0], this.values[1]);
+        }else{
+            this.values = this.valueGetter();
+        }
+        
+        this.draw();
+    }
+    draw(){
+
+        //let hueVal = (angle/Math.PI/2 + 0.5)*360;
+        //context.fillStyle = "hsl("+hueVal+",50%,50%)";
+
+        this.canvas.width = this.canvas.width;
+
+        this.context.lineWidth = 3
+        this.context.strokeStyle = this.lineColor;
+
+
+        //outer border
+        this.context.beginPath();
+        this.context.moveTo(this.pos[0]-this.size/2, this.pos[1]-this.size/2)
+        this.context.lineTo(this.pos[0]-this.size/2, this.pos[1]+this.size/2)
+        this.context.lineTo(this.pos[0]+this.size/2, this.pos[1]+this.size/2)
+        this.context.lineTo(this.pos[0]+this.size/2, this.pos[1]-this.size/2)
+        this.context.lineTo(this.pos[0]-this.size/2, this.pos[1]-this.size/2)
+        this.context.lineTo(this.pos[0]-this.size/2, this.pos[1]+this.size/2) //go again to avoid ugly mitering
+        this.context.stroke();
+
+        if(this.showDraggables){
+            //ok, axes time
+            this.context.lineWidth = 10
+            this.context.strokeStyle = this.lineColor;
+
+            let arrowHeight = 20;
+            let arrowWidth = 20;
+
+            this.context.beginPath();
+
+            //left arrow
+            let lineY = this.pos[1] + this.values[1]*this.size/2;
+            this.context.moveTo(this.pos[0]-this.size/2 + arrowWidth, lineY-arrowHeight)
+            this.context.lineTo(this.pos[0]-this.size/2, lineY)
+            this.context.lineTo(this.pos[0]-this.size/2 + arrowWidth, lineY+arrowHeight)
+
+            //big line
+            this.context.moveTo(this.pos[0]-this.size/2, lineY)
+            this.context.lineTo(this.pos[0]+this.size/2, lineY)
+
+            //right arrow
+            this.context.moveTo(this.pos[0]+this.size/2 - arrowWidth, lineY-arrowHeight)
+            this.context.lineTo(this.pos[0]+this.size/2, lineY)
+            this.context.lineTo(this.pos[0]+this.size/2 - arrowWidth,lineY + arrowHeight)
+
+            //up/down axis now. bottom arrow:
+            let lineX = this.pos[0] + this.values[0]*this.size/2;
+            this.context.moveTo(lineX-arrowHeight, this.pos[1]-this.size/2 + arrowWidth)
+            this.context.lineTo(lineX,this.pos[1]-this.size/2)
+
+            this.context.lineTo(lineX+arrowHeight, this.pos[1]-this.size/2 + arrowWidth)
+
+            //big line
+            this.context.moveTo(lineX,this.pos[1]-this.size/2)
+            this.context.lineTo(lineX,this.pos[1]+this.size/2)
+
+            //top arrow
+            this.context.moveTo(lineX-arrowHeight, this.pos[1]+this.size/2 - arrowWidth)
+            this.context.lineTo(lineX,this.pos[1]+this.size/2)
+            this.context.lineTo(lineX + arrowHeight,this.pos[1]+this.size/2 - arrowWidth)
+
+
+            this.context.stroke();
+
+
+            //point
+            this.context.fillStyle = "orange"
+            if(this.dragging){
+                this.context.fillStyle = "darkorange"
+            }
+            let xCoord = this.values[0]*this.size/2;
+            let yCoord = this.values[1]*this.size/2;
+            drawCircle(this.context, this.pos[0] + xCoord, this.pos[1]+yCoord, this.pointRadius);
+        }
+    }
+
+    onmousedown(x,y){
+        let ptX = this.values[0]*this.size/2 + this.pos[0];
+        let ptY = this.values[1]*this.size/2 + this.pos[0];
+        if(dist(x,y, ptX, ptY) < (this.pointRadius*this.pointRadius) + 10){
+            this.dragging = true;
+        }
+    }
+    onmouseup(x,y){
+        this.dragging = false;
+    }
+    onmousemove(x,y){
+        if(this.dragging){
+            let mouseAngle = Math.atan2(y-this.pos[1],x-this.pos[0]);
+            this.values = [
+                2*(x - this.pos[0])/this.size, //-1 to 1
+                2*(y - this.pos[1])/this.size,
+            ]
+            this.valueSetter(this.values[0],this.values[1]);
         }
     }
 }

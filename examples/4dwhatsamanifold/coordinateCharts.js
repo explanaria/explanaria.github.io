@@ -50,6 +50,7 @@ function setup() {
 
 
     atlas = new Atlas(meshBeingCoveredInCharts); //will hold all the charts
+    objects.push(atlas);
 
 	raycaster = new THREE.Raycaster();
 
@@ -65,21 +66,21 @@ function setup() {
 
 	} );
 
-	window.addEventListener( 'mousedown', function () {
+	document.getElementById("canvas").addEventListener( 'mousedown', function () {
 
 		moved = false;
 
 	}, false );
 
-	window.addEventListener( 'mouseup', function () {
+	document.getElementById("canvas").addEventListener( 'mouseup', function () {
 
 		checkIntersection();
 		if ( ! moved && intersection.intersects ) shootNewDecal();
 
 	} );
 
-	window.addEventListener( 'mousemove', onTouchMove );
-	window.addEventListener( 'touchmove', onTouchMove );
+	document.getElementById("canvas").addEventListener( 'mousemove', onTouchMove );
+	document.getElementById("canvas").addEventListener( 'touchmove', onTouchMove );
     
 	three.on("update",function(time){
 		for(var x of objects){
@@ -168,7 +169,10 @@ function loadMeshBeingCoveredInCharts() {
 
 	} );*/
 
-    meshBeingCoveredInCharts = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32),
+    //let geometry = new THREE.SphereGeometry(2, 32, 32);
+    let geometry = new THREE.TorusGeometry( 2, 1, 16, 100);
+
+    meshBeingCoveredInCharts = new THREE.Mesh(geometry,
 		new THREE.MeshPhongMaterial({
 			specular: 0x111111,
             color: 0xff00ff,

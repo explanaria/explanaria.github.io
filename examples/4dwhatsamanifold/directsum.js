@@ -100,7 +100,7 @@ function setup(){
     .add(new EXP.LineOutput({width:10, color: fadedPurple}));
 
     let coord1Slider = new CircleSlider("#f07000", 'circleContainer1', ()=>userPointParams.x1, (x)=>{userPointParams.x1 = x});
-    let coord2Slider = new RealNumberSlider("#f070f0", 'circleContainer2',  ()=>userPointParams.x2, (x)=>{userPointParams.x2 = x});
+    let coord2Slider = new CircleSlider("#f070f0", 'circleContainer2',  ()=>userPointParams.x2, (x)=>{userPointParams.x2 = x});
 
 
     objects = [knotLine, torus, coord1, coord2, userPoint1, coord1Slider, coord2Slider];

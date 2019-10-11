@@ -14,10 +14,11 @@ class Slider{
         this.valueSetter = valueSetter;
         
         this.canvas.addEventListener("mousedown",this.mousedownEvt.bind(this));
-        this.canvas.addEventListener("mouseup",this.mouseupEvt.bind(this));
+        window.addEventListener("mouseup",this.mouseupEvt.bind(this));
         this.canvas.addEventListener("mousemove",this.mousemoveEvt.bind(this));
         this.canvas.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
         this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
+        this.canvas.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
 
         //this.update();
     }
@@ -56,6 +57,16 @@ class Slider{
         for(var i=0;i<event.touches.length;i++){
             let touch = event.touches[i];
             this.onmousemove(touch.clientX - rect.left, touch.clientY - rect.top);
+        }
+    }
+    ontouchend(event){
+        event.preventDefault();
+        
+        let rect = this.canvas.getBoundingClientRect();
+
+        for(var i=0;i<event.touches.length;i++){
+            let touch = event.touches[i];
+            this.onmouseup(touch.clientX - rect.left, touch.clientY - rect.top);
         }
     }
 
@@ -226,6 +237,9 @@ class PlaneSlider extends Slider{
 
         this.showDraggables = true;
 
+        this.showInvalidCross = false;
+        this.invalidCrossPos = [0,0];
+
         this.maxDraggableRadius = 1; //draggable values will be clamped to -maxradius and +maxradius.
     }
     activate(){
@@ -298,9 +312,7 @@ class PlaneSlider extends Slider{
             this.context.lineTo(lineX,this.pos[1]+this.size/2)
             this.context.lineTo(lineX + arrowHeight,this.pos[1]+this.size/2 - arrowWidth)
 
-
             this.context.stroke();
-
 
         if(this.showDraggables){
             //point
@@ -311,6 +323,23 @@ class PlaneSlider extends Slider{
             let xCoord = this.values[0]*this.size/2;
             let yCoord = this.values[1]*this.size/2;
             drawCircle(this.context, this.pos[0] + xCoord, this.pos[1]+yCoord, this.pointRadius);
+        }
+
+
+        if(this.showInvalidCross){
+            this.context.strokeStyle = "HSL(33, 100%, 30%)"
+            let crossX = this.pos[0] + this.invalidCrossPos[0]*this.size/2;
+            let crossY = this.pos[1] + this.invalidCrossPos[1]*this.size/2;
+            let crossWidth = 20;
+
+            this.context.beginPath();
+            this.context.moveTo(crossX + crossWidth, crossY+crossWidth);
+            this.context.lineTo(crossX - crossWidth, crossY-crossWidth);
+            this.context.moveTo(crossX + crossWidth, crossY-crossWidth);
+            this.context.lineTo(crossX - crossWidth, crossY+crossWidth);
+
+            this.context.stroke();
+
         }
     }
 

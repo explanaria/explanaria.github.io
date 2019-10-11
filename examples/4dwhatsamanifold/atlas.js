@@ -146,7 +146,7 @@ class CoordinateChart2D{
         //called every frame.
 
         //but we only want to do something when the value changes
-        if(x != this.pointPos[0] || y != this.pointPos[1]){
+        if(x != this.twoDslider.lastValues[0] || y != this.twoDslider.lastValues[1]){
             this.pointPos = [x,y];
             this.updateAtlas3DPointFrom2DCoords(x,y);
         }
@@ -182,11 +182,15 @@ class CoordinateChart2D{
              //oops. guess the coordinate chart doesn't cover this part. guess the linear approximation will have to do. no updates. should really raise an error I guess
 
             //this.twoDslider.disallowMovementIntoThisSpot();
-            this.twoDslider.values = this.twoDslider.lastValues;
+
+            //show an 'x' over the mouse
+            this.twoDslider.invalidCrossPos = [x,y];
+            this.twoDslider.values = this.twoDslider.lastValues; //keep the point in place
+            this.twoDslider.showInvalidCross = true;
             return
         }
+        this.twoDslider.showInvalidCross = false;
            
-
         let intersectionData = intersections[0];
         let manifoldPoint = intersectionData.point;
 	    let manifoldNormal = intersectionData.face.normal.clone();

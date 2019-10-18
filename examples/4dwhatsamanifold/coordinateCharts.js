@@ -88,6 +88,7 @@ function setup() {
 		for(var x of objects){
 			x.activate(time.t);
 		}
+        centerCamera();
 	});
 }
 
@@ -172,7 +173,7 @@ function loadMeshBeingCoveredInCharts() {
 	} );*/
 
     //let geometry = new THREE.SphereGeometry(2, 32, 32);
-    let geometry = new THREE.TorusGeometry( 2, 1, 16, 100);
+    let geometry = new THREE.TorusGeometry( 2, 1, 100, 100);
 
     meshBeingCoveredInCharts = new THREE.Mesh(geometry,
 		new THREE.MeshPhongMaterial({
@@ -219,11 +220,18 @@ async function animate(){
     EXP.TransitionTo(knotParams,{'a':5});
 }
 
+let cameraLookTarget = new THREE.Vector3();
 function centerCamera(){
     //center the camera so it gives a view of the normal.
     //a bit nauseating though...
-    let cameraPos = atlas.threeDPointNormal.clone().multiplyScalar(3).add(atlas.threeDPointPos);
-    three.camera.position.copy(cameraPos);
+    let cameraTarget = atlas.threeDPointNormal.clone().multiplyScalar(3).add(atlas.threeDPointPos);
+
+    three.camera.position.lerp(cameraTarget, 0.03);
+
+    cameraLookTarget.lerp(atlas.threeDPointPos, 0.03);
+
+    three.camera.lookAt(cameraLookTarget);
+
 }
 
 window.addEventListener("load",function(){

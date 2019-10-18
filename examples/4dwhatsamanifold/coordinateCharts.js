@@ -219,6 +219,13 @@ async function animate(){
     EXP.TransitionTo(knotParams,{'a':5});
 }
 
+function centerCamera(){
+    //center the camera so it gives a view of the normal.
+    //a bit nauseating though...
+    let cameraPos = atlas.threeDPointNormal.clone().multiplyScalar(3).add(atlas.threeDPointPos);
+    three.camera.position.copy(cameraPos);
+}
+
 window.addEventListener("load",function(){
     setup();
     animate();

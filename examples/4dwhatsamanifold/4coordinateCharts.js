@@ -1,6 +1,4 @@
-let three, controls, objects=[], knotParams={a:2,b:3};
-let userPointParams = {x1:0,x2:0,factors:['circle','circle']};
-
+let three, controls, objects=[];
 let atlas = null;
 
 
@@ -212,12 +210,9 @@ function removeAllCharts() {
 
 
 async function animate(){
-
+/*
     await EXP.delay(2000);
-    EXP.TransitionTo(knotParams,{'a':3,'b':2});
-
-    await EXP.delay(5000);
-    EXP.TransitionTo(knotParams,{'a':5});
+    EXP.TransitionTo(knotParams,{'a':3,'b':2});*/
 }
 
 let cameraLookTarget = new THREE.Vector3();

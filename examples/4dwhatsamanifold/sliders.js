@@ -19,6 +19,9 @@ class Slider{
         this.canvas.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
         this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
         this.canvas.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
+	
+        window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
+        this.onWindowResize();
 
         //this.update();
     }
@@ -38,6 +41,13 @@ class Slider{
         //window.requestAnimationFrame(this.update.bind(this)); //ugly but works.
     }
     draw(){}
+    onWindowResize() {
+        this.width = this.canvas.clientWidth;
+        this.canvas.width = this.width;
+        this.height = this.canvas.clientHeight;
+        this.canvas.height = this.height;
+        console.log(this.canvas.clientWidth);
+    }
     ontouchstart(event){
         if(event.target == this.canvas)event.preventDefault();
 
@@ -107,6 +117,17 @@ class CircleSlider extends Slider{
 
         this.disabled = false;
         this.disabledColor = "#f0f0f0";
+   
+        this.lineWidth = 10;
+        this.onWindowResize();
+    }
+    onWindowResize(){
+        super.onWindowResize();
+    
+        this.radius = 35 / 100 * this.canvas.width;
+        this.pointRadius = 15 /100 * this.canvas.width;
+        this.lineWidth = 7/100 * this.canvas.width;
+        this.pos = [this.canvas.width/2,this.canvas.height/2];
     }
     draw(){
 
@@ -114,7 +135,7 @@ class CircleSlider extends Slider{
         //context.fillStyle = "hsl("+hueVal+",50%,50%)";
 
         this.canvas.width = this.canvas.width;
-        this.context.lineWidth = 10;
+        this.context.lineWidth = this.lineWidth;
 
         this.context.strokeStyle = this.pointColor;
         if(this.disabled)this.context.strokeStyle = this.disabledColor;
@@ -131,6 +152,7 @@ class CircleSlider extends Slider{
         let ptY = this.pos[1] + this.radius*Math.sin(this.value);
         if(dist(x,y, ptX, ptY) < (this.pointRadius*this.pointRadius) + 10){
             this.dragging = true;
+            this.onmousemove(x,y);
         }
     }
     onmouseup(x,y){
@@ -157,12 +179,18 @@ class RealNumberSlider extends Slider{
     
         this.dragging = false;
     
-        this.pos = [this.canvas.width/2,this.canvas.height/2];
-
-        this.width = 100;
         this.pointRadius = 20;
         this.lineColor = color;
         this.disabledColor = "#f0f0f0";
+
+        this.onWindowResize();
+    }
+    onWindowResize(){
+        super.onWindowResize();
+    
+        this.width = 100 / 128 * this.canvas.width;
+        this.pos = [this.canvas.width/2,this.canvas.height/2];
+        this.lineWidth = 7/100 * this.canvas.width;
     }
     draw(){
 
@@ -170,7 +198,7 @@ class RealNumberSlider extends Slider{
         //context.fillStyle = "hsl("+hueVal+",50%,50%)";
 
         this.canvas.width = this.canvas.width;
-        this.context.lineWidth = 10
+        this.context.lineWidth = this.lineWidth;
         this.context.strokeStyle = this.lineColor;
 
         if(this.disabled)this.context.strokeStyle = this.disabledColor;
@@ -248,6 +276,14 @@ class PlaneSlider extends Slider{
         this.invalidCrossPos = [0,0];
 
         this.maxDraggableRadius = 1; //draggable values will be clamped to -maxradius and +maxradius.
+   
+        this.onWindowResize();
+    }
+    onWindowResize(){
+        super.onWindowResize();
+    
+        this.size = this.canvas.width;
+        this.pos = [this.canvas.width/2,this.canvas.height/2];
     }
     activate(){
         if(this.dragging){
@@ -270,56 +306,58 @@ class PlaneSlider extends Slider{
 
 
         //outer border
+        let borderWidth = this.maxDraggableRadius * this.canvas.width;
         this.context.beginPath();
-        this.context.moveTo(this.pos[0]-this.size/2, this.pos[1]-this.size/2)
-        this.context.lineTo(this.pos[0]-this.size/2, this.pos[1]+this.size/2)
-        this.context.lineTo(this.pos[0]+this.size/2, this.pos[1]+this.size/2)
-        this.context.lineTo(this.pos[0]+this.size/2, this.pos[1]-this.size/2)
-        this.context.lineTo(this.pos[0]-this.size/2, this.pos[1]-this.size/2)
-        this.context.lineTo(this.pos[0]-this.size/2, this.pos[1]+this.size/2) //go again to avoid ugly mitering
+        this.context.moveTo(this.pos[0]-borderWidth/2, this.pos[1]-borderWidth/2)
+        this.context.lineTo(this.pos[0]-borderWidth/2, this.pos[1]+borderWidth/2)
+        this.context.lineTo(this.pos[0]+borderWidth/2, this.pos[1]+borderWidth/2)
+        this.context.lineTo(this.pos[0]+borderWidth/2, this.pos[1]-borderWidth/2)
+        this.context.lineTo(this.pos[0]-borderWidth/2, this.pos[1]-borderWidth/2)
+        this.context.lineTo(this.pos[0]-borderWidth/2, this.pos[1]+borderWidth/2) //go again to avoid ugly mitering
         this.context.stroke();
 
-            //ok, axes time
-            this.context.lineWidth = 10
-            this.context.strokeStyle = this.lineColor;
+        let axisWidth = 0.9 * this.maxDraggableRadius * this.canvas.width;
+        //ok, axes time
+        this.context.lineWidth = 10 / 150 * this.canvas.width;
+        this.context.strokeStyle = this.lineColor;
 
-            let arrowHeight = 20;
-            let arrowWidth = 20;
+        let arrowHeight = 20 / 150 * this.canvas.width;
+        let arrowWidth = 20 / 150 * this.canvas.width;
 
-            this.context.beginPath();
+        this.context.beginPath();
 
-            //left arrow
-            let lineY = this.pos[1]// + this.values[1]*this.size/2;
-            this.context.moveTo(this.pos[0]-this.size/2 + arrowWidth, lineY-arrowHeight)
-            this.context.lineTo(this.pos[0]-this.size/2, lineY)
-            this.context.lineTo(this.pos[0]-this.size/2 + arrowWidth, lineY+arrowHeight)
+        //left arrow
+        let lineY = this.pos[1]// + this.values[1]*axisWidth/2;
+        this.context.moveTo(this.pos[0]-axisWidth/2 + arrowWidth, lineY-arrowHeight)
+        this.context.lineTo(this.pos[0]-axisWidth/2, lineY)
+        this.context.lineTo(this.pos[0]-axisWidth/2 + arrowWidth, lineY+arrowHeight)
 
-            //big line
-            this.context.moveTo(this.pos[0]-this.size/2, lineY)
-            this.context.lineTo(this.pos[0]+this.size/2, lineY)
+        //big line
+        this.context.moveTo(this.pos[0]-axisWidth/2, lineY)
+        this.context.lineTo(this.pos[0]+axisWidth/2, lineY)
 
-            //right arrow
-            this.context.moveTo(this.pos[0]+this.size/2 - arrowWidth, lineY-arrowHeight)
-            this.context.lineTo(this.pos[0]+this.size/2, lineY)
-            this.context.lineTo(this.pos[0]+this.size/2 - arrowWidth,lineY + arrowHeight)
+        //right arrow
+        this.context.moveTo(this.pos[0]+axisWidth/2 - arrowWidth, lineY-arrowHeight)
+        this.context.lineTo(this.pos[0]+axisWidth/2, lineY)
+        this.context.lineTo(this.pos[0]+axisWidth/2 - arrowWidth,lineY + arrowHeight)
 
-            //up/down axis now. bottom arrow:
-            let lineX = this.pos[0]// + this.values[0]*this.size/2;
-            this.context.moveTo(lineX-arrowHeight, this.pos[1]-this.size/2 + arrowWidth)
-            this.context.lineTo(lineX,this.pos[1]-this.size/2)
+        //up/down axis now. bottom arrow:
+        let lineX = this.pos[0]// + this.values[0]*axisWidth/2;
+        this.context.moveTo(lineX-arrowHeight, this.pos[1]-axisWidth/2 + arrowWidth)
+        this.context.lineTo(lineX,this.pos[1]-axisWidth/2)
 
-            this.context.lineTo(lineX+arrowHeight, this.pos[1]-this.size/2 + arrowWidth)
+        this.context.lineTo(lineX+arrowHeight, this.pos[1]-axisWidth/2 + arrowWidth)
 
-            //big line
-            this.context.moveTo(lineX,this.pos[1]-this.size/2)
-            this.context.lineTo(lineX,this.pos[1]+this.size/2)
+        //big line
+        this.context.moveTo(lineX,this.pos[1]-axisWidth/2)
+        this.context.lineTo(lineX,this.pos[1]+axisWidth/2)
 
-            //top arrow
-            this.context.moveTo(lineX-arrowHeight, this.pos[1]+this.size/2 - arrowWidth)
-            this.context.lineTo(lineX,this.pos[1]+this.size/2)
-            this.context.lineTo(lineX + arrowHeight,this.pos[1]+this.size/2 - arrowWidth)
+        //top arrow
+        this.context.moveTo(lineX-arrowHeight, this.pos[1]+axisWidth/2 - arrowWidth)
+        this.context.lineTo(lineX,this.pos[1]+axisWidth/2)
+        this.context.lineTo(lineX + arrowHeight,this.pos[1]+axisWidth/2 - arrowWidth)
 
-            this.context.stroke();
+        this.context.stroke();
 
         if(this.showDraggables){
             //point
@@ -355,6 +393,7 @@ class PlaneSlider extends Slider{
         let ptY = this.values[1]*this.size/2 + this.pos[0];
         if(dist(x,y, ptX, ptY) < (this.pointRadius*this.pointRadius) + 10){
             this.dragging = true;
+            this.onmousemove(x,y);
         }
     }
     onmouseup(x,y){

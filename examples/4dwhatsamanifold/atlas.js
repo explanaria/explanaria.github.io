@@ -33,7 +33,8 @@ class Atlas{
 	        wireframe: false
         } );
 
-        this.newChartSize = new THREE.Vector3(2,2,2);
+        let size = 1.8;
+        this.newChartSize = new THREE.Vector3(size,size,size);
     }
     activate(){
         //render all charts' 2D canvases and move the 3D ball.

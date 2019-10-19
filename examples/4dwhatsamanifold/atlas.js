@@ -156,10 +156,10 @@ class CoordinateChart2D{
         //Now, we must figure out the 3D location of the point
         
         //step 1: planar approximation. approximate the coordinate chart as a linear plane based on some data we saved when this chart was created. Then we'll project that approximation onto the mesh itself.
-        planarApproximation.set(x,y,0);
+        planarApproximation.set(x,-y,0);
 		planarApproximation.applyMatrix4( this.projectorMatrix );
 
-        planarApproximationInwardsNormal.set(x,y,1);
+        planarApproximationInwardsNormal.set(x,-y,1);
         planarApproximationInwardsNormal.applyMatrix4( this.projectorMatrix );
         planarApproximationInwardsNormal.sub(planarApproximation).multiplyScalar(-1); //sure there's a better linalg way of getting this normal direction right from the coefficients of the matrix itself. but I'm lazy and spent 3 hours debugging this code and I think this is good enough.
 

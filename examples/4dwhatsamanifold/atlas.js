@@ -156,6 +156,8 @@ class CoordinateChart2D{
         //Now, we must figure out the 3D location of the point
         
         //step 1: planar approximation. approximate the coordinate chart as a linear plane based on some data we saved when this chart was created. Then we'll project that approximation onto the mesh itself.
+
+        //keep in mind the -y is because a canvas's +y direction is down, but we want it to be up.
         planarApproximation.set(x,-y,0);
 		planarApproximation.applyMatrix4( this.projectorMatrix );
 
@@ -203,7 +205,7 @@ class CoordinateChart2D{
     updateDrawnPointLocation(uvCoords){
         if(this.twoDslider.dragging)return;
         this.pointPos[0] = (uvCoords.x - 0.5)*2; //change from 0-1 to -1-1.
-        this.pointPos[1] = (uvCoords.y - 0.5)*2;
+        this.pointPos[1] = ((1-uvCoords.y) - 0.5)*2; //the 1-y is because a 3D chart's +Y is up, but a canvas's +y is down.
     }
     hideDraggables(){
         this.twoDslider.showDraggables = false;

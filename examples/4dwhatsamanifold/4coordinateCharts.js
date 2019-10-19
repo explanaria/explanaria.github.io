@@ -58,6 +58,9 @@ function setup() {
 	mouseHelper.visible = false;
 	three.scene.add( mouseHelper );
 
+    /* mouse ray gun disabled
+
+
 	var moved = false;
 
 	controls.addEventListener( 'change', function () {
@@ -80,7 +83,7 @@ function setup() {
 	} );
 
 	document.getElementById("canvas").addEventListener( 'mousemove', onTouchMove );
-	document.getElementById("canvas").addEventListener( 'touchmove', onTouchMove );
+	document.getElementById("canvas").addEventListener( 'touchmove', onTouchMove );*/
     
 	three.on("update",function(time){
 		for(var x of objects){
@@ -186,7 +189,7 @@ function loadMeshBeingCoveredInCharts() {
 
 function shootFirstDecal(){
 
-    let firstPoint = new THREE.Vector3(0,-1.5,1);
+    let firstPoint = new THREE.Vector3(0,-1.7,1);
     let firstOrientation = new THREE.Euler(0,0,0); //euler angles.
 
     var chart = new CoordinateChart2D(atlas, firstPoint, firstOrientation);

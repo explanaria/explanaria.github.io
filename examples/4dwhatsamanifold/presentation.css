@@ -13,18 +13,19 @@
 }
 
 .threeDPart{
-    height: 64%;
+    height: 62%;
     width: 100%;
     /*background-color: green;*/
     min-height: 2;
 }
 
 .non3DFooterPart{
-    height: 33%;
+    height: 35%;
     width: 100%;
     overflow-y: scroll;
     padding: 0.5em;
     border-top: 1px solid #ccc;
+    line-height: 1.0;
 }
 
 #chartCanvases{
@@ -37,21 +38,57 @@
 
 }
 
+/* used in 2 directsum*/
+#factors canvas{
+    width: 8em;
+    height: 8em;
+}
+#factors .column{
+    padding-bottom: 0;
+    padding-top: 0;
+   }
+
+#timesSign{
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: 0.75rem;
+
+    text-align: center;
+    font-size: 150px;
+}
+
 
 @media screen and (max-height:600px){
     .threeDPart{
-        width: 66%;
+        width: 60%;
         height:100%;
-        float:left
+        float:left;
+        overflow-y: hidden; /* I'm not sure about this. disabling it does get rid of a scrollbar, but that scrollbar shouldn't be there in the first place.*/
     }
 
     .non3DFooterPart{
-        width: calc(33% - 0.5em);
+        width: calc(40% - 0.25em);
         height: 100%;
         float:right;
         bottom:0%;
         border-top: none;
         border-left: 1px solid #ccc;
+    }
+
+    #factors canvas{
+        width: 6em;
+        height: 6em;
+    }
+    .column{
+        padding:0;
+    }
+
+    #timesSign{
+        font-size: 3em;
+        padding: 0;
+        margin-top: 1.5em;
     }
     
 }

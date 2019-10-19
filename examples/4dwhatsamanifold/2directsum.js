@@ -10,6 +10,7 @@ function setup(){
     
 
 	three.camera.position.z = 6;
+	three.camera.position.y = 0.5;
     controls.autoRotate = true;
     
 	three.on("update",function(time){

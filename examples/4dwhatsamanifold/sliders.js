@@ -156,7 +156,6 @@ class RealNumberSlider extends Slider{
         super(containerID, valueGetter, valueSetter);
     
         this.dragging = false;
-        this.disabled = false;
     
         this.pos = [this.canvas.width/2,this.canvas.height/2];
 

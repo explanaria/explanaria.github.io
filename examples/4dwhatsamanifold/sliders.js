@@ -104,6 +104,9 @@ class CircleSlider extends Slider{
         this.radius = 50;
         this.pointRadius = 20;
         this.pointColor = color
+
+        this.disabled = false;
+        this.disabledColor = "#f0f0f0";
     }
     draw(){
 
@@ -114,13 +117,14 @@ class CircleSlider extends Slider{
         this.context.lineWidth = 10;
 
         this.context.strokeStyle = this.pointColor;
+        if(this.disabled)this.context.strokeStyle = this.disabledColor;
         drawCircleStroke(this.context, this.pos[0],this.pos[1],this.radius);
 
         this.context.fillStyle = "orange"
         if(this.dragging){
             this.context.fillStyle = "darkorange"
         }
-        drawCircle(this.context, this.pos[0] + this.radius*Math.cos(this.value), this.pos[1] + this.radius*Math.sin(this.value), this.pointRadius);
+        if(!this.disabled)drawCircle(this.context, this.pos[0] + this.radius*Math.cos(this.value), this.pos[1] + this.radius*Math.sin(this.value), this.pointRadius);
     }
     onmousedown(x,y){
         let ptX = this.pos[0] + this.radius*Math.cos(this.value);
@@ -152,12 +156,14 @@ class RealNumberSlider extends Slider{
         super(containerID, valueGetter, valueSetter);
     
         this.dragging = false;
+        this.disabled = false;
     
         this.pos = [this.canvas.width/2,this.canvas.height/2];
 
         this.width = 100;
         this.pointRadius = 20;
         this.lineColor = color;
+        this.disabledColor = "#f0f0f0";
     }
     draw(){
 
@@ -167,6 +173,8 @@ class RealNumberSlider extends Slider{
         this.canvas.width = this.canvas.width;
         this.context.lineWidth = 10
         this.context.strokeStyle = this.lineColor;
+
+        if(this.disabled)this.context.strokeStyle = this.disabledColor;
 
         //left arrow
 
@@ -199,7 +207,7 @@ class RealNumberSlider extends Slider{
             this.context.fillStyle = "darkorange"
         }
         let xCoord = this.value*this.width/2;
-        drawCircle(this.context, this.pos[0] + xCoord, this.pos[1], this.pointRadius);
+        if(!this.disabled)drawCircle(this.context, this.pos[0] + xCoord, this.pos[1], this.pointRadius);
     }
     onmousedown(x,y){
         let ptX = this.value*this.width/2 + this.pos[0];

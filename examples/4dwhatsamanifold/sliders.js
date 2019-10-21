@@ -208,23 +208,7 @@ class RealNumberSlider extends Slider{
         let arrowHeight = 20;
         let arrowWidth = 20;
 
-        this.context.beginPath();
-
-        this.context.moveTo(this.pos[0]-this.width/2 + arrowWidth, this.pos[1]-arrowHeight)
-        this.context.lineTo(this.pos[0]-this.width/2, this.pos[1])
-
-        this.context.lineTo(this.pos[0]-this.width/2 + arrowWidth, this.pos[1]+arrowHeight)
-
-        //big line
-        this.context.moveTo(this.pos[0]-this.width/2, this.pos[1])
-        this.context.lineTo(this.pos[0]+this.width/2, this.pos[1])
-
-        //right arrow
-        this.context.moveTo(this.pos[0]+this.width/2 - arrowWidth, this.pos[1]-arrowHeight)
-        this.context.lineTo(this.pos[0]+this.width/2, this.pos[1])
-
-        this.context.lineTo(this.pos[0]+this.width/2 - arrowWidth, this.pos[1]+arrowHeight)
-        this.context.stroke();
+        drawHorizontalArrow(this.context, this.pos, this.width, arrowWidth, arrowHeight);
 
         drawCircleStroke(this.context, this.value*this.width/2 + this.pos[0],this.pos[1],this.radius);
 
@@ -316,7 +300,7 @@ class PlaneSlider extends Slider{
         this.context.lineTo(this.pos[0]-borderWidth/2, this.pos[1]+borderWidth/2) //go again to avoid ugly mitering
         this.context.stroke();
 
-        let axisWidth = 0.9 * this.maxDraggableRadius * this.canvas.width;
+        let axisLength = 0.9 * this.maxDraggableRadius * this.canvas.width;
         //ok, axes time
         this.context.lineWidth = 10 / 150 * this.canvas.width;
         this.context.strokeStyle = this.lineColor;
@@ -324,40 +308,10 @@ class PlaneSlider extends Slider{
         let arrowHeight = 20 / 150 * this.canvas.width;
         let arrowWidth = 20 / 150 * this.canvas.width;
 
-        this.context.beginPath();
+        drawHorizontalArrow(this.context, this.pos, axisLength, arrowWidth, arrowHeight);
+        drawVerticalArrow(this.context, this.pos, axisLength, arrowWidth, arrowHeight);
 
-        //left arrow
-        let lineY = this.pos[1]// + this.values[1]*axisWidth/2;
-        this.context.moveTo(this.pos[0]-axisWidth/2 + arrowWidth, lineY-arrowHeight)
-        this.context.lineTo(this.pos[0]-axisWidth/2, lineY)
-        this.context.lineTo(this.pos[0]-axisWidth/2 + arrowWidth, lineY+arrowHeight)
 
-        //big line
-        this.context.moveTo(this.pos[0]-axisWidth/2, lineY)
-        this.context.lineTo(this.pos[0]+axisWidth/2, lineY)
-
-        //right arrow
-        this.context.moveTo(this.pos[0]+axisWidth/2 - arrowWidth, lineY-arrowHeight)
-        this.context.lineTo(this.pos[0]+axisWidth/2, lineY)
-        this.context.lineTo(this.pos[0]+axisWidth/2 - arrowWidth,lineY + arrowHeight)
-
-        //up/down axis now. bottom arrow:
-        let lineX = this.pos[0]// + this.values[0]*axisWidth/2;
-        this.context.moveTo(lineX-arrowHeight, this.pos[1]-axisWidth/2 + arrowWidth)
-        this.context.lineTo(lineX,this.pos[1]-axisWidth/2)
-
-        this.context.lineTo(lineX+arrowHeight, this.pos[1]-axisWidth/2 + arrowWidth)
-
-        //big line
-        this.context.moveTo(lineX,this.pos[1]-axisWidth/2)
-        this.context.lineTo(lineX,this.pos[1]+axisWidth/2)
-
-        //top arrow
-        this.context.moveTo(lineX-arrowHeight, this.pos[1]+axisWidth/2 - arrowWidth)
-        this.context.lineTo(lineX,this.pos[1]+axisWidth/2)
-        this.context.lineTo(lineX + arrowHeight,this.pos[1]+axisWidth/2 - arrowWidth)
-
-        this.context.stroke();
 
         if(this.showDraggables){
             //point
@@ -412,7 +366,76 @@ class PlaneSlider extends Slider{
     }
 }
 
+function drawHorizontalArrow(context, pos, lineLength, arrowWidth, arrowHeight){
+
+
+        context.beginPath();
+
+        //left arrow
+        let lineY = pos[1]// + values[1]*axisWidth/2;
+        context.moveTo(pos[0]-lineLength/2 + arrowWidth, lineY-arrowHeight)
+        context.lineTo(pos[0]-lineLength/2, lineY)
+        context.lineTo(pos[0]-lineLength/2 + arrowWidth, lineY+arrowHeight)
+
+        //big line
+        context.moveTo(pos[0]-lineLength/2, lineY)
+        context.lineTo(pos[0]+lineLength/2, lineY)
+
+        //right arrow
+        context.moveTo(pos[0]+lineLength/2 - arrowWidth, lineY-arrowHeight)
+        context.lineTo(pos[0]+lineLength/2, lineY)
+        context.lineTo(pos[0]+lineLength/2 - arrowWidth,lineY + arrowHeight)
+
+        context.stroke();
+}
+
+function drawVerticalArrow(context, pos, lineLength, arrowWidth, arrowHeight){
+
+        //up/down axis now. bottom arrow:
+        let lineX = pos[0]// + values[0]*axisWidth/2;
+        context.beginPath();
+        context.moveTo(lineX-arrowHeight, pos[1]-lineLength/2 + arrowWidth)
+        context.lineTo(lineX,pos[1]-lineLength/2)
+
+        context.lineTo(lineX+arrowHeight, pos[1]-lineLength/2 + arrowWidth)
+
+        //big line
+        context.moveTo(lineX,pos[1]-lineLength/2)
+        context.lineTo(lineX,pos[1]+lineLength/2)
+
+        //top arrow
+        context.moveTo(lineX-arrowHeight, pos[1]+lineLength/2 - arrowWidth)
+        context.lineTo(lineX,pos[1]+lineLength/2)
+        context.lineTo(lineX + arrowHeight,pos[1]+lineLength/2 - arrowWidth)
+
+        context.stroke();
+}
+
 //helper func
+function drawLine(context, x1,y1,x2,y2){
+    context.beginPath();
+    context.moveTo(x1,y1);
+    context.lineTo(x2,y2);
+    context.stroke();
+}
+
+function drawArrow(context, x1,y1,x2,y2, arrowSize){
+    drawLine(context, x1,y1,x2,y2)
+
+  //pos1 is the back of the midline of the triangle, pos2 the tip
+  const size = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))
+  arrowSize = Math.min(size/3, arrowSize);
+  const negativeTriangleDirectionVec = [(x1-x2)/size*arrowSize,(y1-y2)/size*arrowSize];
+
+  const halfTriangleDirectionPerpVec1 = [-negativeTriangleDirectionVec[1]/2,negativeTriangleDirectionVec[0]/2];
+  const halfTriangleDirectionPerpVec2 = [negativeTriangleDirectionVec[1]/2,-negativeTriangleDirectionVec[0]/2];
+  context.beginPath();
+  context.moveTo(x2 + negativeTriangleDirectionVec[0] + halfTriangleDirectionPerpVec1[0], y2 + negativeTriangleDirectionVec[1] + halfTriangleDirectionPerpVec1[1]);
+  context.lineTo(x2,y2);
+  context.lineTo(x2 + negativeTriangleDirectionVec[0] + halfTriangleDirectionPerpVec2[0], y2 + negativeTriangleDirectionVec[1] + halfTriangleDirectionPerpVec2[1]);
+  context.stroke();
+
+}
 function drawCircleStroke(context, x,y,radius){
     context.beginPath();
     context.arc(x,y, radius, 0, 2 * Math.PI);

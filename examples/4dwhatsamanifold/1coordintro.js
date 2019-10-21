@@ -1,6 +1,154 @@
 let three, controls, objects, knotParams;
 
-let pointCoords = [];
+let pointCoords = [0,0,0];
+
+let presentation = null;
+
+let manifoldPoint = null;//will be an EXP.Transformation
+
+
+let coordinateLine1Color = 'hsl(260,81%,69%)';
+let coordinateLine2Color = 'hsl(160,81%,69%)';
+let coordinateLine3Color = 'hsl(60,81%,69%)';
+
+
+let twoDCanvasHandler = null;
+
+//represent
+class twoDCoordIntroScene{
+    constructor(canvasID){
+        this.canvas = document.getElementById(canvasID);
+        this.context = this.canvas.getContext("2d");
+
+        window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
+        this.onWindowResize();
+
+        this.opacity = 1;
+
+        this.cartesianOpacity = 1;
+        this.polarOpacity = 0;
+
+    }
+    onWindowResize(){
+        this.canvas.width = this.canvas.parentElement.clientWidth;
+        this.canvas.height = this.canvas.parentElement.clientHeight;
+
+    }
+    activate(t){
+        this.canvas.width = this.canvas.width;
+
+        this.context.fillStyle = '#ffffff';
+        this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
+        this.canvas.style.opacity = this.opacity;
+
+        let centerPos = [this.canvas.width/2, this.canvas.height/2];
+
+
+        let pointPos = [100,100];
+        pointPos = [150*Math.sin(t/3), 150*Math.sin(t/5)];
+    
+           
+        this.context.globalAlpha = this.cartesianOpacity;
+        this.draw2DCoordinates(t, pointPos);
+        this.drawCartesianText(t, centerPos, pointPos);
+
+        this.context.globalAlpha = this.polarOpacity;
+        this.drawPolarCoordinates(t, pointPos);
+        this.drawPolarText(t, centerPos, pointPos);
+
+        this.context.globalAlpha = 1;
+
+        
+        //point    
+        this.context.fillStyle = "#f07000";
+        drawCircle(this.context, centerPos[0]+pointPos[0],centerPos[1]+pointPos[1],20);
+    }
+    draw2DCoordinates(t, pointPos){
+
+
+        let pos = [this.canvas.width/2, this.canvas.height/2];
+
+        let lineLength = Math.min(Math.min(this.canvas.width, this.canvas.height)*2/3, 500);
+
+        this.context.lineWidth = 10;
+
+
+        this.context.strokeStyle = coordinateLine1Color;
+        drawVerticalArrow(this.context, pos, lineLength, 20, 20,);
+        this.context.strokeStyle = coordinateLine2Color;
+        drawHorizontalArrow(this.context, pos, lineLength, 20, 20);
+
+        //lines to point
+        this.context.lineWidth = 10;
+        this.context.strokeStyle = coordinateLine2Color;
+        drawArrow(this.context, pos[0], pos[1], pos[0] + pointPos[0], pos[1], 30);
+        this.context.strokeStyle = coordinateLine1Color;
+        drawArrow(this.context, pos[0]+ pointPos[0], pos[1], pos[0] + pointPos[0], pos[1]+ pointPos[1], 30);
+    }
+    drawCartesianText(t, pos, pointPos){
+        this.drawTwoCoordinates([pos[0]+pointPos[0],pos[1]+pointPos[1]], [pointPos[0]/100, -pointPos[1]/100]);
+    }
+    drawPolarText(t, pos, pointPos){
+        const size = Math.sqrt(pointPos[1]*pointPos[1] + pointPos[0]*pointPos[0])
+        let angle = Math.atan2(pointPos[1],pointPos[0]);
+        angle = (angle+(Math.PI*2))%(Math.PI*2)
+        this.drawTwoCoordinates([pos[0]+pointPos[0],pos[1]+pointPos[1]], [size/100, angle]);
+    }
+    drawTwoCoordinates(pos, coordinates){
+        this.context.font = "48px Computer Modern Serif";
+
+        let allStrings = ['[',format(coordinates[0]),',',format(coordinates[1]),']'];
+
+        let textX = pos[0] + 50;
+        let textY = pos[1] - 50;
+        for(let i=0;i<allStrings.length;i++){
+
+            let metrics = this.context.measureText(allStrings[i]);
+
+            //draw a transparent rectangle under the text
+            this.context.fillStyle = "rgba(255,255,255,0.9)"
+            this.context.fillRect(textX, textY-38, metrics.width, 52);
+
+            if(i == 1){this.context.fillStyle = coordinateLine2Color;}
+            else if(i == 3){this.context.fillStyle = coordinateLine1Color}
+            else{this.context.fillStyle = '#444';}
+
+            this.context.fillText(allStrings[i], textX, textY);
+
+            textX += metrics.width;
+        }
+    }
+    drawPolarCoordinates(t, pointPos){
+        let pos = [this.canvas.width/2, this.canvas.height/2];
+
+        let lineLength = Math.min(Math.min(this.canvas.width, this.canvas.height)*2/3, 500);
+
+        this.context.lineWidth = 10;
+
+
+        this.context.strokeStyle = 'rgba(170,170,170, 0.5)';
+        drawVerticalArrow(this.context, pos, lineLength, 20, 20,);
+        drawHorizontalArrow(this.context, pos, lineLength, 20, 20);
+
+
+        this.context.strokeStyle = 'white';
+        //drawArrow(this.context, pos[0], pos[1], pos[0] + 150, pos[1], 30);
+
+        //axis 1: arc
+        const size = Math.sqrt(pointPos[1]*pointPos[1] + pointPos[0]*pointPos[0])
+        let angle = Math.atan2(pointPos[1],pointPos[0]);
+        let radius = Math.min(100, size*2/3); //show circle smaller than 100px if angle is smaller than 100px
+        
+        this.context.strokeStyle = coordinateLine1Color;
+        this.context.beginPath();
+        this.context.arc(pos[0],pos[1], radius, 0, angle);
+        this.context.stroke();
+
+        //arrow straight to the point
+        this.context.strokeStyle = coordinateLine2Color;
+        drawArrow(this.context, pos[0], pos[1], pos[0] + pointPos[0], pos[1]+ pointPos[1], 30);
+    }
+}
 
 function setup(){
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
@@ -27,9 +175,6 @@ function setup(){
     let gray = 0x555555;
 
 
-    let coordinateLine1Color = 'hsl(260,81%,69%)';
-    let coordinateLine2Color = 'hsl(160,81%,69%)';
-    let coordinateLine3Color = 'hsl(60,81%,69%)';
 
     console.log("Loaded.");
 
@@ -69,7 +214,7 @@ function setup(){
 
 
     var threeDPoint = new EXP.Array({data: [[0]]})
-    var manifoldPoint = new EXP.Transformation({expr: (i,t,x) => [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7)]});
+    manifoldPoint = new EXP.Transformation({expr: (i,t,x) => [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7)]});
     threeDPoint
     .add(manifoldPoint)
     .add(new EXP.PointOutput({width:0.2, color: fadedRed}));
@@ -127,21 +272,47 @@ function setup(){
     }};
 
 
-    document.getElementById("coord1").style.backgroundColor = coordinateLine1Color
-    document.getElementById("coord2").style.backgroundColor = coordinateLine2Color
-    document.getElementById("coord3").style.backgroundColor = coordinateLine3Color
+    document.getElementById("coord1").style.color = coordinateLine1Color;
+    document.getElementById("coord2").style.color = coordinateLine2Color;
+    document.getElementById("coord3").style.color = coordinateLine3Color;
 
-    objects = [torus, threeDPoint, xAxis, yAxis, zAxis, pointXAxis, pointYAxis, pointZAxis, pointUpdater];
+    twoDCanvasHandler = new twoDCoordIntroScene("twodcanvas");
+    
+	presentation = new EXP.UndoCapableDirector();
+
+    objects = [twoDCanvasHandler, torus, threeDPoint, xAxis, yAxis, zAxis, pointXAxis, pointYAxis, pointZAxis, pointUpdater];
 }
 
 function format(x){
-    return parseInt(x*100)/100;
+    return Number(x).toFixed(2);
 }
 
 
 async function animate(){
-    //await EXP.delay(2000);
-   // EXP.TransitionTo(knotParams,{'a':3,'b':2});
+    twoDCanvasHandler.cartesianOpacity = 0;
+    await presentation.begin();
+
+    await presentation.nextSlide();
+    presentation.TransitionTo(twoDCanvasHandler, {'cartesianOpacity':1}, 750);
+    
+    await presentation.nextSlide();
+    /*
+    presentation.TransitionTo(twoDCanvasHandler, {'cartesianOpacity':0}, 750);
+    await presentation.delay(500);
+    presentation.TransitionTo(twoDCanvasHandler, {'polarOpacity':1}, 750);*/
+
+    presentation.TransitionTo(twoDCanvasHandler, {'polarOpacity':1, 'cartesianOpacity':0}, 750);
+
+
+    await presentation.nextSlide();
+    presentation.TransitionTo(twoDCanvasHandler, {'opacity':0}, 750);
+
+    //technically this is a string. the CSS animation handles the transition.
+    let threeDCoords = document.getElementById("coords");
+    presentation.TransitionTo(threeDCoords.style, {'opacity':1}, 0);
+   
+    await presentation.nextSlide();
+    presentation.TransitionTo(manifoldPoint, {expr: (i,t,x) => [5,5,5]});
 }
 
 window.addEventListener("load",function(){

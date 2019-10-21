@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
-  <title>Explanarian - Direct Sums</title>
+  <title>Explanarian - Different Coordinate Systems</title>
 
   <script src="../../src/lib/three.min.js"></script>
   <script src="../../src/lib/socket.io.js"></script>
@@ -35,11 +35,6 @@
         display: block;
     }
 
-    #coords{
-        font-size: 30;
-        background-color: #ddd;
-        color: black;
-    }
 
   </style>
 
@@ -53,34 +48,35 @@
         <canvas id="canvas">
 
         </canvas>
+        <canvas id="twodcanvas">
+
+        </canvas>
       </div>
       <div id="textArea" class="non3DFooterPart">
         <br />
 
-	    <div id="coords" class="exp-slide columns is-mobile">
-            <div id="" class="column">
+	    <div id="coords" style="opacity: 0" class="is-mobile">
+            <span id="" class="">
                 [
-            </div>
-            <div id="coord1" class="column">
-                
-            </div>
-            <div id="" class="column">
+            </span>
+            <span id="coord1" class=""></span>
+            <span id="" class="">
                 ,
-            </div>
-            <div id="coord2" class="column">
-                
-            </div>
-            <div id="" class="column">
+            </span>
+            <span id="coord2" class=""></span>
+            <span id="" class="">
                 ,
-            </div>
-            <div id="coord3" class="column">
-                
-            </div>
-            <div id="" class="column">
+            </span>
+            <span id="coord3" class=""></span>
+            <span id="" class="">
                 ]
-            </div>
+            </span>
 	    </div>
-	    <p>One way of representing a torus is using two circle coordinates.</p>
+	    <p class="exp-slide">Here's a point.</p>
+	    <p class="exp-slide">You're probably used to 2D coordinates.</p>
+	    <p class="exp-slide">Or polar ones.</p>
+	    <p class="exp-slide">Each coordinate is a real number - a spot on the number line.</p>
+	    <p class="exp-slide">3D coordinates work the same way - only instead of two number lines, we have 3.</p>
       </div>
   </div>
 </body>

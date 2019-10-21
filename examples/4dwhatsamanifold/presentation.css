@@ -38,6 +38,27 @@
 
 }
 
+/* used in 1 coordinate systems */
+
+    #coords{
+        padding: 5;
+        color: black;
+        font-size: 5em;
+        font-family: "Computer Modern Serif";
+        transition: opacity 0.75s linear;
+    }
+    #coords:nth-child(2n+1){
+        min-width: 30%;
+    }
+
+    #twodcanvas{
+        z-index: 2;
+        margin-top: -100%; /* hack to position 2D canvas over 3D canvas*/
+        pointer-events: none;
+        opacity: 1.0;
+        taransition: 1s linear opacity;
+    }
+
 /* used in 2 directsum*/
 #factors canvas{
     width: 8em;

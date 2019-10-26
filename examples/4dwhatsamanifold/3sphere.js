@@ -84,7 +84,7 @@ function setup(){
 	three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
 	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
-    presentation = new EXP.NonDecreasingDirector();
+    presentation = new EXP.UndoCapableDirector();
     
 
 	three.camera.position.z = 2;
@@ -154,14 +154,10 @@ function setup(){
 
     singularPoints.add(manifoldParametrization.makeLink()).add(ptOutput);
 
-
     twoDCanvasHandler = new CircleCoordinateNotAlwaysCircularScene("twoDcanvas");
 
     objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints];
 }
-
-
-
 
 async function animate(){
 
@@ -180,16 +176,26 @@ async function animate(){
     */
 
     //animation is done in CSS with 1500 
+
+    //TODO: when this undos, call three.onWindowResize();
     objects.push({activate: function(){three.onWindowResize()}}); //ensure canvas keeps aspect ratio properly
     presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 1fr'}, 0);
     await presentation.delay(1500);
     objects.pop(); //delete that last object
+
+    //HORRIBLE HACK ALERT
+
+    window.addEventListener("mouseup", () => three.onWindowResize());
+    window.addEventListener("touchend",() => three.onWindowResize());
+
 
 
     await presentation.nextSlide();
 
     coord1SliderR.dragging = true;
     presentation.TransitionTo(coord1SliderR, {'value': -1}, 1000);
+
+    await presentation.nextSlide();
 }
 
 

@@ -7,10 +7,6 @@ let presentation = null;
 let manifoldPoint = null;//will be an EXP.Transformation
 
 
-let coordinateLine1Color = 'hsl(260,81%,69%)';
-let coordinateLine2Color = 'hsl(160,81%,69%)';
-let coordinateLine3Color = 'hsl(60,81%,69%)';
-
 
 let twoDCanvasHandler = null;
 
@@ -157,7 +153,8 @@ function setup(){
 
 	three.camera.position.z = 3;
 	three.camera.position.y = 0.5;
-    controls.autoRotate = true;
+    controls.autoRotate = true;    
+    controls.enableKeys = false;
     
 	three.on("update",function(time){
 		for(var x of objects){
@@ -165,16 +162,6 @@ function setup(){
 		}
 		controls.update();
 	});
-
-    let blue = 0x0070f0;
-    let green = 0x50d050;
-
-    let fadedRed = 0xf07000;
-    let fadedPurple = 0xf070f0;
-
-    let gray = 0x555555;
-
-
 
     console.log("Loaded.");
 
@@ -217,7 +204,7 @@ function setup(){
     manifoldPoint = new EXP.Transformation({expr: (i,t,x) => [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7)]});
     threeDPoint
     .add(manifoldPoint)
-    .add(new EXP.PointOutput({width:0.2, color: fadedRed}));
+    .add(new EXP.PointOutput({width:0.2, color: pointColor}));
 
     var xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
     xAxis
@@ -276,7 +263,7 @@ function setup(){
     document.getElementById("coord2").style.color = coordinateLine2Color;
     document.getElementById("coord3").style.color = coordinateLine3Color;
 
-    twoDCanvasHandler = new twoDCoordIntroScene("twodcanvas");
+    twoDCanvasHandler = new twoDCoordIntroScene("twoDcanvasOverlay");
     
 	presentation = new EXP.UndoCapableDirector();
 

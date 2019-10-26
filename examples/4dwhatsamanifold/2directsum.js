@@ -1,6 +1,6 @@
 let three, controls, objects, knotParams;
 
-let userPointParams = {x1:0,x2:0,factors:['circle','circle']};
+let userPointParams = {x1:0,x2:0,factors:['linear','linear']};
 
 let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070f0",'faded':'#D6C2D6'}}
 
@@ -19,18 +19,6 @@ function setup(){
 		}
 		controls.update();
 	});
-
-    let blue = 0x0070f0;
-    let green = 0x50d050;
-
-    let fadedRed = 0xf07000;
-    let fadedPurple = 0xf070f0;
-
-    let gray = 0x555555;
-
-
-    let coordinateLine1Color = 'hsl(260,81%,69%)';
-    let coordinateLine2Color = 'hsl(160,81%,69%)';
 
     console.log("Loaded.");
 
@@ -91,7 +79,7 @@ function setup(){
     userPoint1
     .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,userPointParams.x2]}))
     .add(manifoldParametrization.makeLink())
-    .add(new EXP.PointOutput({width:0.3, color: fadedRed}));
+    .add(new EXP.PointOutput({width:0.3, color: pointColor}));
 
 
     var coord2 = new EXP.Area({bounds: [[0,1]], numItems: 200});
@@ -109,8 +97,8 @@ function setup(){
     let coord2SliderC = new CircleSlider(coordinateLine2Color, '2circle',  ()=>userPointParams.x2, (x)=>setSecondFactor(x, 'circle'));
     let coord2SliderR = new RealNumberSlider(coordinateLine2Color, '2real',  ()=>userPointParams.x2, (x)=>setSecondFactor(x, 'real'));
 
-    coord1SliderR.disabled = true;
-    coord2SliderR.disabled = true;
+    coord1SliderC.disabled = true;
+    coord2SliderC.disabled = true;
 
     function setFirstFactor(value, factorType){
         userPointParams.x1 = value;

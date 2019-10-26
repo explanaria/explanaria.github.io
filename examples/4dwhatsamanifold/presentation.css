@@ -97,7 +97,6 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-rows: 100%;
-    background-color: red;
     transition: 1.5s grid-template-columns ease-in-out;
 }
 

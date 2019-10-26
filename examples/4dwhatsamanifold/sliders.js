@@ -46,7 +46,6 @@ class Slider{
         this.canvas.width = this.width;
         this.height = this.canvas.clientHeight;
         this.canvas.height = this.height;
-        console.log(this.canvas.clientWidth);
     }
     ontouchstart(event){
         if(event.target == this.canvas)event.preventDefault();
@@ -116,7 +115,7 @@ class CircleSlider extends Slider{
         this.pointColor = color
 
         this.disabled = false;
-        this.disabledColor = "#f0f0f0";
+        this.disabledColor = disabledGray;
    
         this.lineWidth = 10;
         this.onWindowResize();
@@ -141,9 +140,9 @@ class CircleSlider extends Slider{
         if(this.disabled)this.context.strokeStyle = this.disabledColor;
         drawCircleStroke(this.context, this.pos[0],this.pos[1],this.radius);
 
-        this.context.fillStyle = "orange"
+        this.context.fillStyle = pointColorCanvas
         if(this.dragging){
-            this.context.fillStyle = "darkorange"
+            this.context.fillStyle = pointColorDragging
         }
         if(!this.disabled)drawCircle(this.context, this.pos[0] + this.radius*Math.cos(this.value), this.pos[1] + this.radius*Math.sin(this.value), this.pointRadius);
     }
@@ -181,16 +180,26 @@ class RealNumberSlider extends Slider{
     
         this.pointRadius = 20;
         this.lineColor = color;
-        this.disabledColor = "#f0f0f0";
+        this.disabledColor = disabledGray;
+
+        this.mode = "horizontal"; //or 'vertical'
 
         this.onWindowResize();
+
+        this.dragPadding = 20; //how far away from the end of the arrow should we restrict ourselves to
     }
     onWindowResize(){
         super.onWindowResize();
-    
-        this.width = 100 / 128 * this.canvas.width;
         this.pos = [this.canvas.width/2,this.canvas.height/2];
-        this.lineWidth = 7/100 * this.canvas.width;
+    
+        if(this.mode == 'horizontal'){
+            this.width = 100 / 128 * this.canvas.width;
+            this.lineWidth = 7/100 * this.canvas.width;
+        }else{
+            this.width = 100 / 128 * this.canvas.height;
+            this.lineWidth = 7/100 * this.canvas.height;
+
+        }
     }
     draw(){
 
@@ -208,17 +217,25 @@ class RealNumberSlider extends Slider{
         let arrowHeight = 20;
         let arrowWidth = 20;
 
-        drawHorizontalArrow(this.context, this.pos, this.width, arrowWidth, arrowHeight);
-
-        drawCircleStroke(this.context, this.value*this.width/2 + this.pos[0],this.pos[1],this.radius);
+        if(this.mode == 'horizontal'){
+            drawHorizontalArrow(this.context, this.pos, this.width, arrowWidth, arrowHeight);
+        }else{
+            drawVerticalArrow(this.context, this.pos, this.width, arrowWidth, arrowHeight);
+        }
 
         //point
-        this.context.fillStyle = "orange"
+        this.context.fillStyle = pointColorCanvas;
         if(this.dragging){
-            this.context.fillStyle = "darkorange"
+            this.context.fillStyle = pointColorDragging;
         }
         let xCoord = this.value*this.width/2;
-        if(!this.disabled)drawCircle(this.context, this.pos[0] + xCoord, this.pos[1], this.pointRadius);
+        if(!this.disabled){
+            if(this.mode == 'horizontal'){
+                drawCircle(this.context, this.pos[0] + xCoord, this.pos[1], this.pointRadius);
+            }else{
+                drawCircle(this.context, this.pos[0], this.pos[1] + xCoord, this.pointRadius);
+            }
+        }
     }
     onmousedown(x,y){
         let ptX = this.value*this.width/2 + this.pos[0];
@@ -232,11 +249,19 @@ class RealNumberSlider extends Slider{
     }
     onmousemove(x,y){
         if(this.dragging){
-            let mouseAngle = Math.atan2(y-this.pos[1],x-this.pos[0]);
-            this.value = 2*(x - this.pos[0])/this.width; //-1 to 1
+            if(this.mode == 'horizontal'){
+                this.value = 2*(x - this.pos[0])/(this.width); //-1 to 1
+            }else{
+                this.value = 2*(y - this.pos[1])/(this.width); 
+            }
+            this.value = clamp(this.value, -1, 1);//-1 to 1
             this.valueSetter(this.value);
         }
     }
+}
+
+function clamp(x,minX,maxX){
+    return Math.max(Math.min(x, maxX),minX);
 }
 
 class PlaneSlider extends Slider{
@@ -315,9 +340,9 @@ class PlaneSlider extends Slider{
 
         if(this.showDraggables){
             //point
-            this.context.fillStyle = "orange"
+            this.context.fillStyle = pointColorCanvas
             if(this.dragging){
-                this.context.fillStyle = "darkorange"
+                this.context.fillStyle = pointColorDragging
             }
             let xCoord = this.values[0]*this.size/2;
             let yCoord = this.values[1]*this.size/2;

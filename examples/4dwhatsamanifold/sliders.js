@@ -291,7 +291,7 @@ class PlaneSlider extends Slider{
     onWindowResize(){
         super.onWindowResize();
     
-        this.size = this.canvas.width;
+        this.size = this.canvas.width - (this.pointRadius*2);
         this.pos = [this.canvas.width/2,this.canvas.height/2];
     }
     activate(){
@@ -315,7 +315,7 @@ class PlaneSlider extends Slider{
 
 
         //outer border
-        let borderWidth = this.maxDraggableRadius * this.canvas.width;
+        let borderWidth = this.maxDraggableRadius * this.canvas.width * 0.9;
         this.context.beginPath();
         this.context.moveTo(this.pos[0]-borderWidth/2, this.pos[1]-borderWidth/2)
         this.context.lineTo(this.pos[0]-borderWidth/2, this.pos[1]+borderWidth/2)
@@ -325,7 +325,7 @@ class PlaneSlider extends Slider{
         this.context.lineTo(this.pos[0]-borderWidth/2, this.pos[1]+borderWidth/2) //go again to avoid ugly mitering
         this.context.stroke();
 
-        let axisLength = 0.9 * this.maxDraggableRadius * this.canvas.width;
+        let axisLength = 0.8 * this.maxDraggableRadius * this.canvas.width;
         //ok, axes time
         this.context.lineWidth = 10 / 150 * this.canvas.width;
         this.context.strokeStyle = this.lineColor;

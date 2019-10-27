@@ -40,7 +40,7 @@ function setup(){
     
     //sphere
 	let sphereParametrization = (i,t,theta1,theta2) => 
-		[(a*Math.sin(theta1))*Math.cos(theta2),a*Math.cos(theta1),(a*Math.sin(theta1))*Math.sin(theta2)];
+		[(a*Math.sin(theta1))*Math.cos(-theta2),a*Math.cos(theta1),(a*Math.sin(theta1))*Math.sin(-theta2)];
 
 
     var sphere = new EXP.Area({bounds: [[0,Math.PI*2],[0, Math.PI]], numItems: [30,30]});

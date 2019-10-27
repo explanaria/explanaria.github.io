@@ -298,8 +298,9 @@ async function animate(){
     let threeDCoords = document.getElementById("coords");
     presentation.TransitionTo(threeDCoords.style, {'opacity':1}, 0);
    
+    /*
     await presentation.nextSlide();
-    presentation.TransitionTo(manifoldPoint, {expr: (i,t,x) => [5,5,5]});
+    presentation.TransitionTo(manifoldPoint, {expr: (i,t,x) => [5,5,5]});*/
 }
 
 window.addEventListener("load",function(){

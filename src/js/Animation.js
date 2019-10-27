@@ -79,12 +79,13 @@ r
 			//ASSUMPTION: the first variable of this function is i, and it's assumed i is zero-indexed.
 
 			//encapsulate percentage
-			this.target[propertyName] = (function(i, ...coords){
+			this.target[propertyName] = (function(...coords){
+                let i = coords[0];
 				let lerpFactor = percentage/(1-this.staggerFraction) - i*this.staggerFraction/this.targetNumCallsPerActivation;
 				//let percent = Math.min(Math.max(percentage - i/this.targetNumCallsPerActivation   ,1),0);
 
 				let t = this.interpolationFunction(Math.max(Math.min(lerpFactor,1),0));
-				return math.lerpVectors(t,toValue(i, ...coords),fromValue(i, ...coords))
+				return math.lerpVectors(t,toValue(...coords),fromValue(...coords))
 			}).bind(this);
 			return;
 		}else if(typeof(toValue) === "boolean" && typeof(fromValue) === "boolean"){

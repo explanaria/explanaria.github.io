@@ -75,10 +75,12 @@ function setup(){
 
     var userLine = new EXP.Array({data: [[0],[1]]}); //discarded
     let manifoldLink2 = manifoldParametrization.makeLink();
+    let LEF = 10; //line extension factor. 1 = ends on sphere, 3 = radius = 3*sphere raidus
     userLine
     .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,userPointParams.x2]}))
     .add(manifoldParametrization.makeLink())
     .add(new EXP.Transformation({expr: (i,t,x,y,z) => i==0?[-x,-y,-z]:[x,y,z]}))
+    .add(new EXP.Transformation({expr: (i,t,x,y,z) => [LEF*x,LEF*y,LEF*z]}))
     .add(new EXP.LineOutput({width:10, color: pointColor}));
 
 
@@ -96,6 +98,11 @@ function setup(){
 
     singularPoints.add(manifoldParametrization.makeLink()).add(ptOutput);
 
+	var singularPoints = new EXP.Array({data: [[0,0],[Math.PI,0]]});
+	var ptOutput = new EXP.PointOutput({color: green, width: 0.1});
+
+    singularPoints.add(manifoldParametrization.makeLink()).add(ptOutput);
+
 
 
     objects = [sphere, /*coord1, coord2,*/ userPoint1, userLine, singularPoints];
@@ -104,13 +111,9 @@ function setup(){
 }
 
 async function animate(){
+    //await presentation.begin();
 
-    let canvasContainer = document.getElementById('canvasContainer');
-
-    //twoDCanvasHandler.cartesianOpacity = 0;
-    await presentation.begin();
-
-    await presentation.nextSlide();
+    //await presentation.nextSlide();
 }
 
 

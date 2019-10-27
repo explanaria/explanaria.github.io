@@ -12,15 +12,29 @@ function setUserPointParams(arr){
 }
 let vecAdd = EXP.Math.vectorAdd;
 
+function sign(x){
+    if(x == 0)return 1;
+    return Math.sign(x);
+}
+function wrapToInterval(x,size){
+    //move number into [-1, +1]
+    //x%1 would work, but -1%1 == 0 in JS
+    if(Math.abs(x) == size)return x;
+    return x%size; //javascript % is absolute-valued: -1 % 3 == -1, not 2. this is normally terrible but used here
+}
+
 function RP2Clamp(pt){
     if(Math.abs(pt[0]) > 1){
-        pt[0] -= 2 * Math.sign(pt[0]); //the width of this coordinate system
+        pt[0] -= 2 * sign(pt[0]); //the width of this coordinate system
        // pt[1] *= -1; //uncomment for a klein bottle
     }
     if(Math.abs(pt[1]) > 1){
-        pt[0] *= -1;
-        pt[1] -= 2 * Math.sign(pt[1]); //the width of this coordinate system
+        //pt[0] *= -1;
+        pt[0] += 2* sign(pt[0]);
+        pt[1] -= 2 * sign(pt[1]); //the width of this coordinate system
     }
+    pt[0] = wrapToInterval(pt[0],1);
+    pt[1] = wrapToInterval(pt[1],1);
     return pt;
 }
 function translateOnRP2(arr1, translation){

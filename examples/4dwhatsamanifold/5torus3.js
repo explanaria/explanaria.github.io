@@ -65,7 +65,8 @@ function setup(){
     for(var i=8;i<12;i++){
         cubeGeom.faces[i].color = new THREE.Color(coordinateLine3Color);
     }
-    var cube = new THREE.Mesh(cubeGeom, new THREE.MeshPhongMaterial({ opacity:0.2, side: THREE.BackSide, map:cubeGridTex, vertexColors: THREE.FaceColors}));
+    let cubeMaterial = new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, map:cubeGridTex, vertexColors: THREE.FaceColors});
+    var cube = new THREE.Mesh(cubeGeom, cubeMaterial);
     three.scene.add(cube);
 
 

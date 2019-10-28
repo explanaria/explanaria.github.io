@@ -54,7 +54,6 @@ function setup(){
     
     let boxWidth = 2; //width of the area in R^3 that's being passed into this parametrization.
 
-    var cubeGridTex = new THREE.TextureLoader().load( 'grid.png' , (tex) => {console.log("Loaded");console.log(tex)});
     let cubeGeom = new THREE.BoxGeometry(boxWidth,boxWidth,boxWidth);
     for(var i=0;i<4;i++){
         cubeGeom.faces[i].color = new THREE.Color(coordinateLine1ColorDarker);
@@ -65,9 +64,20 @@ function setup(){
     for(var i=8;i<12;i++){
         cubeGeom.faces[i].color = new THREE.Color(coordinateLine3ColorDarker);
     }
-    let cubeMaterial = new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, map:cubeGridTex, vertexColors: THREE.FaceColors});
-    var cube = new THREE.Mesh(cubeGeom, cubeMaterial);
+
+    var cube = new THREE.Mesh(cubeGeom, new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, vertexColors: THREE.FaceColors}));
     three.scene.add(cube);
+
+    let cubeMaterial2 = new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, vertexColors: THREE.FaceColors, transparent: true});
+
+    var cubeGridTex = new THREE.TextureLoader().load( 'grid.png', function(texture){
+        cubeMaterial2.map = texture;
+        cubeMaterial2.needsUpdate = true;
+        cubeMaterial2.transparent = true;
+    });
+
+    var cube2 = new THREE.Mesh(new THREE.BoxGeometry(boxWidth-0.01,boxWidth-0.01,boxWidth-0.01), cubeMaterial2);
+    three.scene.add(cube2);
 
 
     var userPoint1 = new EXP.Array({data: [[0,1]]}); //discarded

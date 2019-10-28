@@ -54,16 +54,16 @@ function setup(){
     
     let boxWidth = 2; //width of the area in R^3 that's being passed into this parametrization.
 
-    var cubeGridTex = new THREE.TextureLoader().load( './grid.png' , (tex) => {console.log("Loaded");console.log(tex)});
+    var cubeGridTex = new THREE.TextureLoader().load( 'grid.png' , (tex) => {console.log("Loaded");console.log(tex)});
     let cubeGeom = new THREE.BoxGeometry(boxWidth,boxWidth,boxWidth);
     for(var i=0;i<4;i++){
-        cubeGeom.faces[i].color = new THREE.Color(coordinateLine1Color);
+        cubeGeom.faces[i].color = new THREE.Color(coordinateLine1ColorDarker);
     }
     for(var i=4;i<8;i++){
-        cubeGeom.faces[i].color = new THREE.Color(coordinateLine2Color);
+        cubeGeom.faces[i].color = new THREE.Color(coordinateLine2ColorDarker);
     }
     for(var i=8;i<12;i++){
-        cubeGeom.faces[i].color = new THREE.Color(coordinateLine3Color);
+        cubeGeom.faces[i].color = new THREE.Color(coordinateLine3ColorDarker);
     }
     let cubeMaterial = new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, map:cubeGridTex, vertexColors: THREE.FaceColors});
     var cube = new THREE.Mesh(cubeGeom, cubeMaterial);

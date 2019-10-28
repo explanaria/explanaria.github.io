@@ -20,8 +20,10 @@ function wrapToInterval(x,size){
     //move number into [-1, +1]
     //x%1 would work, but -1%1 == 0 in JS
     if(Math.abs(x) == size)return x;
-    return x%size; //javascript % is absolute-valued: -1 % 3 == -1, not 2. this is normally terrible but used here
+    let s2 = 2*size;
+    return (((x+size)%s2)+s2)%s2 -size; //javascript % is absolute-valued: -1 % 3 == -1, not 2. this is normally terrible but used here
 }
+
 
 function RP2Clamp(pt){
     if(Math.abs(pt[0]) > 1){

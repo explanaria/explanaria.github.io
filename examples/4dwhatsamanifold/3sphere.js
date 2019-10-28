@@ -89,8 +89,10 @@ function setup(){
 
 	three.camera.position.z = 2;
 	three.camera.position.y = 0.5;
+
     controls.enableKeys = false;
-    //controls.autoRotate = true;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
     
 	three.on("update",function(time){
 		for(var x of objects){
@@ -116,6 +118,13 @@ function setup(){
     var timeChange = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [theta1, theta2]});
     var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => sphereParametrization(i,t,theta1,theta2) });
     sphereOutput = new EXP.SurfaceOutput({opacity:0.3, color: blue, showGrid: true, gridLineWidth: 0.05, showSolid:true});
+
+    //SO. For some reason, this makes everything look a lot better with transparency on. It still renders things behind it properly (I guess that takes depthTest).
+    //I guess it OVERWRITES the thing behind it instead of adding to it?
+    //which looks bad at opacity 1.0, but looks GREAT at opacity 0.3 - 0.
+    //I wonder if I rendered things in two parts, one solid color with  X, and one lines with depthWrite off, whether it would look awesome
+    //
+    sphereOutput.mesh.material.depthWrite = false;
     sphere.add(timeChange).add(manifoldParametrization).add(sphereOutput);
 
     //sphere's lines

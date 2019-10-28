@@ -153,8 +153,10 @@ function setup(){
 
 	three.camera.position.z = 3;
 	three.camera.position.y = 0.5;
+
     controls.autoRotate = true;    
     controls.enableKeys = false;
+    controls.autoRotateSpeed = 1;
     
 	three.on("update",function(time){
 		for(var x of objects){

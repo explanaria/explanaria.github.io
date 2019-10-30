@@ -452,8 +452,8 @@ function drawArrow(context, x1,y1,x2,y2, arrowSize){
   arrowSize = Math.min(size/3, arrowSize);
   const negativeTriangleDirectionVec = [(x1-x2)/size*arrowSize,(y1-y2)/size*arrowSize];
 
-  const halfTriangleDirectionPerpVec1 = [-negativeTriangleDirectionVec[1]/2,negativeTriangleDirectionVec[0]/2];
-  const halfTriangleDirectionPerpVec2 = [negativeTriangleDirectionVec[1]/2,-negativeTriangleDirectionVec[0]/2];
+  const halfTriangleDirectionPerpVec1 = [-negativeTriangleDirectionVec[1]/2*Math.sqrt(3),negativeTriangleDirectionVec[0]/2*Math.sqrt(3)];
+  const halfTriangleDirectionPerpVec2 = [negativeTriangleDirectionVec[1]/2*Math.sqrt(3),-negativeTriangleDirectionVec[0]/2*Math.sqrt(3)];
   context.beginPath();
   context.moveTo(x2 + negativeTriangleDirectionVec[0] + halfTriangleDirectionPerpVec1[0], y2 + negativeTriangleDirectionVec[1] + halfTriangleDirectionPerpVec1[1]);
   context.lineTo(x2,y2);

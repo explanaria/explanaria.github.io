@@ -121,6 +121,9 @@
     pointer-events: none;
     font-size: 5em;
     font-family: "Computer Modern Serif";
+    margin: 0;
+    padding: 1em;
+    width:100%;
 }
 
 

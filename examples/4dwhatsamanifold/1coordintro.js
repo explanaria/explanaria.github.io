@@ -15,13 +15,6 @@ let xAxisControl,yAxisControl,zAxisControl = null; //the 3 3D axes
 let manifoldPointOutput = null; //the 3 points on the R^3 = three Rs graph
 let manifoldPointPositions = null // the positions of those points
 
-function getAllChildren(x){
-    let children = [];
-    if(x.children ===
-    return getChildren(x.children[0
-
-}
-
 function pointPath(i,t,x){
     //point in 3D space's path
     return [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7)]
@@ -94,11 +87,10 @@ function setup(){
     var threeDPoint = new EXP.Array({data: [[0]]})
     manifoldPoint = new EXP.Transformation({expr: (i,t,x) => pointPath(i,t,x)});
 
-    //threeDPoint's job is now taken by multipleManifoldPoints - multiple points which overlap, then separate.
-    // it's not needed to be displayed anymore. manifoldPoint is used by the arrows though so it's needed.
-
-    //threeDPoint
-    //.add(manifoldPoint)
+    //threeDPoint's visual job is now taken by multipleManifoldPoints - multiple points which overlap, then separate.
+    // it's not needed to be displayed anymore. It still needs to exist to update the DOM though.
+    threeDPoint
+    .add(manifoldPoint)
     //.add(new EXP.PointOutput({width:0.2, color: pointColor}));
     
 
@@ -142,7 +134,7 @@ function setup(){
     .add(yAxisControl.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
 
-    zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    let zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
     zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]});
     zAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))
@@ -154,23 +146,21 @@ function setup(){
     .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
 
 
-    var pointXAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    pointXAxis
+    pointCoordinateArrows = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    pointCoordinateArrows
     .add(manifoldPoint.makeLink())
     .add(new EXP.Transformation({expr: (i,t,x,y,z) => i==0 ? [0,0,0]: [x,0,0]}))
-    .add(new EXP.VectorOutput({width:10, color: coordinateLine1Color}));
+    .add(new EXP.VectorOutput({width:15, color: coordinateLine1Color}));
 
-    var pointYAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    pointXAxis
+    pointCoordinateArrows
     .add(manifoldPoint.makeLink())
     .add(new EXP.Transformation({expr: (i,t,x,y,z) => i==0 ? [x,0,0]: [x,y,0]}))
-    .add(new EXP.VectorOutput({width:10, color: coordinateLine2Color}));
+    .add(new EXP.VectorOutput({width:15, color: coordinateLine2Color}));
 
-    var pointZAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    pointXAxis
+    pointCoordinateArrows
     .add(manifoldPoint.makeLink())
     .add(new EXP.Transformation({expr: (i,t,x,y,z) => i==0 ? [x,y,0]: [x,y,z]}))
-    .add(new EXP.VectorOutput({width:10, color: coordinateLine3Color}));
+    .add(new EXP.VectorOutput({width:15, color: coordinateLine3Color}));
 
     //read out the point's coords
     manifoldPoint.add(new EXP.Transformation({expr: (i,t,x,y,z) => pointCoords=[x,y,z]}))
@@ -190,7 +180,7 @@ function setup(){
     
 	presentation = new EXP.UndoCapableDirector();
 
-    objects = [twoDCanvasHandler, torus, threeDPoint, xAxis, yAxis, zAxis, pointXAxis, pointYAxis, pointZAxis, pointUpdater, multipleManifoldPoints];
+    objects = [threeDPoint, twoDCanvasHandler, torus, threeDPoint, xAxis, yAxis, zAxis, pointCoordinateArrows, pointUpdater, multipleManifoldPoints];
 }
 
 function format(x){
@@ -213,14 +203,12 @@ async function animate(){
     await presentation.delay(250);
     presentation.TransitionTo(twoDCanvasHandler, {'cartesianBreakdownLerpFactor':1}, 1500);
     
-    await presentation.nextSlide();
     /*
-    presentation.TransitionTo(twoDCanvasHandler, {'cartesianOpacity':0}, 750);
-    await presentation.delay(500);
-    presentation.TransitionTo(twoDCanvasHandler, {'polarOpacity':1}, 750);*/
+    await presentation.nextSlide();
 
+    //polar slide
     presentation.TransitionTo(twoDCanvasHandler, {'polarOpacity':1, 'cartesianOpacity':0}, 750);
-
+    */
 
     await presentation.nextSlide();
     presentation.TransitionTo(twoDCanvasHandler, {'opacity':0}, 750);
@@ -244,10 +232,26 @@ async function animate(){
     
     //separate axes
     [xAxisControl,yAxisControl,zAxisControl].forEach((item, axisNumber) => {
-        presentation.TransitionTo(item, {'expr': (i,t,x,y,z)=>[x+y+z, axisNumber-1, 0]});
-    },1500);
-    //move 3 points with them
+        presentation.TransitionTo(item, {'expr': (i,t,x,y,z)=>[x+y+z, axisNumber-1, 0]}, 1500);
+    });
 
+    //separate out the arrows for each individual coordinate
+    pointCoordinateArrows.children.forEach((manifoldLink, axisNumber) => {
+        let arrowSetter = manifoldLink.children[0]
+    
+        presentation.TransitionTo(arrowSetter, {
+            expr: (i,t,x,y,z) => {
+                if(i==0){
+                    return [0, axisNumber-1, 0];
+                }else{
+                    let coordinate = [x,y,z][axisNumber];
+                    return [coordinate, axisNumber-1, 0];
+                }
+            }
+        }, 1500);
+    });
+
+    //move 3 points with them
     presentation.TransitionTo(manifoldPointPositions, {expr: (i,t,x) => {
         let point3DPos = pointPath(i,t,x); 
         let returnedPos = [point3DPos[i],i-1,0];
@@ -255,9 +259,10 @@ async function animate(){
         }
     },1500);
    
-    /*
+    
     await presentation.nextSlide();
-    presentation.TransitionTo(manifoldPoint, {expr: (i,t,x) => [5,5,5]});*/
+    //overlay text appears
+    await presentation.nextSlide();
 }
 
 window.addEventListener("load",function(){

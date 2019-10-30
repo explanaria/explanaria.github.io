@@ -65,6 +65,13 @@ function setup(){
     });
     var output = new EXP.SurfaceOutput({opacity:0.3, color: blue, showGrid: true, gridLineWidth: 0.05, showSolid:true});
 
+    //SO. For some reason, this makes everything look a lot better with transparency on. It still renders things behind it properly (I guess that takes depthTest).
+    //I guess it OVERWRITES the thing behind it instead of adding to it?
+    //which looks bad at opacity 1.0, but looks GREAT at opacity 0.3 - 0.
+    //I wonder if I rendered things in two parts, one solid color with  X, and one lines with depthWrite off, whether it would look awesome
+    //
+    output.mesh.material.depthWrite = false;
+
     torus.add(timeChange).add(manifoldParametrization).add(output);
 
     var coord1 = new EXP.Area({bounds: [[0,1]], numItems: 20});

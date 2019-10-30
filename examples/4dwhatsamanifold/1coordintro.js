@@ -6,144 +6,25 @@ let presentation = null;
 
 let manifoldPoint = null;//will be an EXP.Transformation
 
-
+let settings = {'updateControls':true};
 
 let twoDCanvasHandler = null;
 
-//represent
-class twoDCoordIntroScene{
-    constructor(canvasID){
-        this.canvas = document.getElementById(canvasID);
-        this.context = this.canvas.getContext("2d");
+let xAxis, yAxis, zAxis = null;
+let xAxisControl,yAxisControl,zAxisControl = null; //the 3 3D axes
+let manifoldPointOutput = null; //the 3 points on the R^3 = three Rs graph
+let manifoldPointPositions = null // the positions of those points
 
-        window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
-        this.onWindowResize();
+function getAllChildren(x){
+    let children = [];
+    if(x.children ===
+    return getChildren(x.children[0
 
-        this.opacity = 1;
+}
 
-        this.cartesianOpacity = 1;
-        this.polarOpacity = 0;
-
-    }
-    onWindowResize(){
-        this.canvas.width = this.canvas.parentElement.clientWidth;
-        this.canvas.height = this.canvas.parentElement.clientHeight;
-
-    }
-    activate(t){
-        this.canvas.width = this.canvas.width;
-
-        this.context.fillStyle = '#ffffff';
-        this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
-        this.canvas.style.opacity = this.opacity;
-
-        let centerPos = [this.canvas.width/2, this.canvas.height/2];
-
-
-        let pointPos = [100,100];
-        pointPos = [150*Math.sin(t/3), 150*Math.sin(t/5)];
-    
-           
-        this.context.globalAlpha = this.cartesianOpacity;
-        this.draw2DCoordinates(t, pointPos);
-        this.drawCartesianText(t, centerPos, pointPos);
-
-        this.context.globalAlpha = this.polarOpacity;
-        this.drawPolarCoordinates(t, pointPos);
-        this.drawPolarText(t, centerPos, pointPos);
-
-        this.context.globalAlpha = 1;
-
-        
-        //point    
-        this.context.fillStyle = "#f07000";
-        drawCircle(this.context, centerPos[0]+pointPos[0],centerPos[1]+pointPos[1],20);
-    }
-    draw2DCoordinates(t, pointPos){
-
-
-        let pos = [this.canvas.width/2, this.canvas.height/2];
-
-        let lineLength = Math.min(Math.min(this.canvas.width, this.canvas.height)*2/3, 500);
-
-        this.context.lineWidth = 10;
-
-
-        this.context.strokeStyle = coordinateLine1Color;
-        drawVerticalArrow(this.context, pos, lineLength, 20, 20,);
-        this.context.strokeStyle = coordinateLine2Color;
-        drawHorizontalArrow(this.context, pos, lineLength, 20, 20);
-
-        //lines to point
-        this.context.lineWidth = 10;
-        this.context.strokeStyle = coordinateLine2Color;
-        drawArrow(this.context, pos[0], pos[1], pos[0] + pointPos[0], pos[1], 30);
-        this.context.strokeStyle = coordinateLine1Color;
-        drawArrow(this.context, pos[0]+ pointPos[0], pos[1], pos[0] + pointPos[0], pos[1]+ pointPos[1], 30);
-    }
-    drawCartesianText(t, pos, pointPos){
-        this.drawTwoCoordinates([pos[0]+pointPos[0],pos[1]+pointPos[1]], [pointPos[0]/100, -pointPos[1]/100]);
-    }
-    drawPolarText(t, pos, pointPos){
-        const size = Math.sqrt(pointPos[1]*pointPos[1] + pointPos[0]*pointPos[0])
-        let angle = Math.atan2(pointPos[1],pointPos[0]);
-        angle = (angle+(Math.PI*2))%(Math.PI*2)
-        this.drawTwoCoordinates([pos[0]+pointPos[0],pos[1]+pointPos[1]], [size/100, angle]);
-    }
-    drawTwoCoordinates(pos, coordinates){
-        this.context.font = "48px Computer Modern Serif";
-
-        let allStrings = ['[',format(coordinates[0]),',',format(coordinates[1]),']'];
-
-        let textX = pos[0] + 50;
-        let textY = pos[1] - 50;
-        for(let i=0;i<allStrings.length;i++){
-
-            let metrics = this.context.measureText(allStrings[i]);
-
-            //draw a transparent rectangle under the text
-            this.context.fillStyle = "rgba(255,255,255,0.9)"
-            this.context.fillRect(textX, textY-38, metrics.width, 52);
-
-            if(i == 1){this.context.fillStyle = coordinateLine2Color;}
-            else if(i == 3){this.context.fillStyle = coordinateLine1Color}
-            else{this.context.fillStyle = '#444';}
-
-            this.context.fillText(allStrings[i], textX, textY);
-
-            textX += metrics.width;
-        }
-    }
-    drawPolarCoordinates(t, pointPos){
-        let pos = [this.canvas.width/2, this.canvas.height/2];
-
-        let lineLength = Math.min(Math.min(this.canvas.width, this.canvas.height)*2/3, 500);
-
-        this.context.lineWidth = 10;
-
-
-        this.context.strokeStyle = 'rgba(170,170,170, 0.5)';
-        drawVerticalArrow(this.context, pos, lineLength, 20, 20,);
-        drawHorizontalArrow(this.context, pos, lineLength, 20, 20);
-
-
-        this.context.strokeStyle = 'white';
-        //drawArrow(this.context, pos[0], pos[1], pos[0] + 150, pos[1], 30);
-
-        //axis 1: arc
-        const size = Math.sqrt(pointPos[1]*pointPos[1] + pointPos[0]*pointPos[0])
-        let angle = Math.atan2(pointPos[1],pointPos[0]);
-        let radius = Math.min(100, size*2/3); //show circle smaller than 100px if angle is smaller than 100px
-        
-        this.context.strokeStyle = coordinateLine1Color;
-        this.context.beginPath();
-        this.context.arc(pos[0],pos[1], radius, 0, angle);
-        this.context.stroke();
-
-        //arrow straight to the point
-        this.context.strokeStyle = coordinateLine2Color;
-        drawArrow(this.context, pos[0], pos[1], pos[0] + pointPos[0], pos[1]+ pointPos[1], 30);
-    }
+function pointPath(i,t,x){
+    //point in 3D space's path
+    return [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7)]
 }
 
 function setup(){
@@ -162,7 +43,12 @@ function setup(){
 		for(var x of objects){
 			x.activate(time.t);
 		}
-		controls.update();
+
+        //HACKY HACK ALERT. If I don't disable the controls, then when I try to lerp the camera position they both fight for domination over camera rotation, making a jerky ride.
+		if(settings.updateControls){
+
+            controls.update();
+        }
 	});
 
     console.log("Loaded.");
@@ -201,36 +87,71 @@ function setup(){
 
     torus.add(manifoldParametrization).add(output);*/
 
+    let axisSize = 1.5;
 
+
+    
     var threeDPoint = new EXP.Array({data: [[0]]})
-    manifoldPoint = new EXP.Transformation({expr: (i,t,x) => [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7)]});
-    threeDPoint
-    .add(manifoldPoint)
-    .add(new EXP.PointOutput({width:0.2, color: pointColor}));
+    manifoldPoint = new EXP.Transformation({expr: (i,t,x) => pointPath(i,t,x)});
 
-    var xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    //threeDPoint's job is now taken by multipleManifoldPoints - multiple points which overlap, then separate.
+    // it's not needed to be displayed anymore. manifoldPoint is used by the arrows though so it's needed.
+
+    //threeDPoint
+    //.add(manifoldPoint)
+    //.add(new EXP.PointOutput({width:0.2, color: pointColor}));
+    
+
+
+    var multipleManifoldPoints = new EXP.Array({data: [[0],[1],[2]]});
+    /*
+    manifoldPointPositions = new EXP.Transformation({expr: (i,t,x) => {
+        let point3DPos = pointPath(i,t,x); 
+        let returnedPos = [point3DPos[i],i-1,0];
+        return returnedPos;
+        }
+    });
+    */
+    manifoldPointPositions = new EXP.Transformation({expr: (i,t,x) => pointPath(i,t,x)});
+    manifoldPointOutput = new EXP.PointOutput({width:0.2, color: pointColor});
+
+    multipleManifoldPoints
+    .add(manifoldPointPositions)
+    .add(manifoldPointOutput);
+
+    xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]});
     xAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [x,0,0]}))
-    //.add(new EXP.VectorOutput({width:10, color: coordinateLine1Color}));
+    .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0]}))
+    .add(xAxisControl)
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
+    
     xAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [4*(x-0.5),0,0]}))
-    .add(new EXP.LineOutput({width:3, color: coordinateLine1Color}));
+    .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0]}))
+    .add(xAxisControl.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
 
-    var yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    yAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]});
     yAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,x,0]}))
-    //.add(new EXP.VectorOutput({width:10, color: coordinateLine2Color}));
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0]}))
+    .add(yAxisControl)
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
     yAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,4*(x-0.5),0]}))
-    .add(new EXP.LineOutput({width:3, color: coordinateLine2Color}));
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0]}))
+    .add(yAxisControl.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
 
-    var zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]});
     zAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,x]}))
-    //.add(new EXP.VectorOutput({width:10, color: coordinateLine3Color}));
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))
+    .add(zAxisControl)
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
     zAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,4*(x-0.5)]}))
-    .add(new EXP.LineOutput({width:3, color: coordinateLine3Color}));
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x]}))
+    .add(zAxisControl.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
 
 
     var pointXAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
@@ -269,7 +190,7 @@ function setup(){
     
 	presentation = new EXP.UndoCapableDirector();
 
-    objects = [twoDCanvasHandler, torus, threeDPoint, xAxis, yAxis, zAxis, pointXAxis, pointYAxis, pointZAxis, pointUpdater];
+    objects = [twoDCanvasHandler, torus, threeDPoint, xAxis, yAxis, zAxis, pointXAxis, pointYAxis, pointZAxis, pointUpdater, multipleManifoldPoints];
 }
 
 function format(x){
@@ -282,7 +203,15 @@ async function animate(){
     await presentation.begin();
 
     await presentation.nextSlide();
-    presentation.TransitionTo(twoDCanvasHandler, {'cartesianOpacity':1}, 750);
+    presentation.TransitionTo(twoDCanvasHandler, {'cartesianOpacity':1,cartesianPointOutArrowsOpacity: 1}, 750);
+    await presentation.delay(750);
+    presentation.TransitionTo(twoDCanvasHandler, {'showLonesomePoint':false}, 0);
+
+
+    await presentation.nextSlide();
+    presentation.TransitionTo(twoDCanvasHandler, {'cartesianPointOutArrowsOpacity':0}, 250);
+    await presentation.delay(250);
+    presentation.TransitionTo(twoDCanvasHandler, {'cartesianBreakdownLerpFactor':1}, 1500);
     
     await presentation.nextSlide();
     /*
@@ -299,6 +228,32 @@ async function animate(){
     //technically this is a string. the CSS animation handles the transition.
     let threeDCoords = document.getElementById("coords");
     presentation.TransitionTo(threeDCoords.style, {'opacity':1}, 0);
+
+    await presentation.nextSlide();
+
+    //this is the slide where we break R^3 into 3 lines.
+    //re-center camera
+    presentation.TransitionTo(controls, {'autoRotateSpeed':0}, 250);
+    await presentation.delay(300);
+    presentation.TransitionTo(controls, {'autoRotate':false}, 0);
+
+    presentation.TransitionTo(three.camera.position, {'x':0,'y':0,'z':3}, 1000);
+    presentation.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},1000);
+
+    await presentation.delay(1500);
+    
+    //separate axes
+    [xAxisControl,yAxisControl,zAxisControl].forEach((item, axisNumber) => {
+        presentation.TransitionTo(item, {'expr': (i,t,x,y,z)=>[x+y+z, axisNumber-1, 0]});
+    },1500);
+    //move 3 points with them
+
+    presentation.TransitionTo(manifoldPointPositions, {expr: (i,t,x) => {
+        let point3DPos = pointPath(i,t,x); 
+        let returnedPos = [point3DPos[i],i-1,0];
+        return returnedPos;
+        }
+    },1500);
    
     /*
     await presentation.nextSlide();

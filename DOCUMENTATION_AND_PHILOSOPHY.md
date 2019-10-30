@@ -129,8 +129,11 @@ See the examples in the `/examples` folder for more!
 
     * Transformation.makeLink()
 
-    Often one will want to define a function or `Transformation` once, but use it in multiple places - and then be able to call EXP.TransformTo() only once to change all of them. Explanaria offers this functionality through .makeLink(). If you havea
+    Often one will want to define a function or `Transformation` once, but use it in multiple places - and then be able to call EXP.TransformTo() only once to change all of them. Explanaria offers this functionality through .makeLink(). 
 
+    Transformation.makeLink() will return an EXP.LinkedTransformation object, which is a superclass of EXP.Transformation and therefore can be used in the exact same way as an EXP.Transformation - for example, you can .add() things to the LinkedTransformation object, and they will not be affected by the original Transformation object. However, if the original Transformation object's expr() is later changed to a different function, the LinkedTransformation object's expr() will automatically change to the same function. 
+
+    This can be useful if, for example, one wants to render a point's path alongside graphs of its x and y coordinates, or if wants to express the same transformation using two different DomainNodes, or create two outputs depicting different representations of the same function.
 
 	```
 	var norm = new EXP.Transformation({ 'expr':(i,t,x,y,z) => Math.sqrt(x*x+y*y+z*z)});
@@ -140,7 +143,7 @@ See the examples in the `/examples` folder for more!
     await EXP.delay(1000);
     //After a while, perhaps we want to demonstrate the manhattan metric
     EXP.TransitionTo(norm, {'expr':(i,t,x,y,z) => Math.abs(x) + Math.abs(y) + Math.abs(z)});
-    //norm2 is now using this same function too!
+    //norm2's expr() is now also the function (i,t,x,y,z) => Math.abs(x) + Math.abs(y) + Math.abs(z)!
 	```
 
 ## Outputs
@@ -299,6 +302,6 @@ You may also wish to increase the resolution or `numItems` of any Domains while 
 Explanaria will record a frame that is the size of the current window. To record video at a specific resolution such as 1920x1080, instead of laboriously resizing your window, we recommend using your browser's developer tools, such as Firefox's [Responsive Design Mode](https://developer.mozilla.org/en-US/docs/Tools/Responsive_Design_Mode) or Chrome's [Device Mode](https://developers.google.com/web/tools/chrome-devtools/device-mode/), which allow one to type in "1920x1080" directly.
 
 # Presentations
-If you want to synchronize text-based slides to your animations, use an EXP.Director, such as EXP.NonDecreasingDirector().
+If you want to synchronize text-based slides to your animations, use an EXP.Director, such as EXP.NonDecreasingDirector() or EXP.UndoCapableDirector().
 This section will be expanded later.
 

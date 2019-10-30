@@ -38,6 +38,19 @@ class Node{
 		if(parentCount >= MAX_CHAIN)throw new Error("Unable to find top-level parent!");
         return root;
     }
+    getDeepestChildren(){ //find all leaf nodes from this node
+        //this algorithm can probably be improved
+        if(this.children.length == 0)return [this];
+
+        let children = [];
+        for(let i=0;i<this.children.length;i++){
+            let childsChildren = this.children[i].getDeepestChildren();
+            for(let j=0;j<childsChildren.length;j++){
+                children.push(childsChildren[j]);
+            }
+        }
+        return children;
+    }
     getClosestDomain(){
         /* Find the DomainNode that this Node is being called from.
         Traverse the chain of parents upwards until we find a DomainNode, at which point we return it.

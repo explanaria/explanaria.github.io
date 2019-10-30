@@ -17,6 +17,7 @@
     width: 100%;
     /*background-color: green;*/
     min-height: 2;
+    position:relative;
 }
 
 .non3DFooterPart{
@@ -53,10 +54,15 @@
 
 #twoDcanvasOverlay{
     z-index: 2;
-    margin-top: -100%; /* hack to position 2D canvas over 3D canvas*/
     pointer-events: none;
     opacity: 1.0;
     taransition: 1s linear opacity;
+/* hack to position 2D canvas over 3D canvas*/
+    position: absolute;
+    top:0%;
+    left:0%;
+    right:100%;
+    bottom:100%;
 }   
 
 /* used in 2 directsum*/

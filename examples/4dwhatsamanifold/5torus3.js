@@ -24,7 +24,7 @@ function setup(){
     presentation = new EXP.UndoCapableDirector();
     
 
-	three.camera.position.z = 2;
+	three.camera.position.z = 3;
 	three.camera.position.y = 0.5;
 
     controls.enableKeys = false;

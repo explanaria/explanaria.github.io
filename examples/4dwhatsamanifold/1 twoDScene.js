@@ -32,8 +32,10 @@ class twoDCoordIntroScene{
         let centerPos = [this.canvas.width/2, this.canvas.height/2];
 
 
-        let pointPos = [100,100];
-        pointPos = [150*Math.sin(t/3), 150*Math.sin(t/5)];
+
+        let lineLength = Math.min(Math.min(this.canvas.width, this.canvas.height)*2/3, 500);
+        this.pointWanderingRadius = (lineLength/2 * 4/5);
+        let pointPos = [this.pointWanderingRadius * Math.sin(t/3), this.pointWanderingRadius*Math.sin(t/5)];
     
 
         //the arrows connecting [0,0] and [0,x] and [x,y]
@@ -143,11 +145,11 @@ class twoDCoordIntroScene{
         //coordinates
         let textOffset = lerpTo([-100, this.canvas.height/10 *3],[50,-50]);
         let textPos = lerpTo(centerPos, vectorAdd(pointPos, centerPos));
-        this.drawTwoCoordinates(textPos, [pointPos[0]/100, -pointPos[1]/100],textOffset);
+        this.drawTwoCoordinates(textPos, [pointPos[0]/this.pointWanderingRadius, -pointPos[1]/this.pointWanderingRadius],textOffset);
 
     }
     drawCartesianText(t, pos, pointPos){
-        this.drawTwoCoordinates([pos[0]+pointPos[0],pos[1]+pointPos[1]], [pointPos[0]/100, -pointPos[1]/100]);
+        this.drawTwoCoordinates([pos[0]+pointPos[0],pos[1]+pointPos[1]], [pointPos[0]/this.pointWanderingRadius, -pointPos[1]/this.pointWanderingRadius]);
     }
     drawPolarText(t, pos, pointPos){
         const size = Math.sqrt(pointPos[1]*pointPos[1] + pointPos[0]*pointPos[0])

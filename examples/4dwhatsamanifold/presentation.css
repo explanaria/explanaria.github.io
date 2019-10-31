@@ -47,6 +47,7 @@
     font-size: 5em;
     font-family: "Computer Modern Serif";
     transition: opacity 0.75s linear;
+    text-align: center;
 }
 #coords:nth-child(2n+1){
     min-width: 30%;
@@ -145,18 +146,50 @@
 .fullscreenText{
     background-color: rgba(255,255,255,0.8);
     pointer-events: none;
-    font-size: 5em;
+    font-size: 2.5em;
     font-family: "Computer Modern Serif";
     margin: 0;
     padding: 1em;
     width:100%;
 }
 
+.coverBG{
+    background-color: rgba(255,255,255,0.9);
+}
+
+.fullscreenText h1{
+    font-size: 1.5em;
+    text-align: center;  
+}
+.fullscreenText .columns{
+    line-height: 1.2; 
+}
+
+
+
+.fullscreenText aside{
+    font-size: 0.8em;
+}
+
+/* used in 5.5 tofourdimensions */
+
+.coord4Reveal{
+    transition: all 1s ease-in-out;
+}
+.modal{ /* so it goes under the EXP buttons */
+  z-index: 0.9;
+}
 
 /* used in 4 coordinate charts */
  .chart canvas{
     width: 150px;
     height: 150px;
+}
+
+/* used in bonuses */
+ul {
+    list-style: disc;
+    padding-left: 1em;
 }
 
 

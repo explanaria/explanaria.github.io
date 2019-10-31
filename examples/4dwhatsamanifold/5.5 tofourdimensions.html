@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - So what is the fourth dimension?</title>
+
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <script src="colors.js"></script>
+  <script src="sliders.js"></script>
+  <script src="5.5fourdimensions.js"></script>
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <style>
+    #canvasContainer{
+
+    }
+    #textArea{
+
+    }
+
+    .grid{
+    }
+
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart"> 
+        <canvas id="canvas">
+
+        </canvas>
+        <canvas id="twoDcanvasOverlay">
+
+        </canvas>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+        <br />
+
+	    <div id="coords" style="opacity: 1" class="is-mobile">
+            <span id="" class="">
+                [
+            </span>
+            <span id="coord1" class=""></span>
+            <span id="" class="">
+                ,
+            </span>
+            <span id="coord2" class=""></span>
+            <span id="" class="">
+                ,
+            </span>
+            <span id="coord3" class=""></span>
+
+            <span id="coord4Reveal" class="coord4Reveal" style="font-size: 0px;">
+                <span id="coord4comma" class="">
+                    ,
+                </span>
+                <span id="coord4" class=""></span>
+            </span>
+            <span id="" class="">
+                ]
+            </span>
+	    </div>
+
+
+        <div style="diasplay: none"> <!-- these are for the benefit of web audiences, not talk --> 
+	        <div class="exp-slide">Back to 3 dimensions.</div>
+	        <div class="exp-slide">You can break this up into three different coordinates, each one a real number.</div>
+	        <!-- <div class="exp-slide">We may not know how to visualize it...</div> -->
+	        <div class="exp-slide">Mathematically... a fourth dimension is just another number.</div>
+
+        </div>
+
+
+      <div class="fullscreenText coverBG modal is-active exp-slide">
+        <div>
+            <h1>4 dimensions: It's Just Another Number</h1>
+            <br />
+            If there's one thing you should take away from this talk, it's this: 4D coordinates are just four normal numbers.
+        </div>
+      </div>
+
+        <div class="fullscreenText coverBG modal is-active exp-slide">
+            <div>
+                <h1> We can extend familiar things to 4D! </h1>
+                    <br />
+                    A cube's vertices are the set of all points where each coordinate is ±1.
+                <br><br>
+                <div class="columns">
+                    <div class="column">
+                        <h1 class="horizontal-center"> 3D </h1>
+
+                        <div>[<span class='x'>±1</span>,<span class='y'>0</span>,<span class='z'>0</span>]</div>
+                        <div>[<span class='x'>0</span>,<span class='y'>±1</span>,<span class='z'>0</span>]</div>
+                        <div>[<span class='x'>0</span>,<span class='y'>0</span>,<span class='z'>±1</span>]</div>
+                        <aside> and combinations: [<span class='x'>-1</span>,<span class='y'> 0</span>,<span class='z'> 1</span>], etc.</aside>
+                    </div>
+
+                    <div class="column">
+                        <h1 class="horizontal-center"> 4D </h1>
+                        <div>[<span class='x'>±1</span>,<span class='y'>0</span>,<span class='z'>0</span>,<span class='w'>0</span>]</div>
+                        <div>[<span class='x'>0</span>,<span class='y'>±1</span>,<span class='z'>0</span>,<span class='w'>0</span>]</div>
+                        <div>[<span class='x'>0</span>,<span class='y'>0</span>,<span class='z'>±1</span>,<span class='w'>0</span>]</div>
+                        <div>[<span class='x'>0</span>,<span class='y'>0</span>,<span class='z'>0</span>,<span class="highlight"><span class='w'>±1</span></span>]</div>
+                        <aside> and combinations: [<span class='x'>-1</span>,<span class='y'> 0</span>,<span class='z'> 1</span>,<span class='w'> 1</span>], etc.</aside>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <div class="fullscreenText coverBG modal is-active exp-slide">
+            <div>
+                <h1> Extending familiar things to 4D: The Sequel </h1>
+                <br />
+                    A circle is the set of all points that are 1 unit away from the origin.
+                <br><br>
+                <div class="columns">
+                    <div class="column">
+                        <h1 class="horizontal-center"> 3D </h1>
+
+                        <div> <span class='x'>x</span><sup>2</sup> + <span class='y'>y</span><sup>2</sup> + <span class='z'>z</span><sup>2</sup> = 1</div>
+                    </div>
+
+                    <div class="column">
+                        <h1> 4D </h1>
+
+                        <div> <span class='x'>x</span><sup>2</sup> + <span class='y'>y</span><sup>2</sup> + <span class='z'>z</span><sup>2</sup> + <span class="highlight"><span class='w'>w</span><sup>2</sup></span> = 1</div>
+                    </div>
+                </div>
+            </div>
+          </div>
+      </div>
+
+    <!--
+      <div class="fullscreenText modal is-active exp-slide">
+        <div>
+            <h1> 3-manifolds </h1>
+            You can also extend a torus in the exact same way! But to visualize it, you need to get creative.
+        </div>
+      </div>
+    -->
+  </div>
+</body>
+</html>

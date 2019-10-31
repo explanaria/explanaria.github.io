@@ -66,7 +66,7 @@ function setMeshToMammoth(){
 		three.scene.add( mammothMesh );
 		mammothMesh.scale.set(1/5,1/5,1/5);
         mammothMesh.rotation.set(-Math.PI/2,0,Math.PI/2)
-        mammothMesh.position.set(2,-6,0)
+        mammothMesh.position.set(2,-6,0);
         setMeshBeingCoveredInCharts(mammothMesh, [0,0,12]);
     }
 }

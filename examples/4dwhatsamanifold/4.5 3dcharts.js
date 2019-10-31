@@ -79,7 +79,7 @@ function setup(){
     rightcube.position.x = 3;
     rightcube2.position.x = 3;
 
-    rotateObjects = [cube, cube2, leftcube, leftcube2];
+    rotateObjects = [cube, cube2, leftcube, leftcube2,rightcube,rightcube2];
 
 
     var userPoint1 = new EXP.Array({data: [[0],[-3],[3]]}); //point xes

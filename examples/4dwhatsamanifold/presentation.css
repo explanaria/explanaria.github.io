@@ -1,3 +1,9 @@
+.hideWhenPresenting{
+
+    display: none;
+}
+
+
 .grid{
     width: 100%;
     height: 100%;

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - 3-torus!</title>
+
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <script src="colors.js"></script>
+  <script src="sliders.js"></script>
+  <script src="4.5 3dcharts.js"></script>
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <style>
+
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart canvasGrid">
+        <div class="exp-text fullscreenText">
+            <h1> How to Visualize Manifolds in 4 Dimensions:</h1>
+            <br><br>
+            <h1 id='question' style="opacity:0; transition: all 1s ease-in-out">???</h1>
+        </div>
+      </div>
+      <div id="textArea" class="non3DFooterPart chartCanvasContainer exp-slide" style="padding: 0em;">
+                <canvas id="threeDcanvas" class="griddedCanvas" style="opacity:0; transition: all 1s ease-in-out;"></canvas>
+      </div>
+  </div>
+</body>
+</html>

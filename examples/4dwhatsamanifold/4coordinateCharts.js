@@ -3,6 +3,8 @@ let atlas = null;
 
 var raycaster;
 
+let meshBeingCoveredInCharts= null;
+
 function setup() {
     
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
@@ -21,20 +23,16 @@ function setup() {
 	light.position.set( - 1, 0.75, - 0.5 );
 	three.scene.add( light );
 
+
+    atlas = new Atlas(null); //will hold all the charts
+    objects.push(atlas);
+
 	loadMeshBeingCoveredInCharts();
 
     setupDragControls();
 
-
-
-    atlas = new Atlas(meshBeingCoveredInCharts); //will hold all the charts
-    objects.push(atlas);
-
-    shootFirstDecal();
-
 	raycaster = new THREE.Raycaster();
 
-    
 	three.on("update",function(time){
 		for(var x of objects){
 			x.activate(time.t);
@@ -43,31 +41,55 @@ function setup() {
 	});
 }
 
+let mammothMesh = null;
 function loadMeshBeingCoveredInCharts() {
 
-    /*
-	var loader = new GLTFLoader();
+    
+	var loader = new THREE.GLTFLoader();
 
-	loader.load( 'models/gltf/LeePerrySmith/LeePerrySmith.glb', function ( gltf ) {
+	loader.load( 'mammoth.glb', function ( gltf ) {
 
-		meshBeingCoveredInCharts = gltf.scene.children[ 0 ];
-		meshBeingCoveredInCharts.material = new THREE.MeshPhongMaterial( {
+		mammothMesh = gltf.scene.children[ 0 ];
+		mammothMesh.material = new THREE.MeshPhongMaterial( {
 			specular: 0x111111,
-			map: textureLoader.load( 'models/gltf/LeePerrySmith/Map-COL.jpg' ),
-			specularMap: textureLoader.load( 'models/gltf/LeePerrySmith/Map-SPEC.jpg' ),
-			normalMap: textureLoader.load( 'models/gltf/LeePerrySmith/Infinite-Level_02_Tangent_SmoothUV.jpg' ),
+            color: 0xDEB887,
 			shininess: 25
 		} );
 
-		three.scene.add( meshBeingCoveredInCharts );
+	} );
+
+    setMeshToSphere();
+}
+
+function setMeshToMammoth(){
+    if(mammothMesh != null){
+		three.scene.add( mammothMesh );
 		meshBeingCoveredInCharts.scale.set( 10, 10, 10 );
+        setMeshBeingCoveredInCharts(mammothMesh);
+    }
+}
 
-	} );*/
-
-    //let geometry = new THREE.SphereGeometry(2, 32, 32);
+function setMeshToTorus(){
     let geometry = new THREE.TorusGeometry( 2, 1, 100, 100);
+    let torus = new THREE.Mesh(geometry,
+		new THREE.MeshPhongMaterial({
+			specular: 0x111111,
+            color: 0xff00ff,
+			shininess: 25,
+		})
+    )
 
-    meshBeingCoveredInCharts = new THREE.Mesh(geometry,
+
+    let size = 1.7;
+    atlas.newChartSize = new THREE.Vector3(size,size,2);
+
+    setMeshBeingCoveredInCharts(torus);
+
+}
+
+function setMeshToSphere(){
+    let geometry = new THREE.SphereGeometry(2, 32, 32);
+    let sphere = new THREE.Mesh(geometry,
 		new THREE.MeshPhongMaterial({
 			specular: 0x111111,
             color: 0xff00ff,
@@ -75,28 +97,62 @@ function loadMeshBeingCoveredInCharts() {
 		})
     );
 
-    three.scene.add(meshBeingCoveredInCharts);
+    let size = 2.5;
+    atlas.newChartSize = new THREE.Vector3(size,size,size);
+
+    let rotationHelper = new THREE.Object3D();
+
+    //front
+    setMeshBeingCoveredInCharts(sphere, [0,0,2]);
+
+    //R
+    shootFirstDecal([2,0,0], [Math.PI,Math.PI/2,Math.PI]);
+
+    //back
+    shootFirstDecal([0,0,-2], [0,-Math.PI,0]);
+    //L
+    shootFirstDecal([-2,0,0], [-Math.PI,-Math.PI/2,Math.PI]);
+
+    //poles, the finickiest
+    shootFirstDecal([0,2,0], [-Math.PI/2,0,0]);
+    shootFirstDecal([0,-2,0], [Math.PI/2,0,0]);
+
+    atlas.charts.forEach( (i, num) => {if(num>0)i.hideDraggables()});
+
+
+    atlas.threeDPointPos.set(0,0,2);
 }
 
-function shootFirstDecal(){
+function setMeshBeingCoveredInCharts(mesh, firstDecalPosition, firstDecalAngle){
+    if(meshBeingCoveredInCharts !== null)three.scene.remove(meshBeingCoveredInCharts);
+    atlas.removeAllCharts();
+    
+    meshBeingCoveredInCharts = mesh;
+    atlas.meshBeingCoveredInCharts = mesh;
+    three.scene.add(mesh);
 
-    let firstPoint = new THREE.Vector3(0,-1.7,1);
-    let firstOrientation = new THREE.Euler(0,0,0); //euler angles.
+    shootFirstDecal(firstDecalPosition, firstDecalAngle);
+
+}
+
+function shootFirstDecal(position=[0,-1.71,1], eulerAngle=[0,0,0]){
+
+    let firstPoint = new THREE.Vector3(position[0],position[1],position[2]);
+    let firstOrientation = new THREE.Euler(eulerAngle[0],eulerAngle[1],eulerAngle[2]); //euler angles.
 
     var chart = new CoordinateChart2D(atlas, firstPoint, firstOrientation);
     atlas.addChart(chart);
     atlas.threeDPointPos = firstPoint;
 }
 
-function removeAllCharts() {
-    atlas.removeAllCharts();
-}
-
-
+let presentation = new EXP.NonDecreasingDirector();
 async function animate(){
-/*
-    await EXP.delay(2000);
-    EXP.TransitionTo(knotParams,{'a':3,'b':2});*/
+    
+    await presentation.begin();
+    await presentation.nextSlide();
+    setMeshToTorus()
+    await presentation.nextSlide();
+    setMeshToMammoth();
 }
 
 //camera controls

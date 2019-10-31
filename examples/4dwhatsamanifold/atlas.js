@@ -27,7 +27,7 @@ class Atlas{
 	        shininess: 30,
 	        transparent: false,
 	        depthTest: true,
-	        depthWrite: false,
+	        depthWrite: true,
 	        polygonOffset: true,
 	        polygonOffsetFactor: - 4,
 	        wireframe: false
@@ -45,8 +45,12 @@ class Atlas{
     }
 
     removeAllCharts(){
-        this.charts.forEach( function ( d ) {
-            three.scene.remove( d.mesh );
+        this.charts.forEach( function ( c ) {
+            three.scene.remove( c.mesh );
+            let canvas = c.twoDslider.canvas;
+            let canvasContainer = canvas.parentElement;
+            canvasContainer.removeChild(canvas);
+            canvasContainer.parentElement.removeChild(canvasContainer);
         } );
         this.charts = [];
     }
@@ -120,11 +124,15 @@ class CoordinateChart2D{
         var material = this.parentAtlas.decalMaterial.clone();
         this.color = Math.random() * 0xffffff;
         this.colorString =  '#' + ('00000' + (this.color | 0).toString(16)).substr(-6);
+        material.polygonOffsetFactor = -4-this.parentAtlas.charts.length;
         material.color.setHex( this.color);
 
 
         this.sourcePosition = position;
         this.sourceOrientation = orientation;
+
+        this.xSpan = parentAtlas.newChartSize.x/2;
+        this.ySpan = parentAtlas.newChartSize.y/2;
 
         //matrix to project UV corodinates (0-1) to world coordinates
 	    this.projectorMatrix = new THREE.Matrix4();
@@ -158,7 +166,7 @@ class CoordinateChart2D{
         //step 1: planar approximation. approximate the coordinate chart as a linear plane based on some data we saved when this chart was created. Then we'll project that approximation onto the mesh itself.
 
         //keep in mind the -y is because a canvas's +y direction is down, but we want it to be up.
-        planarApproximation.set(x,-y,0);
+        planarApproximation.set(x*this.xSpan,-y*this.ySpan,0);
 		planarApproximation.applyMatrix4( this.projectorMatrix );
 
         planarApproximationInwardsNormal.set(x,-y,1);

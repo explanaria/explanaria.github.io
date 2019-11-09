@@ -126,6 +126,7 @@ class twoDCoordIntroScene{
         this.context.fillStyle = pointColorCanvas;
         drawCircle(this.context, point1Pos[0],point1Pos[1],20);
 
+
         //axis 2
         this.context.strokeStyle = coordinateLine1Color; //regrettably inverted
 
@@ -145,7 +146,17 @@ class twoDCoordIntroScene{
         //coordinates
         let textOffset = lerpTo([-100, this.canvas.height/10 *3],[50,-50]);
         let textPos = lerpTo(centerPos, vectorAdd(pointPos, centerPos));
-        this.drawTwoCoordinates(textPos, [pointPos[0]/this.pointWanderingRadius, -pointPos[1]/this.pointWanderingRadius],textOffset);
+        let coordinates = [pointPos[0]/this.pointWanderingRadius, -pointPos[1]/this.pointWanderingRadius]
+        this.drawTwoCoordinates(textPos, coordinates, textOffset);
+
+        //the second X coordinate text
+        let coordinate1TextPos = lerpTo([pointPos[0]+centerPos[0], newCenterPos1[1]-50], vectorAdd(vectorAdd(pointPos, centerPos),[50,-50]));
+        this.drawText(format(coordinates[0]), coordinate1TextPos[0], coordinate1TextPos[1],coordinateLine2Color );
+
+
+        //the second Y coordinate text
+        let coordinate2TextPos = lerpTo([-pointPos[1]+centerPos[0], newCenterPos2[1]-50], vectorAdd(vectorAdd(pointPos, centerPos),[150,-50]));
+        this.drawText(format(coordinates[1]), coordinate2TextPos[0], coordinate2TextPos[1],coordinateLine1Color );
 
     }
     drawCartesianText(t, pos, pointPos){
@@ -168,18 +179,31 @@ class twoDCoordIntroScene{
 
             let metrics = this.context.measureText(allStrings[i]);
 
-            //draw a transparent rectangle under the text
-            this.context.fillStyle = "rgba(255,255,255,0.9)"
-            this.context.fillRect(textX, textY-38, metrics.width, 52);
+            let fillStyle = '#444';
 
-            if(i == 1){this.context.fillStyle = coordinateLine2Color;}
-            else if(i == 3){this.context.fillStyle = coordinateLine1Color}
-            else{this.context.fillStyle = '#444';}
+            if(i == 1){
+                fillStyle = coordinateLine2Color;
+            }else if(i == 3){
+                fillStyle = coordinateLine1Color
+            }
 
-            this.context.fillText(allStrings[i], textX, textY);
+            this.drawText(allStrings[i], textX, textY, fillStyle);
 
             textX += metrics.width;
         }
+    }
+    drawText(text, textX, textY, fillStyle){
+        
+        let metrics = this.context.measureText(text);
+
+        //draw a transparent rectangle under the text
+        this.context.fillStyle = "rgba(255,255,255,0.9)"
+        this.context.fillRect(textX, textY-38, metrics.width, 52);
+
+        this.context.fillStyle = fillStyle;
+
+        this.context.fillText(text, textX, textY);
+
     }
     drawPolarCoordinates(t, pointPos){
         let pos = [this.canvas.width/2, this.canvas.height/2];

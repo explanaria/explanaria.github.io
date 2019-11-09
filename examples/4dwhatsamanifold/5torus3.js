@@ -6,7 +6,76 @@ let presentation = null;
 
 let sphereOutput = null;
 let sphereLineOutput = null;
-let coord1SliderR = null;
+let coord1SliderC, coord2SliderC, coord3SliderC = null;
+
+function wrapToInterval(x,size){
+    //move number into [-1, +1]
+    //x%1 would work, but -1%1 == 0 in JS
+    if(Math.abs(x) == size)return x;
+    let s2 = 2*size;
+    return (((x+size)%s2)+s2)%s2 -size; //javascript % is absolute-valued: -1 % 3 == -1, not 2. this is normally terrible but used here
+}
+
+
+class CircleToSidewaysSlider extends CircleSlider{
+    // a circleslider that can animate into a line slider.
+    //in retrospect I should have just animated this via explanaria instead of doing it internally
+    constructor(...args){
+        super(...args);
+        this.lineAnimationFactor = 0;
+
+        let lerpNumbers = (x,y) => x * (this.lineAnimationFactor) + y*(1-this.lineAnimationFactor);
+    }
+    lerpTo(a,b){
+        return EXP.Math.lerpVectors(this.lineAnimationFactor, a, b);
+    }
+    drawPointTrack(){
+        //this.radius = 35 / 100 * this.canvas.width;
+        //this.pointRadius = 15 /100 * this.canvas.width;
+
+        //draw some line segments
+        let endHeight = 10/100 * this.canvas.width;
+        this.context.beginPath();
+        this.context.moveTo(this.pos[0] - this.radius*this.lineAnimationFactor, this.pos[1] - endHeight * this.lineAnimationFactor+ this.radius*(1-this.lineAnimationFactor));
+        this.context.lineTo(this.pos[0] - this.radius*this.lineAnimationFactor, this.pos[1] + endHeight * this.lineAnimationFactor+ this.radius*(1-this.lineAnimationFactor));
+        this.context.moveTo(this.pos[0] + this.radius*this.lineAnimationFactor, this.pos[1] - endHeight * this.lineAnimationFactor + this.radius*(1-this.lineAnimationFactor));
+        this.context.lineTo(this.pos[0] + this.radius*this.lineAnimationFactor, this.pos[1] + endHeight * this.lineAnimationFactor+ this.radius*(1-this.lineAnimationFactor));
+        this.context.stroke();        
+
+        //draw the circle/line blended together
+        this.context.beginPath();
+        let circleStartPos = [this.pos[0], this.pos[1] + this.radius]
+        let lineStartPos = [this.pos[0] - this.radius, this.pos[1]]
+        this.context.moveTo(...this.lerpTo(lineStartPos, circleStartPos));
+        for(var i=0; i <= Math.PI*2+0.01; i += Math.PI/30){
+            
+
+            let circlePos = [this.pos[0] + Math.cos(i+Math.PI/2)*this.radius, this.pos[1] + Math.sin(i+Math.PI/2) * this.radius];
+            let linePos = [this.pos[0] - this.radius + (i / (Math.PI))*this.radius, this.pos[1]];
+
+            this.context.lineTo(...this.lerpTo(linePos, circlePos));
+        }
+        this.context.stroke();
+
+       // drawCircleStroke(this.context, this.pos[0],this.pos[1],this.radius);
+    }
+    drawPoint(x,y){
+        let circlePos = [this.pos[0] + this.radius*Math.cos(this.value), this.pos[1] + this.radius*Math.sin(this.value)]
+        let linePos = [this.pos[0] + (wrapToInterval(this.value, Math.PI)/Math.PI) * this.radius, this.pos[1]];
+        let pointPos = this.lerpTo(linePos, circlePos);
+
+        drawCircle(this.context, pointPos[0], pointPos[1], this.pointRadius);
+    }
+
+    onmousemove(x,y){
+        if(this.dragging){
+            
+            let mouseAngle = Math.atan2(y-this.pos[1],x-this.pos[0]);
+            this.value = this.lerpTo([(x - this.pos[0])/this.radius *Math.PI],[mouseAngle])[0];
+            this.valueSetter(this.value);
+        }
+    }
+}
 
 
 function wrapToInterval(x,size){
@@ -110,9 +179,9 @@ function setup(){
     .add(manifoldParametrization.makeLink())
     .add(new EXP.LineOutput({width:10, color: coordinateLine3Color}));
 
-    coord1SliderC = new CircleSlider(coordinateLine1Color, 'circle1', ()=>userPointParams.x1, (x)=>{userPointParams.x1=x});
-    coord2SliderC = new CircleSlider(coordinateLine2Color, 'circle2', ()=>userPointParams.x2, (x)=>{userPointParams.x2=x});
-    coord3SliderC = new CircleSlider(coordinateLine3Color, 'circle3', ()=>userPointParams.x3, (x)=>{userPointParams.x3=x});
+    coord1SliderC = new CircleToSidewaysSlider(coordinateLine1Color, 'circle1', ()=>userPointParams.x1, (x)=>{userPointParams.x1=x});
+    coord2SliderC = new CircleToSidewaysSlider(coordinateLine2Color, 'circle2', ()=>userPointParams.x2, (x)=>{userPointParams.x2=x});
+    coord3SliderC = new CircleToSidewaysSlider(coordinateLine3Color, 'circle3', ()=>userPointParams.x3, (x)=>{userPointParams.x3=x});
 
     objects = [coord1, coord2, coord3, userPoint1, coord1SliderC, coord2SliderC, coord3SliderC];
 }
@@ -120,6 +189,9 @@ function setup(){
 async function animate(){
 
     await presentation.begin();
+
+    await presentation.nextSlide();
+    [coord1SliderC,coord2SliderC,coord3SliderC].forEach( (item) => presentation.TransitionTo(item,{lineAnimationFactor:1}),1500);
 
     await presentation.nextSlide();
 
@@ -145,6 +217,8 @@ async function animate(){
     objects.pop()
     let fancyFlight = {activate: function(t){userPointParams.x1 = 2*Math.sin(t/2);userPointParams.x2 = 5*Math.sin(t/1.7);userPointParams.x3 = 2*Math.sin(t/1.3);}};
     objects.push(fancyFlight);
+
+    [coord1SliderC,coord2SliderC,coord3SliderC].forEach( (item) => presentation.TransitionTo(item,{lineAnimationFactor:0}),1500);
 
     await presentation.nextSlide();
     objects.pop();

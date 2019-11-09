@@ -138,14 +138,24 @@ class CircleSlider extends Slider{
 
         this.context.strokeStyle = this.pointColor;
         if(this.disabled)this.context.strokeStyle = this.disabledColor;
-        drawCircleStroke(this.context, this.pos[0],this.pos[1],this.radius);
+        this.drawPointTrack();
 
         this.context.fillStyle = pointColorCanvas
         if(this.dragging){
             this.context.fillStyle = pointColorDragging
         }
-        if(!this.disabled)drawCircle(this.context, this.pos[0] + this.radius*Math.cos(this.value), this.pos[1] + this.radius*Math.sin(this.value), this.pointRadius);
+        if(!this.disabled)this.drawPoint();
     }
+
+    drawPointTrack(){
+        //this.radius = 35 / 100 * this.canvas.width;
+        //this.pointRadius = 15 /100 * this.canvas.width;
+        drawCircleStroke(this.context, this.pos[0],this.pos[1],this.radius);
+    }
+    drawPoint(x,y){
+        drawCircle(this.context, this.pos[0] + this.radius*Math.cos(this.value), this.pos[1] + this.radius*Math.sin(this.value), this.pointRadius);
+    }
+
     onmousedown(x,y){
         let ptX = this.pos[0] + this.radius*Math.cos(this.value);
         let ptY = this.pos[1] + this.radius*Math.sin(this.value);

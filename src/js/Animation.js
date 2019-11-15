@@ -5,6 +5,8 @@ import { Transformation } from './Transformation.js';
 import * as math from './math.js';
 import { threeEnvironment } from './ThreeEnvironment.js';
 
+let EPS = Number.EPSILON;
+
 class Animation{
 	constructor(target, toValues, duration, staggerFraction){
 		Utils.assertType(toValues, Object);
@@ -80,15 +82,24 @@ r
 
 			//encapsulate percentage
 			this.target[propertyName] = (function(...coords){
-                let i = coords[0];
-				let lerpFactor = percentage/(1-this.staggerFraction) - i*this.staggerFraction/this.targetNumCallsPerActivation;
+                const i = coords[0];
+				let lerpFactor = percentage;
+
+                //fancy staggering math, if we know how many objects are flowing through this transformation at once
+                if(this.targetNumCallsPerActivation !== undefined){
+                    lerpFactor = percentage/(1-this.staggerFraction+EPS) - i*this.staggerFraction/this.targetNumCallsPerActivation;
+                }
 				//let percent = Math.min(Math.max(percentage - i/this.targetNumCallsPerActivation   ,1),0);
 
 				let t = this.interpolationFunction(Math.max(Math.min(lerpFactor,1),0));
 				return math.lerpVectors(t,toValue(...coords),fromValue(...coords))
 			}).bind(this);
 			return;
-		}else if(typeof(toValue) === "boolean" && typeof(fromValue) === "boolean"){
+		}else if(toValue.constructor === THREE.Color && fromValue.constructor === THREE.Color){
+            let t = this.interpolationFunction(percentage);
+            let color = fromValue.clone();
+            this.target[propertyName] = color.lerp(toValue, t);
+        }else if(typeof(toValue) === "boolean" && typeof(fromValue) === "boolean"){
             let t = this.interpolationFunction(percentage);
             this.target[propertyName] = t > 0.5 ? toValue : fromValue;
         }else{

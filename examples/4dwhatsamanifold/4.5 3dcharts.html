@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
-  <title>Explanarian - 3-torus!</title>
+  <title>Explanarian - To Higher Dimensions!</title>
 
   <script src="../../src/lib/three.min.js"></script>
   <script src="../../src/lib/socket.io.js"></script>
@@ -34,24 +34,53 @@
 <body>
   <div class="grid">
       <div id="header" class="headerPart"></div>
-      <div id="canvasContainer" class="threeDPart canvasGrid">
-        <div class="exp-text fullscreenText" style="padding-bottom:0">
-            <h1> How to Visualize Manifolds in 4 Dimensions:</h1>
-            <br>
-            <h1 id='question' style="opacity:0; transition: all 0.5s ease-in-out">???</h1>
-
-            <div class="columns">
-                <div class="column">Color points based on their 4-dimensional coordinates</div>
-                <div class="column">
-                    <div>Use only 3 dimensions, but with perspective to make it seem like there's a fourth</div>
-                    <img style="height:150px" src="Schlegel_wireframe_8-cell.png"></img>
-                    
-                    </div>
+      <div id="" class="canvasGrid" style="height: 97%">
+        <div class="exp-text fullscreenText" style="padding-bottom:0; padding-top:0;">
+            <h1> Using Manifolds in Higher Dimensions</h1>
+            <br style="height:50%">
+            <div class="level columns is-mobile" style="border-bottom: 1px solid #555">
+                <div class="column smolColumn" style="opacity:0"><aside>n-manifolds</aside></div> <!-- to make columns line up. sorry screenreaders -->
+                <div class="column"><div>Using these...</div></div>
+                <div class="column smolSymbolColumn"></div>
+                <div class="column"><div>We can study these</div></div>
             </div>
+
+            <div class="level columns is-mobile">
+                <div class="column smolColumn">
+                    <div>2D:</div>
+                    <aside id="twomanifoldtext" class="willFadeInFromJS">2-manifolds</aside>
+                </div>
+                <div class="column">
+                    <div> 2 real numbers</div>
+                    <div id="2dchart" class="chart"></div>
+
+                </div>
+                <div class="column smolSymbolColumn">→</div>
+                <div class="column"> 
+                    <div>Surfaces, in 3D:</div>
+                    <img style="max-height:150px;height: 5em;" src="sphere.png"></img>
+                </div>
+            </div>
+
+            <div class="level columns is-mobile willFadeInFromJS" id="threeDRow">
+                <div class="column smolColumn">
+                    <div>3D:</div>
+                    <aside id="threemanifoldtext" class="willFadeInFromJS">3-manifolds</aside>
+                </div>
+                <div class="column" id="">
+                    <div> 3 real numbers</div>
+                    <canvas id="threeDcanvas" class="griddedCanvas" style="max-width: 50%"></canvas>
+                </div>
+                <div class="column smolSymbolColumn">→</div>
+                <div class="column">
+                    <div> Things in 4D:</div>
+                    <!-- <div> <img style="height:150px" src="Schlegel_wireframe_8-cell.png"></img> </div> -->
+                    <div>???</div>
+                </div>
+            </div>
+
+                
         </div>
-      </div>
-      <div id="textArea" class="non3DFooterPart chartCanvasContainer exp-slide" style="padding: 0em;">
-                <canvas id="threeDcanvas" class="griddedCanvas" style="opacity:0; transition: all 1s ease-in-out;"></canvas>
       </div>
   </div>
 </body>

@@ -52,7 +52,6 @@
     color: black;
     font-size: 5em;
     font-family: "Computer Modern Serif";
-    transition: opacity 0.75s linear;
     text-align: center;
 }
 #coords:nth-child(2n+1){
@@ -83,12 +82,6 @@
 }
 
 #timesSign{
-    display: block;
-    flex-basis: 0;
-    flex-grow: 1;
-    flex-shrink: 1;
-    padding: 0.75rem;
-
     text-align: center;
     font-size: 150px;
 }
@@ -194,7 +187,7 @@
     pointer-events: all;
 }
 
-
+/* used in 4.5 3dcharts */
 
 .smolSymbolColumn{
     display: block;
@@ -210,6 +203,11 @@
 }
 .smolColumn{
     flex-grow: 0;
+}
+
+.willFadeInFromJS{
+    opacity:0; 
+    transition: opacity 0.75s ease-in-out;
 }
 
 /* used in bonuses */
@@ -242,10 +240,17 @@ ul {
         height: 6em;
     }
 
+    .factors .column{
+        padding: 0;
+    }
+    .factors{
+        margin: 0;
+    }
+
     #timesSign{
         font-size: 3em;
-        padding: 0;
-        margin-top: 1.5em;
+        margin-left: -10%;
+        margin-right: -5%;
     }
 
     /* used in 3 */

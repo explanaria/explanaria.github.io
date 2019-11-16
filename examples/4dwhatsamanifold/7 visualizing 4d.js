@@ -1,8 +1,7 @@
-let three, controls, objects, knotParams;
+let three, controls, objects, presentation;
 
 
 let sq3 = Math.sqrt(3);
-
 let userParams = {"mode": "orthographic", 'orthographic4Vec':[1/sq3,1/sq3,1/sq3]};
 
 let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070f0",'faded':'#D6C2D6'}};
@@ -39,7 +38,9 @@ class Polychoron{
 
         this.outputs = [];
         this.EXPLines = [];
+
         this.color = 0x00ff88;
+        this.colorAttributes = []; //the attributes containing arrays for color. this is a giant hacky way of changing color for EXP.LineOutputs
 
         this.objectParent = new THREE.Object3D();
         three.scene.add(this.objectParent);
@@ -68,26 +69,40 @@ class Polychoron{
             let NUM_LINES = 1;
 
 	        let colorArr = new Float32Array(NUM_POINTS_IN_A_LINE * NUM_LINES * 3);
-            let color1 = colorMap(this.points[ptAIndex][3]);
-            colorArr[0] = color1.r;
-            colorArr[1] = color1.g;
-            colorArr[2] = color1.b;
-            
-            let color2 = colorMap(this.points[ptBIndex][3]);
-            colorArr[3] = color2.r;
-            colorArr[4] = color2.g;
-            colorArr[5] = color2.b;
+            this.setColorInArray(this.points[ptAIndex], colorArr, 0);
+            this.setColorInArray(this.points[ptBIndex], colorArr, 3);
 
-	        output._geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( colorArr, 3) )
-		    let geometryAttribute = output._geometry.attributes.color;
-		    geometryAttribute.needsUpdate = true;
+            let colorAttribute = new THREE.Float32BufferAttribute( colorArr, 3)
+
+	        output._geometry.addAttribute( 'color', colorAttribute  )
+		    colorAttribute.needsUpdate = true;
+            this.colorAttributes.push(colorAttribute);
 
         }
     }
     activate(t){
         for(var i=0;i<this.EXPLines.length;i++){
             this.EXPLines[i].activate(t);
+
+
+            //calculate the appropriate 4D color and set it. Manually. this is terrible. todo: make this better
+            let colorAttribute = this.colorAttributes[i];
+            let ptA = this.points[this.lineData[i][0]];
+            let ptB = this.points[this.lineData[i][1]];
+
+            let ptA4DCoordinates = this.preEmbeddingTransformation.expr(i, t, ...ptA);
+            this.setColorInArray(ptA4DCoordinates, colorAttribute.array, 0);
+            let ptB4DCoordinates = this.preEmbeddingTransformation.expr(i, t, ...ptB);
+            this.setColorInArray(ptB4DCoordinates, colorAttribute.array, 3);
+		    colorAttribute.needsUpdate = true;
+            
         }
+    }
+    setColorInArray(vec4Coords, colorArray, startIndex){
+            let color = colorMap(vec4Coords[3]);
+            colorArray[startIndex + 0] = color.r;
+            colorArray[startIndex + 1] = color.g;
+            colorArray[startIndex + 2] = color.b;
     }
 }
 
@@ -142,14 +157,14 @@ function R4EmbeddingFunc(i,t,x,y,z,w){
 }
 
 
-function setup(){
+function setupThree(){
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
 	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
     
 
 	three.camera.position.z = 6;
 	three.camera.position.y = 0.5;
-    controls.autoRotate = true;
+    //controls.autoRotate = true;
     
 	three.on("update",function(time){
 		for(var x of objects){
@@ -157,6 +172,13 @@ function setup(){
 		}
 		controls.update();
 	});
+
+    
+	presentation = new EXP.UndoCapableDirector();
+}
+
+function setup(){
+    setupThree();
 
     console.log("Loaded.");
 
@@ -211,18 +233,22 @@ function setup(){
 
 
 async function animate(){
-    await EXP.delay(5000);
+    await presentation.begin();
+    await presentation.nextSlide();
    // EXP.TransitionTo(knotParams,{'a':3,'b':2});
-    EXP.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding});
-    await EXP.delay(5000);
-    EXP.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
-    await EXP.delay(3000);
+    presentation.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding});
+    await presentation.nextSlide();
+    presentation.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
+    await presentation.nextSlide();
 
     //hyper-rotation!
-    EXP.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w) => {
-let newZ = z*Math.cos(t) + -w*Math.sin(t)
-let newW = z*Math.sin(t) + w*Math.cos(t)
-       return [x,y,newZ,newW]
+    presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w) => {
+            //center of rotation is [0,0,0,0.5], hence the w - 0.5 part
+        w = w-0.5
+
+        let newZ = z*Math.cos(t) + -w*Math.sin(t)
+        let newW = z*Math.sin(t) + w*Math.cos(t)
+       return [x,y,newZ,newW + 0.5]
     }});
 }
 

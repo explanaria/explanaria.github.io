@@ -9,6 +9,26 @@ let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070
 
 let R4Embedding = null;
 
+function colorMap(wCoordinate){
+ let fourDRampAmt = Math.min(1, wCoordinate) //ramp from 0-1 then hold steady at 1
+ let fourDAbsRampAmt = Math.min(1, Math.abs(wCoordinate)) //ramp from 0-1 then hold steady at 1
+ /*
+  //a color map that (A) goes from dark to light as you go from 0-1, and (B) cycles hue
+ let lightness = Math.min(0.5, wCoordinate);
+ return new THREE.Color().setHSL(wCoordinate, 0.5, fourDRampAmt/2);
+ */
+
+ //linear green->blue map
+
+ let color = 40;
+ let zeroWColor = new THREE.Color().setHSL((140)/360, 0.7, 0.6); //formerly 0x55e088
+ if(wCoordinate > 0){
+   return zeroWColor.lerp(new THREE.Color().setHSL(0/360, 0.85, 0.74), fourDAbsRampAmt); 
+ }else{
+   return zeroWColor.lerp(new THREE.Color().setHSL((140*2)/360, 0.85, 0.74), fourDAbsRampAmt); 
+ }
+}
+
 
 class Polychoron{
     constructor(points, lines, embeddingTransformation){
@@ -17,7 +37,7 @@ class Polychoron{
         this.embeddingTransformation = embeddingTransformation;
 
         this.outputs = [];
-        this.EXPObjects = [];
+        this.EXPLines = [];
         this.color = 0x00ff88;
 
         this.objectParent = new THREE.Object3D();
@@ -30,20 +50,41 @@ class Polychoron{
             let ptAIndex = this.lineData[i][0];
             let ptBIndex = this.lineData[i][1];
             var line = new EXP.Array({data: [this.points[ptAIndex],this.points[ptBIndex]]});
-            let output = new EXP.LineOutput({width: 10, color: this.color});
+            let output = new EXP.LineOutput({width: 10, color: 0xffffff});
             line
                 .add(this.embeddingTransformation.makeLink())
                 .add(output);
 
-            this.EXPObjects.push(line);
+            this.EXPLines.push(line);
             this.outputs.push(output);
-
             this.objectParent.add(output.mesh);
+
+            //set up 4D color lerping by bolting it onto the existing material like a terrible person
+            output.material.vertexColors = THREE.VertexColors;
+
+	        let NUM_POINTS_IN_A_LINE = 2;
+            let NUM_LINES = 1;
+
+	        let colorArr = new Float32Array(NUM_POINTS_IN_A_LINE * NUM_LINES * 3);
+            let color1 = colorMap(this.points[ptAIndex][3]);
+            colorArr[0] = color1.r;
+            colorArr[1] = color1.g;
+            colorArr[2] = color1.b;
+            
+            let color2 = colorMap(this.points[ptBIndex][3]);
+            colorArr[3] = color2.r;
+            colorArr[4] = color2.g;
+            colorArr[5] = color2.b;
+
+	        output._geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( colorArr, 3) )
+		    let geometryAttribute = output._geometry.attributes.color;
+		    geometryAttribute.needsUpdate = true;
+
         }
     }
     activate(t){
-        for(var i=0;i<this.EXPObjects.length;i++){
-            this.EXPObjects[i].activate(t);
+        for(var i=0;i<this.EXPLines.length;i++){
+            this.EXPLines[i].activate(t);
         }
     }
 }
@@ -140,14 +181,16 @@ function setup(){
     */
     let hypercube = makeHypercube(R4Embedding);
 
-    hypercube.objectParent.position.x = 1
+    hypercube.objectParent.position.x = 2
 
 
-    let sq5 = Math.sqrt(5)
+    let sq5 = Math.sqrt(5), sq29 = Math.sqrt(2/9), sq23 = Math.sqrt(2/3);
     let fivecell = new Polychoron(
         [//points
             //[0,0,0,0], [0,0,0,1], [0,0,1,0], [0,1,0,0], [1,0,0,0],
-            [1,1,1,-1/sq5], [1,-1,-1,-1/sq5], [-1,1,-1,-1/sq5], [-1,-1,1,-1/sq5], [0,0,0,sq5-1/sq5]
+
+            //[1,1,1,-1/sq5], [1,-1,-1,-1/sq5], [-1,1,-1,-1/sq5], [-1,-1,1,-1/sq5], [0,0,0,sq5-1/sq5]
+            [sq5*Math.sqrt(8/9),-sq5/3,0,0], [-sq5*sq29,-sq5/3,-sq5*sq23,0], [-sq5*sq29,-sq5/3,sq5*sq23,0], [0,sq5,0,0], [0,0,0,1] //has base on XZ plane, almost all w=0
 
         ],
         [ //lines
@@ -157,6 +200,7 @@ function setup(){
             [3,4],
         ],
     R4Embedding);
+    fivecell.objectParent.position.x = -2
 
 
     objects = [hypercube, fivecell];
@@ -164,10 +208,10 @@ function setup(){
 
 
 async function animate(){
-    await EXP.delay(2000);
+    await EXP.delay(5000);
    // EXP.TransitionTo(knotParams,{'a':3,'b':2});
     EXP.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding});
-    await EXP.delay(2000);
+    await EXP.delay(5000);
     EXP.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
 
     /* //hyper-rotation!

@@ -192,6 +192,10 @@ async function animate(){
     twoDCanvasHandler.cartesianOpacity = 0;
     await presentation.begin();
 
+    //hide title page
+    await presentation.nextSlide();
+    
+
     await presentation.nextSlide();
     presentation.TransitionTo(twoDCanvasHandler, {'cartesianOpacity':1,cartesianPointOutArrowsOpacity: 1}, 750);
     await presentation.delay(750);

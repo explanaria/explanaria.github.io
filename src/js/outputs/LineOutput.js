@@ -58,7 +58,7 @@ class LineOutput extends OutputNode{
 
 		let MAX_POINTS = 10000;
 
-		this._vertices = new Float32Array(MAX_POINTS * 2 * this._outputDimensions);
+		this._vertices = new Float32Array(this._outputDimensions * (MAX_POINTS-1)*2);
 
 		// build geometry
 
@@ -90,7 +90,12 @@ class LineOutput extends OutputNode{
 		this._onAdd(); //setup this.numCallsPerActivation and this.itemDimensions. used here again because cloning means the onAdd() might be called before this is connected to a type of domain
 
 		// perhaps instead of generating a whole new array, this can reuse the old one?
-		let vertices = new Float32Array(this.numCallsPerActivation * this._outputDimensions * 2);
+
+
+        // Why use (this.numCallsPerActivation-1)*2? 
+        // We want to render a chain with n points, each connected to the one in front of it by a line except the last one. Then because the last vertex doesn't introduce a new line, there are n-1 lines between the chain points.
+        // Each line is rendered using two vertices. So we multiply the number of lines, this.numCallsPerActivation-1, by two.
+		let vertices = new Float32Array( this._outputDimensions * (this.numCallsPerActivation-1) * 2);
 
 		let positionAttribute = this._geometry.attributes.position;
 		this._vertices = vertices;

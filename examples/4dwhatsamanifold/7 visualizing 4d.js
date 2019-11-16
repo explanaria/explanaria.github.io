@@ -7,7 +7,7 @@ let userParams = {"mode": "orthographic", 'orthographic4Vec':[1/sq3,1/sq3,1/sq3]
 
 let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070f0",'faded':'#D6C2D6'}};
 
-let R4Embedding = null;
+let R4Embedding = null, R4Rotation = null;
 
 function colorMap(wCoordinate){
  let fourDRampAmt = Math.min(1, wCoordinate) //ramp from 0-1 then hold steady at 1
@@ -31,10 +31,11 @@ function colorMap(wCoordinate){
 
 
 class Polychoron{
-    constructor(points, lines, embeddingTransformation){
+    constructor(points, lines, embeddingTransformation, R4Rotation){
         this.points = points;
         this.lineData = lines;
         this.embeddingTransformation = embeddingTransformation;
+        this.preEmbeddingTransformation = R4Rotation;
 
         this.outputs = [];
         this.EXPLines = [];
@@ -52,6 +53,7 @@ class Polychoron{
             var line = new EXP.Array({data: [this.points[ptAIndex],this.points[ptBIndex]]});
             let output = new EXP.LineOutput({width: 10, color: 0xffffff});
             line
+                .add(this.preEmbeddingTransformation.makeLink())
                 .add(this.embeddingTransformation.makeLink())
                 .add(output);
 
@@ -89,7 +91,7 @@ class Polychoron{
     }
 }
 
-function makeHypercube(R4Embedding){
+function makeHypercube(R4Embedding, R4Rotation){
 
     let points = [];
     let lines = [];
@@ -119,7 +121,7 @@ function makeHypercube(R4Embedding){
         }
     }
 
-    return new Polychoron(points, lines, R4Embedding);
+    return new Polychoron(points, lines, R4Embedding, R4Rotation);
 }
 
 
@@ -160,6 +162,7 @@ function setup(){
 
 
     R4Embedding = new EXP.Transformation({'expr': R4EmbeddingFunc});
+    R4Rotation = new EXP.Transformation({'expr': (i,t,x,y,z,w) => [x,y,z,w]});
 
 
     
@@ -179,7 +182,7 @@ function setup(){
         ],
     R4Embedding);
     */
-    let hypercube = makeHypercube(R4Embedding);
+    let hypercube = makeHypercube(R4Embedding,R4Rotation);
 
     hypercube.objectParent.position.x = 2
 
@@ -199,7 +202,7 @@ function setup(){
             [2,3],[2,4],
             [3,4],
         ],
-    R4Embedding);
+    R4Embedding,R4Rotation);
     fivecell.objectParent.position.x = -2
 
 
@@ -213,16 +216,14 @@ async function animate(){
     EXP.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding});
     await EXP.delay(5000);
     EXP.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
+    await EXP.delay(3000);
 
-    /* //hyper-rotation!
-    EXP.TransitionTo(R4Embedding, {'expr': (i,t,x,y,z,w) => {
+    //hyper-rotation!
+    EXP.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w) => {
 let newZ = z*Math.cos(t) + -w*Math.sin(t)
 let newW = z*Math.sin(t) + w*Math.cos(t)
-       return perspectiveEmbedding(i,t,x,y,newZ,newW);
+       return [x,y,newZ,newW]
     }});
-    */
-
-//userParams.orthographic4Vec = [1.2,1.2,1.2]
 }
 
 window.addEventListener("load",function(){

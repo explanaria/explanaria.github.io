@@ -149,6 +149,10 @@
     font-size: 150px;
 }
 
+.fullscreenPopup{
+    font-size: 2.5em;
+}
+
 .fullscreenText{
     background-color: rgba(255,255,255,0.8);
     pointer-events: none;
@@ -157,6 +161,7 @@
     margin: 0;
     padding: 1em;
     width:100%;
+    top: 0%;
 }
 
 .coverBG{
@@ -172,8 +177,6 @@
     line-height: 1.2; 
 }
 
-
-
 .fullscreenText aside{
     font-size: 0.8em;
 }
@@ -188,6 +191,25 @@
  .chart canvas{
     width: 150px;
     height: 150px;
+    pointer-events: all;
+}
+
+
+
+.smolSymbolColumn{
+    display: block;
+    flex-basis: 0;
+    flex-grow: 0.25;
+    flex-shrink: 1;
+    padding: 0.75rem;
+
+    text-align: center;
+    font-size: 150px;
+
+    margin: -75px;
+}
+.smolColumn{
+    flex-grow: 0;
 }
 
 /* used in bonuses */
@@ -234,6 +256,10 @@ ul {
     }
 
     .fullscreenText{
+        font-size: 1.3em;
+    }
+
+    .fullscreenPopup{
         font-size: 3em;
     }
    

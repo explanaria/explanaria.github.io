@@ -20,7 +20,7 @@ function pointPath(i,t,x){
     return [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7), Math.sin(t/2.5)]
 }
 
-function setup(){
+function setupThree(){
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
 	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
     
@@ -43,13 +43,15 @@ function setup(){
             controls.update();
         }
 	});
+}
+
+function setup(){
+    setupThree();
 
     console.log("Loaded.");
 
     var a=1;
     var b=2;
-    let domainWidth = 2*Math.PI; //width of the area in R^2 that's being passed into this parametrization.
-
     function manifoldEmbeddingIntoR3(i,t,theta1,theta2){
         if(userPointParams.factors[0] == 'circle'){
 
@@ -73,6 +75,7 @@ function setup(){
     }
 
 
+    let domainWidth = 2*Math.PI; //width of the area in R^2 that's being passed into this parametrization.
     var torus = new EXP.Area({bounds: [[-domainWidth/2,domainWidth/2],[-domainWidth/2, domainWidth/2]], numItems: [30,30]});
     /*var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => manifoldEmbeddingIntoR3(i,t,theta1,theta2)
     });

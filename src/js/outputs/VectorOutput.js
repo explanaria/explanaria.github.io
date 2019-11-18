@@ -16,7 +16,9 @@ export class VectorOutput extends LineOutput{
 		this.arrowheads = [];
 
 
-		this.material = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width, opacity:this._opacity});
+		this.material = new THREE.LineBasicMaterial({vertexColors: THREE.VertexColors, linewidth: this._width, opacity:this._opacity});
+        //TODO: make the arrow tip colors match the colors of the lines' tips
+		this.arrowMaterial = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width, opacity:this._opacity});
 		this.lineMesh = new THREE.LineSegments(this._geometry,this.material);
 
 		this.opacity = this._opacity; // setter sets transparent flag if necessary
@@ -58,7 +60,7 @@ export class VectorOutput extends LineOutput{
 
 		this.arrowheads = new Array(this.numArrowheads);
 		for(var i=0;i<this.numArrowheads;i++){
-			this.arrowheads[i] = new THREE.Mesh(this.coneGeometry, this.material);
+			this.arrowheads[i] = new THREE.Mesh(this.coneGeometry, this.arrowMaterial);
 			threeEnvironment.scene.add(this.arrowheads[i]);
 		}
 		console.log("number of arrowheads (= number of lines):"+ this.numArrowheads);
@@ -135,6 +137,20 @@ export class VectorOutput extends LineOutput{
 			}
 
 		}
+	}
+    set opacity(opacity){
+		this.arrowMaterial.opacity = opacity;
+		this.arrowMaterial.transparent = opacity < 1;
+		this.arrowMaterial.visible = opacity > 0;
+
+		this.material.opacity = opacity;
+		this.material.transparent = opacity < 1;
+		this.material.visible = opacity > 0;
+		this._opacity = opacity;
+    }
+
+	get opacity(){
+		return this._opacity;
 	}
     removeSelfFromScene(){
         threeEnvironment.scene.remove(this.mesh);

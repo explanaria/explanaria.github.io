@@ -165,17 +165,23 @@ class LineOutput extends OutputNode{
         const numVertices = (this.numCallsPerActivation-1)*2;
         for(let i=0; i<numVertices;i++){
             //Don't forget some points appear twice - as the end of one line segment and the beginning of the next.
-            this._setColorForVertex(i, col.r, col.g, col.b);
+            this._setColorForVertexRGB(i, col.r, col.g, col.b);
         }
         //tell three.js to update colors
-		let colorAttribute = this._geometry.attributes.color;
-		colorAttribute.needsUpdate = true;
     }
-    _setColorForVertex(vertexIndex, normalizedR, normalizedG, normalizedB){
+    _setColorForVertex(vertexIndex, color){
+        //color is a THREE.Color here
+		this._setColorForVertexRGB(vertexIndex, color.r, color.g, color.b);
+    }
+    _setColorForVertexRGB(vertexIndex, normalizedR, normalizedG, normalizedB){
+        //all of normalizedR, normalizedG, normalizedB are 0-1.
 		let colorArray = this._geometry.attributes.color.array;
         colorArray[vertexIndex*3 + 0] = normalizedR;
         colorArray[vertexIndex*3 + 1] = normalizedG;
         colorArray[vertexIndex*3 + 2] = normalizedB;
+
+		let colorAttribute = this._geometry.attributes.color;
+		colorAttribute.needsUpdate = true;
     }
 	set color(color){
 		//currently only a single color is supported.

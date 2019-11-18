@@ -1,4 +1,4 @@
-let three, controls, objects, presentation;
+let three, controls, objects=[], presentation;
 
 
 let sq3 = Math.sqrt(3);
@@ -141,7 +141,7 @@ function makeHypercube(R4Embedding, R4Rotation){
 
 
 function perspectiveEmbedding(i,t,x,y,z,w){
-    return [x/(w+0.5), y/(w+0.5), z/(w+0.5)];
+    return [0.5*x/(w+0.5), 0.5*y/(w+0.5), 0.5*z/(w+0.5)];
 }
 function orthographicEmbedding(i,t,x,y,z,w){
     let wProjection = EXP.Math.multiplyScalar(w,EXP.Math.clone(userParams.orthographic4Vec));
@@ -175,13 +175,17 @@ function setupThree(){
 
     
 	presentation = new EXP.UndoCapableDirector();
+    console.log("Loaded.");
+
 }
 
 function setup(){
     setupThree();
+    setup4DPolychora();
+    setupAxes();
+}
 
-    console.log("Loaded.");
-
+function setup4DPolychora(){
 
     R4Embedding = new EXP.Transformation({'expr': R4EmbeddingFunc});
     R4Rotation = new EXP.Transformation({'expr': (i,t,x,y,z,w) => [x,y,z,w]});
@@ -204,6 +208,8 @@ function setup(){
         ],
     R4Embedding);
     */
+
+
     let hypercube = makeHypercube(R4Embedding,R4Rotation);
 
     hypercube.objectParent.position.x = 2
@@ -225,10 +231,79 @@ function setup(){
             [3,4],
         ],
     R4Embedding,R4Rotation);
-    fivecell.objectParent.position.x = -2
+    fivecell.objectParent.position.x = -2;
 
+    objects.push(hypercube);
+    objects.push(fivecell);
+}
 
-    objects = [hypercube, fivecell];
+function setupAxes(){
+    let axisSize = 1.5;
+    xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
+    xAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0]}))
+    .add(xAxisControl)
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
+    
+    xAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0]}))
+    .add(xAxisControl.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
+
+    yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    yAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
+    yAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0]}))
+    .add(yAxisControl)
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
+    yAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0]}))
+    .add(yAxisControl.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
+
+    let zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
+    zAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))
+    .add(zAxisControl)
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
+    zAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x]}))
+    .add(zAxisControl.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
+
+    //the fourth dimension!
+    wAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    wAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,x]}))
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1}));
+    wAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,-x]}))
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1}));
+
+/*
+    wAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => {
+
+        let wProjectionComponent = EXP.Math.multiplyScalar(-x,EXP.Math.clone(userParams.orthographic4Vec));
+        
+        return [...wProjectionComponent,x]
+
+    }}))
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1}));
+*/
+    [xAxis, yAxis, zAxis, wAxis].forEach((x) => objects.push(x));
+
 }
 
 

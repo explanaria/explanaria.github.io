@@ -1,0 +1,14 @@
+In 3 circle, I say this is bad because 'useless coordinates' are bad. what I should really do is draw  a path of an airplane flying over the north pole, make graphs of r(t) and phi(t), show the discontinuity, complain about the discontinuity.
+
+
+
+In bonus RP2, the entire horizontal axis of the red coordinate chart maps to the same point: north pole. this is because blue coordinate chart isn't actually right - blue coordinate chart right now is [lat, lon]. the entire top part of the blue coordinate chart maps to the same point: north pole.
+
+
+but the entire horizontal axis of red chart also maps to north pole. that's NOT RIGHT. it should map to the 0* meridian.
+
+I think I should take the BR and BL quarters of the red cordinate chart and swap them horizontally, and that would give the twist that the RP2 needs.
+
+I need:
+    - a version of 4 with a sphere  
+    - something with multiple 3D coordinate charts

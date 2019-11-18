@@ -1,13 +1,19 @@
 let three, controls, objects=[], presentation;
 
 
+
 let sq3 = Math.sqrt(3);
 let userParams = {"mode": "orthographic", 'orthographic4Vec':[1/sq3,1/sq3,1/sq3]};
 
 let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070f0",'faded':'#D6C2D6'}};
 
-let R4Embedding = null, R4Rotation = null;
+let R4Embedding = null, R4Rotation = null, positiveWOutput = null;
 
+
+
+const zeroWColor = new THREE.Color(coordinateLine4ZeroColor);
+const oneWColor = new THREE.Color(coordinateLine4Color);
+const negativeWColor = new THREE.Color(coordinateLine4NegativeColor);
 function colorMap(wCoordinate){
  let fourDRampAmt = Math.min(1, wCoordinate) //ramp from 0-1 then hold steady at 1
  let fourDAbsRampAmt = Math.min(1, Math.abs(wCoordinate)) //ramp from 0-1 then hold steady at 1
@@ -17,14 +23,12 @@ function colorMap(wCoordinate){
  return new THREE.Color().setHSL(wCoordinate, 0.5, fourDRampAmt/2);
  */
 
- //linear green->blue map
-
- let color = 40;
- let zeroWColor = new THREE.Color().setHSL((140)/360, 0.7, 0.6); //formerly 0x55e088
  if(wCoordinate > 0){
-   return zeroWColor.lerp(new THREE.Color().setHSL(0/360, 0.85, 0.74), fourDAbsRampAmt); 
+   //This should be coordinateline4color. w=+1
+   return zeroWColor.clone().lerp(oneWColor.clone(), fourDAbsRampAmt); 
  }else{
-   return zeroWColor.lerp(new THREE.Color().setHSL((140*2)/360, 0.85, 0.74), fourDAbsRampAmt); 
+    //this is coordinateLine4NegativeColor. w=-1
+   return zeroWColor.clone().lerp(negativeWColor.clone(), fourDAbsRampAmt); 
  }
 }
 
@@ -62,21 +66,8 @@ class Polychoron{
             this.outputs.push(output);
             this.objectParent.add(output.mesh);
 
-            //set up 4D color lerping by bolting it onto the existing material like a terrible person
-            output.material.vertexColors = THREE.VertexColors;
-
-	        let NUM_POINTS_IN_A_LINE = 2;
-            let NUM_LINES = 1;
-
-	        let colorArr = new Float32Array(NUM_POINTS_IN_A_LINE * NUM_LINES * 3);
-            this.setColorInArray(this.points[ptAIndex], colorArr, 0);
-            this.setColorInArray(this.points[ptBIndex], colorArr, 3);
-
-            let colorAttribute = new THREE.Float32BufferAttribute( colorArr, 3)
-
-	        output._geometry.addAttribute( 'color', colorAttribute  )
-		    colorAttribute.needsUpdate = true;
-            this.colorAttributes.push(colorAttribute);
+            //set up color lerping by memorizing the attributes like a terrible person
+            this.colorAttributes.push(output._geometry.attributes.color);
 
         }
     }
@@ -84,25 +75,23 @@ class Polychoron{
         for(var i=0;i<this.EXPLines.length;i++){
             this.EXPLines[i].activate(t);
 
+            let lineOutput = this.outputs[i];
 
-            //calculate the appropriate 4D color and set it. Manually. this is terrible. todo: make this better
-            let colorAttribute = this.colorAttributes[i];
+
+            //calculate the appropriate 4D color and set it. Manually. this is terrible. todo: make this dynamic and Transformation-chainable
             let ptA = this.points[this.lineData[i][0]];
             let ptB = this.points[this.lineData[i][1]];
 
             let ptA4DCoordinates = this.preEmbeddingTransformation.expr(i, t, ...ptA);
-            this.setColorInArray(ptA4DCoordinates, colorAttribute.array, 0);
+            let color1 = colorMap(ptA4DCoordinates[3]);
+            lineOutput._setColorForVertexRGB(0, color1.r, color1.g, color1.b);
+
             let ptB4DCoordinates = this.preEmbeddingTransformation.expr(i, t, ...ptB);
-            this.setColorInArray(ptB4DCoordinates, colorAttribute.array, 3);
-		    colorAttribute.needsUpdate = true;
-            
+            let color2 = colorMap(ptB4DCoordinates[3]);
+            lineOutput._setColorForVertexRGB(1, color2.r, color2.g, color2.b);
+
+		    lineOutput._geometry.attributes.color.needsUpdate = true;
         }
-    }
-    setColorInArray(vec4Coords, colorArray, startIndex){
-            let color = colorMap(vec4Coords[3]);
-            colorArray[startIndex + 0] = color.r;
-            colorArray[startIndex + 1] = color.g;
-            colorArray[startIndex + 2] = color.b;
     }
 }
 
@@ -281,14 +270,33 @@ function setupAxes(){
 
     //the fourth dimension!
     wAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    positiveWOutput = new EXP.VectorOutput({width:5, color: coordinateLine4Color, opacity:1});
+    let negativeWOutput = new EXP.VectorOutput({width:5, color: coordinateLine4NegativeColor, opacity:1});
+
     wAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,x]}))
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,x*Math.sqrt(3)]}))
     .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1}));
+    .add(positiveWOutput);
     wAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,-x]}))
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,-x*Math.sqrt(3)]}))
     .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1}));
+    .add(negativeWOutput);
+
+    
+    let colorForW1 = colorMap(1);
+    let colorForW0 = colorMap(0);
+    let colorForWNeg1 = colorMap(-1);
+
+    //HORRIBLE HACK ALERT
+    //when the first time activate() is called, it sets the colors and vertex arrays.
+    //meaning we need to activate it once first before messing with color data.
+    wAxis.activate(0);
+
+    positiveWOutput._setColorForVertex(0, colorForW0);
+    positiveWOutput._setColorForVertex(1, colorForW1);
+
+    negativeWOutput._setColorForVertex(0, colorForW0);
+    negativeWOutput._setColorForVertex(1, colorForWNeg1);
 
 /*
     wAxis

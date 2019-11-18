@@ -94,7 +94,7 @@ function ThreeasyEnvironment(canvasElem = null){
 
     if(!this.shouldCreateCanvas && canvasElem.offsetWidth){
         //If the canvasElement is already loaded, then the 'load' event has already fired. We need to trigger it ourselves.
-        this.onPageLoad();
+        window.requestAnimationFrame(this.onPageLoad.bind(this));
     }
 }
 

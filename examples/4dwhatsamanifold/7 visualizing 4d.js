@@ -329,8 +329,8 @@ async function animate(){
             //center of rotation is [0,0,0,0.5], hence the w - 0.5 part
         w = w-0.5
 
-        let newZ = z*Math.cos(t) + -w*Math.sin(t)
-        let newW = z*Math.sin(t) + w*Math.cos(t)
+        let newZ = z*Math.cos(t*Math.PI) + -w*Math.sin(t*Math.PI)
+        let newW = z*Math.sin(t*Math.PI) + w*Math.cos(t*Math.PI)
        return [x,y,newZ,newW + 0.5]
     }});
 }

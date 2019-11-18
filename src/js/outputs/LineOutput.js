@@ -28,7 +28,7 @@ class LineOutput extends OutputNode{
 		this._vertices;
 		this.makeGeometry();
 
-		this.material = new THREE.LineBasicMaterial({color: this._color, linewidth: this._width,opacity:this._opacity});
+		this.material = new THREE.LineBasicMaterial({vertexColors: THREE.VertexColors, linewidth: this._width,opacity:this._opacity});
 		this.mesh = new THREE.LineSegments(this._geometry,this.material);
 
 		this.opacity = this._opacity; // setter sets transparent flag if necessary
@@ -56,13 +56,16 @@ class LineOutput extends OutputNode{
 		}
 		this._geometry.setIndex( indices );*/
 
-		let MAX_POINTS = 10000;
+		const MAX_POINTS = 10000;
+        const NUM_POINTS_PER_LINE_SEGMENT = 2;
 
-		this._vertices = new Float32Array(this._outputDimensions * (MAX_POINTS-1)*2);
+		this._vertices = new Float32Array(this._outputDimensions * (MAX_POINTS-1)*NUM_POINTS_PER_LINE_SEGMENT);
+		this._colors = new Float32Array((MAX_POINTS-1)*NUM_POINTS_PER_LINE_SEGMENT * 3);
 
 		// build geometry
 
 		this._geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( this._vertices, this._outputDimensions ) );
+        this._geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( this._colors, 3 ) );
 		//this._geometry.addAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
 		//this.geometry.addAttribute( 'uv', new THREE.Float32BufferAttribute( uvs, 2 ) );
 
@@ -95,13 +98,23 @@ class LineOutput extends OutputNode{
         // Why use (this.numCallsPerActivation-1)*2? 
         // We want to render a chain with n points, each connected to the one in front of it by a line except the last one. Then because the last vertex doesn't introduce a new line, there are n-1 lines between the chain points.
         // Each line is rendered using two vertices. So we multiply the number of lines, this.numCallsPerActivation-1, by two.
-		let vertices = new Float32Array( this._outputDimensions * (this.numCallsPerActivation-1) * 2);
+        const NUM_POINTS_PER_LINE_SEGMENT = 2;
+
+		let vertices = new Float32Array( this._outputDimensions * (this.numCallsPerActivation-1) * NUM_POINTS_PER_LINE_SEGMENT);
+		let colors = new Float32Array( 3 * (this.numCallsPerActivation-1) * NUM_POINTS_PER_LINE_SEGMENT);
 
 		let positionAttribute = this._geometry.attributes.position;
 		this._vertices = vertices;
 		positionAttribute.setArray(this._vertices);
 
+		let colorAttribute = this._geometry.attributes.color;
+		this._colors = colors;
+		colorAttribute.setArray(this._colors);
+
+        this.setAllVerticesToColor(this.color);
+
 		positionAttribute.needsUpdate = true;
+		colorAttribute.needsUpdate = true;
 	}
 	evaluateSelf(i, t, x, y, z){
 		if(!this._activatedOnce){
@@ -147,11 +160,28 @@ class LineOutput extends OutputNode{
     removeSelfFromScene(){
         threeEnvironment.scene.remove(this.mesh);
     }
+    setAllVerticesToColor(color){
+        const col = new THREE.Color(color);
+        const numVertices = (this.numCallsPerActivation-1)*2;
+        for(let i=0; i<numVertices;i++){
+            //Don't forget some points appear twice - as the end of one line segment and the beginning of the next.
+            this._setColorForVertex(i, col.r, col.g, col.b);
+        }
+        //tell three.js to update colors
+		let colorAttribute = this._geometry.attributes.color;
+		colorAttribute.needsUpdate = true;
+    }
+    _setColorForVertex(vertexIndex, normalizedR, normalizedG, normalizedB){
+		let colorArray = this._geometry.attributes.color.array;
+        colorArray[vertexIndex*3 + 0] = normalizedR;
+        colorArray[vertexIndex*3 + 1] = normalizedG;
+        colorArray[vertexIndex*3 + 2] = normalizedB;
+    }
 	set color(color){
 		//currently only a single color is supported.
 		//I should really make it possible to specify color by a function.
-		this.material.color = new THREE.Color(color);
 		this._color = color;
+        this.setAllVerticesToColor(color);
 	}
 	get color(){
 		return this._color;

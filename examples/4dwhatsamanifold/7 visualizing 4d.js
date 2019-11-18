@@ -7,7 +7,7 @@ let userParams = {"mode": "orthographic", 'orthographic4Vec':[1/sq3,1/sq3,1/sq3]
 
 let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070f0",'faded':'#D6C2D6'}};
 
-let R4Embedding = null, R4Rotation = null, positiveWOutput = null;
+let R4Embedding = null, R4Rotation = null, inwardsLineControl = null;
 
 
 
@@ -282,6 +282,22 @@ function setupAxes(){
     .add(R4Embedding.makeLink())
     .add(negativeWOutput);
 
+
+    //inwards-pointing ys for the perspective
+    inwardsLineControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z/Math.abs(z)]});
+    for(let m=0;m<4;m++){
+        let i = [1,1,-1,-1][m];
+        let j = [1,-1,1,-1][m];
+        let k = [1,-1,-1,1][m];
+
+        let line = new EXP.Array({data: [[i,j,k],[i/3,j/3,k/3]]});
+        line
+        .add(inwardsLineControl.makeLink())
+        .add(new EXP.VectorOutput({width:50, color: coordinateLine4Color, opacity:1}));
+        objects.push(line);
+    }
+
+
     
     let colorForW1 = colorMap(1);
     let colorForW0 = colorMap(0);
@@ -320,8 +336,11 @@ async function animate(){
     await presentation.nextSlide();
    // EXP.TransitionTo(knotParams,{'a':3,'b':2});
     presentation.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding});
+    await EXP.delay(250);
+    presentation.TransitionTo(inwardsLineControl,{expr: (i,t,x,y,z) => [x,y,z]});
     await presentation.nextSlide();
     presentation.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
+    presentation.TransitionTo(inwardsLineControl,{expr: (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z/Math.abs(z)]});
     await presentation.nextSlide();
 
     //hyper-rotation!
@@ -329,8 +348,8 @@ async function animate(){
             //center of rotation is [0,0,0,0.5], hence the w - 0.5 part
         w = w-0.5
 
-        let newZ = z*Math.cos(t*Math.PI) + -w*Math.sin(t*Math.PI)
-        let newW = z*Math.sin(t*Math.PI) + w*Math.cos(t*Math.PI)
+        let newZ = z*Math.cos(t*Math.PI/3) + -w*Math.sin(t*Math.PI/3)
+        let newW = z*Math.sin(t*Math.PI/3) + w*Math.cos(t*Math.PI/3)
        return [x,y,newZ,newW + 0.5]
     }});
 }

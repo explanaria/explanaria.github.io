@@ -38,7 +38,7 @@ coordinateLine4NegativeColor = 'hsl('+(205+100)+', 85%, 50%)'
 coordinateLine4Color = 'hsl('+(205+110)+', 99%, 50%)'; //pink
 //coordinateLine4ZeroColor = 'hsl('+(205+0)+', 70%, 50%)' // a nice deep blue
 //coordinateLine4ZeroColor = 'hsl('+(205+80)+', 20%, 50%)' // grayish purple
-coordinateLine4ZeroColor = 'hsl('+(205+80)+', 40%, 50%)' // deep purple
+coordinateLine4ZeroColor = 'hsl('+(205+80)+', 40%, 40%)' // deep purple
 coordinateLine4NegativeColor = 'hsl('+(205+100)+', 85%, 40%)'
 
 

@@ -129,6 +129,73 @@ function makeHypercube(R4Embedding, R4Rotation){
 }
 
 
+
+function torus3Parametrization(theta1,theta2,theta3){
+    let a=0.5,b=1,c=1;
+    return [
+    ((a*Math.cos(theta1)+b)*Math.cos(theta2)+c)*Math.cos(theta3),
+    ((a*Math.cos(theta1)+b)*Math.sin(theta2)+c)*Math.cos(theta3),
+    (a*Math.sin(theta1)+c)*Math.cos(theta3),
+    Math.sin(theta3),
+    ];
+}
+
+function makeTorus3(R4Embedding, R4Rotation){
+
+    let points = [];
+    let lines = [];
+
+    //utility function used to avoid adding [a,b] and [b,a] as two separate lines twice
+    function addLine(oneIndex, twoIndex){
+        if(oneIndex < twoIndex){
+             lines.push([oneIndex,twoIndex]) 
+        }
+    }
+
+    const firstSubdivisions = 8;
+    const secondSubdivisions = 8;
+    const thirdSubdivisions = 6;
+
+    const calcArrayIndex = (index1, index2, index3) => index3 + index2* (thirdSubdivisions+1) + index1 * (thirdSubdivisions+1)*(secondSubdivisions+1);
+
+    for(let index1=0;index1<=firstSubdivisions;index1++){
+        for(let index2=0;index2<=secondSubdivisions;index2++){
+            for(let index3=0;index3<=thirdSubdivisions;index3++){
+                    let theta1 = index1/firstSubdivisions * Math.PI*2;
+                    let theta2 = index2/secondSubdivisions * Math.PI*2;
+                    let theta3 = index3/thirdSubdivisions * Math.PI*2;
+
+                    let point = torus3Parametrization(theta1,theta2,theta3);
+                    points.push(point);
+        
+                    //line time
+                    let thisIndex = calcArrayIndex(index1, index2, index3);
+
+                    //line to the point that shares 1st,2nd coords
+                    if(index3 != thirdSubdivisions){
+                      let thirdNeighborIndex = calcArrayIndex(index1, index2, index3+1);
+                      addLine(thisIndex,thirdNeighborIndex);
+                    }
+                     //line to the point that shares 1st,3rd coords
+                    if(index2 != secondSubdivisions){
+                      let secondNeighborIndex = calcArrayIndex(index1, index2+1, index3);
+                      addLine(thisIndex,secondNeighborIndex);
+                    }
+                    //line to the point that shares 2nd,3rd coords
+                    if(index1 != firstSubdivisions){
+                      let firstNeighborIndex = calcArrayIndex(index1+1, index2, index3);
+                      addLine(thisIndex,firstNeighborIndex);
+                    }
+            }
+        }
+    }
+
+    return new Polychoron(points, lines, R4Embedding, R4Rotation);
+}
+
+
+
+
 function perspectiveEmbedding(i,t,x,y,z,w){
     return [0.5*x/(w+0.5), 0.5*y/(w+0.5), 0.5*z/(w+0.5)];
 }
@@ -220,7 +287,13 @@ function setup4DPolychora(){
             [3,4],
         ],
     R4Embedding,R4Rotation);
-    fivecell.objectParent.position.x = -2;
+    fivecell.objectParent.position.x = -3;
+
+    /*
+    //VERY COOL! but also a bit laggy
+    let torus3 = makeTorus3(R4Embedding, R4Rotation);
+    objects.push(torus3);
+    */
 
     objects.push(hypercube);
     objects.push(fivecell);

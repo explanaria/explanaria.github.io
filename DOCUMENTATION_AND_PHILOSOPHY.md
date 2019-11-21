@@ -209,6 +209,28 @@ See the examples in the `/examples` folder for more!
     new EXP.SurfaceOutput({color:0xcccccc, showGrid: true, showSolid: false, gridSquares: 100})); 
     ```
 
+
+* EXP.FlatArrayOutput
+
+    An Output that saves points to a 1D array, with every coordinate in sequence. Useful to save the values of EXP.Transformation()s to use them elsewhere.
+
+	Parameters:
+	* array: an array you want to store the results in. This array will be modified in-place.
+
+    Example usage:
+
+    ```
+    let coords = [];
+    new EXP.FlatArrayOutput({array:coords}));
+
+    let sineValues = [];
+    let interval = new EXP.Area({bounds: [[0,2*Math.PI]]});
+    interval.add(new Transformation({expr: (i,t,x) => [Math.sin(x+t)]}))
+        .add(new EXP.FlatArrayOutput({array: sineValues});
+
+    //now when interval is activate()d, sineValues will contain a dynamically updating table of numeric sin() values, suitable for graphing using some other library!
+    ```
+
 # TransitionTo()
 
 Explanaria allows for animated transitions between two functions, or parameters, or in fact any numeric key. This is done through the `EXP.TransitionTo` function.

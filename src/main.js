@@ -17,5 +17,6 @@ export * from './js/outputs/LineOutput.js';
 export * from './js/outputs/PointOutput.js';
 export * from './js/outputs/VectorOutput.js';
 export * from './js/outputs/SurfaceOutput.js';
+export * from './js/outputs/FlatArrayOutput.js';
 
 export * from './js/Director.js';

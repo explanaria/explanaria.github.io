@@ -138,6 +138,20 @@ export class VectorOutput extends LineOutput{
 
 		}
 	}
+
+
+	set color(color){
+		//currently only a single color is supported.
+		//I should really make it possible to specify color by a function.
+		this._color = color;
+        this.setAllVerticesToColor(color);
+        this.arrowMaterial.color = this._color;
+	}
+
+	get color(){
+		return this._color;
+	}
+
     set opacity(opacity){
 		this.arrowMaterial.opacity = opacity;
 		this.arrowMaterial.transparent = opacity < 1;

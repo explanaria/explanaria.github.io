@@ -18,7 +18,7 @@ class SurfaceOutput extends OutputNode{
 			}
 		*/
 		this._opacity = options.opacity !== undefined ? options.opacity : 1;
-		this._color = options.color !== undefined ? options.color : 0x55aa55;
+		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
 
 		this._gridSquares = options.gridSquares !== undefined ? options.gridSquares : 16;
 		this._showGrid = options.showGrid !== undefined ? options.showGrid : true;

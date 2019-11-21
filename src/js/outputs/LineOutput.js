@@ -15,7 +15,7 @@ class LineOutput extends OutputNode{
 
 		this._width = options.width !== undefined ? options.width : 5;
 		this._opacity = options.opacity !== undefined ? options.opacity : 1;
-		this._color = options.color !== undefined ? options.color : 0x55aa55;
+		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
 
 		this.numCallsPerActivation = 0; //should always be equal to this.points.length
 		this.itemDimensions = []; // how many times to be called in each direction

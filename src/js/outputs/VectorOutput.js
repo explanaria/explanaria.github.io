@@ -38,7 +38,10 @@ export class VectorOutput extends LineOutput{
 
 		this.makeGeometry();
 
-		threeEnvironment.scene.add(this.lineMesh);
+        this.mesh = new THREE.Object3D();
+        this.mesh.add(this.lineMesh);
+
+		threeEnvironment.scene.add(this.mesh);
 	}
 	_onFirstActivation(){
 		super._onFirstActivation();
@@ -61,7 +64,7 @@ export class VectorOutput extends LineOutput{
 		this.arrowheads = new Array(this.numArrowheads);
 		for(var i=0;i<this.numArrowheads;i++){
 			this.arrowheads[i] = new THREE.Mesh(this.coneGeometry, this.arrowMaterial);
-			threeEnvironment.scene.add(this.arrowheads[i]);
+            this.mesh.add(this.arrowheads[i]);
 		}
 		console.log("number of arrowheads (= number of lines):"+ this.numArrowheads);
 	}

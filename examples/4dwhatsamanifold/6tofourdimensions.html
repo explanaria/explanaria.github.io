@@ -13,6 +13,7 @@
 
   <script src="colors.js"></script>
   <script src="sliders.js"></script>
+  <script src="RotateAboutCenterControls.js"></script>
   <script src="polychora.js"></script>
   <script src="7 visualizing 4d.js"></script>
   <script src="6fourdimensions.js"></script>
@@ -191,14 +192,57 @@
 
    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
         <h1>Visualization type: "Perspective Projection"</h1>
-        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by sending [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>,<span class="coord4">w</span>] to [<span class="coord1">x</span>/<span class="coord4">w</span>,<span class="coord2">y</span>/<span class="coord4">w</span>,<span class="coord3">z</span>/<span class="coord4">w</span>].
-        <div>Limitation: can't visualize [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>,<span class="coord4">0</span>] (dividing by zero). Also, HUGE distortion when <span class="coord4">w</span>≈0 since <span class="coord4">w</span>≈0 means 1/<span class="coord4">w</span> is huge.
+        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by sending [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>,<span class="coord4">w</span>] to [<span class="coord1">x</span>/<span class="coord4">w</span>,<span class="coord2">y</span>/<span class="coord4">w</span>,<span class="coord3">z</span>/<span class="coord4">w</span>].</div>
+        <div>Limitation: can't visualize [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>,<span class="coord4">0</span>] (dividing by zero). Also, HUGE distortion when <span class="coord4">w</span>≈0 since <span class="coord4">w</span>≈0 means 1/<span class="coord4">w</span> is huge.</div>
     
     </div>
 
-    <div class="exp-slide"> </div>
-    <div class="exp-slide"> </div>
+    <div class="exp-slide exp-text fullscreenPopup">
+        <div>Cool thing we can do in 4D:</div>
+        <h1>Rotations!</h1>
+    </div>
+    
+    <div class="exp-slide exp-text fullscreenPopup">
+        <h1>But before 4D rotations, let's look at 3D rotations</h1>
+        <div>Back to a normal 3D cube.</div>
+    </div>
 
+    <div class="exp-slide exp-text fullscreenPopup">
+        <h1>Simple 3D rotations:</h1>
+        <div>Rotating around a plane, like the XY plane.</div>
+    </div>
+
+
+    <div class="exp-slide exp-text fullscreenPopup">
+        <h1>Simple 3D rotations in 4D</h1>
+        <br />
+        <h1> We're only changing <span class="coord1">x</span>,<span class="coord2">y</span>, and<span class="coord3">z</span>, so our new fourth <span class="coord4">w</span> axis stays the same.</h1>
+    </div>
+
+
+    <div class="exp-slide exp-text fullscreenPopup">
+        <h1>A simple 4D rotation (orthographic):</h1>
+        <br />
+        <h1>Rotating around the <span class="coord3">z</span><span class="coord4">w</span> plane.</h1>
+    </div>
+
+    <div class="exp-slide exp-text fullscreenPopup">
+        <h1>A simple 4D rotation (perspective):</h1>
+        <br />
+        <h1>Rotating around the <span class="coord3">z</span><span class="coord4">w</span> plane.</h1>
+        <div>Uh oh - distortion from dividing by 0!</div>
+    </div>
+
+    <div class="exp-slide exp-text fullscreenPopup">
+        <h1>A simple 4D rotation (better perspective):</h1>
+        <br />
+        <h1>Rotating around the <span class="coord3">z</span><span class="coord4">w</span> plane.</h1>
+        <div>Adding <span class="coord4">w = w<sub>old</sub> +1</span> means we aren't dividing by 0 anymore - and it looks super cool.</div>
+    </div>
+
+    <div class="exp-slide exp-text fullscreenPopup">
+        <h1></h1>
+    </div>
 
 
   </div>

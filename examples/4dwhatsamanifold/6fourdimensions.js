@@ -1,4 +1,4 @@
-let three, controls, objects=[], knotParams;
+let three, controls, controlsToRotateAboutOrigin, objects=[], knotParams;
 
 let pointCoords = [0,0,0];
 
@@ -24,17 +24,21 @@ function pointPath(i,t,x){
     return [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7), Math.sin(t/2.5)]
 }
 
+
 function setupThree(){
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
 	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
-    
 
+    controlsToRotateAboutOrigin = new RotateAboutCenterControls([axesParent],three.renderer.domElement);
+    
 	three.camera.position.z = 3;
 	three.camera.position.y = 0.5;
 
     controls.autoRotate = true;    
     controls.enableKeys = false;
     controls.autoRotateSpeed = 1;
+
+    controlsToRotateAboutOrigin.enabled = false;
     
 	three.on("update",function(time){
 		for(var x of objects){
@@ -43,8 +47,8 @@ function setupThree(){
 
         //HACKY HACK ALERT. If I don't disable the controls, then when I try to lerp the camera position they both fight for domination over camera rotation, making a jerky ride.
 		if(settings.updateControls){
-
             controls.update();
+            controlsToRotateAboutOrigin.update(time.delta);
         }
 	});
 }
@@ -85,9 +89,7 @@ function setup(){
 
     setup4DEmbedding(); //before 3DAxes
 
-    setup3DAxes();
-
-    setup4DAxes(); //this sets wAxis
+    setup4DAxes();
 
     wAxis.getDeepestChildren().forEach((output) => {
         output.opacity = 0;
@@ -190,23 +192,21 @@ function setup(){
     [threeDPoint, fourthManifoldPoint, pointCoordinateArrows, pointUpdater, multipleManifoldPoints].forEach( (x) => objects.push(x));
 }
 
-
 function setup3DAxes(){
-
     let axisSize = 1.5;
     xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
     xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
     xAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0,0]}))
     .add(xAxisControl)
-    .add(R4Rotation.makeLink())
+    //.add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
     
     xAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0,0]}))
     .add(xAxisControl.makeLink())
-    .add(R4Rotation.makeLink())
+    //.add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
 
@@ -215,13 +215,13 @@ function setup3DAxes(){
     yAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0,0]}))
     .add(yAxisControl)
-    .add(R4Rotation.makeLink())
+    //.add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
     yAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0,0]}))
     .add(yAxisControl.makeLink())
-    .add(R4Rotation.makeLink())
+    //.add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
 
@@ -230,13 +230,13 @@ function setup3DAxes(){
     zAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x,0]}))
     .add(zAxisControl)
-    .add(R4Rotation.makeLink())
+    //.add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
     zAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x,0]}))
     .add(zAxisControl.makeLink())
-    .add(R4Rotation.makeLink())
+    //.add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
     
@@ -335,6 +335,21 @@ async function animate(){
 
     if(animate4D){
         await animateBackTo3DEmbedding();
+
+        //fade away the point and its arrows
+        pointCoordinateArrows.getDeepestChildren().forEach((output) => {
+            presentation.TransitionTo(output, {opacity:0}, 1000);
+        });
+        [manifold4PointOutput,wAxisCoordinateArrowOutput].forEach((output) => {
+            presentation.TransitionTo(output, {opacity:0}, 1000);
+        });
+        //and the DOM coords
+        try{
+            let threeDCoords = document.getElementById("coords");
+            presentation.TransitionTo(threeDCoords.style, {'opacity':0}, 0);
+        }catch(e){}
+
+        await presentation.nextSlide();
         await animate4D();
 
     }

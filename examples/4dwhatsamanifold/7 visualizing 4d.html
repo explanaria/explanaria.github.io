@@ -13,6 +13,8 @@
 
   <script src="colors.js"></script>
   <script src="sliders.js"></script>
+  <script src="polychora.js"></script>
+  <script src="7setup.js"></script>
   <script src="7 visualizing 4d.js"></script>
 
 
@@ -52,8 +54,8 @@
       <div id="textArea" class="non3DFooterPart">
         It's a hypercube! And a 5-cell!
 
-        <button onclick="EXP.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding});"> Stereographic </button>
-        <button onclick="EXP.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});"> Perspective </button>
+        <button onclick="animateTo4DOrtho()"> Stereographic </button>
+        <button onclick="animateTo4DPerspective()"> Perspective </button>
       </div>
   </div>
 </body>

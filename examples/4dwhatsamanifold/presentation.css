@@ -144,6 +144,7 @@
 
 .fullscreenPopup{
     font-size: 2.5em;
+    font-family: "Computer Modern Serif";
 }
 
 .fullscreenText{
@@ -171,6 +172,14 @@
 }
 
 .fullscreenText aside{
+    font-size: 70%;
+}
+
+.fullscreenPopup h1{
+    font-size: 1.5em;
+    text-align: center;  
+}
+.fullscreenPopup aside{
     font-size: 70%;
 }
 
@@ -208,6 +217,12 @@
 .willFadeInFromJS{
     opacity:0; 
     transition: opacity 0.75s ease-in-out;
+}
+
+/* used in 5.5 */
+.flexBR{
+    flex-grow: 1;
+    max-height: 1em;
 }
 
 /* used in bonuses */

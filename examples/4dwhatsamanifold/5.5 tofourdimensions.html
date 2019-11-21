@@ -13,6 +13,8 @@
 
   <script src="colors.js"></script>
   <script src="sliders.js"></script>
+  <script src="polychora.js"></script>
+  <script src="7 visualizing 4d.js"></script>
   <script src="5.5fourdimensions.js"></script>
 
 
@@ -54,29 +56,29 @@
         </canvas>
       </div>
       <div id="textArea" class="non3DFooterPart">
-        <br />
+        <span class="flexBR"></span>
 
 	    <div id="coords" style="opacity: 1" class="is-mobile">
-            <span id="" class="">
+            <span id="">
                 [
             </span>
-            <span id="coord1" class=""></span>
-            <span id="" class="">
+            <span class="coord1 coord1-num"></span>
+            <span id="">
                 ,
             </span>
-            <span id="coord2" class=""></span>
-            <span id="" class="">
+            <span class="coord2 coord2-num"></span>
+            <span id="">
                 ,
             </span>
-            <span id="coord3" class=""></span>
+            <span class="coord3 coord3-num"></span>
 
             <span id="coord4Reveal" class="coord4Reveal" style="font-size: 0px;">
-                <span id="coord4comma" class="">
+                <span id="coord4comma">
                     ,
                 </span>
-                <span id="coord4" class=""></span>
+                <span class="coord4 coord4-num"></span>
             </span>
-            <span id="" class="">
+            <span id="">
                 ]
             </span>
 	    </div>
@@ -91,73 +93,98 @@
         </div>
 
 
-      <div class="fullscreenText coverBG modal is-active exp-slide" style="opacity:0">
-        <div>
-            <h1>4 dimensions: It's Just Another Number</h1>
-            <br />
-            If there's one thing you should take away from this talk, it's this: 4D coordinates are just four normal numbers.
-        </div>
+      <div class="exp-text fullscreenText coverBG modal is-active exp-slide" style="opacity:0">
+        <h1>4 dimensions: It's Just Another Number</h1>
+        <span class="flexBR"></span>
+        <span>If there's one thing you should take away from this talk, it's this: 4D coordinates are just four normal numbers.</span>
+        <span class="flexBR"></span><span class="flexBR"></span>
+        <h1 class="willFadeInFromJS">Thanks for coming.</h1>
+        <span class="flexBR"></span><span class="flexBR"></span>
+        <h1 class="willFadeInFromJS">Wait! Numbers are great, but can we <u>visualize</u> 4D coordinates?</h1>
+        <span class="flexBR"></span>
+        <span class="willFadeInFromJS">Yup, but it's not as easy as 3D. </span>
       </div>
 
-        <div class="fullscreenText coverBG modal is-active exp-slide">
-            <div>
-                <h1> We can extend familiar things to 4D! </h1>
-                    <br />
-                    A cube's vertices are the set of all points where each coordinate is ±1.
-                <br><br>
-                <div class="columns">
-                    <div class="column">
-                        <h1 class="horizontal-center"> 3D </h1>
-
-                        <div>[<span class='x'>±1</span>,<span class='y'>0</span>,<span class='z'>0</span>]</div>
-                        <div>[<span class='x'>0</span>,<span class='y'>±1</span>,<span class='z'>0</span>]</div>
-                        <div>[<span class='x'>0</span>,<span class='y'>0</span>,<span class='z'>±1</span>]</div>
-                        <aside> and combinations: [<span class='x'>-1</span>,<span class='y'> 0</span>,<span class='z'> 1</span>], etc.</aside>
-                    </div>
-
-                    <div class="column">
-                        <h1 class="horizontal-center"> 4D </h1>
-                        <div>[<span class='x'>±1</span>,<span class='y'>0</span>,<span class='z'>0</span>,<span class='w'>0</span>]</div>
-                        <div>[<span class='x'>0</span>,<span class='y'>±1</span>,<span class='z'>0</span>,<span class='w'>0</span>]</div>
-                        <div>[<span class='x'>0</span>,<span class='y'>0</span>,<span class='z'>±1</span>,<span class='w'>0</span>]</div>
-                        <div>[<span class='x'>0</span>,<span class='y'>0</span>,<span class='z'>0</span>,<span class="highlight"><span class='w'>±1</span></span>]</div>
-                        <aside> and combinations: [<span class='x'>-1</span>,<span class='y'> 0</span>,<span class='z'> 1</span>,<span class='w'> 1</span>], etc.</aside>
-                    </div>
-                </div>
-            </div>
-          </div>
-
-          <div class="fullscreenText coverBG modal is-active exp-slide" style="opacity:0">
-            <div>
-                <h1> Extending familiar things to 4D: The Sequel </h1>
-                <br />
-                    A circle is the set of all points that are 1 unit away from the origin.
-                <br><br>
-                <div class="columns">
-                    <div class="column">
-                        <h1 class="horizontal-center"> 3D </h1>
-
-                        <div> <span class='x'>x</span><sup>2</sup> + <span class='y'>y</span><sup>2</sup> + <span class='z'>z</span><sup>2</sup> = 1</div>
-                    </div>
-
-                    <div class="column">
-                        <h1> 4D </h1>
-
-                        <div> <span class='x'>x</span><sup>2</sup> + <span class='y'>y</span><sup>2</sup> + <span class='z'>z</span><sup>2</sup> + <span class="highlight"><span class='w'>w</span><sup>2</sup></span> = 1</div>
-                    </div>
-                </div>
-            </div>
-          </div>
+      <div class="exp-text fullscreenText modal is-active coverBG exp-slide" style="opacity:0">
+        <h1>4 dimensions: It's Just Another Number</h1>
+        <span class="flexBR"></span>
+        <span>If there's one thing you should take away from this talk, it's this: 4D coordinates are just four normal numbers.</span>
+        <span class="flexBR"></span><span class="flexBR"></span>
+        <h1>Thanks for coming.</h1>
+        <span class="flexBR"></span><span class="flexBR"></span>
+        <h1 class="willFadeInFromJS">Wait! Numbers are great, but can we <u>visualize</u> 4D coordinates?</h1>
+        <span class="flexBR"></span>
+        <span class="willFadeInFromJS">Yup, but it's not as easy as 3D. </span>
       </div>
 
-    <!--
-      <div class="fullscreenText modal is-active exp-slide">
-        <div>
-            <h1> 3-manifolds </h1>
-            You can also extend a torus in the exact same way! But to visualize it, you need to get creative.
-        </div>
+
+      <div class="exp-text fullscreenText modal is-active coverBG exp-slide" style="opacity:0">
+        <h1>4 dimensions: It's Just Another Number</h1>
+        <span class="flexBR"></span>
+        <span>If there's one thing you should take away from this talk, it's this: 4D coordinates are just four normal numbers.</span>
+        <span class="flexBR"></span><span class="flexBR"></span>
+        <h1 style="text-decoration: line-through">Thanks for coming.</h1>
+        <span class="flexBR"></span><span class="flexBR"></span>
+        <h1>Wait! Numbers are great, but can we <u>visualize</u> 4D coordinates?</h1>
+        <span class="flexBR"></span>
+        <span class="willFadeInFromJS">Yup, but it's not as easy as 3D. </span>
       </div>
-    -->
+
+      <div class="exp-text fullscreenText modal is-active coverBG exp-slide" style="opacity:0">
+        <h1>4 dimensions: It's Just Another Number</h1>
+        <span class="flexBR"></span>
+        <span>If there's one thing you should take away from this talk, it's this: 4D coordinates are just four normal numbers.</span>
+        <span class="flexBR"></span><span class="flexBR"></span>
+        <h1 style="text-decoration: line-through">Thanks for coming.</h1>
+        <span class="flexBR"></span><span class="flexBR"></span>
+        <h1>Wait! Numbers are great, but can we <u>visualize</u> 4D coordinates?</h1>
+        <span class="flexBR"></span>
+        <span>Yup, but it's not as easy as 3D. </span>
+      </div>
+
+
+      <!--<div class="exp-text fullscreenText exp-slide" style="opacity:0">
+        <h1>Strategy 1: Color according to 4th coordinate</h1>
+      </div> -->
+
+    <div class="exp-slide"> </div>
+    <div class="exp-slide"> </div>
+    <div class="exp-slide"> </div>
+    <div class="exp-slide"> </div>
+    <div class="exp-slide"> </div>
+
+    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
+        <h1>This is "Stereographic Projection:"</h1>
+        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="coord4">some fixed direction vector</span>) to the [x,y,z] coordinates.</div>
+        <div class="willFadeInFromJS">...</div>
+    
+    </div>
+
+    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
+        <h1>This is "Stereographic Projection:"</h1>
+        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="coord4">some fixed direction vector</span>) to the [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>] coordinates.</div>
+        <div>[x,y,z] = [<span class="coord1 coord1-num"></span>,<span class="coord2 coord2-num"></span>,<span class="coord3 coord3-num"></span>] + <span class="coord4 coord4-num"></span>[<span id="orthocoord1">a</span>,<span id="orthocoord2">b</span>,<span id="orthocoord3">c</span>]</div>
+    
+    </div>
+
+    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
+        <h1>This is "Stereographic Projection:"</h1>
+        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="coord4">some fixed direction vector</span>) to the [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>] coordinates.</div>
+        <div>[x,y,z] = [<span class="coord1 coord1-num"></span>,<span class="coord2 coord2-num"></span>,<span class="coord3 coord3-num"></span>] + <span class="coord4 coord4-num"></span>[<span id="orthocoord1">a</span>,<span id="orthocoord2">b</span>,<span id="orthocoord3">c</span>]</div>
+    
+    </div>
+
+    <div class="exp-slide"> </div>
+    <div class="exp-slide"> </div>
+
+
+    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
+        <h1>This is "Perspective Projection:"</h1>
+        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by sending [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>,<span class="coord4">w</span>] to [<span class="coord1">x</span>/<span class="coord4">w</span>,<span class="coord2">y</span>/<span class="coord4">w</span>,<span class="coord3">z</span>/<span class="coord4">w</span>].
+        <div>Limitation: can't visualize [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>,<span class="coord4">0</span>] (dividing by zero). Also, HUGE distortion when <span class="coord4">w</span>≈0 since <span class="coord4">w</span>≈0 means 1/<span class="coord4">w</span> is huge.
+    
+    </div>
+
   </div>
 </body>
 </html>

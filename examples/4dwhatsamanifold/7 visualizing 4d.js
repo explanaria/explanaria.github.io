@@ -1,19 +1,18 @@
-let three, controls, objects=[], presentation;
-
-
 
 let sq3 = Math.sqrt(3);
-let userParams = {"mode": "orthographic", 'orthographic4Vec':[1/sq3,1/sq3,1/sq3]};
 
-let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070f0",'faded':'#D6C2D6'}};
+if(userParams === undefined){
+    var userParams = {};
+}
+userParams.mode= "orthographic";
+userParams.orthographic4Vec=[1/sq3,1/sq3,1/sq3];
 
 let R4Embedding = null, R4Rotation = null, inwardsLineControl = null;
-
-
 
 const zeroWColor = new THREE.Color(coordinateLine4ZeroColor);
 const oneWColor = new THREE.Color(coordinateLine4Color);
 const negativeWColor = new THREE.Color(coordinateLine4NegativeColor);
+
 function colorMap(wCoordinate){
  let fourDRampAmt = Math.min(1, wCoordinate) //ramp from 0-1 then hold steady at 1
  let fourDAbsRampAmt = Math.min(1, Math.abs(wCoordinate)) //ramp from 0-1 then hold steady at 1
@@ -33,171 +32,9 @@ function colorMap(wCoordinate){
 }
 
 
-class Polychoron{
-    constructor(points, lines, embeddingTransformation, R4Rotation){
-        this.points = points;
-        this.lineData = lines;
-        this.embeddingTransformation = embeddingTransformation;
-        this.preEmbeddingTransformation = R4Rotation;
-
-        this.outputs = [];
-        this.EXPLines = [];
-
-        this.color = 0x00ff88;
-        this.colorAttributes = []; //the attributes containing arrays for color. this is a giant hacky way of changing color for EXP.LineOutputs
-
-        this.objectParent = new THREE.Object3D();
-        three.scene.add(this.objectParent);
-
-        this.makeEXPLines(lines);        
-    }
-    makeEXPLines(){
-        for(var i=0;i<this.lineData.length;i++){
-            let ptAIndex = this.lineData[i][0];
-            let ptBIndex = this.lineData[i][1];
-            var line = new EXP.Array({data: [this.points[ptAIndex],this.points[ptBIndex]]});
-            let output = new EXP.LineOutput({width: 10, color: 0xffffff});
-            line
-                .add(this.preEmbeddingTransformation.makeLink())
-                .add(this.embeddingTransformation.makeLink())
-                .add(output);
-
-            this.EXPLines.push(line);
-            this.outputs.push(output);
-            this.objectParent.add(output.mesh);
-
-            //set up color lerping by memorizing the attributes like a terrible person
-            this.colorAttributes.push(output._geometry.attributes.color);
-
-        }
-    }
-    activate(t){
-        for(var i=0;i<this.EXPLines.length;i++){
-            this.EXPLines[i].activate(t);
-
-            let lineOutput = this.outputs[i];
-
-
-            //calculate the appropriate 4D color and set it. Manually. this is terrible. todo: make this dynamic and Transformation-chainable
-            let ptA = this.points[this.lineData[i][0]];
-            let ptB = this.points[this.lineData[i][1]];
-
-            let ptA4DCoordinates = this.preEmbeddingTransformation.expr(i, t, ...ptA);
-            let color1 = colorMap(ptA4DCoordinates[3]);
-            lineOutput._setColorForVertexRGB(0, color1.r, color1.g, color1.b);
-
-            let ptB4DCoordinates = this.preEmbeddingTransformation.expr(i, t, ...ptB);
-            let color2 = colorMap(ptB4DCoordinates[3]);
-            lineOutput._setColorForVertexRGB(1, color2.r, color2.g, color2.b);
-
-		    lineOutput._geometry.attributes.color.needsUpdate = true;
-        }
-    }
-}
-
-function makeHypercube(R4Embedding, R4Rotation){
-
-    let points = [];
-    let lines = [];
-
-    //utility function used to avoid adding [a,b] and [b,a] as two separate lines twice
-    function addLine(oneIndex, twoIndex){
-        if(oneIndex < twoIndex){
-             lines.push([oneIndex,twoIndex]) 
-        }
-    }
-
-    for(let x=0;x<=1;x++){ //-1 - 1
-        for(let y=0;y<=1;y++){
-            for(let z=0;z<=1;z++){
-                for(let w=0;w<=1;w++){
-                    let point = [x-0.5,y-0.5,z-0.5, w] //xyz are -1/2 to 1/2, w is 0-1
-                    points.push(point);
-        
-                    //we should now add a line to every point that shares 3/4 coordinates
-                    let pointIndex = w + 2*z + 4*y + 8*x;
-                    addLine(pointIndex, ((1-w)+ 2*z     +4*y     + 8*x));
-                    addLine(pointIndex, (w    + 2*(1-z) +4*y     + 8*x));
-                    addLine(pointIndex, (w    + 2*z     +4*(1-y) + 8*x));
-                    addLine(pointIndex, (w    + 2*z     +4*y     + 8*(1-x)));
-                }
-            }
-        }
-    }
-
-    return new Polychoron(points, lines, R4Embedding, R4Rotation);
-}
-
-
-
-function torus3Parametrization(theta1,theta2,theta3){
-    let a=0.5,b=1,c=1;
-    return [
-    ((a*Math.cos(theta1)+b)*Math.cos(theta2)+c)*Math.cos(theta3),
-    ((a*Math.cos(theta1)+b)*Math.sin(theta2)+c)*Math.cos(theta3),
-    (a*Math.sin(theta1)+c)*Math.cos(theta3),
-    Math.sin(theta3),
-    ];
-}
-
-function makeTorus3(R4Embedding, R4Rotation){
-
-    let points = [];
-    let lines = [];
-
-    //utility function used to avoid adding [a,b] and [b,a] as two separate lines twice
-    function addLine(oneIndex, twoIndex){
-        if(oneIndex < twoIndex){
-             lines.push([oneIndex,twoIndex]) 
-        }
-    }
-
-    const firstSubdivisions = 8;
-    const secondSubdivisions = 8;
-    const thirdSubdivisions = 6;
-
-    const calcArrayIndex = (index1, index2, index3) => index3 + index2* (thirdSubdivisions+1) + index1 * (thirdSubdivisions+1)*(secondSubdivisions+1);
-
-    for(let index1=0;index1<=firstSubdivisions;index1++){
-        for(let index2=0;index2<=secondSubdivisions;index2++){
-            for(let index3=0;index3<=thirdSubdivisions;index3++){
-                    let theta1 = index1/firstSubdivisions * Math.PI*2;
-                    let theta2 = index2/secondSubdivisions * Math.PI*2;
-                    let theta3 = index3/thirdSubdivisions * Math.PI*2;
-
-                    let point = torus3Parametrization(theta1,theta2,theta3);
-                    points.push(point);
-        
-                    //line time
-                    let thisIndex = calcArrayIndex(index1, index2, index3);
-
-                    //line to the point that shares 1st,2nd coords
-                    if(index3 != thirdSubdivisions){
-                      let thirdNeighborIndex = calcArrayIndex(index1, index2, index3+1);
-                      addLine(thisIndex,thirdNeighborIndex);
-                    }
-                     //line to the point that shares 1st,3rd coords
-                    if(index2 != secondSubdivisions){
-                      let secondNeighborIndex = calcArrayIndex(index1, index2+1, index3);
-                      addLine(thisIndex,secondNeighborIndex);
-                    }
-                    //line to the point that shares 2nd,3rd coords
-                    if(index1 != firstSubdivisions){
-                      let firstNeighborIndex = calcArrayIndex(index1+1, index2, index3);
-                      addLine(thisIndex,firstNeighborIndex);
-                    }
-            }
-        }
-    }
-
-    return new Polychoron(points, lines, R4Embedding, R4Rotation);
-}
-
-
-
 
 function perspectiveEmbedding(i,t,x,y,z,w){
-    return [0.5*x/(w+0.5), 0.5*y/(w+0.5), 0.5*z/(w+0.5)];
+    return [0.5*x/(w-0.5), 0.5*y/(w-0.5), 0.5*z/(w-0.5)];
 }
 function orthographicEmbedding(i,t,x,y,z,w){
     let wProjection = EXP.Math.multiplyScalar(w,EXP.Math.clone(userParams.orthographic4Vec));
@@ -212,64 +49,21 @@ function R4EmbeddingFunc(i,t,x,y,z,w){
     return orthographicEmbedding(i,t,x,y,z,w)
 }
 
+function setup4DEmbedding(){
+    R4Embedding = new EXP.Transformation({'expr': R4EmbeddingFunc});
+    R4Rotation = new EXP.Transformation({'expr': (i,t,x,y,z,w) => [x,y,z,w]});
 
-function setupThree(){
-	three = EXP.setupThree(60,15,document.getElementById("canvas"));
-	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+    R4OrthoVector = new EXP.Transformation({'expr': (i,t) => [1/sq3,1/sq3,1/sq3]}); //Transformation to control the projection of the w axis
     
-
-	three.camera.position.z = 6;
-	three.camera.position.y = 0.5;
-    //controls.autoRotate = true;
-    
-	three.on("update",function(time){
-		for(var x of objects){
-			x.activate(time.t);
-		}
-		controls.update();
-	});
-
-    
-	presentation = new EXP.UndoCapableDirector();
-    console.log("Loaded.");
-
-}
-
-function setup(){
-    setupThree();
-    setup4DPolychora();
-    setupAxes();
+    let R4OrthoVecActivator = new EXP.Array({data: [[0]]});
+    R4OrthoVecActivator.add(R4OrthoVector).add(new EXP.FlatArrayOutput({array: userParams.orthographic4Vec}));
+    objects.push(R4OrthoVecActivator);
 }
 
 function setup4DPolychora(){
 
-    R4Embedding = new EXP.Transformation({'expr': R4EmbeddingFunc});
-    R4Rotation = new EXP.Transformation({'expr': (i,t,x,y,z,w) => [x,y,z,w]});
-
-
-    
-/*
-    let hypercube = new Polychoron(
-        [//points
-            [0,0,0,1], [0,0,0,-1],
-            [0,0,1,0], [0,0,-1,0],
-            [0,1,0,0], [0,-1,0,0],
-            [1,0,0,0], [-1,0,0,0],
-        ],
-        [ //lines
-            [0,1],
-            [2,3],
-            [4,5],
-            [6,7],
-        ],
-    R4Embedding);
-    */
-
-
     let hypercube = makeHypercube(R4Embedding,R4Rotation);
-
     hypercube.objectParent.position.x = 2
-
 
     let sq5 = Math.sqrt(5), sq29 = Math.sqrt(2/9), sq23 = Math.sqrt(2/3);
     let fivecell = new Polychoron(
@@ -289,8 +83,9 @@ function setup4DPolychora(){
     R4Embedding,R4Rotation);
     fivecell.objectParent.position.x = -3;
 
-    /*
+    
     //VERY COOL! but also a bit laggy
+    /*
     let torus3 = makeTorus3(R4Embedding, R4Rotation);
     objects.push(torus3);
     */
@@ -299,82 +94,56 @@ function setup4DPolychora(){
     objects.push(fivecell);
 }
 
-function setupAxes(){
-    let axisSize = 1.5;
-    xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
-    xAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0]}))
-    .add(xAxisControl)
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
-    
-    xAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0]}))
-    .add(xAxisControl.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
-
-    yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    yAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
-    yAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0]}))
-    .add(yAxisControl)
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
-    yAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0]}))
-    .add(yAxisControl.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
-
-    let zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
-    zAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))
-    .add(zAxisControl)
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
-    zAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x]}))
-    .add(zAxisControl.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
-
+function setup4DAxes(){
     //the fourth dimension!
     wAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
     positiveWOutput = new EXP.VectorOutput({width:5, color: coordinateLine4Color, opacity:1});
     let negativeWOutput = new EXP.VectorOutput({width:5, color: coordinateLine4NegativeColor, opacity:1});
 
+    wAxisControl = new EXP.Transformation({expr: (i,t,x,y,z,w) => [x,y,z,w]});
+
     wAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,x*Math.sqrt(3)]}))
+    .add(wAxisControl)
     .add(R4Embedding.makeLink())
     .add(positiveWOutput);
     wAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,-x*Math.sqrt(3)]}))
+    .add(wAxisControl.makeLink())
     .add(R4Embedding.makeLink())
     .add(negativeWOutput);
-
-
-    //inwards-pointing ys for the perspective
-    inwardsLineControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z/Math.abs(z)]});
-    for(let m=0;m<4;m++){
-        let i = [1,1,-1,-1][m];
-        let j = [1,-1,1,-1][m];
-        let k = [1,-1,-1,1][m];
-
-        let line = new EXP.Array({data: [[i,j,k],[i/3,j/3,k/3]]});
-        line
-        .add(inwardsLineControl.makeLink())
-        .add(new EXP.VectorOutput({width:50, color: coordinateLine4Color, opacity:1}));
-        objects.push(line);
-    }
-
-
     
     let colorForW1 = colorMap(1);
     let colorForW0 = colorMap(0);
     let colorForWNeg1 = colorMap(-1);
+
+
+    //inwards-pointing ys for the perspective
+    inwardsLineControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z]});
+    for(let m=0;m<8;m++){
+        //let i = [1,1,-1,-1][m];
+        //let j = [1,-1,1,-1][m];
+        //let k = [1,-1,-1,1][m]; //tetrahedron
+
+        let epsilon = 0.0001;
+
+        let i = [1,1,-1,-1][m];
+        let j = [1,-1,1,-1][m];
+        let k = [epsilon,epsilon,epsilon,epsilon][m];
+
+        let line = new EXP.Array({data: [[i,j,k-epsilon],[i/3,j/3,k/3]]});
+        let vecOut = new EXP.VectorOutput({width:50, color: coordinateLine4Color, opacity:1});
+        line
+        .add(inwardsLineControl.makeLink())
+        .add(vecOut);
+        objects.push(line);
+
+        line.activate(0);
+
+        vecOut._setColorForVertex(0, colorForW0);
+        vecOut._setColorForVertex(1, colorForW1);
+    }
+
 
     //HORRIBLE HACK ALERT
     //when the first time activate() is called, it sets the colors and vertex arrays.
@@ -387,33 +156,75 @@ function setupAxes(){
     negativeWOutput._setColorForVertex(0, colorForW0);
     negativeWOutput._setColorForVertex(1, colorForWNeg1);
 
-/*
-    wAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => {
+    objects.push(wAxis);
+}
 
-        let wProjectionComponent = EXP.Math.multiplyScalar(-x,EXP.Math.clone(userParams.orthographic4Vec));
-        
-        return [...wProjectionComponent,x]
+function setup4D(){
+    setup4DEmbedding();
+    setup4DAxes();
+    setup4DPolychora();
+}
 
-    }}))
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1}));
-*/
-    [xAxis, yAxis, zAxis, wAxis].forEach((x) => objects.push(x));
+async function animateTo4DPerspective(){
+    //change the R4 embedding to perspective and visually show the 3D icon for perspective
 
+    presentation.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding}, 1000);
+
+    await EXP.delay(250);
+    presentation.TransitionTo(inwardsLineControl,{expr: (i,t,x,y,z) => [x,y,z]}, 750);
+
+}
+async function animateTo4DOrtho(){
+    //change the R4 embedding to perspective and hide the 3D icon for perspective
+    presentation.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
+    presentation.TransitionTo(inwardsLineControl,{expr: (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z]});
 }
 
 
-async function animate(){
-    await presentation.begin();
+
+
+
+async function animate4D(){
+    //called by 5.5 once we get to 4D.
+
+    //first, show that we can choose different embeddings
+    //presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
+    presentation.TransitionTo(window, {'pointPath':(i,t,x) => [Math.cos(t/2),Math.sin(t/2),Math.cos(t/2*1.23),1]},1000);
     await presentation.nextSlide();
-   // EXP.TransitionTo(knotParams,{'a':3,'b':2});
-    presentation.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding});
-    await EXP.delay(250);
-    presentation.TransitionTo(inwardsLineControl,{expr: (i,t,x,y,z) => [x,y,z]});
+
+    //flash the name "stereographic embedding"
+    presentation.TransitionTo(window, {'pointPath':(i,t,x) => [1.5,0.5,0.5,1]},1000);
+    await presentation.delay(100);
+    presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [Math.cos(t)/1.7,Math.sin(t)/1.7,0.5]}, 1000);
+
     await presentation.nextSlide();
-    presentation.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
-    presentation.TransitionTo(inwardsLineControl,{expr: (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z/Math.abs(z)]});
+
+    //"but there's another way to do it"
+    presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
+    await presentation.nextSlide();
+
+    //"It's perspective!"
+    await animateTo4DPerspective();
+    await presentation.nextSlide();
+
+    //"Note that in this projection, the 4th dimension vector always goes inwards.
+    presentation.TransitionTo(window, {'pointPath':(i,t,x) => [Math.cos(t/2)*1.4,Math.sin(t/2)*1.4,Math.cos(t/2*1.23)*1.4,2]},1000);
+    await presentation.nextSlide();
+
+}
+
+async function animate4DStandalone(){
+    //no 3-> 4 animation
+    if(!presentation.initialized){
+        await presentation.begin();
+    }
+    await presentation.nextSlide();
+    await animateTo4DPerspective();
+
+    await presentation.nextSlide();
+    await animateTo4DOrtho();
+
+
     await presentation.nextSlide();
 
     //hyper-rotation!
@@ -427,10 +238,3 @@ async function animate(){
     }});
 }
 
-window.addEventListener("load",function(){
-    setup();
-    animate();
-});
-
-//debugging code
-//window.setInterval(() => { userPointParams.x1 += 0.1/30; userPointParams.x2 += 0.1/30;},1/30);

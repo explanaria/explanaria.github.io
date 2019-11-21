@@ -15,7 +15,7 @@
   <script src="sliders.js"></script>
   <script src="polychora.js"></script>
   <script src="7 visualizing 4d.js"></script>
-  <script src="5.5fourdimensions.js"></script>
+  <script src="6fourdimensions.js"></script>
 
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
@@ -58,7 +58,7 @@
       <div id="textArea" class="non3DFooterPart">
         <span class="flexBR"></span>
 
-	    <div id="coords" style="opacity: 1" class="is-mobile">
+	    <div id="coords" style="opacity: 1" class="willFadeInFromJS is-mobile">
             <span id="">
                 [
             </span>
@@ -153,37 +153,53 @@
     <div class="exp-slide"> </div>
     <div class="exp-slide"> </div>
 
-    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
-        <h1>This is "Stereographic Projection:"</h1>
-        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="coord4">some fixed direction vector</span>) to the [x,y,z] coordinates.</div>
-        <div class="willFadeInFromJS">...</div>
-    
+    <div class="exp-slide"> </div>
+    <div class="exp-slide"> </div>
+
+
+    <!-- <div class="exp-slide"> Now: hypercube</div> -->
+    <div class="exp-slide exp-text fullscreenPopup" style="opacity:0">
+        <h1>1D: Line</h1>
+        <span> Recipe: Connect a point to another point moved along <span class="coord1">2nd dimension</span></span>
+    </div>
+    <div class="exp-slide exp-text fullscreenPopup" style="opacity:0">
+        <h1>2D: Square</h1>
+        <span> Recipe: Connect a 1D line to another 1D line moved along the <span class="coord2">2nd dimension</span></span>
+    </div>
+    <div class="exp-slide exp-text fullscreenPopup" style="opacity:0">
+        <h1>3D: Cube</h1>
+        <span> Recipe: Connect a 2D square to another 2D square moved along the <span class="coord3">3rd dimension</span></span>
+    </div>
+    <div class="exp-slide exp-text fullscreenPopup" style="opacity:0">
+        <h1>4D: Hypercube</h1>
+        <span> Recipe: Connect a 3D cube to another 3D cube moved along the <span class="coord4">4th dimension</span></span>
     </div>
 
-    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
-        <h1>This is "Stereographic Projection:"</h1>
+   <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
+        <h1>Visualization type: "Orthographic Projection"</h1>
         <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="coord4">some fixed direction vector</span>) to the [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>] coordinates.</div>
         <div>[x,y,z] = [<span class="coord1 coord1-num"></span>,<span class="coord2 coord2-num"></span>,<span class="coord3 coord3-num"></span>] + <span class="coord4 coord4-num"></span>[<span id="orthocoord1">a</span>,<span id="orthocoord2">b</span>,<span id="orthocoord3">c</span>]</div>
     
     </div>
 
-    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
-        <h1>This is "Stereographic Projection:"</h1>
+   <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
+        <h1>Visualization type: "Orthographic Projection"</h1>
         <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="coord4">some fixed direction vector</span>) to the [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>] coordinates.</div>
         <div>[x,y,z] = [<span class="coord1 coord1-num"></span>,<span class="coord2 coord2-num"></span>,<span class="coord3 coord3-num"></span>] + <span class="coord4 coord4-num"></span>[<span id="orthocoord1">a</span>,<span id="orthocoord2">b</span>,<span id="orthocoord3">c</span>]</div>
     
     </div>
 
-    <div class="exp-slide"> </div>
-    <div class="exp-slide"> </div>
-
-
-    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
-        <h1>This is "Perspective Projection:"</h1>
+   <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
+        <h1>Visualization type: "Perspective Projection"</h1>
         <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by sending [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>,<span class="coord4">w</span>] to [<span class="coord1">x</span>/<span class="coord4">w</span>,<span class="coord2">y</span>/<span class="coord4">w</span>,<span class="coord3">z</span>/<span class="coord4">w</span>].
         <div>Limitation: can't visualize [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>,<span class="coord4">0</span>] (dividing by zero). Also, HUGE distortion when <span class="coord4">w</span>≈0 since <span class="coord4">w</span>≈0 means 1/<span class="coord4">w</span> is huge.
     
     </div>
+
+    <div class="exp-slide"> </div>
+    <div class="exp-slide"> </div>
+
+
 
   </div>
 </body>

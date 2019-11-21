@@ -15,7 +15,7 @@ let manifoldPointPositions = null // the positions of those points
 let pointCoordinateArrows = null;
 
 let wAxisPointPosition = null; //the dot at the end of the w-axis coordinate arrow
-let wAxisCoordinateArrow = null;
+let wAxisCoordinateArrow = null,wAxisCoordinateArrowOutput=null;
 
 let manifold4PointOutput = null;
 
@@ -106,7 +106,7 @@ function setup(){
     //the 4th axis also needs a point + vector vector
     wAxisCoordinateArrow = new EXP.Transformation({expr: (i,t,x) => i==0 ? [0,-(1)*3/4,0,0]: [pointCoords[3],-(1)*3/4,0,0]});
 
-    let wAxisCoordinateArrowOutput = new EXP.VectorOutput({width:15, color: coordinateLine4Color, opacity:0}) 
+    wAxisCoordinateArrowOutput = new EXP.VectorOutput({width:15, color: coordinateLine4Color, opacity:0}) 
 
     wAxis
     .add(wAxisCoordinateArrow)
@@ -173,7 +173,7 @@ function setup(){
 
         //update the orthogonal 4-vec, in the one slide it's used
         for(var i=0;i<3;i++){
-            document.getElementById("orthocoord"+(i+1)).innerHTML = format(userParams.orthographic4Vec[i]);
+        //    document.getElementById("orthocoord"+(i+1)).innerHTML = format(userParams.orthographic4Vec[i]);
         }
     }};
 
@@ -199,12 +199,14 @@ function setup3DAxes(){
     xAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0,0]}))
     .add(xAxisControl)
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
     
     xAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0,0]}))
     .add(xAxisControl.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
 
@@ -213,11 +215,13 @@ function setup3DAxes(){
     yAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0,0]}))
     .add(yAxisControl)
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
     yAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0,0]}))
     .add(yAxisControl.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
 
@@ -244,7 +248,8 @@ function format(x){
 }
 
 
-let fourDDemonstrateAxisPoint = [1.0,-0.5,0.5,1];
+//let fourDDemonstrateAxisPoint = [1.0,0.5,1,1];
+let fourDDemonstrateAxisPoint = [-1.0,0.5,0.5,1];
 
 async function animate(){
     if(!presentation.initialized)await presentation.begin();

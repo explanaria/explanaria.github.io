@@ -34,11 +34,65 @@ function colorMap(wCoordinate){
 
 
 function perspectiveEmbedding(i,t,x,y,z,w){
-    return [0.5*x/(w-0.5), 0.5*y/(w-0.5), 0.5*z/(w-0.5)];
+    return [0.5*x/(w+0.5), 0.5*y/(w+0.5), 0.5*z/(w+0.5)];
 }
 function orthographicEmbedding(i,t,x,y,z,w){
     let wProjection = EXP.Math.multiplyScalar(w,EXP.Math.clone(userParams.orthographic4Vec));
     return EXP.Math.vectorAdd([x,y,z],wProjection);
+}
+
+function rotation4DZW(offsetW=0){
+        //center of rotation is [0,0,0,offsetW]. use 0.0 when orthographic projecting, 0.5 when not
+
+    return function(i,t,x,y,z,w){
+        w = w-offsetW
+
+        let newZ = z*Math.cos(t*Math.PI/6) + -w*Math.sin(t*Math.PI/6)
+        let newW = z*Math.sin(t*Math.PI/6) + w*Math.cos(t*Math.PI/6)
+       return [x,y,newZ,newW+offsetW]
+    }
+}
+
+function rotation3D(axis1,axis2){
+    //if [axis1,axis2] = [0,1], this is a 2D rotation along the x and y axes.
+    return function(i,t, ...coords){
+
+        let rotationFactor = (t*Math.PI/2);
+        let newCoord1 = coords[axis1]*Math.cos(rotationFactor) + -coords[axis2]*Math.sin(rotationFactor)
+        let newCoord2 = coords[axis1]*Math.sin(rotationFactor) + coords[axis2]*Math.cos(rotationFactor);
+
+        coords[axis1] = newCoord1
+        coords[axis2] = newCoord2;
+
+       return coords
+    }
+    
+}
+
+function rotationAll3DAxesSequentially(){
+    //cycle through rotation in the XY, YZ, and XZ plane
+        //NOTE: this technically teleports from pi/2 rotation to 0 rotation. 
+        //Everything I'm using this on is mirror-symmetric, so it doesn't show, but note that that's what's happening.
+
+    let XYRotation = rotation3D(0,1);
+    let YZRotation = rotation3D(1,2);
+    let XZRotation = rotation3D(0,2);
+
+    return function(i,t, ...coords){
+        //NOTE: this technically teleports from pi/2 rotation to 0 rotation. 
+        //Everything I'm using this on is mirror-symmetric, so it doesn't show, but note that that's what's happening.
+        let numSecondsPerHalfRotation = 2;
+        let animationFactor = t/numSecondsPerHalfRotation % 3;
+
+        //first show an XY rotation, then YZ, then XZ, in sequence
+        if(animationFactor < 1){
+            return XYRotation(i,t,...coords);
+        }else if(animationFactor < 2){
+            return YZRotation(i,t,...coords);
+        }else{ //animationFactor < 3
+            return XZRotation(i,t,...coords);
+        }
+    }
 }
 
 
@@ -94,6 +148,7 @@ function setup4DPolychora(){
     objects.push(fivecell);
 }
 
+let inwardsPerspectiveLines = [];
 function setup4DAxes(){
     //the fourth dimension!
     wAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
@@ -105,11 +160,13 @@ function setup4DAxes(){
     wAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,x*Math.sqrt(3)]}))
     .add(wAxisControl)
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(positiveWOutput);
     wAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,-x*Math.sqrt(3)]}))
     .add(wAxisControl.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(negativeWOutput);
     
@@ -138,6 +195,9 @@ function setup4DAxes(){
         .add(vecOut);
         objects.push(line);
 
+        inwardsPerspectiveLines.push(line);
+
+        //horrible color hack time
         line.activate(0);
 
         vecOut._setColorForVertex(0, colorForW0);
@@ -181,43 +241,134 @@ async function animateTo4DOrtho(){
 }
 
 
-
-
+let hypercubeControl = new EXP.Transformation({'expr':(i,t,x,y,z,w) => [0,0,0,0]});
 
 async function animate4D(){
+
+
+    let hypercube = makeHypercube(R4Embedding, [hypercubeControl, R4Rotation]);
+    objects.push(hypercube);
+
+    //fade away the point and its arrows
+    pointCoordinateArrows.getDeepestChildren().forEach((output) => {
+        presentation.TransitionTo(output, {opacity:0}, 1000);
+    });
+    [manifold4PointOutput,wAxisCoordinateArrowOutput].forEach((output) => {
+        presentation.TransitionTo(output, {opacity:0}, 1000);
+    });
+    
+    try{
+        let threeDCoords = document.getElementById("coords");
+        presentation.TransitionTo(threeDCoords.style, {'opacity':0}, 0);
+    }catch(e){}
+
+    await presentation.nextSlide();
+    //The fabled hypercube... begins to appear!
+
+    //move axes and hypercube away from one another
+    [xAxis,yAxis,zAxis,wAxis].concat(inwardsPerspectiveLines).forEach((item, axisNumber) => {
+        item.getDeepestChildren().forEach((output) => {
+            presentation.TransitionTo(output.mesh.position, {x:-1.1}, 1000);
+        });
+    });
+    hypercube.objectParent.position.x = 1.1;
+
+    presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,0,0,0]},1000);
+    await presentation.nextSlide();
+
+
+    presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,y,0,0]},1000);
+    await presentation.nextSlide();
+
+
+    presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,y,z,0]},1000);
+    await presentation.nextSlide();
+
+
+    presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,y,z,w]},1000);
+    await presentation.nextSlide();
+
+    await animate4DEmbeddings();
+    await animate4DRotations();
+
+}
+
+async function animate4DRotations(){
+
+    //reset camera and stop rotating
+    presentation.TransitionTo(three.camera.position, {'x':0,'y':0.5,'z':3}, 1000);
+    presentation.TransitionTo(controls, {'autoRotateSpeed':0, autoRotate: false}, 250);
+
+    await animateTo4DOrtho();
+    await presentation.nextSlide();
+
+    //3D rotation
+    // "We're used to things rotating in 3D"
+
+
+    presentation.TransitionTo(R4Embedding, {'expr':(i,t,x,y,z,w) => [x,y,z,0]},1000);
+    presentation.TransitionTo(R3Rotation, {'expr': rotationAll3DAxesSequentially()});
+    await presentation.nextSlide();
+
+    //"those rotations don't change in 4D"
+    await animateTo4DOrtho();
+    await presentation.nextSlide();
+
+    //thing #1: ortho rotation!
+
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    await presentation.nextSlide();
+
+    //perspective OH NO EVERYTHING GOES WRONG because we animate through w=0
+    await animateTo4DPerspective();
+    await presentation.nextSlide();
+
+    //if we add 1 to w, we're fine
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    await presentation.nextSlide();
+}
+
+
+async function animate4DEmbeddings(){
     //called by 5.5 once we get to 4D.
 
     //first, show that we can choose different embeddings
     //presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
-    presentation.TransitionTo(window, {'pointPath':(i,t,x) => [Math.cos(t/2),Math.sin(t/2),Math.cos(t/2*1.23),1]},1000);
-    await presentation.nextSlide();
+    //presentation.TransitionTo(window, {'pointPath':(i,t,x) => [Math.cos(t/2),Math.sin(t/2),Math.cos(t/2*1.23),1]},1000);
+    //await presentation.nextSlide();
 
-    //flash the name "stereographic embedding"
-    presentation.TransitionTo(window, {'pointPath':(i,t,x) => [1.5,0.5,0.5,1]},1000);
-    await presentation.delay(100);
-    presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [Math.cos(t)/1.7,Math.sin(t)/1.7,0.5]}, 1000);
-
-    await presentation.nextSlide();
-
-    //"but there's another way to do it"
+    //flash the name "orthographic embedding"
     presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
+
     await presentation.nextSlide();
 
-    //"It's perspective!"
+    //"We can vary the vector we're using to display the w-axis, the 4th dimension, and that changes what our visualization looks like.
+    presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [Math.cos(t)/1.7,Math.sin(t)/1.7,0.5]}, 1000);
+    await presentation.nextSlide();
+
+    //"but there's another way to do it: It's perspective!"
     await animateTo4DPerspective();
     await presentation.nextSlide();
 
-    //"Note that in this projection, the 4th dimension vector always goes inwards.
-    presentation.TransitionTo(window, {'pointPath':(i,t,x) => [Math.cos(t/2)*1.4,Math.sin(t/2)*1.4,Math.cos(t/2*1.23)*1.4,2]},1000);
-    await presentation.nextSlide();
-
+    //back to ortho
+    await animateTo4DOrtho();
+    presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
 }
 
 async function animate4DStandalone(){
+
+
+
     //no 3-> 4 animation
     if(!presentation.initialized){
         await presentation.begin();
     }
+
+
+    [xAxis, yAxis, zAxis].forEach((axis) => axis.getDeepestChildren().forEach((output) => {
+        presentation.TransitionTo(output, {"color": new THREE.Color(output.color).offsetHSL(0,0,0.15)},250);
+    }));
+
     await presentation.nextSlide();
     await animateTo4DPerspective();
 
@@ -228,13 +379,6 @@ async function animate4DStandalone(){
     await presentation.nextSlide();
 
     //hyper-rotation!
-    presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w) => {
-            //center of rotation is [0,0,0,0.5], hence the w - 0.5 part
-        w = w-0.5
-
-        let newZ = z*Math.cos(t*Math.PI/3) + -w*Math.sin(t*Math.PI/3)
-        let newW = z*Math.sin(t*Math.PI/3) + w*Math.cos(t*Math.PI/3)
-       return [x,y,newZ,newW + 0.5]
-    }});
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
 }
 

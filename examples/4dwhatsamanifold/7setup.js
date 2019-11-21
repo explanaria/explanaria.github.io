@@ -1,4 +1,10 @@
+//contains all the code if you want to visit 7 fourdimensions alone
+
 let three, controls, objects=[], presentation;
+
+
+
+let xAxis, yAxis,zAxis = null;
 
 
 function setupThree(){
@@ -52,7 +58,7 @@ function setupAxes(){
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
 
-    let zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
     zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
     zAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))

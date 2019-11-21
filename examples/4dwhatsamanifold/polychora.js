@@ -1,11 +1,12 @@
 
 class Polychoron{
     //relies on global colorMap() defined in 7 visualizing4d.js 
-    constructor(points, lines, embeddingTransformation, R4Rotation){
+    constructor(points, lines, embeddingTransformation, preEmbeddingTransformations){
         this.points = points;
         this.lineData = lines;
         this.embeddingTransformation = embeddingTransformation;
-        this.preEmbeddingTransformation = R4Rotation;
+        this.preEmbeddingTransformations = preEmbeddingTransformations;
+        if(preEmbeddingTransformations.constructor != Array)this.preEmbeddingTransformations = [preEmbeddingTransformations];
 
         this.outputs = [];
         this.EXPLines = [];
@@ -24,8 +25,18 @@ class Polychoron{
             let ptBIndex = this.lineData[i][1];
             var line = new EXP.Array({data: [this.points[ptAIndex],this.points[ptBIndex]]});
             let output = new EXP.LineOutput({width: 10, color: 0xffffff});
-            line
-                .add(this.preEmbeddingTransformation.makeLink())
+
+            let numPreEmbeds = this.preEmbeddingTransformations.length;
+            
+            //Add everything. The chain: line -> add this.preEmbeddingTransformations[0], this.preEmbeddingTransformations[1]... -> this.embeddingTransformation -> output.
+            let parent = line;
+            for(let k=0;k<numPreEmbeds;k++){
+                let child = this.preEmbeddingTransformations[k].makeLink();
+                parent.add(child);
+                parent = child;
+            }
+
+            parent
                 .add(this.embeddingTransformation.makeLink())
                 .add(output);
 
@@ -49,11 +60,17 @@ class Polychoron{
             let ptA = this.points[this.lineData[i][0]];
             let ptB = this.points[this.lineData[i][1]];
 
-            let ptA4DCoordinates = this.preEmbeddingTransformation.expr(i, t, ...ptA);
+            let ptA4DCoordinates = ptA;
+            let ptB4DCoordinates = ptB;
+            //THIS IS TERRIBLE
+            for(let j=0;j<this.preEmbeddingTransformations.length;j++){
+                ptA4DCoordinates = this.preEmbeddingTransformations[j].expr(i,t,...ptA4DCoordinates);
+                ptB4DCoordinates = this.preEmbeddingTransformations[j].expr(i,t,...ptB4DCoordinates);
+            }
+
             let color1 = colorMap(ptA4DCoordinates[3]);
             lineOutput._setColorForVertexRGB(0, color1.r, color1.g, color1.b);
 
-            let ptB4DCoordinates = this.preEmbeddingTransformation.expr(i, t, ...ptB);
             let color2 = colorMap(ptB4DCoordinates[3]);
             lineOutput._setColorForVertexRGB(1, color2.r, color2.g, color2.b);
 

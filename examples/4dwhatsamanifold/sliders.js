@@ -18,7 +18,7 @@ class Slider{
         this.canvas.addEventListener("mousemove",this.mousemoveEvt.bind(this));
         this.canvas.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
         this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
-        this.canvas.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
+        window.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
 	
         window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
         this.onWindowResize();
@@ -59,7 +59,7 @@ class Slider{
     }
 
     ontouchmove(event){
-        event.preventDefault();
+        if(event.target == this.canvas)event.preventDefault();
         
         let rect = this.canvas.getBoundingClientRect();
 
@@ -69,7 +69,7 @@ class Slider{
         }
     }
     ontouchend(event){
-        event.preventDefault();
+        if(event.target == this.canvas)event.preventDefault();
         
         let rect = this.canvas.getBoundingClientRect();
 

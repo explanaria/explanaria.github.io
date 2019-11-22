@@ -260,7 +260,7 @@ class SurfaceOutput extends OutputNode{
 	}
 	set opacity(opacity){
 		this.material.opacity = opacity;
-		this.material.transparent = opacity < 1;
+		this.material.transparent = (opacity < 1) || (!this.showSolid);
 		this.material.visible = opacity > 0;
 		this._opacity = opacity;
         this._uniforms.opacity.value = opacity;

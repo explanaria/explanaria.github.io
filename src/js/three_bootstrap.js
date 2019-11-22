@@ -13,21 +13,7 @@ function ThreeasyEnvironment(canvasElem = null){
 
 	if(!Detector.webgl)Detector.addGetWebGLMessage();
 
-	this.camera = new THREE.OrthographicCamera({
-		near: .1,
-		far: 10000,
-
-		//type: 'perspective',
-		fov: 60,
-		aspect: 1,
-/*
-		// type: 'orthographic',
-		left: -1,
-		right: 1,
-		bottom: -1,
-		top: 1,*/
-	  });
-
+    //fov, aspect, near, far
 	this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10000000 );
 	//this.camera = new THREE.OrthographicCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
 
@@ -149,6 +135,7 @@ ThreeasyEnvironment.prototype.onWindowResize= function() {
     }
 
 	this.camera.aspect = width / height;
+    //this.camera.setFocalLength(30); //if I use this, the camera will keep a constant width instead of constant height
 	this.aspect = this.camera.aspect;
 	this.camera.updateProjectionMatrix();
 	this.renderer.setSize( this.evenify(width), this.evenify(height),this.shouldCreateCanvas );

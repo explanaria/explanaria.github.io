@@ -13,13 +13,14 @@ function setup() {
 	three.camera.position.z = 4;
 
     //add lights
-	three.scene.add( new THREE.AmbientLight( 0x443333 ) );
+	//three.scene.add( new THREE.AmbientLight( 0x443333 ) );
+	three.scene.add( new THREE.AmbientLight( 0xaaaaaa ) );
 
-	var light = new THREE.DirectionalLight( 0xffddcc, 1 );
+	var light = new THREE.DirectionalLight( 0xffddcc, 0.5 );
 	light.position.set( 1, 0.75, 0.5 );
 	three.scene.add( light );
 
-	var light = new THREE.DirectionalLight( 0xccccff, 1 );
+	var light = new THREE.DirectionalLight( 0xccccff, 0.5 );
 	light.position.set( - 1, 0.75, - 0.5 );
 	three.scene.add( light );
 

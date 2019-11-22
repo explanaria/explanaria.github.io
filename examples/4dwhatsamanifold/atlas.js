@@ -13,18 +13,10 @@ class Atlas{
 
         this.threeDPointMesh = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshBasicMaterial({color: 0xFFA500})); //the mesh representing the 3D point
         three.scene.add(this.threeDPointMesh);
-
-
-        this.textureLoader = new THREE.TextureLoader();
-        this.decalDiffuse = this.textureLoader.load('decal-diffuse.png'); //this texture doesn't seem to load locally?
-        this.decalNormal = this.textureLoader.load('decal-normal.jpg');
 1
-        this.decalMaterial = new THREE.MeshBasicMaterial({
+        this.decalMaterial = new THREE.MeshLambertMaterial({
 	        specular: 0x444444,
-	        //map: this.decalDiffuse, 
-	        normalMap: this.decalNormal,
-	        normalScale: new THREE.Vector2( 1, 1 ),
-	        shininess: 30,
+	        shininess: 0.3,
 	        transparent: false,
 	        depthTest: true,
 	        depthWrite: true,

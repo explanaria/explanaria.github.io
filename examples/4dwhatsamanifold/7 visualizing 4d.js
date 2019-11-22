@@ -126,45 +126,6 @@ function setup4DEmbedding(){
 }
 
 
-function setup4DPolychora(){
-
-    polychora = [];
-
-    let hypercube = makeHypercube(R4Embedding, [hypercubeControl, R4Rotation]);
-    hypercube.objectParent.position.x = 2;
-
-    let sq5 = Math.sqrt(5), sq29 = Math.sqrt(2/9), sq23 = Math.sqrt(2/3);
-    let fivecell = new Polychoron(
-        [//points
-            //[0,0,0,0], [0,0,0,1], [0,0,1,0], [0,1,0,0], [1,0,0,0],
-
-            //[1,1,1,-1/sq5], [1,-1,-1,-1/sq5], [-1,1,-1,-1/sq5], [-1,-1,1,-1/sq5], [0,0,0,sq5-1/sq5]
-            [sq5*Math.sqrt(8/9),-sq5/3,0,0], [-sq5*sq29,-sq5/3,-sq5*sq23,0], [-sq5*sq29,-sq5/3,sq5*sq23,0], [0,sq5,0,0], [0,0,0,1] //has base on XZ plane, almost all w=0
-
-        ],
-        [ //lines
-            [0,1], [0,2], [0,3], [0,4],
-            [1,2],[1,3],[1,4],
-            [2,3],[2,4],
-            [3,4],
-        ],
-    R4Embedding,R4Rotation);
-    fivecell.objectParent.position.x = -3;
-
-    
-    //VERY COOL! but also a bit laggy
-    /*
-    let torus3 = makeTorus3(R4Embedding, R4Rotation);
-    objects.push(torus3);
-    */
-
-    objects.push(hypercube);
-    objects.push(fivecell);
-
-    polychora = [hypercube, fivecell];
-}
-
-
 //wrap focalLength in some getters and setters so explanaria can change it
 let THREECameraProxy = {
     get focalLength(){
@@ -583,36 +544,24 @@ async function animateFiveCell(){
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
     await animateTo4DPerspective();
     await presentation.nextSlide();
-
-
-
 }
 
 async function animate4DStandalone(){
-
     //no 3-> 4 animation
     if(!presentation.initialized){
         await presentation.begin();
     }
-    
+
+    polychora[0].objectParent.position.x = 3;
+    polychora[1].objectParent.position.x = 0;
     
     await changeCameraToRotateAllObjectsSimultaneously();
-
 
     [xAxis, yAxis, zAxis].forEach((axis) => axis.getDeepestChildren().forEach((output) => {
         presentation.TransitionTo(output, {"color": new THREE.Color(output.color).offsetHSL(0,0,0.15)},250);
     }));
 
-    await presentation.nextSlide();
-    await animateTo4DPerspective();
-
-    await presentation.nextSlide();
-    await animateTo4DOrtho();
-
-
-    await presentation.nextSlide();
-
-    //hyper-rotation!
-    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    await animate4DEmbeddings();
+    await animate4DRotations();
+    await animateFiveCell()
 }
-

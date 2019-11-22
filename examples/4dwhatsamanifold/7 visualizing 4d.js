@@ -8,9 +8,13 @@ if(userParams === undefined){
 userParams.mode= "orthographic";
 userParams.orthographic4Vec=[1/sq3,1/sq3,1/sq3];
 
-let R4Embedding = null, R4Rotation = null, inwardsLineControl = null;
+let R4Embedding = null, R4Rotation = null;
 
-let axesParent = new THREE.Object3D(); //allows the axes to be moved around
+
+let axesParent = new THREE.Object3D(); //allows the XYZW axes to be moved around
+
+let projectionVisualizerParent = new THREE.Object3D(); //an object containing a visualization of the current embedding
+let grayProjectionVisualizingAxes = null, R3Rotation=null, inwardsLineControl = null;
 
 
 const zeroWColor = new THREE.Color(coordinateLine4ZeroColor);
@@ -158,11 +162,29 @@ function setup4DPolychora(){
 }
 
 
+//wrap focalLength in some getters and setters so explanaria can change it
+let THREECameraProxy = {
+    get focalLength(){
+        return three.camera.getFocalLength();
+    },
+    set focalLength(len){
+        three.camera.setFocalLength(len);
+    },
+    get fov(){
+        return three.camera.fov;
+    },
+    set fov(fov){
+        three.camera.fov = fov;
+        three.camera.updateProjectionMatrix();
+    }
+}
+
+
 
 async function changeCameraToRotateAllObjectsSimultaneously(){
     let objectsToRotate = polychora.map( (polychoron) => (polychoron.objectParent));
 
-    objectsToRotate = objectsToRotate.concat([axesParent]);
+    objectsToRotate = objectsToRotate.concat([axesParent, projectionVisualizerParent]);
 
     controlsToRotateAboutOrigin.objects = objectsToRotate;
     controlsToRotateAboutOrigin.autoRotateSpeed = 0.1;
@@ -171,19 +193,16 @@ async function changeCameraToRotateAllObjectsSimultaneously(){
     presentation.TransitionTo(controlsToRotateAboutOrigin, {'enabled': true}, 0);
 
     //make the camera show perspective a bit more orthogonally
-    //wrap focalLength in some getters and setters so explanaria can change it
-    let THREECameraProxy = {
-        get focalLength(){
-            return three.camera.getFocalLength();
-        },
-        set focalLength(len){
-            three.camera.setFocalLength(len);
-        }
-    }
 
     //reset camera and stop rotating
-    presentation.TransitionTo(three.camera.position, {'x':0,'y':0.75,'z':10}, 1000);
-    presentation.TransitionTo(THREECameraProxy, {'focalLength': 40}, 1000);
+
+    //I need to do some resolution-dependent cool things
+
+    //presentation.TransitionTo(three.camera.position, {'x':0,'y':0.75,'z':10}, 1000);
+    //presentation.TransitionTo(THREECameraProxy, {'fov': 30}, 1000);
+    presentation.TransitionTo(THREECameraProxy, {'fov':45}, 1000);
+    presentation.TransitionTo(three.camera.position, {'x':0,'y':2,'z':7}, 1000);
+    //presentation.TransitionTo(THREECameraProxy, {'focalLength': 25}, 1000);
     presentation.TransitionTo(controls, {'autoRotateSpeed':0, autoRotate: false}, 250);
 }
 
@@ -191,24 +210,25 @@ async function changeCameraToRotateAllObjectsSimultaneously(){
 let inwardsPerspectiveLines = [];
 function setup4DAxes(){
     setup3DAxes();
+    
 
     //the fourth dimension!
     wAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    positiveWOutput = new EXP.VectorOutput({width:5, color: coordinateLine4Color, opacity:1});
-    let negativeWOutput = new EXP.VectorOutput({width:5, color: coordinateLine4NegativeColor, opacity:1});
+    positiveWOutput = new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1});
+    let negativeWOutput = new EXP.VectorOutput({width:3, color: coordinateLine4NegativeColor, opacity:1});
 
     wAxisControl = new EXP.Transformation({expr: (i,t,x,y,z,w) => [x,y,z,w]});
 
     wAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,x*Math.sqrt(3)]}))
     .add(wAxisControl)
-    //.add(R4Rotation.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(positiveWOutput);
     wAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,0,-x*Math.sqrt(3)]}))
     .add(wAxisControl.makeLink())
-    //.add(R4Rotation.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(negativeWOutput);
     
@@ -216,6 +236,57 @@ function setup4DAxes(){
     let colorForW0 = colorMap(0);
     let colorForWNeg1 = colorMap(-1);
 
+    //HORRIBLE HACK ALERT
+    //when the first time activate() is called, it sets the colors and vertex arrays.
+    //meaning we need to activate it once first before messing with color data.
+    wAxis.activate(0);
+
+    positiveWOutput._setColorForVertex(0, colorForW0);
+    positiveWOutput._setColorForVertex(1, colorForW1);
+
+    negativeWOutput._setColorForVertex(0, colorForW0);
+    negativeWOutput._setColorForVertex(1, colorForWNeg1);
+
+    objects.push(wAxis);
+
+    //finally, add everything to a parent object called axesParent
+    [xAxis,yAxis,zAxis,wAxis].concat(inwardsPerspectiveLines).forEach((item, axisNumber) => {
+        item.getDeepestChildren().forEach((output) => {
+            axesParent.add(output.mesh);
+        });
+    });
+    three.scene.add(axesParent);
+
+
+    //a separate coordinate system that shows the projection
+
+    let R3Rotation = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]});
+    //gray projection-visualizing axes
+    grayProjectionVisualizingAxes = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    let axisSize = 1.5;
+    for(let sign=-1;sign<=1;sign+=2){
+        grayProjectionVisualizingAxes
+        .add(new EXP.Transformation({expr: (i,t,x) => [sign*axisSize*x,0,0,0]}))
+        .add(R3Rotation.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: lightgray, opacity:0}));
+
+        grayProjectionVisualizingAxes
+        .add(new EXP.Transformation({expr: (i,t,x) => [0,sign*axisSize*x,0,0]}))
+        .add(R3Rotation.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: lightgray, opacity:0}));
+
+        grayProjectionVisualizingAxes
+        .add(new EXP.Transformation({expr: (i,t,x) => [0,0,sign*axisSize*x,0]}))
+        .add(R3Rotation.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: lightgray, opacity:0}));
+    }
+    //the orthographic4Vec vector
+    grayProjectionVisualizingAxes
+    //.add(new EXP.Transformation({expr: (i,t,x) => i==0 ? [0,0,0] : userParams.orthographic4Vec}))
+    .add(new EXP.Transformation({expr: (i,t,x) => i==0 ? [0,0,0,0] : [0,0,0,1]}))
+    .add(R4Embedding.makeLink()) //now this vector points in the direction of userParams.orthographic4Vec
+    .add(R3Rotation.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: orthographic4VecColor, opacity:0}));
 
     //inwards-pointing ys for the perspective
     inwardsLineControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z]});
@@ -246,30 +317,16 @@ function setup4DAxes(){
         vecOut._setColorForVertex(1, colorForW1);
 
         //allow these to be moved along with the rest of the axes
-        axesParent.add(vecOut.mesh);
+        projectionVisualizerParent.add(vecOut.mesh);
     }
 
 
-    //HORRIBLE HACK ALERT
-    //when the first time activate() is called, it sets the colors and vertex arrays.
-    //meaning we need to activate it once first before messing with color data.
-    wAxis.activate(0);
-
-    positiveWOutput._setColorForVertex(0, colorForW0);
-    positiveWOutput._setColorForVertex(1, colorForW1);
-
-    negativeWOutput._setColorForVertex(0, colorForW0);
-    negativeWOutput._setColorForVertex(1, colorForWNeg1);
-
-    objects.push(wAxis);
-
-    //finally, add everything to a parent object called axesParent
-    [xAxis,yAxis,zAxis,wAxis].concat(inwardsPerspectiveLines).forEach((item, axisNumber) => {
-        item.getDeepestChildren().forEach((output) => {
-            axesParent.add(output.mesh);
-        });
+    grayProjectionVisualizingAxes.getDeepestChildren().forEach((output) => {
+        projectionVisualizerParent.add(output.mesh);
     });
-    three.scene.add(axesParent);
+
+    three.scene.add(projectionVisualizerParent);
+    objects.push(grayProjectionVisualizingAxes);
 }
 
 async function animateTo4DPerspective(){
@@ -300,9 +357,23 @@ async function animate4D(){
 
     //The fabled hypercube... begins to appear!
     //move axes and hypercube away from one another
-   presentation.TransitionTo(axesParent.position, {x:-2}, 1000);
-   presentation.TransitionTo(axesParent.scale, {x:1/2,y:1/2,z:1/2}, 1000);
-   presentation.TransitionTo(hypercube.objectParent.position, {x:1}, 1000);
+   
+    //presentation.TransitionTo(axesParent.position, {x:-2}, 1000);
+    //presentation.TransitionTo(axesParent.scale, {x:1/2,y:1/2,z:1/2}, 1000);
+    //presentation.TransitionTo(hypercube.objectParent.position, {x:1}, 1000);
+   
+    presentation.TransitionTo(projectionVisualizerParent.position, {x:-2}, 1000); // THIS IS BAD BECAUSE ITS NOT RESOLUTION DEPENDENT
+    presentation.TransitionTo(projectionVisualizerParent.scale, {x:1/2,y:1/2,z:1/2}, 1000);
+
+    [xAxisControl,yAxisControl,zAxisControl, wAxisControl].forEach((item, axisNumber) => {
+        presentation.TransitionTo(item, {'expr': (i,t,x,y,z,w)=>[1.5*x,1.5*y,1.5*z,1.5*w]}, 1000);
+    });
+    [xAxis, yAxis, zAxis].forEach((axis) => axis.getDeepestChildren().forEach((output) => {
+        presentation.TransitionTo(output, {"opacity": 0.8},250);
+    }));
+
+
+   //presentation.TransitionTo(axesParent.scale, {x:2,y:2,z:2}, 1000);
 
     /*
 
@@ -330,78 +401,22 @@ async function animate4D(){
     await animate4DEmbeddings();
     await animate4DRotations();
 
-}
+    await animateFiveCell()
 
-async function animate4DRotations(){
-
-    //reset camera and stop rotating
-    presentation.TransitionTo(controls, {'autoRotateSpeed':0, autoRotate: false}, 250);
-    presentation.TransitionTo(controlsToRotateAboutOrigin, {'autoRotateSpeed': 0}, 250);
-
-    await animateTo4DOrtho();
-    await presentation.nextSlide();
-
-    //3D rotation
-    // "We're used to things rotating in 3D"
-
-
-    presentation.TransitionTo(R4Embedding, {'expr':(i,t,x,y,z,w) => [x,y,z,0]},1000);
-    await presentation.nextSlide();
-
-    //Instead of transforming the axes, I should really make a dummy pair of axes that show the current embedding
-    [xAxisControl, yAxisControl, zAxisControl, wAxisControl].forEach( (transformation) =>
-        presentation.TransitionTo(transformation, {'expr': rotationAll3DAxesSequentially()})
-    );
-        presentation.TransitionTo(R4Rotation, {'expr': rotationAll3DAxesSequentially()})
-    await presentation.nextSlide();
-
-    //"those rotations don't change in 4D"
-    await animateTo4DOrtho();
-    await presentation.nextSlide();
-
-    //thing #1: ortho rotation!
-    [xAxisControl, yAxisControl, zAxisControl, wAxisControl].forEach( (transformation) =>
-        presentation.TransitionTo(transformation, {'expr': (i,t,x,y,z,w) => [x,y,z,w]})
-    );
-
-    await presentation.delay(1500);
-
-    //fake moving the wz axis
-    [zAxisControl, wAxisControl].forEach( (transformation) =>
-        presentation.TransitionTo(transformation, {'expr': rotation4DZW(0)})
-    );
-
-    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
-    await presentation.nextSlide();
-
-    //move the axis back to nothing to show an embedding shift
-    [xAxisControl, yAxisControl, zAxisControl, wAxisControl].forEach( (transformation) =>
-        presentation.TransitionTo(transformation, {'expr': (i,t,x,y,z,w) => [x,y,z,w]})
-    );
-
-    //perspective OH NO EVERYTHING GOES WRONG because we animate through w=0
-    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0)});
-    await animateTo4DPerspective();
-    await presentation.nextSlide();
-
-    //if we add 1 to w, we're fine
-    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
-    await presentation.nextSlide();
-
-    //now introduce a 5-cell?
 }
 
 
 async function animate4DEmbeddings(){
-    //called by 5.5 once we get to 4D.
-
-    //first, show that we can choose different embeddings
-    //presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
-    //presentation.TransitionTo(window, {'pointPath':(i,t,x) => [Math.cos(t/2),Math.sin(t/2),Math.cos(t/2*1.23),1]},1000);
-    //await presentation.nextSlide();
+    //called by #6 once we get to 4D.
 
     //flash the name "orthographic embedding"
-    presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
+
+    //presentation.TransitionTo(axesParent.position, {x:-2,y:-1}, 1000);
+    presentation.TransitionTo(projectionVisualizerParent.position, {x:-3,y:1}, 1000);
+
+    grayProjectionVisualizingAxes.getDeepestChildren().forEach( (output) => {
+        presentation.TransitionTo(output, {opacity: 1}, 1000);
+    });
 
     await presentation.nextSlide();
 
@@ -416,6 +431,102 @@ async function animate4DEmbeddings(){
     //back to ortho
     await animateTo4DOrtho();
     presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
+}
+
+async function animate4DRotations(){
+
+    //reset camera and stop rotating
+    presentation.TransitionTo(controls, {'autoRotateSpeed':0, autoRotate: false}, 250);
+    presentation.TransitionTo(controlsToRotateAboutOrigin, {'autoRotateSpeed': 0}, 250);
+
+    await presentation.nextSlide();
+
+    //3D rotation
+    // "We're used to things rotating in 3D"
+
+
+    presentation.TransitionTo(R4Embedding, {'expr':(i,t,x,y,z,w) => [x,y,z,0]},1000);
+    await presentation.nextSlide();
+
+    presentation.TransitionTo(R4Rotation, {'expr': rotationAll3DAxesSequentially()})
+    await presentation.nextSlide();
+
+    //"those rotations don't change in 4D"
+    await animateTo4DOrtho();
+    await presentation.nextSlide();
+
+    //thing #1: ortho rotation!
+
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    await presentation.nextSlide();
+
+    //perspective OH NO EVERYTHING GOES WRONG because we animate through w=0
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0)});
+    await animateTo4DPerspective();
+    await presentation.nextSlide();
+
+    //if we add 1 to w, we're fine
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    await presentation.nextSlide();
+
+    //now introduce a 5-cell?
+
+    await presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w) => [x,y,z,w]});
+    await presentation.nextSlide();
+}
+
+async function animateFiveCell(){
+
+    let hypercube = polychora[0];
+
+
+    let sq5 = Math.sqrt(5), sq29 = Math.sqrt(2/9), sq23 = Math.sqrt(2/3);
+    let fivecell = new Polychoron(
+        [//points
+            //[0,0,0,0], [0,0,0,1], [0,0,1,0], [0,1,0,0], [1,0,0,0],
+
+            //[1,1,1,-1/sq5], [1,-1,-1,-1/sq5], [-1,1,-1,-1/sq5], [-1,-1,1,-1/sq5], [0,0,0,sq5-1/sq5]
+            [sq5*Math.sqrt(8/9),-sq5/3,0,0], [-sq5*sq29,-sq5/3,-sq5*sq23,0], [-sq5*sq29,-sq5/3,sq5*sq23,0], [0,sq5,0,0], [0,0,0,1] //has base on XZ plane, almost all w=0
+
+        ],
+        [ //lines
+            [0,1], [0,2], [0,3], [0,4],
+            [1,2],[1,3],[1,4],
+            [2,3],[2,4],
+            [3,4],
+        ],
+    R4Embedding,R4Rotation);
+
+    //fivecell.objectParent.scale.set(0.5,0.5,0.5);
+    fivecell.objectParent.scale.set(0,0,0);
+
+    objects.push(fivecell);
+    polychora.push(fivecell);
+
+    controlsToRotateAboutOrigin.objects = controlsToRotateAboutOrigin.objects.concat([fivecell.objectParent]); //make mouse rotation rotate the hypercube
+
+
+
+    //move hypercube out of the way
+    presentation.TransitionTo(hypercube.objectParent.position, {x:3}, 1000);
+    await animateTo4DOrtho();
+    await presentation.delay(1500);
+
+    
+    //presentation.TransitionTo(fivecell.objectParent.position, {x:0}, 1000); //not needed, positionn already at 0
+    presentation.TransitionTo(fivecell.objectParent.scale, {x:0.5,y:0.5,z:0.5}, 1000);
+   
+    await presentation.nextSlide();
+
+    //now that a hypercube is here let's rotate it
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    await presentation.nextSlide();
+
+    //perspective too, that's cool
+    await animateTo4DPerspective();
+    await presentation.nextSlide();
+
+
 }
 
 async function animate4DStandalone(){

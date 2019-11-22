@@ -178,15 +178,19 @@
 
    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
         <h1>Visualization type: "Orthographic Projection"</h1>
-        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="coord4">some fixed direction vector</span>) to the [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>] coordinates.</div>
-        <div>[x,y,z] = [<span class="coord1 coord1-num"></span>,<span class="coord2 coord2-num"></span>,<span class="coord3 coord3-num"></span>] + <span class="coord4 coord4-num"></span>[<span id="orthocoord1">a</span>,<span id="orthocoord2">b</span>,<span id="orthocoord3">c</span>]</div>
+        <script>    
+        document.getElementByID("").style.color = orthographic4VecColor;
+
+        </script>
+        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="directionVecColor">some fixed direction vector</span>) to the [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>] coordinates.</div>
+        <div>[x,y,z] = [<span class="coord1 coord1-num"></span>,<span class="coord2 coord2-num"></span>,<span class="coord3 coord3-num"></span>] + <span class="coord4 coord4-num"></span>[<span class="directionVecColor orthocoord1">a</span>,<span class="directionVecColor orthocoord2">b</span>,<span class="directionVecColor orthocoord3">c</span>]</div>
     
     </div>
 
    <div class="exp-slide exp-text fullscreenPopup" style="opacity:1">
         <h1>Visualization type: "Orthographic Projection"</h1>
-        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="coord4">some fixed direction vector</span>) to the [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>] coordinates.</div>
-        <div>[x,y,z] = [<span class="coord1 coord1-num"></span>,<span class="coord2 coord2-num"></span>,<span class="coord3 coord3-num"></span>] + <span class="coord4 coord4-num"></span>[<span id="orthocoord1">a</span>,<span id="orthocoord2">b</span>,<span id="orthocoord3">c</span>]</div>
+        <div>Visualizing R<sup>4</sup> as R<sup>3</sup>, by adding <span class="coord4">w</span>(<span class="directionVecColor">some fixed direction vector</span>) to the [<span class="coord1">x</span>,<span class="coord2">y</span>,<span class="coord3">z</span>] coordinates.</div>
+        <div>[x,y,z] = [<span class="coord1 coord1-num"></span>,<span class="coord2 coord2-num"></span>,<span class="coord3 coord3-num"></span>] + <span class="coord4 coord4-num"></span>[<span class="directionVecColor orthocoord1">a</span>,<span class="directionVecColor orthocoord2">b</span>,<span class="directionVecColor orthocoord3">c</span>]</div>
     
     </div>
 
@@ -230,14 +234,14 @@
         <h1>A simple 4D rotation (perspective):</h1>
         <br />
         <h1>Rotating around the <span class="coord3">z</span><span class="coord4">w</span> plane.</h1>
-        <div>Uh oh - distortion from dividing by 0!</div>
+        <div>Uh oh - distortion! Why? When 1/<span class="coord4">w</span> is dividing by 0!</div>
     </div>
 
     <div class="exp-slide exp-text fullscreenPopup">
         <h1>A simple 4D rotation (better perspective):</h1>
         <br />
         <h1>Rotating around the <span class="coord3">z</span><span class="coord4">w</span> plane.</h1>
-        <div>Adding <span class="coord4">w = w<sub>old</sub> +1</span> means we aren't dividing by 0 anymore - and it looks super cool.</div>
+        <div>Adding <span class="coord4">w</span> = <span class="coord4">w<sub>old</sub></span> +1 means we aren't dividing by 0 anymore - and it looks super cool.</div>
     </div>
 
     <div class="exp-slide exp-text fullscreenPopup">

@@ -28,6 +28,9 @@ let coordinateLine4ZeroColor = 'hsl(205,99%,74%)'; //color for w=0. identical to
 //let coordinateLine4ZeroColor = 'hsl(160, 0%,30%)'; //color for w=0.
 let coordinateLine4NegativeColor = 'hsl(305,50%,30%)'; //color for w=-1.
 
+
+let lightgray = 0xbbbbbb;
+
 //GENDERHYPERCUBE
 
 coordinateLine4Color = 'hsl(205, 99%, 74%)'; //blue
@@ -41,6 +44,7 @@ coordinateLine4Color = 'hsl('+(205+110)+', 99%, 50%)'; //pink
 coordinateLine4ZeroColor = 'hsl('+(205+80)+', 40%, 40%)' // deep purple
 coordinateLine4NegativeColor = 'hsl('+(205+100)+', 85%, 40%)'
 
+let orthographic4VecColor = 'hsl('+(205+160)+', 99%, 50%)'; //pink
 
 /*
 // green -> red

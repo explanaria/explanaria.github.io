@@ -29,7 +29,7 @@ function setupThree(){
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
 	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
-    controlsToRotateAboutOrigin = new RotateAboutCenterControls([axesParent],three.renderer.domElement);
+    controlsToRotateAboutOrigin = new RotateAboutCenterControls([],three.renderer.domElement);
     
 	three.camera.position.z = 3;
 	three.camera.position.y = 0.5;
@@ -167,15 +167,18 @@ function setup(){
     for(var i=0;i<4;i++){
         domElems.push(Array.prototype.slice.call(document.getElementsByClassName("coord"+(i+1)+"-num")));
     }
+    for(var i=0;i<3;i++){
+        domElems.push(Array.prototype.slice.call(document.getElementsByClassName("orthocoord"+(i+1))));
+    }
 
     let pointUpdater = {'activate':function(){
-        for(var i=0;i<4;i++){
+        for(let i=0;i<4;i++){
             domElems[i].forEach( (el) => {el.innerHTML = format(pointCoords[i])});
         }
 
-        //update the orthogonal 4-vec, in the one slide it's used
-        for(var i=0;i<3;i++){
-        //    document.getElementById("orthocoord"+(i+1)).innerHTML = format(userParams.orthographic4Vec[i]);
+        //update the orthogonal 4-vec's HTML elements too, in the two slides they're used
+        for(let i=0;i<3;i++){
+            domElems[i+4].forEach( (el) => {el.innerHTML = format(userParams.orthographic4Vec[i])});
         }
     }};
 
@@ -184,6 +187,7 @@ function setup(){
     Array.prototype.slice.call(document.getElementsByClassName("coord2")).forEach( (elem) => { elem.style.color = coordinateLine2Color; } );
     Array.prototype.slice.call(document.getElementsByClassName("coord3")).forEach( (elem) => { elem.style.color = coordinateLine3Color; } );
     Array.prototype.slice.call(document.getElementsByClassName("coord4")).forEach( (elem) => { elem.style.color = coordinateLine4Color; } );
+    Array.prototype.slice.call(document.getElementsByClassName("directionVecColor")).forEach( (elem) => { elem.style.color = orthographic4VecColor; } );
 
 	presentation = new EXP.UndoCapableDirector();
 
@@ -194,19 +198,20 @@ function setup(){
 
 function setup3DAxes(){
     let axisSize = 1.5;
+
     xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
     xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
     xAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0,0]}))
     .add(xAxisControl)
-    //.add(R4Rotation.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
     
     xAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0,0]}))
     .add(xAxisControl.makeLink())
-    //.add(R4Rotation.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
 
@@ -215,13 +220,13 @@ function setup3DAxes(){
     yAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0,0]}))
     .add(yAxisControl)
-    //.add(R4Rotation.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
     yAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0,0]}))
     .add(yAxisControl.makeLink())
-    //.add(R4Rotation.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
 
@@ -230,13 +235,13 @@ function setup3DAxes(){
     zAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x,0]}))
     .add(zAxisControl)
-    //.add(R4Rotation.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
     zAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x,0]}))
     .add(zAxisControl.makeLink())
-    //.add(R4Rotation.makeLink())
+    .add(R4Rotation.makeLink())
     .add(R4Embedding.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
     
@@ -364,14 +369,14 @@ async function animateBackTo3DEmbedding(){
     });
 
     [xAxis, yAxis, zAxis].forEach((axis) => axis.getDeepestChildren().forEach((output) => {
-        presentation.TransitionTo(output, {"color": new THREE.Color(output.color).offsetHSL(0,0,0.15)});
+        presentation.TransitionTo(output, {"color": new THREE.Color(output.color).offsetHSL(0,-0.15,0.15)});
     }));
 
 
     //re-put the XYZ arrows into tip-to-toe
 
     presentation.TransitionTo(three.camera.position, {'x':0,'y':0.5,'z':3}, 1000);
-    presentation.TransitionTo(controls, {'autoRotateSpeed':1, autoRotate: true}, 250);
+    presentation.TransitionTo(controls, {'autoRotateSpeed':1, autoRotate: true}, 100);
 
     //move point coordinate arrows back to their original positions
     let arrowFuncs = [
@@ -444,7 +449,9 @@ async function animateBackTo3DEmbedding(){
     await presentation.nextSlide();
 
     //back to positive
-    presentation.TransitionTo(window, {'pointPath':(i,t,x) => fourDDemonstrateAxisPoint},1000);
+    let fourDDemonstrateAxisHalfPoint = EXP.Math.clone(fourDDemonstrateAxisPoint);
+    fourDDemonstrateAxisHalfPoint[3] *= 1/2;
+    presentation.TransitionTo(window, {'pointPath':(i,t,x) => fourDDemonstrateAxisHalfPoint},1000);
 
     await presentation.nextSlide();
 }

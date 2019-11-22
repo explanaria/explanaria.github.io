@@ -16,6 +16,9 @@ let axesParent = new THREE.Object3D(); //allows the XYZW axes to be moved around
 let projectionVisualizerParent = new THREE.Object3D(); //an object containing a visualization of the current embedding
 let grayProjectionVisualizingAxes = null, R3Rotation=null, inwardsLineControl = null;
 
+let shadowAxes = null, shadowAxesParent=new THREE.Object3D(); //axes to make understanding 4D motion a bit easier
+let shadowPlane = null;
+
 
 const zeroWColor = new THREE.Color(coordinateLine4ZeroColor);
 const oneWColor = new THREE.Color(coordinateLine4Color);
@@ -184,7 +187,7 @@ let THREECameraProxy = {
 async function changeCameraToRotateAllObjectsSimultaneously(){
     let objectsToRotate = polychora.map( (polychoron) => (polychoron.objectParent));
 
-    objectsToRotate = objectsToRotate.concat([axesParent, projectionVisualizerParent]);
+    objectsToRotate = objectsToRotate.concat([axesParent, projectionVisualizerParent, shadowAxesParent]);
 
     controlsToRotateAboutOrigin.objects = objectsToRotate;
     controlsToRotateAboutOrigin.autoRotateSpeed = 0.1;
@@ -258,7 +261,49 @@ function setup4DAxes(){
     three.scene.add(axesParent);
 
 
-    //a separate coordinate system that shows the projection
+    //some fixed transparent XYZ axes, which help orient the transformation
+    shadowAxes = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    let shadowAxisSize = 1.5 - 0.001;
+    
+    for(let sign=-1;sign<=1;sign+=2){
+        shadowAxes
+        .add(new EXP.Transformation({expr: (i,t,x) => [sign*shadowAxisSize*x,0,-0.01,0]}))
+        .add(new EXP.VectorOutput({width:2.9, color: lightgray, opacity:0}));
+
+        shadowAxes
+        .add(new EXP.Transformation({expr: (i,t,x) => [0,sign*shadowAxisSize*x,-0.01,0]}))
+        .add(new EXP.VectorOutput({width:2.9, color: lightgray, opacity:0}));
+
+        shadowAxes
+        .add(new EXP.Transformation({expr: (i,t,x) => [0,-0.01,sign*shadowAxisSize*x,0]}))
+        .add(new EXP.VectorOutput({width:2.9, color: lightgray, opacity:0}));
+    }
+    shadowAxes.getDeepestChildren().forEach((output) => {
+        shadowAxesParent.add(output.mesh);
+    });
+    
+    three.scene.add(shadowAxesParent);
+    objects.push(shadowAxes);
+
+    //some planes under the objects
+    shadowPlane = new EXP.Area({bounds: [[-2,2],[-2,2]], numItems: 2});
+    shadowPlane.add(new EXP.SurfaceOutput({color: kindalightgray, showSolid: false, gridSquares: 8, opacity: 0}));
+    shadowPlane.add(new EXP.SurfaceOutput({color: verylightgray, showGrid: false, gridSquares: 8, opacity: 0}));
+
+    let flatPlaneMesh = shadowPlane.children[0].mesh;
+    flatPlaneMesh.position.y = -1;
+    flatPlaneMesh.rotation.x = Math.PI/2;
+
+    let flatPlaneMesh2 = shadowPlane.children[1].mesh;
+    flatPlaneMesh2.position.y = -1;
+    flatPlaneMesh2.rotation.x = Math.PI/2;
+    
+    shadowPlane.activate(0);
+    shadowAxesParent.add(flatPlaneMesh);
+    shadowAxesParent.add(flatPlaneMesh2);
+
+
+    //a separate coordinate system that shows the type of 4D projection being used
 
     let R3Rotation = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]});
     //gray projection-visualizing axes
@@ -358,15 +403,22 @@ async function animate4D(){
     //The fabled hypercube... begins to appear!
     //move axes and hypercube away from one another
    
-    //presentation.TransitionTo(axesParent.position, {x:-2}, 1000);
-    //presentation.TransitionTo(axesParent.scale, {x:1/2,y:1/2,z:1/2}, 1000);
+    presentation.TransitionTo(axesParent.position, {x:-3}, 1000);// THIS IS BAD BECAUSE ITS NOT RESOLUTION DEPENDENT
+    presentation.TransitionTo(axesParent.scale, {x:1/2,y:1/2,z:1/2}, 1000);
     //presentation.TransitionTo(hypercube.objectParent.position, {x:1}, 1000);
    
-    presentation.TransitionTo(projectionVisualizerParent.position, {x:-2}, 1000); // THIS IS BAD BECAUSE ITS NOT RESOLUTION DEPENDENT
+    presentation.TransitionTo(projectionVisualizerParent.position, {x:-3}, 1000); // THIS IS BAD BECAUSE ITS NOT RESOLUTION DEPENDENT
     presentation.TransitionTo(projectionVisualizerParent.scale, {x:1/2,y:1/2,z:1/2}, 1000);
 
+    //use gray coordinate system
+    /*
+    shadowAxes.getDeepestChildren().forEach( (output) => {
+        presentation.TransitionTo(output, {opacity: 0.3}, 250);
+    });*/
+
+    // extend axes
     [xAxisControl,yAxisControl,zAxisControl, wAxisControl].forEach((item, axisNumber) => {
-        presentation.TransitionTo(item, {'expr': (i,t,x,y,z,w)=>[1.5*x,1.5*y,1.5*z,1.5*w]}, 1000);
+       // presentation.TransitionTo(item, {'expr': (i,t,x,y,z,w)=>[1.5*x,1.5*y,1.5*z,1.5*w]}, 1000);
     });
     [xAxis, yAxis, zAxis].forEach((axis) => axis.getDeepestChildren().forEach((output) => {
         presentation.TransitionTo(output, {"opacity": 0.8},250);
@@ -391,6 +443,10 @@ async function animate4D(){
     await presentation.nextSlide();
 
 
+
+    shadowPlane.getDeepestChildren().forEach( (output) => {
+        presentation.TransitionTo(output, {opacity: 0.5}, 1000);
+    });
     presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,y,z,0]},1000);
     await presentation.nextSlide();
 
@@ -411,7 +467,7 @@ async function animate4DEmbeddings(){
 
     //flash the name "orthographic embedding"
 
-    //presentation.TransitionTo(axesParent.position, {x:-2,y:-1}, 1000);
+    presentation.TransitionTo(axesParent.position, {x:-3,y:-1}, 1000);
     presentation.TransitionTo(projectionVisualizerParent.position, {x:-3,y:1}, 1000);
 
     grayProjectionVisualizingAxes.getDeepestChildren().forEach( (output) => {
@@ -499,6 +555,7 @@ async function animateFiveCell(){
 
     //fivecell.objectParent.scale.set(0.5,0.5,0.5);
     fivecell.objectParent.scale.set(0,0,0);
+    fivecell.objectParent.rotation.copy(hypercube.objectParent.rotation);
 
     objects.push(fivecell);
     polychora.push(fivecell);
@@ -519,12 +576,14 @@ async function animateFiveCell(){
     await presentation.nextSlide();
 
     //now that a hypercube is here let's rotate it
-    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0)});
     await presentation.nextSlide();
 
     //perspective too, that's cool
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
     await animateTo4DPerspective();
     await presentation.nextSlide();
+
 
 
 }

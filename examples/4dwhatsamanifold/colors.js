@@ -30,6 +30,8 @@ let coordinateLine4NegativeColor = 'hsl(305,50%,30%)'; //color for w=-1.
 
 
 let lightgray = 0xbbbbbb;
+let verylightgray = 0xdddddd;
+let kindalightgray = 0x999999;
 
 //GENDERHYPERCUBE
 

@@ -82,16 +82,16 @@ var fShader = [
 " return hsv2rgb_smooth(hsv);",
 "}",
 
-"vec4 renderGridlines(vec4 mainColor, vec2 uv, vec4 color) {",
+"vec4 renderGridlines(vec4 existingColor, vec2 uv, vec4 solidColor) {",
 "  vec2 distToEdge = abs(mod(vUv.xy*gridSquares + lineWidth/2.0,1.0));",
-"  vec3 gridColor = gridLineColor(color.xyz);",
+"  vec3 gridColor = showSolid * gridLineColor(solidColor.xyz) + (1.0-showSolid)*solidColor.xyz;", //if showSolid =0, use solidColor as the gridline color, otherwise shade
 
 "  if( distToEdge.x < lineWidth){",
-"    return showGrid*vec4(gridColor, color.a) + (1.-showGrid)*mainColor;",
+"    return showGrid*vec4(gridColor, 1.0) + (1.0-showGrid)*existingColor;",
 "  } else if(distToEdge.y < lineWidth){ ",
-"    return showGrid*vec4(gridColor, color.a) + (1.-showGrid)*mainColor;",
+"    return showGrid*vec4(gridColor, 1.0) + (1.0-showGrid)*existingColor;",
 "  }",
-"  return mainColor;",
+"  return existingColor;",
 "}",
 /*
 "vec4 getShadedColorMathbox(vec4 rgba) { ",
@@ -114,8 +114,10 @@ var fShader = [
 //"  //gl_FragColor = vec4(vNormal.xyz, 1.0); // view debug normals",
 //"  //if(vNormal.x < 0.0){gl_FragColor = vec4(offSpecular(color.rgb), 1.0);}else{gl_FragColor = vec4((color.rgb), 1.0);}", //view specular and non-specular colors
 //"  gl_FragColor = vec4(mod(vUv.xy,1.0),0.0,1.0); //show uvs
-"  vec4 materialColor = showSolid*getShadedColor(vec4(color.rgb, opacity));",
-"  vec4 colorWithGridlines = renderGridlines(materialColor, vUv.xy, vec4(color.rgb, opacity));",
+"  vec4 solidColor = vec4(color.rgb, showSolid);",
+"  vec4 solidColorOut = showSolid*getShadedColor(solidColor);",
+"  vec4 colorWithGridlines = renderGridlines(solidColorOut, vUv.xy, solidColor);",
+"  colorWithGridlines.a *= opacity;",
 "  gl_FragColor = colorWithGridlines;",	
 "}"].join("\n")
 

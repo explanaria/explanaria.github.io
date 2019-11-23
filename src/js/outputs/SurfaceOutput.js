@@ -57,14 +57,19 @@ class SurfaceOutput extends OutputNode{
 		this.color = this._color; //setter sets color uniform
 		this._uniforms.opacity.value = this._opacity;
 		this._uniforms.gridSquares.value = this._gridSquares;
-		this._uniforms.showGrid.value = this._showGrid ? 1 : 0;
-		this._uniforms.showSolid.value = this._showSolid ? 1 : 0;
+		this._uniforms.showGrid.value = this.toNum(this._showGrid);
+		this._uniforms.showSolid.value = this.toNum(this._showSolid);
 		this._uniforms.lineWidth.value = this._gridLineWidth;
 
 		if(!this.showSolid)this.material.transparent = true;
 
 		getThreeEnvironment().scene.add(this.mesh);
 	}
+    toNum(x){
+        if(x == false)return 0;
+        if(x == true)return 1;
+        return x;
+    }
 	makeGeometry(){
 
 		let MAX_POINTS = 10000;

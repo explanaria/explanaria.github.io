@@ -201,7 +201,7 @@ async function animate(){
 
     await presentation.nextSlide();
 
-    coord1SliderR.dragging = true;
+   // coord1SliderR.dragging = true;
     presentation.TransitionTo(coord1SliderR, {'value': -1}, 1000);
 
     await presentation.nextSlide();

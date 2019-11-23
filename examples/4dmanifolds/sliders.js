@@ -9,6 +9,7 @@ class Slider{
         this.canvas.width = 150;
 
         this.value = 0;
+        this.lastValue = 0;
 
         this.valueGetter = valueGetter; //call every frame to change the display
         this.valueSetter = valueSetter;
@@ -25,14 +26,16 @@ class Slider{
 
         //this.update();
     }
+
     setupCanvas(containerID){
         //setup this.canvas. used in a separate function so subclasses can override it.
         this.canvas = document.createElement("canvas");
         document.getElementById(containerID).appendChild(this.canvas);
     }
     activate(){
-        if(this.dragging){
+        if(this.value != this.lastValue){
             this.valueSetter(this.value);
+            this.lastValue = this.value;
         }else{
             this.value = this.valueGetter();
         }
@@ -107,6 +110,7 @@ class CircleSlider extends Slider{
         super(containerID, valueGetter, valueSetter);
     
         this.dragging = false;
+        this.movingExternally = false;
     
         this.pos = [this.canvas.width/2,this.canvas.height/2];
 
@@ -305,7 +309,7 @@ class PlaneSlider extends Slider{
         this.pos = [this.canvas.width/2,this.canvas.height/2];
     }
     activate(){
-        if(this.dragging){
+        if(this.lastValues[0] != this.values[0] || this.lastValues[1] != this.values[1]){
             this.valueSetter(this.values[0], this.values[1]);
         }else{
             this.values = this.valueGetter();

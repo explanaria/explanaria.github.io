@@ -16,6 +16,8 @@ let twoDCanvasHandler = null;
 let northPoleChartSurface, southPoleChartSurface, middleChartSurface = null;
 
 
+let coord1 = coord2 = null;
+
 
 //2D canvas class in the main canvas zone
 class CircleCoordinateNotAlwaysCircularScene{
@@ -135,7 +137,7 @@ function setup(){
     sphereLineOutput = new EXP.LineOutput({width: 10, color: coordinateLine2ColorLighter, opacity: 0});
     manifoldParametrization.add(sphereLineOutput);
 
-    var coord1 = new EXP.Area({bounds: [[0,1]], numItems: 20});
+    coord1 = new EXP.Area({bounds: [[0,1]], numItems: 20});
     let coord1Range = Math.PI; //how wide the coordinate display should be
     coord1
     .add(new EXP.Transformation({expr: (i,t,x) => [(x)*coord1Range,userPointParams.x2]}))
@@ -149,7 +151,7 @@ function setup(){
     .add(manifoldParametrization.makeLink())
     .add(new EXP.PointOutput({width:0.3, color: pointColor}));
     
-    var coord2 = new EXP.Area({bounds: [[0,1]], numItems: 200});
+    coord2 = new EXP.Area({bounds: [[0,1]], numItems: 200});
     let coord2Range = 2*Math.PI; //how wide the coordinate should be
     coord2
     .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,(x-0.5)*coord2Range + userPointParams.x2]}))
@@ -164,69 +166,67 @@ function setup(){
     //coordinate charts for north pole, south pole
 
 
-/*
-    let middleCircleChart = new CirclePlaneSlider(coordinateLine3Color, 'northPoleSlider', 
+
+    const poleChartDiameter = Math.PI/2-0.1;
+    const middleChartDiameter = poleChartDiameter/1.5;
+
+
+    let middleCircleChart = new PlaneSlider(coordinateLine2Color, 'middleSlider', 
         ()=>{
-            let radius = (Math.PI/2-userPointParams.x1);
-            let pos = [Math.cos(userPointParams.x2)*radius, Math.sin(userPointParams.x2)*radius];
-            return pos;
+            return [userPointParams.x2/(Math.PI), (userPointParams.x1 - Math.PI/2)/(middleChartDiameter/2)];
         }, 
         (x,y)=>{
-            let angle = Math.atan2(y,x);
-            let radius = Math.sqrt(y*y+x*x);
-            userPointParams.x1=(-Math.PI/2+radius);
-            userPointParams.x2=angle;
+            userPointParams.x1=y*(middleChartDiameter/2) + Math.PI/2;
+            userPointParams.x2=x*Math.PI;
         });
-
-*/
-
-
-    const poleChartRadius = Math.PI/2;
-
 
     let northPoleSlider = new CirclePlaneSlider(coordinateLine4Color, 'northPoleSlider', 
         ()=>{
-            let radius = (userPointParams.x1)/poleChartRadius;
+            let radius = (userPointParams.x1)/poleChartDiameter;
             let pos = [Math.cos(userPointParams.x2)*radius, Math.sin(userPointParams.x2)*radius];
             return pos;
         }, 
         (x,y)=>{
             let angle = Math.atan2(y,x);
             let radius = Math.sqrt(y*y+x*x);
-            userPointParams.x1=(radius*poleChartRadius);
+            userPointParams.x1=(radius*poleChartDiameter);
             userPointParams.x2=angle;
         });
+    northPoleSlider.canvas.addEventListener("mousedown", ()=> {
+        EXP.TransitionTo(three.camera.position, {'x':0,'y':3,'z':0}, 1000);}, false);
 
     let southPoleSlider = new CirclePlaneSlider(coordinateLine3Color, 'southPoleSlider', 
         ()=>{
-            let radius = (Math.PI-userPointParams.x1)/poleChartRadius;
+            let radius = (Math.PI-userPointParams.x1)/poleChartDiameter;
             let pos = [Math.cos(-userPointParams.x2)*radius, Math.sin(-userPointParams.x2)*radius];
             return pos;
         }, 
         (x,y)=>{
             let angle = Math.atan2(y,x);
             let radius = Math.sqrt(y*y+x*x);
-            userPointParams.x1=(Math.PI-radius*poleChartRadius);
+            userPointParams.x1=(Math.PI-radius*poleChartDiameter);
             userPointParams.x2=-angle;
         });
+    southPoleSlider.canvas.addEventListener("mousedown", ()=> {
+        EXP.TransitionTo(three.camera.position, {'x':0,'y':-3,'z':0}, 1000);});
 
-    northPoleChartSurface = new EXP.Area({bounds: [[0, poleChartRadius],[0,2*Math.PI]], numItems: [10,30]});
+    northPoleChartSurface = new EXP.Area({bounds: [[0, poleChartDiameter],[0,2*Math.PI]], numItems: [10,30]});
     northPoleChartSurface
     .add(manifoldParametrization.makeLink())
     .add(new EXP.SurfaceOutput({width:10, color: coordinateLine4Color, opacity:0, gridLineWidth: 0.1, showSolid:true, gridSquares: 8}));
-    northPoleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
+    northPoleChartSurface.children[0].children[0].mesh.scale.set(1.001, 1.001, 1.001);//ensure no z-fighting
 
-    southPoleChartSurface = new EXP.Area({bounds: [[Math.PI-poleChartRadius,Math.PI],[0,2*Math.PI]], numItems: [10,30]});
+    southPoleChartSurface = new EXP.Area({bounds: [[Math.PI-poleChartDiameter,Math.PI],[0,2*Math.PI]], numItems: [10,30]});
     southPoleChartSurface
     .add(manifoldParametrization.makeLink())
     .add(new EXP.SurfaceOutput({width:10, color: coordinateLine3Color, opacity:0, gridLineWidth: 0.1, showSolid:true, gridSquares: 8}));
-    southPoleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
+    southPoleChartSurface.children[0].children[0].mesh.scale.set(1.001, 1.001, 1.001);//ensure no z-fighting
 
-    middleChartSurface = new EXP.Area({bounds: [[poleChartRadius/1.5,Math.PI-poleChartRadius/1.5],[0.2,2*Math.PI+0.2]], numItems: [10,30]});
+    middleChartSurface = new EXP.Area({bounds: [[middleChartDiameter,Math.PI-middleChartDiameter],[0.3,2*Math.PI+0.3]], numItems: [10,30]});
     middleChartSurface
     .add(manifoldParametrization.makeLink())
-    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine2Color, opacity:0, gridLineWidth: 0.1, showSolid:0.9, gridSquares: 8}));
-    middleChartSurface.children[0].children[0].mesh.scale.set(1.02, 1.02, 1.02);
+    .add(new EXP.SurfaceOutput({width:10, color: blue, opacity:0, gridLineWidth: 0.1, gridSquares: 8}));
+    middleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01); //ensure no z-fighting
 
 
 
@@ -238,7 +238,11 @@ function setup(){
 
     twoDCanvasHandler = new CircleCoordinateNotAlwaysCircularScene("twoDcanvas");
 
-    objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints, northPoleSlider, southPoleSlider, northPoleChartSurface, southPoleChartSurface,middleChartSurface];
+    objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints, northPoleSlider, southPoleSlider, middleCircleChart];
+
+    //these things could go in objects, but for optimization are only called once
+    staticActivateOnceObjects = [sphere, northPoleChartSurface, southPoleChartSurface,middleChartSurface];
+    staticActivateOnceObjects.forEach((item) => item.activate(0));
 }
 
 async function animate(){
@@ -285,16 +289,35 @@ async function animate(){
     objects.push({activate: function(){three.onWindowResize()}}); //ensure canvas keeps aspect ratio properly
     presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'}, 0);
 
+    coord1.getDeepestChildren().forEach( (output) => {
+        presentation.TransitionTo(output, {'opacity': 0});
+    });
+    coord2.getDeepestChildren().forEach( (output) => {
+        presentation.TransitionTo(output, {'opacity': 0});
+    });
+
     await presentation.delay(1000);
     objects.pop(); //delete that last object
 
 
+    presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'}, 0);
 
-    [northPoleChartSurface,middleChartSurface,southPoleChartSurface].forEach( (item) => {
+    [northPoleChartSurface,southPoleChartSurface].forEach( (item) => {
         item.getDeepestChildren().forEach( (output) => {
             presentation.TransitionTo(output, {'opacity': 1});
         })
     });
+
+    middleChartSurface.getDeepestChildren().forEach( (output) => {
+        presentation.TransitionTo(output, {'opacity': 0.7});
+    });
+
+
+    let coordSystem1 = document.getElementById("firstCoordSystem");
+    presentation.TransitionTo(coordSystem1.style, {'opacity':0}, 0);
+
+    let coordSystem2 = document.getElementById("alternateCoordSystem");
+    presentation.TransitionTo(coordSystem2.style, {'opacity':1}, 0);
 
 }
 

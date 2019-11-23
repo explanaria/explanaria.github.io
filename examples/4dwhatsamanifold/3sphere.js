@@ -117,7 +117,7 @@ function setup(){
     var sphere = new EXP.Area({bounds: [[0,Math.PI*2],[0, Math.PI]], numItems: [30,30]});
     var timeChange = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [theta1, theta2]});
     var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => sphereParametrization(i,t,theta1,theta2) });
-    sphereOutput = new EXP.SurfaceOutput({opacity:0.3, color: blue, showGrid: true, gridLineWidth: 0.05, showSolid:true});
+    sphereOutput = new EXP.SurfaceOutput({opacity:0.03, color: blue, showGrid: true, gridLineWidth: 0.05, showSolid:true});
 
     //SO. For some reason, this makes everything look a lot better with transparency on. It still renders things behind it properly (I guess that takes depthTest).
     //I guess it OVERWRITES the thing behind it instead of adding to it?
@@ -157,6 +157,79 @@ function setup(){
 
     coord1SliderR.mode = 'vertical';
 
+    //coordinate charts for north pole, south pole
+
+
+/*
+    let middleCircleChart = new CirclePlaneSlider(coordinateLine3Color, 'northPoleSlider', 
+        ()=>{
+            let radius = (Math.PI/2-userPointParams.x1);
+            let pos = [Math.cos(userPointParams.x2)*radius, Math.sin(userPointParams.x2)*radius];
+            return pos;
+        }, 
+        (x,y)=>{
+            let angle = Math.atan2(y,x);
+            let radius = Math.sqrt(y*y+x*x);
+            userPointParams.x1=(-Math.PI/2+radius);
+            userPointParams.x2=angle;
+        });
+
+*/
+
+
+    const poleChartRadius = 1.4;
+
+
+    let northPoleSlider = new CirclePlaneSlider(coordinateLine4Color, 'northPoleSlider', 
+        ()=>{
+            let radius = (userPointParams.x1)/poleChartRadius;
+            let pos = [Math.cos(userPointParams.x2)*radius, Math.sin(userPointParams.x2)*radius];
+            return pos;
+        }, 
+        (x,y)=>{
+            let angle = Math.atan2(y,x);
+            let radius = Math.sqrt(y*y+x*x);
+            userPointParams.x1=(radius*poleChartRadius);
+            userPointParams.x2=angle;
+        });
+
+    let southPoleSlider = new CirclePlaneSlider(coordinateLine3Color, 'southPoleSlider', 
+        ()=>{
+            let radius = (Math.PI-userPointParams.x1)/poleChartRadius;
+            let pos = [Math.cos(-userPointParams.x2)*radius, Math.sin(-userPointParams.x2)*radius];
+            return pos;
+        }, 
+        (x,y)=>{
+            let angle = Math.atan2(y,x);
+            let radius = Math.sqrt(y*y+x*x);
+            userPointParams.x1=(Math.PI-radius*poleChartRadius);
+            userPointParams.x2=-angle;
+        });
+
+    var northPoleChartSurface = new EXP.Area({bounds: [[0, poleChartRadius],[0,2*Math.PI]], numItems: [30,30]});
+    northPoleChartSurface
+    .add(manifoldParametrization.makeLink())
+    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine4Color, opacity:0.99, gridLineWidth: 0.05, showSolid:false}));
+    //northPoleChartSurface.children[0].children[0].mesh.material.depthWrite = false;
+    northPoleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
+
+    var southPoleChartSurface = new EXP.Area({bounds: [[Math.PI-poleChartRadius,Math.PI],[0,2*Math.PI]], numItems: [30,30]});
+    southPoleChartSurface
+    .add(manifoldParametrization.makeLink())
+    //.add(new EXP.SurfaceOutput({width:10, color: coordinateLine3Color, opacity:0.99, gridLineWidth: 0.05, showSolid:false}));
+    //southPoleChartSurface.children[0].children[0].mesh.material.depthWrite = false;
+    //southPoleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
+
+    var middleChartSurface = new EXP.Area({bounds: [[poleChartRadius/2,Math.PI-poleChartRadius/2],[0.2,2*Math.PI+0.2]], numItems: [30,30]});
+    middleChartSurface
+    .add(manifoldParametrization.makeLink())
+    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine2Color, opacity:0.99, gridLineWidth: 0.05, showSolid:false}));
+    middleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
+    //middleChartSurface.children[0].children[0].mesh.material.depthWrite = false;
+
+
+
+
     //points to highlight edges
 	var singularPoints = new EXP.Array({data: [[0,0],[Math.PI,0]]});
 	var ptOutput = new EXP.PointOutput({color: green, width: 0.1});
@@ -165,7 +238,7 @@ function setup(){
 
     twoDCanvasHandler = new CircleCoordinateNotAlwaysCircularScene("twoDcanvas");
 
-    objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints];
+    objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints, northPoleSlider, southPoleSlider, northPoleChartSurface, southPoleChartSurface,middleChartSurface];
 }
 
 async function animate(){
@@ -201,7 +274,6 @@ async function animate(){
 
     await presentation.nextSlide();
 
-   // coord1SliderR.dragging = true;
     presentation.TransitionTo(coord1SliderR, {'value': -1}, 1000);
 
     await presentation.nextSlide();

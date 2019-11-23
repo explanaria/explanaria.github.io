@@ -310,9 +310,11 @@ class PlaneSlider extends Slider{
     }
     activate(){
         if(this.lastValues[0] != this.values[0] || this.lastValues[1] != this.values[1]){
+            //values changed externally
             this.valueSetter(this.values[0], this.values[1]);
         }else{
             this.values = this.valueGetter();
+            this.lastValues = this.values;
         }
         
         this.draw();
@@ -491,4 +493,104 @@ function dist(a,b,c,d){
 function clamp(val, min, max){
     return Math.min(Math.max(val, min),max);
 }
+
+
+
+
+
+
+class CirclePlaneSlider extends PlaneSlider{
+    //a PlaneSlider but restricted to a circle
+    constructor(color, containerID, valueGetter, valueSetter){
+        super(color, containerID, valueGetter, valueSetter);
+        this.maxDraggableRadius = 1;
+    }
+    draw(){
+
+        this.canvas.width = this.canvas.width;
+
+        this.context.lineWidth = 3
+        this.context.strokeStyle = this.lineColor;
+
+        //outer border is a circle
+        let borderWidth = this.maxDraggableRadius * this.canvas.width -this.pointRadius;
+        drawCircleStroke(this.context, this.pos[0], this.pos[1], borderWidth/2);
+
+        let axisLength = 0.6 * this.maxDraggableRadius * this.canvas.width;
+        //ok, axes time
+        this.context.lineWidth = 10 / 150 * this.canvas.width;
+        this.context.strokeStyle = this.lineColor;
+
+        let arrowHeight = 20 / 150 * this.canvas.width;
+        let arrowWidth = 20 / 150 * this.canvas.width;
+
+        drawHorizontalArrow(this.context, this.pos, axisLength, arrowWidth, arrowHeight);
+        drawVerticalArrow(this.context, this.pos, axisLength, arrowWidth, arrowHeight);
+
+        if(this.showDraggables){
+            //point
+            this.context.fillStyle = pointColorCanvas
+            if(this.dragging){
+                this.context.fillStyle = pointColorDragging
+            }
+            let xCoord = this.values[0]*this.size/2;
+            let yCoord = this.values[1]*this.size/2;
+            drawCircle(this.context, this.pos[0] + xCoord, this.pos[1]+yCoord, this.pointRadius);
+        }
+
+        if(this.showInvalidCross){
+            this.context.strokeStyle = "HSL(33, 100%, 30%)"
+            let crossX = this.pos[0] + this.invalidCrossPos[0]*this.size/2;
+            let crossY = this.pos[1] + this.invalidCrossPos[1]*this.size/2;
+            let crossWidth = 20;
+
+            this.context.beginPath();
+            this.context.moveTo(crossX + crossWidth, crossY+crossWidth);
+            this.context.lineTo(crossX - crossWidth, crossY-crossWidth);
+            this.context.moveTo(crossX + crossWidth, crossY-crossWidth);
+            this.context.lineTo(crossX - crossWidth, crossY+crossWidth);
+            this.context.stroke();
+        }
+    }
+
+    activate(){
+        if(this.dragging){
+            this.showDraggables = true;
+        }else{
+            this.values = this.valueGetter();
+            this.lastValues = this.values;
+
+            let radius = dist(this.values[0],this.values[1], 0,0);
+
+            if(radius < 0 || radius > 1){
+                this.showDraggables = false;
+            }else{
+                this.showDraggables = true;
+            }
+        }
+        
+        this.draw();
+    }
+
+    onmousedown(x,y){
+        this.dragging = true;
+        this.onmousemove(x,y);
+    }
+    onmousemove(x,y){
+        if(this.dragging){
+            let mouseAngle = Math.atan2(y-this.pos[1],x-this.pos[0]);
+            let radius = dist(x,y, this.pos[0], this.pos[1])/(this.size/2);
+
+            radius = clamp(radius, 0, this.maxDraggableRadius); //clamp to within circle
+
+            this.lastValues = this.values;
+            this.values = [
+                Math.cos(mouseAngle)*radius,
+                Math.sin(mouseAngle)*radius,
+            ]
+            this.valueSetter(this.values[0],this.values[1]);
+        }
+    }
+}
+
 

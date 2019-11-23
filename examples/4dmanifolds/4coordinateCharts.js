@@ -59,7 +59,7 @@ function loadMeshBeingCoveredInCharts() {
 
 	} );
 
-    setMeshToSphere();
+    setMeshToTorus();
 }
 
 function setMeshToMammoth(){
@@ -86,7 +86,17 @@ function setMeshToTorus(){
     let size = 1.7;
     atlas.newChartSize = new THREE.Vector3(size,size,2);
 
-    setMeshBeingCoveredInCharts(torus);
+    let firstChartPoint = [0,-1.71,1];
+    setMeshBeingCoveredInCharts(torus, firstChartPoint);
+
+    //shoot a second chart to the up-right of that first chart
+    shootFirstDecal([1.4,-1.41,1], [0,0,0]);
+
+    //hide ball on second chart
+    atlas.charts.forEach( (chart, num) => {if(num>0)chart.hideDraggables(); chart.twoDslider.onWindowResize()})
+
+    //set position to first chart, not second chart
+    atlas.threeDPointPos.set(...firstChartPoint);
 
 }
 

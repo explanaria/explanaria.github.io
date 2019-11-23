@@ -15,8 +15,8 @@ class Slider{
         
         this.canvas.addEventListener("mousedown",this.mousedownEvt.bind(this));
         window.addEventListener("mouseup",this.mouseupEvt.bind(this));
-        this.canvas.addEventListener("mousemove",this.mousemoveEvt.bind(this));
-        this.canvas.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
+        window.addEventListener("mousemove",this.mousemoveEvt.bind(this));
+        window.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
         this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
         window.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
 	

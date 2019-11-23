@@ -13,6 +13,8 @@ let coord1SliderR = null;
 
 let twoDCanvasHandler = null;
 
+let northPoleChartSurface, southPoleChartSurface, middleChartSurface = null;
+
 
 
 //2D canvas class in the main canvas zone
@@ -93,6 +95,8 @@ function setup(){
     controls.enableKeys = false;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.5;
+
+    three.scene.add(new THREE.AmbientLight(0xffffff));
     
 	three.on("update",function(time){
 		for(var x of objects){
@@ -117,7 +121,7 @@ function setup(){
     var sphere = new EXP.Area({bounds: [[0,Math.PI*2],[0, Math.PI]], numItems: [30,30]});
     var timeChange = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [theta1, theta2]});
     var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => sphereParametrization(i,t,theta1,theta2) });
-    sphereOutput = new EXP.SurfaceOutput({opacity:0.03, color: blue, showGrid: true, gridLineWidth: 0.05, showSolid:true});
+    sphereOutput = new EXP.SurfaceOutput({opacity:0.3, color: blue, showGrid: true, gridLineWidth: 0.05, showSolid:true});
 
     //SO. For some reason, this makes everything look a lot better with transparency on. It still renders things behind it properly (I guess that takes depthTest).
     //I guess it OVERWRITES the thing behind it instead of adding to it?
@@ -177,7 +181,7 @@ function setup(){
 */
 
 
-    const poleChartRadius = 1.4;
+    const poleChartRadius = Math.PI/2;
 
 
     let northPoleSlider = new CirclePlaneSlider(coordinateLine4Color, 'northPoleSlider', 
@@ -206,27 +210,23 @@ function setup(){
             userPointParams.x2=-angle;
         });
 
-    var northPoleChartSurface = new EXP.Area({bounds: [[0, poleChartRadius],[0,2*Math.PI]], numItems: [30,30]});
+    northPoleChartSurface = new EXP.Area({bounds: [[0, poleChartRadius],[0,2*Math.PI]], numItems: [10,30]});
     northPoleChartSurface
     .add(manifoldParametrization.makeLink())
-    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine4Color, opacity:0.99, gridLineWidth: 0.05, showSolid:false}));
-    //northPoleChartSurface.children[0].children[0].mesh.material.depthWrite = false;
+    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine4Color, opacity:0, gridLineWidth: 0.1, showSolid:true, gridSquares: 8}));
     northPoleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
 
-    var southPoleChartSurface = new EXP.Area({bounds: [[Math.PI-poleChartRadius,Math.PI],[0,2*Math.PI]], numItems: [30,30]});
+    southPoleChartSurface = new EXP.Area({bounds: [[Math.PI-poleChartRadius,Math.PI],[0,2*Math.PI]], numItems: [10,30]});
     southPoleChartSurface
     .add(manifoldParametrization.makeLink())
-    //.add(new EXP.SurfaceOutput({width:10, color: coordinateLine3Color, opacity:0.99, gridLineWidth: 0.05, showSolid:false}));
-    //southPoleChartSurface.children[0].children[0].mesh.material.depthWrite = false;
-    //southPoleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
+    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine3Color, opacity:0, gridLineWidth: 0.1, showSolid:true, gridSquares: 8}));
+    southPoleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
 
-    var middleChartSurface = new EXP.Area({bounds: [[poleChartRadius/2,Math.PI-poleChartRadius/2],[0.2,2*Math.PI+0.2]], numItems: [30,30]});
+    middleChartSurface = new EXP.Area({bounds: [[poleChartRadius/1.5,Math.PI-poleChartRadius/1.5],[0.2,2*Math.PI+0.2]], numItems: [10,30]});
     middleChartSurface
     .add(manifoldParametrization.makeLink())
-    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine2Color, opacity:0.99, gridLineWidth: 0.05, showSolid:false}));
-    middleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01);
-    //middleChartSurface.children[0].children[0].mesh.material.depthWrite = false;
-
+    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine2Color, opacity:0, gridLineWidth: 0.1, showSolid:0.9, gridSquares: 8}));
+    middleChartSurface.children[0].children[0].mesh.scale.set(1.02, 1.02, 1.02);
 
 
 
@@ -277,6 +277,25 @@ async function animate(){
     presentation.TransitionTo(coord1SliderR, {'value': -1}, 1000);
 
     await presentation.nextSlide();
+
+    // "But what if we use more than one coordinate system?
+
+    await presentation.nextSlide();
+
+    objects.push({activate: function(){three.onWindowResize()}}); //ensure canvas keeps aspect ratio properly
+    presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'}, 0);
+
+    await presentation.delay(1000);
+    objects.pop(); //delete that last object
+
+
+
+    [northPoleChartSurface,middleChartSurface,southPoleChartSurface].forEach( (item) => {
+        item.getDeepestChildren().forEach( (output) => {
+            presentation.TransitionTo(output, {'opacity': 1});
+        })
+    });
+
 }
 
 

@@ -17,6 +17,7 @@ class Atlas{
         this.decalMaterial = new THREE.MeshLambertMaterial({
 	        specular: 0x444444,
 	        shininess: 0.3,
+	        normalScale: new THREE.Vector2( 0.5, 0.5 ),
 	        transparent: false,
 	        depthTest: true,
 	        depthWrite: true,

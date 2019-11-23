@@ -415,6 +415,24 @@ async function animate4D(){
     presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,y,z,w]},1000);
     await presentation.nextSlide();
 
+    //hide all w-axis lines so that we can see it's two cubes connected
+    for(let i=0;i<hypercube.lineData.length;i+=1){
+      let line = hypercube.lineData[i];
+      if(hypercube.points[line[0]][3] != hypercube.points[line[1]][3]){;
+        polychora[0].EXPLines[i].getDeepestChildren().forEach( (output) => {
+                presentation.TransitionTo(output, {opacity: 0.2}, 1000);
+            });
+       }
+    }
+
+    await presentation.nextSlide();
+    polychora[0].EXPLines.forEach(
+        (line) => {
+             line.getDeepestChildren().forEach( (output) => {
+                presentation.TransitionTo(output, {opacity: 1}, 1000);
+            });
+        });
+
     await animate4DEmbeddings();
     await animate4DRotations();
 
@@ -462,13 +480,16 @@ async function animate4DRotations(){
     // "We're used to things rotating in 3D"
 
 
-    presentation.TransitionTo(R4Embedding, {'expr':(i,t,x,y,z,w) => [x,y,z,0]},1000);
+    presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,y,z,0]},1000);
     await presentation.nextSlide();
 
     presentation.TransitionTo(R4Rotation, {'expr': rotationAll3DAxesSequentially()})
     await presentation.nextSlide();
 
     //"those rotations don't change in 4D"
+
+
+    presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,y,z,w]},1000);
     await animateTo4DOrtho();
     await presentation.nextSlide();
 

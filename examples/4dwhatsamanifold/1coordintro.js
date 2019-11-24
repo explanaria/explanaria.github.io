@@ -192,8 +192,9 @@ async function animate(){
     twoDCanvasHandler.cartesianOpacity = 0;
     await presentation.begin();
 
+    /*
     //hide title page
-    await presentation.nextSlide();
+    await presentation.nextSlide();*/
     
 
     await presentation.nextSlide();
@@ -254,6 +255,10 @@ async function animate(){
             }
         }, 1500);
     });
+
+    [xAxis, yAxis, zAxis].forEach((axis) => axis.getDeepestChildren().forEach((output) => {
+        presentation.TransitionTo(output, {"color": new THREE.Color(output.color).offsetHSL(0,0,0.15)},1500);
+    }));
 
     //move 3 points with them
     presentation.TransitionTo(manifoldPointPositions, {expr: (i,t,x) => {

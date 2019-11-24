@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Coordinate Charts</title>
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+  <script src="colors.js"></script>
+  <script src="sliders.js"></script>
+  <script src="DecalGeometry.js"></script>
+  <script src="GLTFLoader.js"></script>
+  <script src="atlas.js"></script>
+  <script src="4coordinateCharts.js"></script>
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+
+  <style>
+    #canvasContainer{
+
+    }
+    #textArea{
+
+    }
+
+    .grid{
+    }
+
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
+        .chartCanvases{
+
+    }
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart"> 
+
+      <!--
+      <div class="fullscreenText modal is-active exp-slide" style="display: none">
+        The definition of a differentiable manifold has 3 parts:
+
+        <div class="columns" style="font-size: 0.5em">
+            <div class="column">
+                1. The topological space you want to study
+            </div>
+            <div class="column">
+                2. A collection of coordinate systems, which together cover the space in (1)
+                <br />
+                (Called an "Atlas")
+            </div>
+            <div class="column">
+                3. Functions which tell you how to change between the coordinate systems in 2.<br />(Called "Transition Functions")
+            </div>
+        </div>
+      </div>-->
+
+        <canvas id="canvas">
+
+        </canvas>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+	    <button class="button" onclick="atlas.addChartCenteredAtCurrentPosition()"><span>Click to make a coordinate chart centered at the <span style="color:orange;">current point</span>.</span> </button>
+
+        <p class="hideWhenPresenting"> Set up lots of overlapping coordinate charts and you can move around the manifold - navigating by coordinate charts, which are nice simple planes!</p>
+	    <div class="exp-slide">
+            <div id="chartCanvases" class="column"> </div>
+	    </div>
+      </div>
+  </div>
+</body>
+</html>

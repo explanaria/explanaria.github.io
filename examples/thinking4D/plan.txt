@@ -1,0 +1,8 @@
+Rhetorical shift:
+    Manifolds as products of smaller ones
+    ->
+    Manifolds as things with "circle coordinates"
+
+    -> Manifolds have "more than one set of coordinates"
+
+then to "what manifolds can't be made by combining coordinates out of smaller ones?"

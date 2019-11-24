@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Is a Sphere a Direct Sum of Smaller Manifolds?</title>
+
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <script src="colors.js"></script>
+  <script src="sliders.js"></script>
+  <script src="3sphere.js"></script>
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <style>
+
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" style="grid-template-columns: 1fr 0fr" class="threeDPart canvasGrid">
+        <div class="griddedCanvas">
+            <canvas id="threeDcanvas"></canvas>
+        </div>
+        <div class="griddedCanvas">
+            <canvas id="twoDcanvas"></canvas>
+        </div>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+
+        <div class="coordinateSystems">
+
+            <div class="factors chartArray willFadeOutFromJS" id="firstCoordSystem">
+                <div class="columns is-mobile chartArrayInner">
+                    <div id="circleContainer1" class="column">
+                        <div id="1real" class="chartCanvasContainer"></div>
+                    </div>
+                    <div id="timesSign" class="column level is-mobile">
+                        <div>⨯</div>
+                    </div>
+                    <div id="circleContainer1" class="column">
+                        <div id="1circle" class="chartCanvasContainer"></div>
+                    </div>
+                    <div id="questionMark" class="column level is-mobile">
+                        <span>?</span>
+                    </div>
+                </div>
+            </div>
+
+	        <div class="chartArray willFadeInFromJS" id="alternateCoordSystem" style="pointer-events: none">
+                <div class="chartArrayInner columns is-mobile">
+                    <div class="column smolishColumn" id="northPoleSlider">
+                        <h1> North Pole Coordinate System </h1>
+                        <div id="northPoleSlider"></div>
+                    </div>
+                    <div class="column smolishColumn" id="middleSlider">
+                        <h1> Equator (Polar) Coordinate System </h1>
+                        <div id="equatorSlider"></div>
+                    </div>
+                    <div class="column smolishColumn" id="southPoleSlider">
+                        <h1> South Pole Coordinate System </h1>
+                        <div id="northPoleSlider"></div>
+                    </div>
+                </div>
+	        </div>
+        </div>
+    
+        <div class="hideWhenPresenting">
+	        <p class='exp-slide'>Can you make a sphere using two different coordinates? Earth is a sphere, and many people use two coordinates named "latitude" and "longitude" to describe positions.</p>
+	        <p class='exp-slide'>But at the poles, look carefully: the second, circular, coordinate stops being a circle and devolves into a point. An entire coordinate becomes completely useless! So we can't make a sphere using a coordinate system involving two independent shapes.</p>
+            <p class='exp-slide'>Personally, I don't want ANY of my coordinates to be useless, no matter what. So we can't make a coordinate system that covers the entire sphere AND So we can't make a sphere using a coordinate system involving two independent shapes.</p>
+        </div>
+      </div>
+   
+      <div class="fullscreenText modal is-active exp-slide" style="opacity:0">
+        <h1>...but what if we use <u><i>more than one</i></u> coordinate system?</h1>
+      </div>
+
+      <div class="exp-slide"></div>
+  </div>
+</body>
+</html>

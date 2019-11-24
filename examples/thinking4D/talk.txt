@@ -1,0 +1,3 @@
+1) What do we get if we look at all possible points with a certain set of coordinates?
+
+2) What spaces can we describe using _more than one_ coordinate systems?

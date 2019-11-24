@@ -172,11 +172,11 @@ function setup(){
 
     let middleCircleChart = new PlaneSlider(coordinateLine2Color, 'middleSlider', 
         ()=>{
-            return [userPointParams.x2/(Math.PI), (userPointParams.x1 - Math.PI/2)/(middleChartDiameter/2)];
+            return [-userPointParams.x2/(Math.PI), (userPointParams.x1 - Math.PI/2)/(middleChartDiameter/2)];
         }, 
         (x,y)=>{
             userPointParams.x1=y*(middleChartDiameter/2) + Math.PI/2;
-            userPointParams.x2=x*Math.PI;
+            userPointParams.x2=-x*Math.PI;
         });
 
     let northPoleSlider = new CirclePlaneSlider(coordinateLine4Color, 'northPoleSlider', 

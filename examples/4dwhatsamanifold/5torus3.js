@@ -198,10 +198,10 @@ async function animate(){
     //cube: appear!
 
     let coordSystem1 = document.getElementById("questionMarks");
-    presentation.TransitionTo(coordSystem1.style, {'opacity':0, 'pointer-events': "none"}, 0);
+    presentation.TransitionTo(coordSystem1.style, {'opacity':0, 'pointerEvents': "none"}, 0);
 
     let threeDcanvas = document.getElementById("threeDcanvas");
-    presentation.TransitionTo(threeDcanvas.style, {'opacity':1, 'pointer-events':"all"}, 0);
+    presentation.TransitionTo(threeDcanvas.style, {'opacity':1, 'pointerEvents':"all"}, 0);
 
     await presentation.nextSlide();
 

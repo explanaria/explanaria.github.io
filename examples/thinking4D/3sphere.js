@@ -162,10 +162,20 @@ function setup(){
 
     coord1SliderR.mode = 'vertical';
 
+    console.log("Todo: make the second coordinate sliders either work or noninteractable");
+    let twoCoordinates1R = new RealNumberSlider(coordinateLine1Color, 'twoCoordinates1R', ()=>userPointParams.x1/(Math.PI/2)-1, (x)=>{});
+
+    twoCoordinates1R.mode = 'vertical';
+    let twoCoordinates1C = new CircleSlider(coordinateLine2Color, 'twoCoordinates1C', ()=>userPointParams.x2, (x)=>{});
+
+    let twoCoordinates2R = new RealNumberSlider(coordinateLine1Color, 'twoCoordinates2R', ()=>userPointParams.x1/(Math.PI/2)-1, (x)=>{});
+
+    twoCoordinates2R.mode = 'vertical';
+    let twoCoordinates2C = new CircleSlider(coordinateLine2Color, 'twoCoordinates2C', ()=>userPointParams.x2+Math.PI/2, (x)=>{});
+
+    coord1SliderR.mode = 'vertical';
+
     //coordinate charts for north pole, south pole
-
-
-
     const poleChartDiameter = Math.PI/2-0.1;
     const middleChartDiameter = poleChartDiameter/1.5;
 
@@ -237,7 +247,7 @@ function setup(){
 
     twoDCanvasHandler = new CircleCoordinateNotAlwaysCircularScene("twoDcanvas");
 
-    objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints, northPoleSlider, southPoleSlider, middleCircleChart];
+    objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints, northPoleSlider, southPoleSlider, middleCircleChart, twoCoordinates1R, twoCoordinates1C, twoCoordinates2R, twoCoordinates2C];
 
     //these things could go in objects, but for optimization are only called once
     staticActivateOnceObjects = [sphere, northPoleChartSurface, southPoleChartSurface,middleChartSurface];
@@ -281,6 +291,16 @@ async function animate(){
 
     await presentation.nextSlide();
 
+
+
+    let coordSystem1 = document.getElementById("firstCoordSystem");
+    presentation.TransitionTo(coordSystem1.style, {'opacity':0, 'pointer-events': "none"}, 0);
+
+    let notInjective = document.getElementById("notInjective");
+    presentation.TransitionTo(notInjective.style, {'opacity':1, 'pointer-events':"all"}, 0);
+
+    await presentation.nextSlide();
+
     // "But what if we use more than one coordinate system?
 
     await presentation.nextSlide();
@@ -312,8 +332,8 @@ async function animate(){
     });
 
 
-    let coordSystem1 = document.getElementById("firstCoordSystem");
-    presentation.TransitionTo(coordSystem1.style, {'opacity':0, 'pointer-events': "none"}, 0);
+   // let notInjective = document.getElementById("firstCoordSystem"); //defined above
+    presentation.TransitionTo(notInjective.style, {'opacity':0, 'pointer-events': "none"}, 0);
 
     let coordSystem2 = document.getElementById("alternateCoordSystem");
     presentation.TransitionTo(coordSystem2.style, {'opacity':1, 'pointer-events':"all"}, 0);

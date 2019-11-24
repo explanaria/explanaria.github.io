@@ -94,9 +94,10 @@ html{
     flex-grow: 0.1;
 }
 
-#questionMark{
+.disappearingQuestionMarks{
     text-align: center;
     font-size: 3em;
+    pointer-events: none;
 }
 
 /* used in 3 circle */
@@ -113,9 +114,6 @@ html{
    margin: 0 auto;
     max-width: 60em;
    
-}
-
-#alternateCoordSystem{
 }
 
 .chart{
@@ -205,7 +203,7 @@ html{
     font-size: 70%;
 }
 
-/* used in 5.5 tofourdimensions */
+/* used in 6 tofourdimensions */
 
 .coord4Reveal{
     transition: all 1s ease-in-out;
@@ -240,6 +238,9 @@ html{
     flex-grow: 0.5;
 }
 
+.manifoldComparisonChart{
+    font-size: 2em;
+}
 
 .willFadeInFromJS{
     opacity:0; 
@@ -249,8 +250,22 @@ html{
     opacity:1; 
     transition: opacity 0.75s ease-in-out;
 }
+/* used in 5 */
 
-/* used in 5.5 */
+.relativePos{
+    position: relative;
+}
+.absolutePos{
+  position: absolute;
+  top:0px;
+  width:100%;
+}
+#questionMarks{
+    height: 100%;
+    text-align: center;
+}
+
+/* used in 6 */
 .flexBR{
     flex-grow: 1;
     max-height: 1em;

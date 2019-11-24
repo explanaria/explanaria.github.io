@@ -200,7 +200,6 @@ function centerCamera(){
         cameraLookTarget.lerp(atlas.threeDPointPos, 0.03);
         three.camera.lookAt(cameraLookTarget);
     }
-
 }
 
 window.addEventListener("load",function(){

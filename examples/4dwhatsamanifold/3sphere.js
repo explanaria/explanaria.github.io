@@ -84,6 +84,11 @@ class CircleCoordinateNotAlwaysCircularScene{
 }
 
 
+var a=1;
+var b=2;
+let sphereParametrization = (i,t,theta1,theta2) => 
+	[(a*Math.sin(theta1))*Math.cos(theta2),a*Math.cos(theta1),(a*Math.sin(theta1))*Math.sin(theta2)];
+
 function setup(){
 	three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
 	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
@@ -108,16 +113,10 @@ function setup(){
 	});
 
     console.log("Loaded.");
-
-    var a=1;
-    var b=2;
-
     let domainWidth = 2*Math.PI; //width of the area in R^2 that's being passed into this parametrization.
 
     
     //sphere
-	let sphereParametrization = (i,t,theta1,theta2) => 
-		[(a*Math.sin(theta1))*Math.cos(theta2),a*Math.cos(theta1),(a*Math.sin(theta1))*Math.sin(theta2)];
 
 
     var sphere = new EXP.Area({bounds: [[0,Math.PI*2],[0, Math.PI]], numItems: [30,30]});
@@ -192,8 +191,8 @@ function setup(){
             userPointParams.x1=(radius*poleChartDiameter);
             userPointParams.x2=angle;
         });
-    northPoleSlider.canvas.addEventListener("mousedown", ()=> {
-        EXP.TransitionTo(three.camera.position, {'x':0,'y':3,'z':0}, 1000);}, false);
+    //northPoleSlider.canvas.addEventListener("mousedown", ()=> {
+    //    EXP.TransitionTo(three.camera.position, {'x':0,'y':3,'z':0}, 1000);}, false);
 
     let southPoleSlider = new CirclePlaneSlider(coordinateLine3Color, 'southPoleSlider', 
         ()=>{
@@ -207,8 +206,8 @@ function setup(){
             userPointParams.x1=(Math.PI-radius*poleChartDiameter);
             userPointParams.x2=-angle;
         });
-    southPoleSlider.canvas.addEventListener("mousedown", ()=> {
-        EXP.TransitionTo(three.camera.position, {'x':0,'y':-3,'z':0}, 1000);});
+    //southPoleSlider.canvas.addEventListener("mousedown", ()=> {
+    //    EXP.TransitionTo(three.camera.position, {'x':0,'y':-3,'z':0}, 1000);});
 
     northPoleChartSurface = new EXP.Area({bounds: [[0, poleChartDiameter],[0,2*Math.PI]], numItems: [10,30]});
     northPoleChartSurface
@@ -314,12 +313,38 @@ async function animate(){
 
 
     let coordSystem1 = document.getElementById("firstCoordSystem");
-    presentation.TransitionTo(coordSystem1.style, {'opacity':0}, 0);
+    presentation.TransitionTo(coordSystem1.style, {'opacity':0, 'pointer-events': "none"}, 0);
 
     let coordSystem2 = document.getElementById("alternateCoordSystem");
-    presentation.TransitionTo(coordSystem2.style, {'opacity':1}, 0);
-
+    presentation.TransitionTo(coordSystem2.style, {'opacity':1, 'pointer-events':"all"}, 0);
 }
+
+/*
+let centerCameraOnPointEnabled = true;
+let cameraPosIntermediary = new THREE.Vector3();
+let cameraLookTarget = new THREE.Vector3();
+function centerCamera(time){
+    //center the camera so it gives a view of the normal.
+    //a bit nauseating though...
+    let cameraTarget = new THREE.Vector3(...sphereParametrization(0,0,userPointParams.x1,userPointParams.x2));
+
+    if(userPointParams.x1 < 0.7){
+        cameraTarget.set(0,1.3,0);
+    }
+
+    if(userPointParams.x1 > Math.PI - 0.7){
+        cameraTarget.set(0,-1.3,0);
+    }
+
+    let cameraPosTarget = cameraTarget.clone().multiplyScalar(2);
+
+    if(centerCameraOnPointEnabled){
+        cameraPosIntermediary.lerp(cameraPosTarget, 3.1*time.delta);
+        three.camera.position.lerp(cameraPosIntermediary, 3*time.delta);
+        cameraLookTarget.lerp(cameraTarget, 3.1*time.delta);
+        three.camera.lookAt(cameraLookTarget);
+    }
+}*/
 
 
 window.addEventListener("load",function(){

@@ -15,11 +15,17 @@ class Slider{
         this.valueSetter = valueSetter;
         
         this.canvas.addEventListener("mousedown",this.mousedownEvt.bind(this));
-        window.addEventListener("mouseup",this.mouseupEvt.bind(this));
-        window.addEventListener("mousemove",this.mousemoveEvt.bind(this));
+
+        window.addEventListener("mouseup",this.mouseupEvt.bind(this),false);
+        this.canvas.addEventListener("mouseup",this.mouseupEvt.bind(this),false);
+
+        window.addEventListener("mousemove",this.mousemoveEvt.bind(this),false);
         window.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
+
         this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
         window.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
+
+        this.canvas.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
 	
         window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
         this.onWindowResize();
@@ -38,6 +44,7 @@ class Slider{
             this.lastValue = this.value;
         }else{
             this.value = this.valueGetter();
+            this.lastValue = this.value;
         }
         
         this.draw();
@@ -312,6 +319,7 @@ class PlaneSlider extends Slider{
         if(this.lastValues[0] != this.values[0] || this.lastValues[1] != this.values[1]){
             //values changed externally
             this.valueSetter(this.values[0], this.values[1]);
+            this.lastValues = this.values;
         }else{
             this.values = this.valueGetter();
             this.lastValues = this.values;

@@ -93,6 +93,9 @@ html{
     font-size: 3em;
     flex-grow: 0.1;
 }
+#questionMark{
+    font-size: 3em;
+}
 
 .disappearingQuestionMarks{
     text-align: center;
@@ -263,6 +266,7 @@ html{
 #questionMarks{
     height: 100%;
     text-align: center;
+    font-size: 6em;
 }
 
 /* used in 6 */

@@ -90,6 +90,7 @@ function setup4DPolychora(){
 
     polychora = [];
 
+    
     let hypercube = makeHypercube(R4Embedding, [R4Rotation]);
     hypercube.objectParent.position.x = 2;
 
@@ -113,15 +114,15 @@ function setup4DPolychora(){
 
     
     //VERY COOL! but also a bit laggy
-    /*
+    
     let torus3 = makeTorus3(R4Embedding, R4Rotation);
     objects.push(torus3);
-    */
+    
 
-    objects.push(hypercube);
-    objects.push(fivecell);
+    //objects.push(hypercube);
+    //objects.push(fivecell);
 
-    polychora = [hypercube, fivecell];
+    polychora = [hypercube, fivecell, torus3];
 }
 
 

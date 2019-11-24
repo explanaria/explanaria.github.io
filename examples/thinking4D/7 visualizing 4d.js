@@ -557,16 +557,32 @@ async function animateFiveCell(){
    
     await presentation.nextSlide();
 
-    //now that a hypercube is here let's rotate it
+    //now that a fivecell is here let's rotate it
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0)});
     await presentation.nextSlide();
 
     //perspective too, that's cool
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
     await animateTo4DPerspective();
-    await presentation.nextSlide();
-}
 
+    //LAST-MINUTE ADDITION: 3-torus
+    await presentation.nextSlide();
+
+
+    presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w) => [x,y,z,w]});
+    presentation.TransitionTo(hypercube.objectParent.position, {x:6,y:1}, 1000);
+    presentation.TransitionTo(fivecell.objectParent.position, {x:3,y:1}, 1000);
+
+    let torus3 = makeTorus3(R4Embedding, [R4Rotation]);
+    objects.push(torus3);
+    polychora.push(torus3);
+    controlsToRotateAboutOrigin.objects = controlsToRotateAboutOrigin.objects.concat([torus3.objectParent]); //make mouse rotation rotate the torus3
+    console.log("nice")
+
+    await presentation.nextSlide();
+
+
+}
 async function animate4DStandalone(){
     //no 3-> 4 animation
     if(!presentation.initialized){

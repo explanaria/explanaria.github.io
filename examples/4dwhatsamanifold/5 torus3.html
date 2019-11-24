@@ -34,27 +34,29 @@
 <body>
   <div class="grid">
       <div id="header" class="headerPart"></div>
-      <div id="canvasContainer" style="grid-template-columns: 1fr 0fr" class="threeDPart canvasGrid">
+      <div id="canvasContainer" style="grid-template-columns: 1fr 0fr" class="threeDPart canvasGrid relativePos">
         <div class="griddedCanvas">
-            <canvas id="threeDcanvas"></canvas>
+            <canvas id="threeDcanvas" class="willFadeInFromJS"></canvas>
         </div>
-        <div class="griddedCanvas">
-            <canvas id="twoDcanvas"></canvas>
+
+        <div class="absolutePos fullscreenText level columns is-mobile willFadeOutFromJS disappearingQuestionMarks" id="questionMarks">
+            <span class="column">???</span>
         </div>
+        
       </div>
       <div id="textArea" class="non3DFooterPart">
           <div class="factors columns is-mobile">
             <div id="circleContainer1" class="column">
                 <div id="circle1" class="chartCanvasContainer"></div>
             </div>
-            <div id="timesSign" class="">
-                ⨯
+            <div id="timesSign" class="level is-mobile">
+                <span>⨯</span>
             </div>
             <div id="circleContainer3" class="column">
                 <div id="circle2" class="chartCanvasContainer"></div>
             </div>
-            <div id="timesSign" class="">
-                ⨯
+            <div id="timesSign" class="level is-mobile">
+                <span>⨯</span>
             </div>
             <div id="circleContainer2" class="column">
                 <div id="circle3" class="chartCanvasContainer"></div>

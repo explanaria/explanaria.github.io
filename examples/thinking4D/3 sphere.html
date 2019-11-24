@@ -49,17 +49,46 @@
 
             <div class="factors chartArray willFadeOutFromJS" id="firstCoordSystem">
                 <div class="columns is-mobile chartArrayInner">
-                    <div id="circleContainer1" class="column">
+                    <div class="column">
                         <div id="1real" class="chartCanvasContainer"></div>
                     </div>
-                    <div id="timesSign" class="column level is-mobile">
+                    <div class="timesSign column level is-mobile">
                         <div>⨯</div>
                     </div>
-                    <div id="circleContainer1" class="column">
+                    <div class="column">
                         <div id="1circle" class="chartCanvasContainer"></div>
                     </div>
                     <div id="questionMark" class="column level is-mobile">
                         <span>?</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="factors chartArray willFadeInFromJS" id="notInjective" style="pointer-events: none">
+                <div class="columns is-mobile chartArrayInner">
+                    <div class="column">
+                        <div id="twoCoordinates1R" class="chartCanvasContainer"></div>
+                    </div>
+                    <div class="timesSign column level is-mobile">
+                        <div>⨯</div>
+                    </div>
+                    <div class="column">
+                        <div id="twoCoordinates1C" class="chartCanvasContainer"></div>
+                    </div>
+                    <div class="timesSign column level is-mobile">
+                        <span>=</span>
+                    </div>
+                   <div class="column">
+                        <div id="twoCoordinates2R" class="chartCanvasContainer"></div>
+                    </div>
+                    <div class="timesSign column level is-mobile">
+                        <div>⨯</div>
+                    </div>
+                    <div class="column">
+                        <div id="twoCoordinates2C" class="chartCanvasContainer"></div>
+                    </div>
+                    <div id="questionMark" class="column level is-mobile">
+                        <span>???</span>
                     </div>
                 </div>
             </div>
@@ -88,7 +117,10 @@
             <p class='exp-slide'>Personally, I don't want ANY of my coordinates to be useless, no matter what. So we can't make a coordinate system that covers the entire sphere AND So we can't make a sphere using a coordinate system involving two independent shapes.</p>
         </div>
       </div>
-   
+
+    
+      <div class="exp-slide"></div>
+
       <div class="fullscreenText modal is-active exp-slide" style="opacity:0">
         <h1>...but what if we use <u><i>more than one</i></u> coordinate system?</h1>
       </div>

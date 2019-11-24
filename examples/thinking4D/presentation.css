@@ -88,7 +88,7 @@ html{
     margin-bottom: 0;
 }
 
-#timesSign{
+.timesSign{
     text-align: center;
     font-size: 3em;
     flex-grow: 0.1;
@@ -311,7 +311,7 @@ ul {
         margin: 0;
     }
 
-    #timesSign{
+    .timesSign{
         font-size: 3em;
         margin-left: -10%;
         margin-right: -5%;

@@ -76,10 +76,22 @@
       <div id="textArea" class="non3DFooterPart">
 	    <button class="button" onclick="atlas.addChartCenteredAtCurrentPosition()"><span>Click to make a coordinate chart centered at the <span style="color:orange;">current point</span>.</span> </button>
 
-        <p class="hideWhenPresenting"> Set up lots of overlapping coordinate charts and you can move around the manifold - navigating by coordinate charts, which are nice simple planes!</p>
-	    <div class="exp-slide">
+	    <div>
             <div id="chartCanvases" class="column"> </div>
 	    </div>
+
+
+        <div class="textContainer"> <!-- these are for the benefit of web audiences, not talk --> 
+	        <div class="exp-slide slideTextItem">
+                Inspired by the sphere, we can study more complicated surfaces, like this bagel shape (called a "torus") using multiple 2D coordinate systems.
+                <br>
+                If we ever reach a dead end, we can make a new coordinate system by clicking the button above. Try moving all the way around the surface of this torus - you'll see that just by moving in a straight line, you can return to your starting point!</div>
+            <div class="exp-slide slideTextItem">
+                And this strategy even works on incredibly complicated surfaces, like this one! The key idea: <u>use Cartesian coordinate systems, which we know how to work with, to study more complicated shapes, even if we don't know how to work with.</u> 
+                <br>
+            A "manifold" is what mathematicians call something that uses this strategy. A manifold has three parts: the space you want to study <aside>(here this mammoth)</aside>, a ton of Cartesian coordinate systems called "charts" <aside>(here 2D ones; the name comes from those real-life paper maps)</aside>, and "transition functions" which tell you how to change from one coordinate system to another <aside>(here, when you drag the point and it appears on a different chart, your device is calculating the transition functions automatically)</aside>.
+            </div>
+        </div>
       </div>
   </div>
 </body>

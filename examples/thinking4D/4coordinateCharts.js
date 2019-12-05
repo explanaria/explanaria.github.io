@@ -162,8 +162,7 @@ let presentation = new EXP.NonDecreasingDirector();
 async function animate(){
     
     await presentation.begin();
-    await presentation.nextSlide();
-    setMeshToTorus()
+    //starting out as a torus    
     await presentation.nextSlide();
     setMeshToMammoth();
 }

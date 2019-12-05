@@ -61,15 +61,15 @@
             <span id="" class="">
                 [
             </span>
-            <span id="coord1" class=""></span>
+            <span id="coord1" class="coord1"></span>
             <span id="" class="">
                 ,
             </span>
-            <span id="coord2" class=""></span>
+            <span id="coord2" class="coord2"></span>
             <span id="" class="">
                 ,
             </span>
-            <span id="coord3" class=""></span>
+            <span id="coord3" class="coord3"></span>
             <span id="" class="">
                 ]
             </span>
@@ -83,18 +83,29 @@
             </div>
           </div> -->
 
-        <div class="hideWhenPresenting"> <!-- these are for the benefit of web audiences, not talk --> 
-	        <div class="exp-slide">Here's a point.</div>
-	        <div class="exp-slide">You're probably used to 2D coordinates. Two numbers, each denoting some distance away from the origin.</div>
-	        <div class="exp-slide">But you can also think about cartesian coordinates like this: they're all possible combinations of two independent numbers on the real line. When you see it like this, I think it's a bit more clear that they're independent of each other.</div>
-	        <div class="exp-slide">3D coordinates work the same way - only instead of two coordinates, we have 3.</div>
-	        <div class="exp-slide">Here, too, each set of 3D coordinates is really 3 sets of number lines, all of them independent from one another.</div>
+        <div class="textContainer"> <!-- these are for the benefit of web audiences, not talk --> 
+	        <div class="exp-slide slideTextItem">Before we talk about how mathematicians think about four dimensions, let's talk about how mathematicians think about two dimensions. <br> Here's a point! You've probably seen these things before. </div>
+	        <div class="exp-slide slideTextItem">
+                How do mathematicians think about points in 2D space? You probably know the usual answer: <span class="coord1">x</span>-<span class="coord2">y</span> coordinate systems! <br> But what do those two numbers mean? We have two axes, so each number represents how far the point is along one axis. Pretty simple.
+            </div>
+	        <div class="exp-slide slideTextItem">
+                Here's a different way to think about an <span class="coord1">x</span><span class="coord2">y</span> coordinate system: You can think of <span class="coord1">x</span> and <span class="coord2">y</span> as points on two separate number lines. Then, to get the final position on the plane, you can recombine the two axes together.
 
+                <br>This coordinate system has some nice properties - different coordinates give you different points on the plane, and every point can be reached by some set of coordinates. Remember this in the back of your head - it'll be useful soon.
+
+       
+            </div>
+	        <div class="exp-slide slideTextItem">
+            <br>
+            How do mathematicians think about 3D coordinates? The exact same way, but instead of just two <span class="coord1">x</span> and <span class="coord2">y</span> coordinates, we use three, called <span class="coord1">x</span> and <span class="coord2">y</span>, and <span class="coord3">z</span>.
+            </div>
+	        <div class="exp-slide slideTextItem">
+                Just like in 2D, we can think about this 3D <span class="coord1">x</span><span class="coord2">y</span><span class="coord3">z</span> coordinate system as three independent number lines, where all possible combinations of points on lines are recombined to cover every possible point in 3D.</div>
         </div>
 
           <div class="fullscreenText fullscreenPopup modal is-active exp-slide" style="opacity:0">
             <div>
-                    So coordinates are really just points on a number line.
+                    So Cartesian coordinates are really just points on number lines.
                 <br><br>
                 <span style="opacity: 0">...could coordinates be points on <span style="font-weight: bold">other</span> shapes, like circles?</span>
             </div>
@@ -102,7 +113,7 @@
 
           <div class="fullscreenText fullscreenPopup modal is-active exp-slide" style="opacity:0">
             <div>
-                    So coordinates are really just points on a number line.
+                    So Cartesian coordinates are really just points on number lines.
                 <br><br>
                 <span>...could coordinates be points on <span style="font-weight: bold">other</span> shapes, like circles?</span>
             </div>

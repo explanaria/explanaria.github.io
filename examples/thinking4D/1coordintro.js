@@ -134,7 +134,7 @@ function setup(){
     .add(yAxisControl.makeLink())
     .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
 
-    let zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
     zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]});
     zAxis
     .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))
@@ -171,10 +171,10 @@ function setup(){
         document.getElementById("coord3").innerHTML = format(pointCoords[2]);
     }};
 
-
-    document.getElementById("coord1").style.color = coordinateLine1Color;
-    document.getElementById("coord2").style.color = coordinateLine2Color;
-    document.getElementById("coord3").style.color = coordinateLine3Color;
+    //set colors of DOM elements with appropriate classes
+ Array.prototype.slice.call(document.getElementsByClassName("coord1")).forEach( (elem) => { elem.style.color = coordinateLine1Color; } );
+    Array.prototype.slice.call(document.getElementsByClassName("coord2")).forEach( (elem) => { elem.style.color = coordinateLine2Color; } );
+    Array.prototype.slice.call(document.getElementsByClassName("coord3")).forEach( (elem) => { elem.style.color = coordinateLine3Color; } );
 
     twoDCanvasHandler = new twoDCoordIntroScene("twoDcanvasOverlay");
     
@@ -256,7 +256,8 @@ async function animate(){
         }, 1500);
     });
 
-    [xAxis, yAxis, zAxis].forEach((axis) => axis.getDeepestChildren().forEach((output) => {
+    [xAxis, yAxis, zAxis].forEach((axis) =>    
+     axis.getDeepestChildren().forEach((output) => {
         presentation.TransitionTo(output, {"color": new THREE.Color(output.color).offsetHSL(0,0,0.15)},1500);
     }));
 

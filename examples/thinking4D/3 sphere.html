@@ -111,21 +111,42 @@
 	        </div>
         </div>
     
-        <div class="hideWhenPresenting">
-	        <p class='exp-slide'>Can you make a sphere using two different coordinates? Earth is a sphere, and many people use two coordinates named "latitude" and "longitude" to describe positions.</p>
-	        <p class='exp-slide'>But at the poles, look carefully: the second, circular, coordinate stops being a circle and devolves into a point. An entire coordinate becomes completely useless! So we can't make a sphere using a coordinate system involving two independent shapes.</p>
-            <p class='exp-slide'>Personally, I don't want ANY of my coordinates to be useless, no matter what. So we can't make a coordinate system that covers the entire sphere AND So we can't make a sphere using a coordinate system involving two independent shapes.</p>
+        <div class="textContainer hideWhenPresenting">
+	        <div class="exp-slide slideTextItem" style="opacity: 0">
+                A sphere is a super common type of surface. Can we make a sphere out of a pair of coordinates, like before? <aside>(By "sphere", we mean only the surface of a sphere.)</aside>
+                <br>
+                Here's a coordinate system people use on this weird planet called "earth", made of a line-circle pair. <span class="coord1">The first coordinate, "latitude"</span>, controls how <span class="coord1">north/south</span> the point is, and <span class="coord2">the second coordinate, "longitude"</span>, controls how <span class="coord2">east/west</span> the point is. There we go - we've got a coordinate system, right?
+                <br>            
+                Unfortunately, there's a problem with this coordinate system. Can you see it?
+            </div>
+	        <div class="exp-slide slideTextItem" style="opacity: 0">
+                To see the problem, it might help to look at the <span class="coord2">the circle of all possible points with the same latitude (north/south) coordinate</span>.
+            </div>
+            <div class="exp-slide slideTextItem" style="opacity: 0">
+                The problem is: at the north pole, that circle of all possible east/west values shrinks into a point! That means every single value
+                <br>
+                OK, what's so bad about that? Why care about points versus circles? Well...            
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                At the poles, we're being lied to: our "two-dimensional coordinate system" isn't actually two-dimensional. This means that there's infinitely many sets of coordinates that give you the same point on the sphere. 
+                <br>
+                That's not good - if this were a map, it would look very distorted around the poles. Personally, I don't like being lied to - if we see two different points on a coordinate system, they should actually be two different points. I guess we can't make a sphere out of pairs of simpler shapes.
+            </div>
+
+            <div class="modal is-active exp-slide fullscreenText fullscreenPopup" style="opacity:0">
+                <h1>...but what if we use <u><i>more than one</i></u> coordinate system?</h1>
+            </div>
+
+            <div class="textContainer exp-slide">
+                Let's add two more overlapping coordinate systems centered at the <span class="coord3">north pole</span> and <span class="coord4">south pole</span> to our <span class="coord2">our original coordinate system</span> (we'll move <span class="coord2">it</span> away from the poles, too).
+                <br>
+                Now we can describe everywhere on the sphere using at least one coordinate system. And if we want to reach somewhere that isn't covered by <span class="coord4">one coordinate system</span>, we can use the overlapping areas to switch to <span class="coord2">another</span> coordinate system and keep going.
+                <br>
+                This is great: we can still reach every point on the sphere using at least one coordinate system. And we fixed the problem - on each coordinate system, different sets of coordinates always give different points on the sphere. Perfect!
+             </div>
         </div>
       </div>
-
-    
-      <div class="exp-slide"></div>
-
-      <div class="fullscreenText modal is-active exp-slide" style="opacity:0">
-        <h1>...but what if we use <u><i>more than one</i></u> coordinate system?</h1>
-      </div>
-
-      <div class="exp-slide"></div>
   </div>
 </body>
 </html>

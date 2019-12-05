@@ -247,6 +247,18 @@ function setup(){
 
     twoDCanvasHandler = new CircleCoordinateNotAlwaysCircularScene("twoDcanvas");
 
+
+    //set colors of DOM elements with appropriate classes
+ Array.prototype.slice.call(document.getElementsByClassName("coord1")).forEach( (elem) => { elem.style.color = coordinateLine1ColorDarker; } );
+    Array.prototype.slice.call(document.getElementsByClassName("coord2")).forEach( (elem) => { elem.style.color = coordinateLine2ColorDarker; } );
+    Array.prototype.slice.call(document.getElementsByClassName("coord3")).forEach( (elem) => { elem.style.color = coordinateLine3ColorDarker; } );
+
+Array.prototype.slice.call(document.getElementsByClassName("coord4")).forEach( (elem) => { elem.style.color = coordinateLine4Color; } );
+
+Array.prototype.slice.call(document.getElementsByClassName("middleChartColor")).forEach( (elem) => { elem.style.color = blue; } );
+
+
+
     objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints, northPoleSlider, southPoleSlider, middleCircleChart, twoCoordinates1R, twoCoordinates1C, twoCoordinates2R, twoCoordinates2C];
 
     //these things could go in objects, but for optimization are only called once

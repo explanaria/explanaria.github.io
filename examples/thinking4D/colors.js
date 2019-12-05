@@ -1,6 +1,6 @@
 
 /* colors*/
-let blue = 0x0070f0;
+let blue = "#0070f0";
 let green = 0x50d050;
 
 let fadedRed = 0xf07000;

@@ -15,7 +15,7 @@
   <script src="sliders.js"></script>
   <script src="RotateAboutCenterControls.js"></script>
   <script src="polychora.js"></script>
-  <script src="7setup.js"></script>
+  <script src="7standalonesetup.js"></script>
   <script src="7 visualizing 4d.js"></script>
 
 
@@ -53,10 +53,18 @@
         </canvas>
       </div>
       <div id="textArea" class="non3DFooterPart">
-        It's a hypercube! And a 5-cell!
+        It's a hypercube! And a 5-cell, or hypertetrahedron!
 
-        <button onclick="animateTo4DOrtho()"> Stereographic </button>
-        <button onclick="animateTo4DPerspective()"> Perspective </button>
+        <br>
+        <button onclick="animateTo4DOrtho()" class="button"> Stereographic </button>
+        <button onclick="animateTo4DPerspective()" class="button"> Perspective </button>
+        <br>
+        
+        <button onclick="
+    presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w)=>[x,y,z,w]});" class="button"> No rotation </button>
+    <button onclick="
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});" class="button"> 4D rotation: zw plane</button>
+
       </div>
   </div>
 </body>

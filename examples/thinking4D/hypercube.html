@@ -81,12 +81,14 @@
         xAxis
         .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0]}))
         .add(xAxisControl)
+        .add(R4Rotation.makeLink())
         .add(R4Embedding.makeLink())
         .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
         
         xAxis
         .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0]}))
         .add(xAxisControl.makeLink())
+        .add(R4Rotation.makeLink())
         .add(R4Embedding.makeLink())
         .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
 
@@ -95,11 +97,13 @@
         yAxis
         .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0]}))
         .add(yAxisControl)
+        .add(R4Rotation.makeLink())
         .add(R4Embedding.makeLink())
         .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
         yAxis
         .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0]}))
         .add(yAxisControl.makeLink())
+        .add(R4Rotation.makeLink())
         .add(R4Embedding.makeLink())
         .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
 
@@ -108,11 +112,13 @@
         zAxis
         .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))
         .add(zAxisControl)
+        .add(R4Rotation.makeLink())
         .add(R4Embedding.makeLink())
         .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
         zAxis
         .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x]}))
         .add(zAxisControl.makeLink())
+        .add(R4Rotation.makeLink())
         .add(R4Embedding.makeLink())
         .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
     }
@@ -198,14 +204,14 @@
         It's a hypercube!
 
         <br>
-        <button onclick="animateTo4DOrtho()"> Stereographic </button>
-        <button onclick="animateTo4DPerspective()"> Perspective </button>
+        <button onclick="animateTo4DOrtho()" class="button"> Stereographic </button>
+        <button onclick="animateTo4DPerspective()" class="button"> Perspective </button>
         <br>
         
         <button onclick="
-    presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w)=>[x,y,z,w]});"> No rotation </button>
+    presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w)=>[x,y,z,w]});" class="button"> No rotation </button>
     <button onclick="
-    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});"> 4D rotation: zw plane</button>
+    presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});" class="button"> 4D rotation: zw plane</button>
       </div>
   </div>
 </body>

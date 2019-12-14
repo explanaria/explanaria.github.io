@@ -3,17 +3,20 @@
 }
 
 /* text */
-
 .textContainer{
-    position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
 }
 .slideTextItem{
-  position: absolute;
-  top:0px;
+
+ grid-row-start: 1;
+ grid-column-start: 1;
   width:100%;
   margin: 0;
   font-family: "Computer Modern Sans";
 }
+
+
 .slideTextItem br{
     margin-bottom: 0.75em;
 }
@@ -77,13 +80,23 @@ html{
 #coords{
     padding: 5;
     color: black;
-    font-size: 5em;
+    font-size: 3em;
     font-family: "Computer Modern Serif";
     text-align: center;
     margin-bottom: 0.2em;
+
+    display: flex;
+    flex-wrap: wrap;
+    width:100%;
+    justify-content: center;
+}
+
+#coords:nth-child(2n){
+    flex:1 1 auto;
+
 }
 #coords:nth-child(2n+1){
-    min-width: 30%;
+    flex:0 1 auto;
 }
 
 #twoDcanvasOverlay{
@@ -110,36 +123,52 @@ html{
     margin-bottom: 0;
 }
 
-.timesSign{
+
+.bigEquationSymbol, .timesSign{
     text-align: center;
     font-size: 3em;
-    flex-grow: 0.1;
+    flex-grow: 1;
+    pointer-events: none;
+
+    display: flex;
+    justify-content: center;
 }
-#questionMark{
-    font-size: 3em;
+.timesSign *, .bigEquationSymbol *{ /*vertically align children */
+    margin: auto 0;
 }
 
-.disappearingQuestionMarks{
-    text-align: center;
-    font-size: 3em;
-    pointer-events: none;
+/* a times sign shouldn't take up any extra width when screen size is tight. */
+.timesSign{
+    width: 0;
+    min-width: 0; /*key property to allow overlapping */
 }
 
 /* used in 3 circle */
+.overlappingItemContainer{
+  display: grid;
+  grid-template-columns: 1fr;
+ width:100%;
+}
+.overlappingItem{
+ grid-row-start: 1;
+ grid-column-start: 1;
+ width:100%;
+}
 
-.coordinateSystems{
-    position: relative;
-    height:100%;
-}
-.chartArray{
-  position: absolute;
-  top:0px;
-  width:100%;
-}
-.chartArrayInner{
-   margin: 0 auto;
-    max-width: 60em;
+.notInjectiveContainer{
+   display: flex;
    
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: repeat(auto-fill, min-content);
+
+    max-width:90%;
+    
+    flex-wrap: wrap;
+}
+
+.threeCoordinateSystems{
+
+    max-width:90%;
 }
 
 .chart{
@@ -188,15 +217,17 @@ html{
     height: 100%;
 }
 
-.fullscreenPopup{
+/*these may seem the same, but they're responsive differently on mobile */
+.fullscreenShortPopup{
     font-size: 2.5em;
-    font-family: "Computer Modern Serif";
+}
+.fullscreenText{
+    font-size: 2.5em;
 }
 
-.fullscreenText{
+.fullscreenText, .fullscreenShortPopup{
     background-color: rgba(255,255,255,0.8);
     pointer-events: none;
-    font-size: 2.5em;
     font-family: "Computer Modern Serif";
     margin: 0;
     padding: 1em;
@@ -210,23 +241,15 @@ html{
     z-index: 1;
 }
 
-.fullscreenText h1{
-    font-size: 1.5em;
+.fullscreenText h1, .fullscreenShortPopup h1{
+    font-size: 150%;
     text-align: center;  
 }
 .fullscreenText .columns{
     line-height: 1.2; 
 }
 
-.fullscreenText aside{
-    font-size: 70%;
-}
-
-.fullscreenPopup h1{
-    font-size: 1.5em;
-    text-align: center;  
-}
-.fullscreenPopup aside{
+.fullscreenText aside, .fullscreenShortPopup aside{
     font-size: 70%;
 }
 
@@ -287,10 +310,11 @@ html{
   top:0px;
   width:100%;
 }
-#questionMarks{
-    height: 100%;
+
+.disappearingQuestionMarks{
     text-align: center;
-    font-size: 6em;
+    font-size: 3em;
+    pointer-events: none;
 }
 
 /* used in 6 */
@@ -310,6 +334,10 @@ ul {
 
     body{
         font-size: 16px;
+    }
+
+    #coords{
+        font-size: 1.5em;
     }
 
     .threeDPart{
@@ -337,8 +365,6 @@ ul {
 
     .timesSign{
         font-size: 3em;
-        margin-left: -10%;
-        margin-right: -5%;
     }
 
     /* used in 3 */
@@ -352,7 +378,7 @@ ul {
         font-size: 1.3em;
     }
 
-    .fullscreenPopup{
+    .fullscreenShortPopup{
         font-size: 3em;
     }
    

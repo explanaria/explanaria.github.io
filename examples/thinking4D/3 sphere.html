@@ -45,56 +45,107 @@
       </div>
       <div id="textArea" class="non3DFooterPart">
 
-        <div class="coordinateSystems">
 
-            <div class="factors chartArray willFadeOutFromJS" id="firstCoordSystem">
-                <div class="columns is-mobile chartArrayInner">
-                    <div class="column">
-                        <div id="1real" class="chartCanvasContainer"></div>
+          <div class="overlappingItemContainer">
+
+            <div class="overlappingItem willFadeOutFromJS" id="firstCoordSystem"> <!-- the first coord system -->
+
+                <div class="factors">
+                    <div class="columns is-mobile chartArrayInner">
+                        <div class="column">
+                            <div id="1real" class="chartCanvasContainer"></div>
+                        </div>
+                        <div class="timesSign">
+                            <div>⨯</div>
+                        </div>
+                        <div class="column">
+                            <div id="1circle" class="chartCanvasContainer"></div>
+                        </div>
+                        <div class="timesSign">
+                            <span>?</span>
+                        </div>
                     </div>
-                    <div class="timesSign column level is-mobile">
-                        <div>⨯</div>
+                </div>
+
+                <div class="overlappingItemContainer hideWhenPresenting">
+	                <div class="exp-slide slideTextItem" style="opacity: 0">
+                        A sphere is a super common type of surface. Can we make a sphere out of a pair of coordinates, like before? <aside>(By "sphere", we mean only the surface of a sphere.)</aside>
+                        <br>
+                        Here's a coordinate system people use on this weird planet called "earth", made of a line-circle pair. <span class="coord1">The first coordinate, "latitude"</span>, controls how <span class="coord1">north/south</span> the point is, and <span class="coord2">the second coordinate, "longitude"</span>, controls how <span class="coord2">east/west</span> the point is. There we go - we've got a coordinate system, right?
+                        <br>            
+                        Unfortunately, there's a problem with this coordinate system. Can you see it?
                     </div>
-                    <div class="column">
-                        <div id="1circle" class="chartCanvasContainer"></div>
+	                <div class="exp-slide slideTextItem" style="opacity: 0">
+                        To see the problem, it might help to look at the <span class="coord2">the circle of all possible points with the same latitude (north/south) coordinate</span>.
                     </div>
-                    <div id="questionMark" class="column level is-mobile">
-                        <span>?</span>
+                    <div class="exp-slide slideTextItem" style="opacity: 0">
+                        The problem is: at the north pole, that circle of all possible east/west values shrinks into a point!
+                        <br>
+                        At first glance, this might not seem that important. Why does it matter if our line-and-circle coordinate system shrinks the circle into a point? But this is a sign of something worse.
                     </div>
                 </div>
             </div>
 
-            <div class="factors chartArray willFadeInFromJS" id="notInjective" style="pointer-events: none">
-                <div class="columns is-mobile chartArrayInner">
-                    <div class="column">
-                        <div id="twoCoordinates1R" class="chartCanvasContainer"></div>
-                    </div>
-                    <div class="timesSign column level is-mobile">
-                        <div>⨯</div>
-                    </div>
-                    <div class="column">
-                        <div id="twoCoordinates1C" class="chartCanvasContainer"></div>
-                    </div>
-                    <div class="timesSign column level is-mobile">
-                        <span>=</span>
-                    </div>
-                   <div class="column">
-                        <div id="twoCoordinates2R" class="chartCanvasContainer"></div>
-                    </div>
-                    <div class="timesSign column level is-mobile">
-                        <div>⨯</div>
-                    </div>
-                    <div class="column">
-                        <div id="twoCoordinates2C" class="chartCanvasContainer"></div>
-                    </div>
-                    <div id="questionMark" class="column level is-mobile">
-                        <span>???</span>
+
+            <div class="overlappingItem willFadeInFromJS" id="notInjective" style="pointer-events: none"> <!-- coords #2: oh no multiples lead to the same one -->
+
+                <div class="factors">
+                    <div class="notInjectiveContainer">
+
+                        <div class="columns is-mobile">
+                            <div class="column">
+                                <div id="twoCoordinates1R" class="chartCanvasContainer"></div>
+                            </div>
+                            <div class="timesSign">
+                                <div>,</div>
+                            </div>
+                            <div class="column">
+                                <div id="twoCoordinates1C" class="chartCanvasContainer"></div>
+                            </div>
+                        </div>
+
+                        <div class="bigEquationSymbol">
+                            <span>=</span>
+                        </div>
+
+                       <div class="columns is-mobile">
+                           <div class="column">
+                                <div id="twoCoordinates2R" class="chartCanvasContainer"></div>
+                            </div>
+                            <div class="timesSign">
+                                <div>,</div>
+                            </div>
+                            <div class="column">
+                                <div id="twoCoordinates2C" class="chartCanvasContainer"></div>
+                            </div>
+                        </div>
+                        <div class="bigEquationSymbol">
+                            <span>???</span>
+                        </div>
                     </div>
                 </div>
+
+        
+            
+                <div class="exp-slide slideTextItem">
+                    When our "line-and-circle" coordinate system becomes a "line-and-point" coordinate system, it means we're being lied to: our two-dimensional coordinate system really only gives you one dimension of control. And that means there's infinitely many sets of coordinates that give you the same point on the sphere. 
+                    <br>
+                    When multiple different coordinates secretly represent the same point, that's usually not good. For example, if we used this coordinate system to draw a map, it would look super distorted around the poles. Personally, I don't like being lied to - if we see two different points on a coordinate system, they should actually be two different points. I guess we can't make a sphere out of pairs of simpler shapes.
+                    <br> <aside>(You can see this distortion on most real maps by looking at Antarctica!)</aside>
+                    <br>
+                    <br>
+                </div>
+
+                <div class="modal is-active exp-slide fullscreenText fullscreenPopup" style="opacity:0">
+                    <h1>...but what if we use <u><i>more than one</i></u> coordinate system?</h1>
+                </div>
+
+                
             </div>
 
-	        <div class="chartArray willFadeInFromJS" id="alternateCoordSystem" style="pointer-events: none">
-                <div class="chartArrayInner columns is-mobile">
+            <div class="overlappingItem willFadeInFromJS" id="alternateCoordSystem" style="pointer-events: none">
+
+                <div class="columns">
                     <div class="column smolishColumn" id="northPoleSlider">
                         <h1> North Pole Coordinate System </h1>
                         <div id="northPoleSlider"></div>
@@ -108,45 +159,21 @@
                         <div id="northPoleSlider"></div>
                     </div>
                 </div>
-	        </div>
+
+                <br />
+
+                <div class="exp-slide slideTextItem">
+                    Let's add two more overlapping coordinate systems centered at the <span class="coord3">north pole</span> and <span class="coord4">south pole</span> to our <span class="coord2">our original coordinate system</span> (we'll move <span class="coord2">it</span> away from the poles, too).
+                    <br>
+                    Now we can describe everywhere on the sphere using at least one coordinate system. And if we want to reach somewhere that isn't covered by <span class="coord4">one coordinate system</span>, we can use the overlapping areas to switch to <span class="coord2">another</span> coordinate system and keep going.
+                    <br>
+                    This is great: we can still reach every point on the sphere using at least one coordinate system. And we fixed the problem - on each coordinate system, different sets of coordinates always give different points on the sphere. Perfect!
+                    <br>
+                    <br>
+                </div>
+            </div>
         </div>
-    
-        <div class="textContainer hideWhenPresenting">
-	        <div class="exp-slide slideTextItem" style="opacity: 0">
-                A sphere is a super common type of surface. Can we make a sphere out of a pair of coordinates, like before? <aside>(By "sphere", we mean only the surface of a sphere.)</aside>
-                <br>
-                Here's a coordinate system people use on this weird planet called "earth", made of a line-circle pair. <span class="coord1">The first coordinate, "latitude"</span>, controls how <span class="coord1">north/south</span> the point is, and <span class="coord2">the second coordinate, "longitude"</span>, controls how <span class="coord2">east/west</span> the point is. There we go - we've got a coordinate system, right?
-                <br>            
-                Unfortunately, there's a problem with this coordinate system. Can you see it?
-            </div>
-	        <div class="exp-slide slideTextItem" style="opacity: 0">
-                To see the problem, it might help to look at the <span class="coord2">the circle of all possible points with the same latitude (north/south) coordinate</span>.
-            </div>
-            <div class="exp-slide slideTextItem" style="opacity: 0">
-                The problem is: at the north pole, that circle of all possible east/west values shrinks into a point! That means every single value
-                <br>
-                OK, what's so bad about that? Why care about points versus circles? Well...            
-            </div>
-
-            <div class="exp-slide slideTextItem">
-                At the poles, we're being lied to: our "two-dimensional coordinate system" isn't actually two-dimensional. This means that there's infinitely many sets of coordinates that give you the same point on the sphere. 
-                <br>
-                That's not good - if this were a map, it would look very distorted around the poles. Personally, I don't like being lied to - if we see two different points on a coordinate system, they should actually be two different points. I guess we can't make a sphere out of pairs of simpler shapes.
-            </div>
-
-            <div class="modal is-active exp-slide fullscreenText fullscreenPopup" style="opacity:0">
-                <h1>...but what if we use <u><i>more than one</i></u> coordinate system?</h1>
-            </div>
-
-            <div class="textContainer exp-slide">
-                Let's add two more overlapping coordinate systems centered at the <span class="coord3">north pole</span> and <span class="coord4">south pole</span> to our <span class="coord2">our original coordinate system</span> (we'll move <span class="coord2">it</span> away from the poles, too).
-                <br>
-                Now we can describe everywhere on the sphere using at least one coordinate system. And if we want to reach somewhere that isn't covered by <span class="coord4">one coordinate system</span>, we can use the overlapping areas to switch to <span class="coord2">another</span> coordinate system and keep going.
-                <br>
-                This is great: we can still reach every point on the sphere using at least one coordinate system. And we fixed the problem - on each coordinate system, different sets of coordinates always give different points on the sphere. Perfect!
-             </div>
-        </div>
-      </div>
+     </div>
   </div>
 </body>
 </html>

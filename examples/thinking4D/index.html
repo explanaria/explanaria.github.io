@@ -9,6 +9,7 @@
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
   <style>
+/*
 		iframe{
 			width: 100%;
 			height:100%;
@@ -18,19 +19,43 @@ iframe[seamless]{
     border: 0px none transparent;
     padding: 0px;
     overflow: hidden;
+}*/
+
+
+
+body{
+    font-size: 24px;
+    font-family: "Computer Modern Serif", serif;
 }
 
-ul{
-    font-family: "Computer Modern Serif", serif;
-    font-size: 2em;
+.mainheader h1{
+    font-size: 3em; /*cut down on supermassive header from bumping up font size whoops */
+}
+
+main{
     margin: 1em;
 }
 
+.opening{
+    margin: 0 auto;
+    max-width: 1200px;
+    font-size: 1em;
+}
 
-.slideTextItem br{
+@media screen and (max-width:700px){
+    .opening{
+        font-size: 0.8em;
+    }
+}
+
+ul{
+    font-size: 1em;
+}
+
+br{
     margin-bottom: 0.75em;
 }
-.slideTextItem aside{
+aside{
     display: inline;
     font-size: 80%;
     opacity: 0.8;
@@ -45,9 +70,9 @@ ul{
         <br />
     </header>
 
-	<ul style="line-height:150%">
+    <main>
 
-    <div class="slideTextItem">
+    <div class="slideTextItem opening">
 
 
         <aside>(These are my interactive slides from a talk I gave in November 2019 geared towards high schoolers and undergraduates. It's still a WIP - not optimized for smaller screens yet. Enjoy!) </aside>
@@ -67,6 +92,9 @@ ul{
 
     </div>
         <br>
+
+
+	<ul style="line-height:150%">
         <h1> Contents </h1>
 
 		<li><a href="1 R3.html">1: Different coordinate systems.</a></li>
@@ -113,7 +141,8 @@ ul{
 		<li><a href="hypercube.html">Bonus: Play around with a hypercube in 4D!</a> Bonus bonus: a complicated-looking <a href="threetorus.html">3-torus</a>.</li>
 		<br />
 
-
+        <div style="text-align: center; border-top: 1px solid #ddd;"></div>
+		<br />
 
         Broken things:
 		<br />
@@ -129,6 +158,6 @@ ul{
 
 	</ul>
 	</div>
-	</div>
+    </main>
 </body>
 </html>

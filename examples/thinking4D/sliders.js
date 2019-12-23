@@ -56,7 +56,11 @@ class Slider{
         this.canvas.height = this.height;
     }
     ontouchstart(event){
-        if(event.target == this.canvas)event.preventDefault();
+        if(event.target == this.canvas){
+            event.preventDefault();
+        }else{
+            return;
+        }
 
         let rect = this.canvas.getBoundingClientRect();
 
@@ -67,7 +71,9 @@ class Slider{
     }
 
     ontouchmove(event){
-        if(event.target == this.canvas)event.preventDefault();
+        if(event.target == this.canvas){
+            event.preventDefault();
+        }
         
         let rect = this.canvas.getBoundingClientRect();
 
@@ -77,7 +83,7 @@ class Slider{
         }
     }
     ontouchend(event){
-        if(event.target == this.canvas)event.preventDefault();
+        //if(event.target == this.canvas)event.preventDefault(); //allow other canvases to also touchend
         
         let rect = this.canvas.getBoundingClientRect();
 
@@ -168,7 +174,7 @@ class CircleSlider extends Slider{
     onmousedown(x,y){
         let ptX = this.pos[0] + this.radius*Math.cos(this.value);
         let ptY = this.pos[1] + this.radius*Math.sin(this.value);
-        if(dist(x,y, ptX, ptY) < (this.pointRadius*this.pointRadius) + 10){
+        if(dist(x,y, ptX, ptY) < this.pointRadius + 200){
             this.dragging = true;
             this.onmousemove(x,y);
         }
@@ -259,7 +265,7 @@ class RealNumberSlider extends Slider{
     onmousedown(x,y){
         let ptX = this.value*this.width/2 + this.pos[0];
         let ptY = this.pos[1]
-        if(dist(x,y, ptX, ptY) < (this.pointRadius*this.pointRadius) + 10){
+        if(dist(x,y, ptX, ptY) < this.pointRadius + 200){
             this.dragging = true;
         }
     }
@@ -392,7 +398,7 @@ class PlaneSlider extends Slider{
     onmousedown(x,y){
         let ptX = this.values[0]*this.size/2 + this.pos[0];
         let ptY = this.values[1]*this.size/2 + this.pos[0];
-        if(dist(x,y, ptX, ptY) < (this.pointRadius*this.pointRadius) + 10){
+        if(dist(x,y, ptX, ptY) < this.pointRadius + 200){
             this.dragging = true;
             this.onmousemove(x,y);
         }
@@ -506,7 +512,7 @@ function clamp(val, min, max){
 
 
 class CirclePlaneSlider extends PlaneSlider{
-    //a PlaneSlider but restricted to a circle
+    //a PlaneSlider but restricted to the interior of a disk.
     constructor(color, containerID, valueGetter, valueSetter){
         super(color, containerID, valueGetter, valueSetter);
         this.maxDraggableRadius = 1;

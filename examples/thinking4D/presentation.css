@@ -161,7 +161,7 @@ html{
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: repeat(auto-fill, min-content);
 
-    max-width:90%;
+    max-width:100%;
     
     flex-wrap: wrap;
 }

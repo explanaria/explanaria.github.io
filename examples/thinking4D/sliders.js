@@ -83,7 +83,7 @@ class Slider{
         }
     }
     ontouchend(event){
-        //if(event.target == this.canvas)event.preventDefault(); //allow other canvases to also touchend
+        if(event.target == this.canvas)event.preventDefault(); //allow other canvases to also touchend
         
         let rect = this.canvas.getBoundingClientRect();
 
@@ -126,7 +126,7 @@ class CircleSlider extends Slider{
         this.pos = [this.canvas.width/2,this.canvas.height/2];
 
         this.radius = 50;
-        this.pointRadius = 20;
+        this.pointRadius = 15;
         this.pointColor = color
 
         this.disabled = false;
@@ -203,25 +203,24 @@ class RealNumberSlider extends Slider{
     
         this.dragging = false;
     
-        this.pointRadius = 20;
+        this.pointRadius = 15;
         this.lineColor = color;
         this.disabledColor = disabledGray;
 
         this.mode = "horizontal"; //or 'vertical'
 
         this.onWindowResize();
-
-        this.dragPadding = 20; //how far away from the end of the arrow should we restrict ourselves to
     }
     onWindowResize(){
         super.onWindowResize();
         this.pos = [this.canvas.width/2,this.canvas.height/2];
+        this.pointRadius = 15 /100 * this.canvas.width;
     
         if(this.mode == 'horizontal'){
-            this.width = 100 / 128 * this.canvas.width;
+            this.width = 70 / 100 * this.canvas.width;
             this.lineWidth = 7/100 * this.canvas.width;
         }else{
-            this.width = 100 / 128 * this.canvas.height;
+            this.width = 70 / 100 * this.canvas.height;
             this.lineWidth = 7/100 * this.canvas.height;
 
         }
@@ -317,6 +316,7 @@ class PlaneSlider extends Slider{
         super.onWindowResize();
     
         this.size = this.canvas.width - (this.pointRadius*2);
+        this.pointRadius = 20 /100 * this.canvas.width;
         this.pos = [this.canvas.width/2,this.canvas.height/2];
     }
     activate(){

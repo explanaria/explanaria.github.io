@@ -333,7 +333,7 @@ ul {
 @media screen and (max-height:600px){
 
     body{
-        font-size: 16px;
+        font-size: 12px;
     }
 
     #coords{
@@ -354,6 +354,11 @@ ul {
         bottom:0%;
         border-top: none;
         border-left: 1px solid #ccc;
+    }
+
+    .factors canvas{ /* shrink canvases a bit */
+        width: 4em;
+        height: 4em;
     }
 
     .factors .column{

@@ -15,17 +15,15 @@ class Slider{
         this.valueSetter = valueSetter;
         
         this.canvas.addEventListener("mousedown",this.mousedownEvt.bind(this));
+        this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
 
         window.addEventListener("mouseup",this.mouseupEvt.bind(this),false);
-        this.canvas.addEventListener("mouseup",this.mouseupEvt.bind(this),false);
+        window.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
 
         window.addEventListener("mousemove",this.mousemoveEvt.bind(this),false);
         window.addEventListener("touchmove", this.ontouchmove.bind(this),{'passive':false});
 
-        this.canvas.addEventListener("touchstart", this.ontouchstart.bind(this),{'passive':false});
-        window.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
 
-        this.canvas.addEventListener("touchend", this.ontouchend.bind(this),{'passive':false});
 	
         window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
         this.onWindowResize();

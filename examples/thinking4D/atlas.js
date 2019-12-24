@@ -93,7 +93,6 @@ class Atlas{
 
             this.charts[i].updateDrawnPointLocation(uvCoords);
         }
-
     }
 }
 

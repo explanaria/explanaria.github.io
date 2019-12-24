@@ -297,7 +297,7 @@ class PlaneSlider extends Slider{
         this.pos = [this.canvas.width/2,this.canvas.height/2];
 
         this.size = 130;
-        this.pointRadius = 20;
+        this.pointRadius = 15;
         this.lineColor = color;
 
         this.values = [0,0];
@@ -316,7 +316,7 @@ class PlaneSlider extends Slider{
         super.onWindowResize();
     
         this.size = this.canvas.width - (this.pointRadius*2);
-        this.pointRadius = 20 /100 * this.canvas.width;
+        this.pointRadius = 15 /100 * this.canvas.width;
         this.pos = [this.canvas.width/2,this.canvas.height/2];
     }
     activate(){

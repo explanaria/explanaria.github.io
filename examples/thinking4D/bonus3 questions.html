@@ -50,8 +50,8 @@
 let presentation = new EXP.UndoCapableDirector();
     
 async function animate(){
-    //await presentation.begin();
-    //await presentation.nextSlide();
+    await presentation.begin();
+    await presentation.nextSlide();
     //await presentation.nextSlide();
 }
 
@@ -78,24 +78,43 @@ function setColors(className, color){
   <div class="grid">
       <div id="header" class="headerPart"></div>
 
-        <div class="fullscreenText modal is-active exp-slide">
+        <div class="fullscreenText qmodal is-active exp-slide">
             <div>
                 <h1>Questions I Didn't Answer</h1>
+
                 <br>
                 <ul>
                      <li>How do we know that we can always make coordinate charts everywhere on a manifold?
-                        <aside>(To avoid this problem, we just define "a manifold is a space where you can always make coordinate systems".)</aside></li>
+                        <aside>(Spoilers: to avoid this problem, we just define "a manifold is a space where you can always make coordinate systems")</aside></li>
 
-                     <li>What happens if we look at paths moving around the surface of a manifold?</li>
-
-                     <li>A "3-torus" can't exist in <span style="color: green">ℝ<sup>3</sup></span> without self-intersecting, but it can in <span style="color: purple">ℝ<sup>4</sup></span>. If you have an <span style="color: green">n</span>-manifold, what's the smallest <span style="color: purple">ℝ<sup>m</sup></span> it can exist in without self-intersecting?</li>
-
-                     <li>If we have two sets of coordinates How do we know that two sets of coordinate systems represent the same manifold?</li>
-                     <aside>(How do you define "same manifold"? Studying that is part of "topology".)</aside>
+                     <li>If we have two sets of coordinate systems, how do we know if they represent the same manifold or different manifolds?</li>
+                     <aside>(Before we can answer that question, we need to answer another: how should we define "same manifold"? The part of math that tries to answer that question is called "topology".)</aside>
                      <!-- <aside> This one's unsolved for 3-manifolds and above!)</aside> -->
 
-                     <li>What if instead of real numbers, we made each coordinate system out of <i>complex</i> numbers?
-                        <aside>(This is called a "symplectic" manifold! They pop up in physics a lot!)</aside>
+                     </li>
+
+
+                     <li>An even bigger question: if we have two manifolds, what information about each manifold do we need in order to know whether they're different manifolds, or actually the same manifold?</li>
+                     <aside>(This one's actually unsolved for 3-manifolds and above!)</aside>
+
+                     </li>
+                 </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="fullscreenText qmodal is-active exp-slide">
+            <div>
+                <h1>Further Questions</h1>
+
+                <br>
+                <ul>
+                     <li>If an ant walks in a straight line around the surface of a manifold, what path will it take? Will it return to its starting point? If so, after how long? Are there shorter paths? In general, "paths on manifolds" is full of interesting questions to ask.</li>
+
+                     <li>A <span style="color: green">"3-torus"</span> can't exist in <span style="color: purple">ℝ<sup>3</sup></span> without self-intersecting, but it can in <span style="color: purple">ℝ<sup>4</sup></span>. If you have an <span style="color: green">n-manifold</span>, what's the smallest <span style="color: purple">ℝ<sup>m</sup></span> it can exist in without self-intersecting?</li>
+
+                     <li>Each coordinate chart of an <span style="color: green">n-manifold</span> is a coordinate system with <span style="color: green">n real numbers</span>. What if instead of real numbers, we made each coordinate system out of <span style="color: green">n <i>complex</i> numbers?</span>
+                        <aside>(These manifolds are called "symplectic" manifolds. They pop up in physics a lot!)</aside>
 
                      <li>Our universe sure seems like a 3-manifold. Which 3-manifold do we live in? 
                     <aside>(Mathematicians who study this question call themselves "physicists".)</aside>
@@ -140,8 +159,8 @@ function setColors(className, color){
                 <div>5-manifolds and up:<br> Surprisingly, yes, using the 'Whitney trick'!</div>  
             </div>
           </div>
-            -->
       </div>
+     -->
   </div>
 </body>
 </html>

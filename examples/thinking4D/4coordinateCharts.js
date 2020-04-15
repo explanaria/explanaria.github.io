@@ -43,6 +43,8 @@ function setup() {
 }
 
 let mammothMesh = null;
+let mammothLoaded = false;
+
 function loadMeshBeingCoveredInCharts() {
 
     
@@ -55,20 +57,28 @@ function loadMeshBeingCoveredInCharts() {
 			specular: 0x111111,
             color: 0xDEB887,
 			shininess: 25
-		} );
+		});
 
+		mammothMesh.scale.set(1/5,1/5,1/5);
+        mammothMesh.rotation.set(-Math.PI/2,0,Math.PI/2)
+        mammothMesh.position.set(2,-6,0);
+
+        mammothMesh.visible = false;
+
+        three.scene.add(mammothMesh);
+        mammothLoaded = true;
 	} );
 
     setMeshToTorus();
 }
 
 function setMeshToMammoth(){
-    if(mammothMesh != null){
-		three.scene.add( mammothMesh );
-		mammothMesh.scale.set(1/5,1/5,1/5);
-        mammothMesh.rotation.set(-Math.PI/2,0,Math.PI/2)
-        mammothMesh.position.set(2,-6,0);
-        setMeshBeingCoveredInCharts(mammothMesh, [0,0,12]);
+    //called when the next arrow is pressed
+    if(mammothLoaded){
+        mammothMesh.visible = true;
+        setMeshBeingCoveredInCharts(mammothMesh, [0,0,2.2]);
+    }else{
+        window.setTimeout(setMeshToMammoth, 1000);
     }
 }
 
@@ -86,11 +96,13 @@ function setMeshToTorus(){
     let size = 1.7;
     atlas.newChartSize = new THREE.Vector3(size,size,2);
 
+    three.scene.add(torus);
+
     let firstChartPoint = [0,-1.71,1];
     setMeshBeingCoveredInCharts(torus, firstChartPoint);
 
     //shoot a second chart to the up-right of that first chart
-    shootFirstDecal([1.4,-1.41,1], [0,0,0]);
+    shootDecalFromFixedPosition([1.4,-1.41,1], [0,0,0]);
 
     //hide ball on second chart
     atlas.charts.forEach( (chart, num) => {if(num>0)chart.hideDraggables(); chart.twoDslider.onWindowResize()})
@@ -119,16 +131,16 @@ function setMeshToSphere(){
     setMeshBeingCoveredInCharts(sphere, [0,0,2]);
 
     //R
-    shootFirstDecal([2,0,0], [Math.PI,Math.PI/2,Math.PI]);
+    shootDecalFromFixedPosition([2,0,0], [Math.PI,Math.PI/2,Math.PI]);
 
     //back
-    shootFirstDecal([0,0,-2], [0,-Math.PI,0]);
+    shootDecalFromFixedPosition([0,0,-2], [0,-Math.PI,0]);
     //L
-    shootFirstDecal([-2,0,0], [-Math.PI,-Math.PI/2,Math.PI]);
+    shootDecalFromFixedPosition([-2,0,0], [-Math.PI,-Math.PI/2,Math.PI]);
 
     //poles, the finickiest
-    shootFirstDecal([0,2,0], [-Math.PI/2,0,0]);
-    shootFirstDecal([0,-2,0], [Math.PI/2,0,0]);
+    shootDecalFromFixedPosition([0,2,0], [-Math.PI/2,0,0]);
+    shootDecalFromFixedPosition([0,-2,0], [Math.PI/2,0,0]);
 
     atlas.charts.forEach( (i, num) => {if(num>0)i.hideDraggables()});
 
@@ -142,13 +154,12 @@ function setMeshBeingCoveredInCharts(mesh, firstDecalPosition, firstDecalAngle){
     
     meshBeingCoveredInCharts = mesh;
     atlas.meshBeingCoveredInCharts = mesh;
-    three.scene.add(mesh);
 
-    shootFirstDecal(firstDecalPosition, firstDecalAngle);
+    shootDecalFromFixedPosition(firstDecalPosition, firstDecalAngle);
 
 }
 
-function shootFirstDecal(position=[0,-1.71,1], eulerAngle=[0,0,0]){
+function shootDecalFromFixedPosition(position=[0,-1.71,1], eulerAngle=[0,0,0]){
 
     let firstPoint = new THREE.Vector3(position[0],position[1],position[2]);
     let firstOrientation = new THREE.Euler(eulerAngle[0],eulerAngle[1],eulerAngle[2]); //euler angles.

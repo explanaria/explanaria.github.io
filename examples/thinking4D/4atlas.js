@@ -206,9 +206,12 @@ class CoordinateChart2D{
         if(this.twoDslider.dragging)return;
         this.pointPos[0] = (uvCoords.x - 0.5)*2; //change from 0-1 to -1-1.
         this.pointPos[1] = ((1-uvCoords.y) - 0.5)*2; //the 1-y is because a 3D chart's +Y is up, but a canvas's +y is down.
+        
+        this.twoDslider.showInvalidCross = false;
     }
     hideDraggables(){
         this.twoDslider.showDraggables = false;
+        this.twoDslider.showInvalidCross = false;
     }
     showDraggables(){
         this.twoDslider.showDraggables = true;

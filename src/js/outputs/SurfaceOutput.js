@@ -10,15 +10,20 @@ class SurfaceOutput extends OutputNode{
 			options:
 			{
 				opacity: number
-				color: hex code or THREE.Color()
-				showGrid: boolean. If true, will display a grid over the surface. Default: true
+				color: hex code or THREE.Color(). Diffuse color of this surface.
+				gridColor: hex code or THREE.Color(). If showGrid is true, grid lines will appear over this surface. gridColor determines their color 
+				showGrid: boolean. If true, will display a gridColor-colored grid over the surface. Default: true
 				showSolid: boolean. If true, will display a solid surface. Default: true
 				gridSquares: number representing how many squares per dimension to use in a rendered grid
 				gridLineWidth: number representing how many squares per dimension to use in a rendered grid
 			}
 		*/
 		this._opacity = options.opacity !== undefined ? options.opacity : 1;
+
 		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
+
+		this._gridColor = options.gridColor !== undefined ? new THREE.Color(options.gridColor) : new THREE.Color(0x55aa55);
+        this._useCustomGridColor = options.gridColor !== undefined;
 
 		this._gridSquares = options.gridSquares !== undefined ? options.gridSquares : 16;
 		this._showGrid = options.showGrid !== undefined ? options.showGrid : true;
@@ -60,6 +65,7 @@ class SurfaceOutput extends OutputNode{
 		this._uniforms.showGrid.value = this.toNum(this._showGrid);
 		this._uniforms.showSolid.value = this.toNum(this._showSolid);
 		this._uniforms.lineWidth.value = this._gridLineWidth;
+        this._uniforms.useCustomGridColor = this._useCustomGridColor;
 
 		if(!this.showSolid)this.material.transparent = true;
 
@@ -262,6 +268,16 @@ class SurfaceOutput extends OutputNode{
 	}
 	get color(){
 		return this._color;
+	}
+	set gridColor(color){
+		//currently only a single color is supported.
+		//I should really make this a function
+		this._gridColor = color;
+		this._uniforms.gridColor.value = new THREE.Color(color);
+        this._uniforms.useCustomGridColor = 1.0;
+	}
+	get gridColor(){
+		return this._gridColor;
 	}
 	set opacity(opacity){
 		this.material.opacity = opacity;

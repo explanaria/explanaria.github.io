@@ -25,6 +25,8 @@ var fShader = [
 "varying vec2 vUv;",
 "uniform float time;",
 "uniform vec3 color;",
+"uniform float useCustomGridColor;",
+"uniform vec3 gridColor;",
 "uniform vec3 vLight;",
 "uniform float gridSquares;",
 "uniform float lineWidth;",
@@ -84,12 +86,11 @@ var fShader = [
 
 "vec4 renderGridlines(vec4 existingColor, vec2 uv, vec4 solidColor) {",
 "  vec2 distToEdge = abs(mod(vUv.xy*gridSquares + lineWidth/2.0,1.0));",
-"  vec3 gridColor = showSolid * gridLineColor(solidColor.xyz) + (1.0-showSolid)*solidColor.xyz;", //if showSolid =0, use solidColor as the gridline color, otherwise shade
+"  vec3 chosenGridLineColor = mix(gridLineColor(solidColor.xyz), gridColor, useCustomGridColor); ", //use either gridLineColor() or override with custom grid
+"  vec3 blendedGridLine = showSolid * chosenGridLineColor + (1.0-showSolid)*solidColor.xyz;", //if showSolid =0, use solidColor as the gridline color, otherwise shade
 
-"  if( distToEdge.x < lineWidth){",
-"    return showGrid*vec4(gridColor, 1.0) + (1.0-showGrid)*existingColor;",
-"  } else if(distToEdge.y < lineWidth){ ",
-"    return showGrid*vec4(gridColor, 1.0) + (1.0-showGrid)*existingColor;",
+"  if( distToEdge.x < lineWidth || distToEdge.y < lineWidth){",
+"    return mix(existingColor, vec4(blendedGridLine, 1.0),showGrid);",
 "  }",
 "  return existingColor;",
 "}",
@@ -127,6 +128,14 @@ var uniforms = {
 		value: 0,
 	},
 	color: {
+		type: 'c',
+		value: new THREE.Color(0x55aa55),
+	},
+	useCustomGridColor: {
+		type: 'f',
+		value: 0,
+	},
+	gridColor: {
 		type: 'c',
 		value: new THREE.Color(0x55aa55),
 	},

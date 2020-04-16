@@ -184,12 +184,15 @@ class NonDecreasingDirector{
         //updates HTML and also sets this.currentSlideIndex to slideNumber
 
         let prevSlideNumber = this.currentSlideIndex;
+        this.currentSlideIndex = slideNumber;
 
 
         //hide the HTML elements for the previous slide
 
         //items with class exp-slide
-        this.slides[prevSlideNumber].style.opacity = 0;
+        if(prevSlideNumber < this.slides.length){
+            this.slides[prevSlideNumber].style.opacity = 0;
+        }
         
         //items with HTML class exp-slide-n
         let prevSlideElems = document.getElementsByClassName("exp-slide-"+(prevSlideNumber+1))
@@ -214,9 +217,9 @@ class NonDecreasingDirector{
         }
 
         //items with class exp-slide
-        this.slides[slideNumber].style.opacity = 1;
-
-        this.currentSlideIndex = slideNumber;
+        if(slideNumber < this.slides.length){
+            this.slides[slideNumber].style.opacity = 1;
+        }
 
     }
 

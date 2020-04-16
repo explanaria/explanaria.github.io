@@ -185,11 +185,6 @@ class NonDecreasingDirector{
 
         let prevSlideNumber = this.currentSlideIndex;
 
-        if(slideNumber >= this.numHTMLSlides){
-            console.error("Tried to show slide #"+slideNumber+", but only " + this.numHTMLSlides + "HTML elements with exp-slide were found! Make more slides?");
-            return;
-        }
-
 
         //hide the HTML elements for the previous slide
 
@@ -205,14 +200,21 @@ class NonDecreasingDirector{
 
         //show the HTML elements for the current slide
   
-        //items with class exp-slide
-        this.slides[slideNumber].style.opacity = 1;
         
         //items with HTML class exp-slide-n
         let elemsToDisplayOnlyOnThisSlide = document.getElementsByClassName("exp-slide-"+(slideNumber+1));
+
+        if(slideNumber >= this.numHTMLSlides && elemsToDisplayOnlyOnThisSlide.length == 0){
+            console.error("Tried to show slide #"+slideNumber+", but only " + this.numHTMLSlides + "HTML elements with exp-slide were found! Make more slides?");
+            return;
+        }
+
         for(var i=0;i<elemsToDisplayOnlyOnThisSlide.length;i++){
             elemsToDisplayOnlyOnThisSlide[i].style.opacity = 1;
         }
+
+        //items with class exp-slide
+        this.slides[slideNumber].style.opacity = 1;
 
         this.currentSlideIndex = slideNumber;
 

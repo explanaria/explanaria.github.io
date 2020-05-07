@@ -111,7 +111,7 @@ class LineOutput extends OutputNode{
         // Why use (this.numCallsPerActivation-1)*2? 
         // We want to render a chain with n points, each connected to the one in front of it by a line except the last one. Then because the last vertex doesn't introduce a new line, there are n-1 lines between the chain points.
         // Each line is rendered using two vertices. So we multiply the number of lines, this.numCallsPerActivation-1, by two.
-        const NUM_POINTS_PER_LINE_SEGMENT = 2;
+        const NUM_POINTS_PER_LINE_SEGMENT = 4;
         const numVerts = (this.numCallsPerActivation) * NUM_POINTS_PER_LINE_SEGMENT;
 
 		let vertices = new Float32Array( this._outputDimensions * numVerts);
@@ -142,6 +142,13 @@ class LineOutput extends OutputNode{
         }
 		this._geometry.addAttribute( 'direction', new THREE.Float32BufferAttribute( direction, 1) );
 
+        //used to differentiate the points which move towards prev vertex from points which move towards next vertex
+        let nextOrPrev = new Float32Array(numVerts);
+        for(var i=0; i<numVerts;i++){
+            nextOrPrev[i] = i%4<2 ? 0 : 1; //alternate 0,0, 1,1
+        }
+		this._geometry.addAttribute( 'approachNextOrPrevVertex', new THREE.Float32BufferAttribute( nextOrPrev, 1) );
+
 		//indices
 
         /*
@@ -152,11 +159,14 @@ class LineOutput extends OutputNode{
         then we advance n two at a time to move to the next vertex. vertices n, n+1 represent the same point;
         they're separated in the vertex shader to a constant screenspace width */
         let indices = [];
-		for(let vertNum=0;vertNum<numVerts-2;vertNum +=2){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
+		for(let vertNum=0;vertNum<numVerts-4;vertNum +=4){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
         	//indices.push( vertNum, vertNum+1, vertNum+2);
 			//indices.push( vertNum+2,vertNum+1, vertNum+3);
         	indices.push( vertNum+1, vertNum, vertNum+2);
 			indices.push( vertNum+1,vertNum+2, vertNum+3);
+            //extra bevel triangles
+        	indices.push( vertNum+3, vertNum+2, vertNum+4);
+			indices.push( vertNum+3,vertNum+4, vertNum+5);
 		}
 		this._geometry.setIndex( indices );
 
@@ -175,16 +185,11 @@ class LineOutput extends OutputNode{
 
 		//assert i < vertices.count
 
-		let index = this._currentPointIndex*this._outputDimensions;
+        let xValue =  x === undefined ? 0 : x;
+        let yValue =  y === undefined ? 0 : y;
+        let zValue =  z === undefined ? 0 : z;
 
-	    this._vertices[index]   = x === undefined ? 0 : x;
-		this._vertices[index+1] = y === undefined ? 0 : y;
-		this._vertices[index+2] = z === undefined ? 0 : z;
-	    this._vertices[index+3] = this._vertices[index];
-		this._vertices[index+4] = this._vertices[index+1]; //TODO: remove this debug
-		this._vertices[index+5] = this._vertices[index+2];
-
-		this._currentPointIndex++;
+        this.saveVertexInfoInBuffers(this._vertices, this._currentPointIndex, xValue,yValue,zValue);
 
 		/* we're drawing like this:
 		*----*----*
@@ -201,48 +206,50 @@ class LineOutput extends OutputNode{
 
         if(startingNewLine){
             //make the prevPoint be the same point as this
-			this._prevPointVertices[index]   = this._vertices[index];
-			this._prevPointVertices[index+1] = this._vertices[index+1];
-			this._prevPointVertices[index+2] = this._vertices[index+2];
-
-			this._prevPointVertices[index+3]  = this._vertices[index];
-			this._prevPointVertices[index+4] = this._vertices[index+1];
-			this._prevPointVertices[index+5] = this._vertices[index+2];
+            this.saveVertexInfoInBuffers(this._prevPointVertices, this._currentPointIndex, xValue,yValue,zValue);
         }else{
+
+            let prevX = this._vertices[(this._currentPointIndex-1)*this._outputDimensions*4];
+            let prevY = this._vertices[(this._currentPointIndex-1)*this._outputDimensions*4+1];
+            let prevZ = this._vertices[(this._currentPointIndex-1)*this._outputDimensions*4+2];
+
             //set this thing's prevPoint to the previous vertex
-			this._prevPointVertices[index] = this._vertices[index-this._outputDimensions*2];
-			this._prevPointVertices[index+1] = this._vertices[index-this._outputDimensions*2+1];
-			this._prevPointVertices[index+2] = this._vertices[index-this._outputDimensions*2+2];
-
-			this._prevPointVertices[index+3] = this._prevPointVertices[index];
-			this._prevPointVertices[index+4] = this._prevPointVertices[index+1];
-			this._prevPointVertices[index+5] = this._prevPointVertices[index+2];
-
+            this.saveVertexInfoInBuffers(this._prevPointVertices, this._currentPointIndex, prevX,prevY,prevZ);
 
             //set the PREVIOUS point's nextPoint to to THIS vertex.
-			this._nextPointVertices[index-this._outputDimensions*2] = this._vertices[index];
-			this._nextPointVertices[index-this._outputDimensions*2+1] = this._vertices[index+1];
-			this._nextPointVertices[index-this._outputDimensions*2+2] = this._vertices[index+2];
-
-			this._nextPointVertices[index-this._outputDimensions*2+3] = this._vertices[index];
-			this._nextPointVertices[index-this._outputDimensions*2+4] = this._vertices[index+1];
-			this._nextPointVertices[index-this._outputDimensions*2+5] = this._vertices[index+2];
+            this.saveVertexInfoInBuffers(this._nextPointVertices, this._currentPointIndex-1, xValue,yValue,zValue);
         }
 
         if(endingNewLine){
             //make the nextPoint be the same point as this
-			this._nextPointVertices[index]   = this._vertices[index];
-			this._nextPointVertices[index+1] = this._vertices[index+1];
-			this._nextPointVertices[index+2] = this._vertices[index+2];
-
-			this._nextPointVertices[index+3] = this._vertices[index];
-			this._nextPointVertices[index+4] = this._vertices[index+1];
-			this._nextPointVertices[index+5] = this._vertices[index+2];
+            this.saveVertexInfoInBuffers(this._nextPointVertices, this._currentPointIndex, xValue,yValue,zValue);
         }
-
-
 	    this._currentPointIndex++;
 	}
+
+    saveVertexInfoInBuffers(array, vertNum, value1,value2,value3){
+        //for every call to activate(), all 4 geometry vertices representing that point need to save that info.
+        //Therefore, this function will spread three coordinates into a given array, repeatedly.
+
+        let index = vertNum*this._outputDimensions*4;
+
+		array[index]   = value1
+		array[index+1] = value2
+		array[index+2] = value3
+
+		array[index+3] = value1
+		array[index+4] = value2
+		array[index+5] = value3
+
+		array[index+6] = value1
+		array[index+7] = value2
+		array[index+8] = value3
+
+		array[index+9]  = value1
+		array[index+10] = value2
+		array[index+11] = value3
+        
+    }
 	onAfterActivation(){
 		let positionAttribute = this._geometry.attributes.position;
 		positionAttribute.needsUpdate = true;
@@ -275,13 +282,23 @@ class LineOutput extends OutputNode{
     _setColorForVertexRGB(vertexIndex, normalizedR, normalizedG, normalizedB){
         //all of normalizedR, normalizedG, normalizedB are 0-1.
 		let colorArray = this._geometry.attributes.color.array;
-        colorArray[vertexIndex*3 + 0] = normalizedR;
-        colorArray[vertexIndex*3 + 1] = normalizedG;
-        colorArray[vertexIndex*3 + 2] = normalizedB;
+        let index = vertexIndex * 3 * 4; //*3 because colors have 3 channels, *4 because 4 vertices/line point
 
-        colorArray[vertexIndex*3 + 3] = normalizedR;
-        colorArray[vertexIndex*3 + 4] = normalizedG;
-        colorArray[vertexIndex*3 + 5] = normalizedB;
+        colorArray[index + 0] = normalizedR;
+        colorArray[index + 1] = normalizedG;
+        colorArray[index + 2] = normalizedB;
+
+        colorArray[index + 3] = normalizedR;
+        colorArray[index + 4] = normalizedG;
+        colorArray[index + 5] = normalizedB;
+
+        colorArray[index + 6] = normalizedR;
+        colorArray[index + 7] = normalizedG;
+        colorArray[index + 8] = normalizedB;
+
+        colorArray[index*4 + 9] = normalizedR;
+        colorArray[index*4 + 10] = normalizedG;
+        colorArray[index + 11] = normalizedB;
 
 		let colorAttribute = this._geometry.attributes.color;
 		colorAttribute.needsUpdate = true;

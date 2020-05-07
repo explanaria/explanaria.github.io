@@ -50,28 +50,28 @@ var vShader = [
   "  vec2 dirB = normalize((nextScreen - currentScreen));",
   "  if (miter == 1.0) {",
   "    //now compute the miter join normal and length",
-  "    vec2 tangent = normalize(dirA + dirB);",
-  "    vec2 perp = vec2(-dirB.y, dirB.x);",
-  "    vec2 miterDirection = vec2(-tangent.y, tangent.x);",
-  "    dir = tangent;",
-  //"    miterExtensionDot = dot(miter, perp);", //normally this is used to solve the simultaneous solution of the two edge lines for the miter length. But if dirA and dirB are nearly parallel, the dot product will be near 0, and thickness/dot(miter, perp) will blow up!
+  "    vec2 miterDirection = normalize(dirA + dirB);",
+  "    dir = miterDirection;",
+  "    float miterExtensionDot = 1./dot(dirA, dirB);", //normally this is used to solve the simultaneous solution of the two edge lines for the miter length. But if dirA and dirB are nearly parallel, the dot product will be near 0, and thickness/dot(miter, perp) will blow up!
 //so instead of thickness * 1/dot(miter, perp)
 // so I need a formula such that f(dot(miter, perp)) is 1/x when x is big, but instead of diverging when x=0, goes to 0.
 //after experimentation with desmos I decided arctan(1/x) * arccos(c/(x+c)) works smoothly, and c=1 seems nicest.
 //then I realized it was converging a bit too quickly, so sin(x) works, but clamp x to be <= pi/2 so it doesn't oscillate far from 0
-  "    float miterExtensionDot = dot(miterDirection, perp);",
-  //"    float miterLengthMultiplier = atan(1./miterExtensionDot)*sin(clamp(miterExtensionDot,0.0,1.5707));",
-  "    len = thickness * miterExtensionDot; //miterLengthMultiplier;",
+
+
+      "vec2 prevLineExtrudeDirection = vec2(-dirA.y, dirA.x);",
+      "vec2 miter = vec2(-miterDirection.y, miterDirection.x);",
+      "len = thickness / dot(miter, prevLineExtrudeDirection);", //huh?
   "  } else {",
   "    dir = dirA;",
   "  }",
   "}",
-  "nextPtPos = vec3(len);", //TODO: remove. it's for debugging colors
+  "nextPtPos.r = len;", //TODO: remove. it's for debugging colors
   "vec2 normal = vec2(-dir.y, dir.x) ;",
   "normal *= len/2.0;",
   "normal.x /= aspect;",
 
-  "vec4 offset = vec4(normal * orientation, 0.0, 1.0);",
+  "vec4 offset = vec4(normal * orientation, 0.0, 0.0);",
   "gl_Position = currentProjected + offset;",
   "gl_PointSize = 1.0;",
 "}"].join("\n")

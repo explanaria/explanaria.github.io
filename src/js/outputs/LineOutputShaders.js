@@ -16,11 +16,9 @@ var vShader = [
 
 "void main() {",
 
-  "nextPtPos = nextPointPosition;", //for debugging colors
-
   "vec2 aspectVec = vec2(aspect, 1.0);",
   "mat4 projViewModel = projectionMatrix *",
-            "modelViewMatrix;",
+            "viewMatrix * modelMatrix;",
   "vec4 previousProjected = projViewModel * vec4(previousPointPosition, 1.0);",
   "vec4 currentProjected = projViewModel * vec4(position, 1.0);",
   "vec4 nextProjected = projViewModel * vec4(nextPointPosition, 1.0);",
@@ -32,6 +30,8 @@ var vShader = [
 
   "float len = thickness;",
   "float orientation = direction;",
+
+  "nextPtPos = vec3(currentScreen, 1.0);", //TODO: remove. it's for debugging colors
 
   //starting point uses (next - current)
   "vec2 dir = vec2(0.0);",
@@ -74,7 +74,7 @@ var fShader = [
 
 "void main(){",
 "  gl_FragColor = vec4(color.rgb, opacity);",	
-"  gl_FragColor = vec4(sin(nextPtPos.rgb), opacity);",	
+"  gl_FragColor = vec4((nextPtPos.rgb), opacity);",	
 "}"].join("\n")
 
 var uniforms = {
@@ -88,7 +88,7 @@ var uniforms = {
 	},
 	miter: {
 		type: 'f',
-		value: 0.2,
+		value: 1.0,
 	},
 	opacity: {
 		type: 'f',

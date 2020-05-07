@@ -5,7 +5,8 @@ import { vShader, fShader, uniforms } from './LineOutputShaders.js';
 class LineOutput extends OutputNode{
 	constructor(options = {}){
 		super();
-		/* should be .add()ed to a Transformation to work
+		/* should be .add()ed to a Transformation to work.
+        Crisp lines using the technique in https://mattdesl.svbtle.com/drawing-lines-is-hard.
 			options:
 			{
 				width: number
@@ -39,19 +40,12 @@ class LineOutput extends OutputNode{
 			}
 		}
 
-        /*
 		this.material = new THREE.ShaderMaterial({
 			side: THREE.BackSide,
 			vertexShader: vShader, 
 			fragmentShader: fShader,
 			uniforms: this._uniforms,
-	    });*/
-
-        
-	    this.material = new THREE.MeshBasicMaterial({
-			color: 0xff0000,
-			wireframe: true,
-	    });//*/
+	    });
 
 		this.mesh = new THREE.Mesh(this._geometry,this.material);
 
@@ -59,7 +53,7 @@ class LineOutput extends OutputNode{
 		this.color = this._color; //setter sets color uniform
 		this._uniforms.opacity.value = this._opacity;
 		this._uniforms.color.value = this._color;
-		this._uniforms.thickness.value = this._width;
+		this._uniforms.thickness.value = this._width / 10;
 
 		getThreeEnvironment().scene.add(this.mesh);
 	}
@@ -138,6 +132,13 @@ class LineOutput extends OutputNode{
 		let colorAttribute = this._geometry.attributes.color;
 		this._colors = colors;
 		colorAttribute.setArray(this._colors);
+
+        //used to differentiate the left border of the line from the right border
+        let direction = new Float32Array(numVerts);
+        for(var i=0; i<numVerts;i++){
+            direction[i] = i%2==0 ? 1 : -1; //alternate -1 and 1
+        }
+		this._geometry.addAttribute( 'direction', new THREE.Float32BufferAttribute( direction, 1) );
 
 		//indices
 

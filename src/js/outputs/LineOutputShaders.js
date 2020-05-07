@@ -2,16 +2,22 @@
 
 //experiment: shaders to get the triangle pulsating!
 var vShader = [
-"varying vec3 vNormal;",
-"varying vec3 vPosition;",
 "uniform vec3 color;", //todo: make varying
-"uniform float aspect;",
-"attribute vec3 position;",
+"uniform float aspect;", //used to calibrate screen space
+"uniform float thickness;", //width of line
+"uniform float miter;", //enable or disable line miters?
+//"attribute vec3 position;", //added automatically by three.js
 "attribute vec3 nextPointPosition;",
 "attribute vec3 previousPointPosition;",
+"attribute float direction;",
 //"uniform float miter;",
 
+"varying vec3 nextPtPos;",
+
 "void main() {",
+
+  "nextPtPos = nextPointPosition;", //for debugging colors
+
   "vec2 aspectVec = vec2(aspect, 1.0);",
   "mat4 projViewModel = projectionMatrix *",
             "modelViewMatrix;",
@@ -40,7 +46,7 @@ var vShader = [
   "else {",
   //get directions from (C - B) and (B - A)
   "  vec2 dirA = normalize((currentScreen - previousScreen));",
-  "  if (miter == 1) {",
+  "  if (miter == 1.0) {",
   "    vec2 dirB = normalize((nextScreen - currentScreen));",
   "    //now compute the miter join normal and length",
   "    vec2 tangent = normalize(dirA + dirB);",
@@ -64,9 +70,11 @@ var vShader = [
 var fShader = [
 "uniform vec3 color;",
 "uniform float opacity;",
+"varying vec3 nextPtPos;",
 
 "void main(){",
 "  gl_FragColor = vec4(color.rgb, opacity);",	
+"  gl_FragColor = vec4(sin(nextPtPos.rgb), opacity);",	
 "}"].join("\n")
 
 var uniforms = {
@@ -76,15 +84,15 @@ var uniforms = {
 	},
 	thickness: {
 		type: 'f',
-		value: 1.0,
-	},/*
+		value: 0.2,
+	},
 	miter: {
 		type: 'f',
-		value: 1,
-	},*/
+		value: 0.2,
+	},
 	opacity: {
 		type: 'f',
-		value: 0.1,
+		value: 1.0,
 	},
 	aspect: { //aspect ratio. need to load from renderer
 		type: 'f',

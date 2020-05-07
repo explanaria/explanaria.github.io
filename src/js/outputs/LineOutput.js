@@ -2,6 +2,8 @@ import {OutputNode} from '../Node.js';
 import { getThreeEnvironment } from '../ThreeEnvironment.js';
 import { vShader, fShader, uniforms } from './LineOutputShaders.js';
 
+const WIDTH_FUDGE_FACTOR = 10;
+
 class LineOutput extends OutputNode{
 	constructor(options = {}){
 		super();
@@ -53,7 +55,7 @@ class LineOutput extends OutputNode{
 		this.color = this._color; //setter sets color uniform
 		this._uniforms.opacity.value = this._opacity;
 		this._uniforms.color.value = this._color;
-		this._uniforms.thickness.value = this._width / 10;
+		this._uniforms.thickness.value = this._width / WIDTH_FUDGE_FACTOR;
 
 		getThreeEnvironment().scene.add(this.mesh);
 	}
@@ -293,12 +295,14 @@ class LineOutput extends OutputNode{
 		this.material.transparent = opacity < 1;
 		this.material.visible = opacity > 0;
 		this._opacity = opacity;
+        this._uniforms.opacity.value = opacity;
 	}
 	get opacity(){
 		return this._opacity;
 	}
 	set width(width){
 		this._width = width;
+        this._uniforms.thickness.value = width / WIDTH_FUDGE_FACTOR;
 	}
 	get width(){
 		return this._width;

@@ -145,16 +145,18 @@ class LineOutput extends OutputNode{
 		//indices
 
         /*
-        For each point, we connect it to the next vertex like this:
+        For each vertex, we connect it to the next vertex like this:
         n --n+2
         |  /  |
        n+1 --n+3 
-        then we advance n two at a time to move to the next point. Points n, n+1 have the same geometry;
+        then we advance n two at a time to move to the next vertex. vertices n, n+1 represent the same point;
         they're separated in the vertex shader to a constant screenspace width */
         let indices = [];
-		for(let vertNum=0;vertNum<numVerts-3;vertNum +=1){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
-        	indices.push( vertNum, vertNum+1, vertNum+2);
-			indices.push( vertNum+2,vertNum+1, vertNum+3);
+		for(let vertNum=0;vertNum<numVerts-2;vertNum +=2){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
+        	//indices.push( vertNum, vertNum+1, vertNum+2);
+			//indices.push( vertNum+2,vertNum+1, vertNum+3);
+        	indices.push( vertNum+1, vertNum, vertNum+2);
+			indices.push( vertNum+1,vertNum+2, vertNum+3);
 		}
 		this._geometry.setIndex( indices );
 
@@ -208,27 +210,27 @@ class LineOutput extends OutputNode{
 			this._prevPointVertices[index+5] = this._vertices[index+2];
         }else{
             //set this thing's prevPoint to the previous vertex
-			this._prevPointVertices[index] = this._vertices[index-this._outputDimensions];
-			this._prevPointVertices[index+1] = this._vertices[index-this._outputDimensions+1];
-			this._prevPointVertices[index+2] = this._vertices[index-this._outputDimensions+2];
+			this._prevPointVertices[index] = this._vertices[index-this._outputDimensions*2];
+			this._prevPointVertices[index+1] = this._vertices[index-this._outputDimensions*2+1];
+			this._prevPointVertices[index+2] = this._vertices[index-this._outputDimensions*2+2];
 
 			this._prevPointVertices[index+3] = this._prevPointVertices[index];
 			this._prevPointVertices[index+4] = this._prevPointVertices[index+1];
 			this._prevPointVertices[index+5] = this._prevPointVertices[index+2];
 
 
-            //set the PREVIOUS point to connect to THIS vertex.
-			this._nextPointVertices[index-this._outputDimensions] = this._vertices[index];
-			this._nextPointVertices[index-this._outputDimensions+1] = this._vertices[index+1];
-			this._nextPointVertices[index-this._outputDimensions+2] = this._vertices[index+2];
+            //set the PREVIOUS point's nextPoint to to THIS vertex.
+			this._nextPointVertices[index-this._outputDimensions*2] = this._vertices[index];
+			this._nextPointVertices[index-this._outputDimensions*2+1] = this._vertices[index+1];
+			this._nextPointVertices[index-this._outputDimensions*2+2] = this._vertices[index+2];
 
-			this._nextPointVertices[index-this._outputDimensions+3] = this._vertices[index];
-			this._nextPointVertices[index-this._outputDimensions+4] = this._vertices[index+1];
-			this._nextPointVertices[index-this._outputDimensions+5] = this._vertices[index+2];
+			this._nextPointVertices[index-this._outputDimensions*2+3] = this._vertices[index];
+			this._nextPointVertices[index-this._outputDimensions*2+4] = this._vertices[index+1];
+			this._nextPointVertices[index-this._outputDimensions*2+5] = this._vertices[index+2];
         }
 
         if(endingNewLine){
-            //make the prevPoint be the same point as this
+            //make the nextPoint be the same point as this
 			this._nextPointVertices[index]   = this._vertices[index];
 			this._nextPointVertices[index+1] = this._vertices[index+1];
 			this._nextPointVertices[index+2] = this._vertices[index+2];
@@ -248,6 +250,9 @@ class LineOutput extends OutputNode{
 		prevPointPositionAttribute.needsUpdate = true;
 		let nextPointPositionAttribute = this._geometry.attributes.nextPointPosition;
 		nextPointPositionAttribute.needsUpdate = true;
+
+        //update aspect ratio. in the future perhaps this should only be changed when the aspect ratio changes so it's not being done per frame?
+        this._uniforms.aspect.value = getThreeEnvironment().camera.aspect;
 
 		this._currentPointIndex = 0; //reset after each update
 	}

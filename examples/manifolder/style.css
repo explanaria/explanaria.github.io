@@ -1,0 +1,46 @@
+body{
+margin: 0;
+    width: 100%;
+    height:100%;
+    position:absolute;
+}
+
+br{
+    margin-bottom: 0.75em;
+}
+aside{
+    display: inline;
+    font-size: 80%;
+    opacity: 0.8;
+}
+
+
+html{
+    overflow-y: auto;
+}
+
+.overlappingItemContainer{
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 100%;
+}
+.overlappingItem{
+ grid-row-start: 1;
+ grid-column-start: 1;
+ width:100%;
+}
+
+#canvasContainer{
+    width: 100%;
+    height:100%;
+}
+
+#canvasContainer canvas{
+    width: 100%;
+    height: 100%;
+}
+
+
+#twoDCanvas{
+    abackground-color: red;
+}

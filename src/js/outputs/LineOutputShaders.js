@@ -37,6 +37,7 @@ var vShader = [
   "vec2 dir = vec2(0.0);",
   "if (currentScreen == previousScreen) {",
   "  dir = normalize(nextScreen - currentScreen);",
+  //"  nextPtPos.b = 0.0;", //TODO: remove
   "} ",
   //ending point uses (current - previous)
   "else if (currentScreen == nextScreen) {",
@@ -46,19 +47,27 @@ var vShader = [
   "else {",
   //get directions from (C - B) and (B - A)
   "  vec2 dirA = normalize((currentScreen - previousScreen));",
+  "  vec2 dirB = normalize((nextScreen - currentScreen));",
   "  if (miter == 1.0) {",
-  "    vec2 dirB = normalize((nextScreen - currentScreen));",
   "    //now compute the miter join normal and length",
   "    vec2 tangent = normalize(dirA + dirB);",
-  "    vec2 perp = vec2(-dirA.y, dirA.x);",
-  "    vec2 miter = vec2(-tangent.y, tangent.x);",
+  "    vec2 perp = vec2(-dirB.y, dirB.x);",
+  "    vec2 miterDirection = vec2(-tangent.y, tangent.x);",
   "    dir = tangent;",
-  "    len = thickness / dot(miter, perp);",
+  //"    miterExtensionDot = dot(miter, perp);", //normally this is used to solve the simultaneous solution of the two edge lines for the miter length. But if dirA and dirB are nearly parallel, the dot product will be near 0, and thickness/dot(miter, perp) will blow up!
+//so instead of thickness * 1/dot(miter, perp)
+// so I need a formula such that f(dot(miter, perp)) is 1/x when x is big, but instead of diverging when x=0, goes to 0.
+//after experimentation with desmos I decided arctan(1/x) * arccos(c/(x+c)) works smoothly, and c=1 seems nicest.
+//then I realized it was converging a bit too quickly, so sin(x) works, but clamp x to be <= pi/2 so it doesn't oscillate far from 0
+  "    float miterExtensionDot = dot(miterDirection, perp);",
+  //"    float miterLengthMultiplier = atan(1./miterExtensionDot)*sin(clamp(miterExtensionDot,0.0,1.5707));",
+  "    len = thickness * miterExtensionDot; //miterLengthMultiplier;",
   "  } else {",
   "    dir = dirA;",
   "  }",
   "}",
-  "vec2 normal = vec2(-dir.y, dir.x);",
+  "nextPtPos = vec3(len);", //TODO: remove. it's for debugging colors
+  "vec2 normal = vec2(-dir.y, dir.x) ;",
   "normal *= len/2.0;",
   "normal.x /= aspect;",
 

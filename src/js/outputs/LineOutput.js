@@ -153,13 +153,13 @@ class LineOutput extends OutputNode{
 
         /*
         For each vertex, we connect it to the next vertex like this:
-        n --n+2
-        |  /  |
-       n+1 --n+3 
+        n --n+2--n+4
+        |  /  | / |
+       n+1 --n+3--n+5
         then we advance n two at a time to move to the next vertex. vertices n, n+1 represent the same point;
         they're separated in the vertex shader to a constant screenspace width */
         let indices = [];
-		for(let vertNum=0;vertNum<numVerts-4;vertNum +=4){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
+		for(let vertNum=0;vertNum<(this.numCallsPerActivation-1) * NUM_POINTS_PER_LINE_SEGMENT;vertNum +=NUM_POINTS_PER_LINE_SEGMENT){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
         	//indices.push( vertNum, vertNum+1, vertNum+2);
 			//indices.push( vertNum+2,vertNum+1, vertNum+3);
         	indices.push( vertNum+1, vertNum, vertNum+2);

@@ -15,7 +15,7 @@
 </head>
 <body>
   <script>
-	var three = EXP.setupThree(60,15);
+	var three = EXP.setupThree(60,7);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.z = 4;
@@ -32,7 +32,7 @@
 
 
     let c = 2
-	var square = new EXP.Array({data: [[0,1],[-c,-c],[1,0]]});
+	var square = new EXP.Array({data: [[0,1],[-c,-c],[1,0],[2,-3]]});
     var line2 = new EXP.LineOutput({width:5, color: 0x00ff55});
 	square
 		.add(line2);
@@ -42,7 +42,8 @@
     geometry.vertices.push(
     new THREE.Vector3(0, 1, 0),
     new THREE.Vector3(-c, -c, 0),
-    new THREE.Vector3(1, 0, 0));
+    new THREE.Vector3(1, 0, 0),
+    new THREE.Vector3(2, -3, 0));
 
 
     let originalLine = new THREE.Line(geometry, new THREE.LineBasicMaterial({
@@ -57,12 +58,14 @@
 	var axis2 = new Area({bounds: [[0,0],[-5,5]], numItems: 40}); //this is a rather silly way to get a y-axis.
 	axis2.add(new PointOutput({width:0.1, color: 0x000000}));*/
 
+    //controls.autoRotate = true;
+    //controls.autoRotateSpeed = 30 / Math.PI;
 
 	three.on("update",function(time){
 		unitcircle.activate(time.t);
 		square.activate(time.t);
 		//axis2.activate(time.t);
-		//controls.update();
+		controls.update();
 
 		//three.camera.lookAt(new THREE.Vector3())
 	});

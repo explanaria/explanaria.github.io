@@ -308,7 +308,7 @@ function setup4DAxes(){
         let k = [epsilon,epsilon,epsilon,epsilon][m];
 
         let line = new EXP.Array({data: [[i,j,k-epsilon],[i/3,j/3,k/3]]});
-        let vecOut = new EXP.VectorOutput({width:50, color: coordinateLine4Color, opacity:1});
+        let vecOut = new EXP.VectorOutput({width:5, color: coordinateLine4Color, opacity:1});
         line
         .add(inwardsLineControl.makeLink())
         .add(vecOut);

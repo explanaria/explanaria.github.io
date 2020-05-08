@@ -24,7 +24,7 @@
 
 
 	var unitcircle = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 40});
-    var line = new EXP.LineOutput({width:5, color: 0xff5555});
+    var line = new EXP.LineOutput({width:50, color: 0xff5555});
 	unitcircle
 		.add(new EXP.Transformation({'expr': (i,t,theta) => [1*Math.cos(theta)+3,1*Math.sin(theta)]}))
 		.add(line);
@@ -33,7 +33,7 @@
 
     let c = 2
 	var square = new EXP.Array({data: [[0,1],[-c,-c],[1,0],[2,-3]]});
-    var line2 = new EXP.LineOutput({width:5, color: 0x00ff55});
+    var line2 = new EXP.LineOutput({width:30, color: 0x00ff55});
 	square
 		.add(line2);
 
@@ -47,9 +47,9 @@
 
 
     let originalLine = new THREE.Line(geometry, new THREE.LineBasicMaterial({
-    color: 0x0000ff
+    color: 0x0000ff,
     }))
-    three.scene.add(originalLine);
+    //three.scene.add(originalLine);
 
 	/*
 	var axis = new Area({bounds: [[-5,5]], numItems: 40});

@@ -3,7 +3,6 @@
 //based on https://mattdesl.svbtle.com/drawing-lines-is-hard but with several errors corrected, bevel shading added, and more
 
 var vShader = [
-"uniform vec3 color;", //todo: make varying
 "uniform float aspect;", //used to calibrate screen space
 "uniform float lineWidth;", //width of line
 "uniform float miter;", //enable or disable line miters?
@@ -15,6 +14,9 @@ var vShader = [
 "attribute float approachNextOrPrevVertex;",
 
 "varying float crossLinePosition;",
+"attribute vec3 color;",
+"varying vec3 vColor;",
+
 
 "varying vec3 debugInfo;",
 
@@ -41,6 +43,7 @@ var vShader = [
   "vec4 nextProjected = projViewModel * vec4(nextPointPosition, 1.0);",
 
   "crossLinePosition = direction;", //send direction to the fragment shader
+  "vColor = color;", //send direction to the fragment shader
 
   //get 2D screen space with W divide and aspect correction
   "vec2 currentScreen = currentProjected.xy / currentProjected.w * aspectVec;",
@@ -102,23 +105,19 @@ var vShader = [
 "}"].join("\n");
 
 var fShader = [
-"uniform vec3 color;",
 "uniform float opacity;",
+"varying vec3 vColor;",
 "varying vec3 debugInfo;",
 "varying float crossLinePosition;",
 
 "void main(){",
-"  vec3 col = color.rgb;",
+"  vec3 col = vColor.rgb;",
 //"  col = debugInfo.rgb;",
 //"  col *= clamp(1.-2.*abs(crossLinePosition),0.0,1.0);", //this goes from 1 in the middle to 0 at the half mark
 "  gl_FragColor = vec4(col, opacity);",
 "}"].join("\n")
 
 var uniforms = {
-	color: {
-		type: 'c',
-		value: new THREE.Color(0x55aa55),
-	},
 	lineWidth: {
 		type: 'f',
 		value: 1.0,

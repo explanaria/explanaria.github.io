@@ -282,19 +282,9 @@ async function animate(){
     presentation.TransitionTo(sphereLineOutput, {'opacity':0.5}, 750);
     */
 
-    //animation is done in CSS with 1500 
-
-    //TODO: when this undos, call three.onWindowResize();
-    objects.push({activate: function(){three.onWindowResize()}}); //ensure canvas keeps aspect ratio properly
+    //Show the 2D canvas. Animation is done in CSS with a time of 1500 ms 
     presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 1fr'}, 0);
     await presentation.delay(1500);
-    objects.pop(); //delete that last object
-
-    //HORRIBLE HACK ALERT
-
-    window.addEventListener("mouseup", () => three.onWindowResize());
-    window.addEventListener("touchend",() => three.onWindowResize());
-
 
 
     await presentation.nextSlide();
@@ -316,8 +306,6 @@ async function animate(){
     // "But what if we use more than one coordinate system?
 
     await presentation.nextSlide();
-
-    objects.push({activate: function(){three.onWindowResize()}}); //ensure canvas keeps aspect ratio properly
     presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'}, 0);
 
     coord1.getDeepestChildren().forEach( (output) => {

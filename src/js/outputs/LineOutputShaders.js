@@ -18,7 +18,7 @@ var vShader = [
 
 "varying vec3 debugInfo;",
 
-"vec3 angle_to_hue(float angle) {",
+"vec3 angle_to_hue(float angle) {", //for debugging
 "  angle /= 3.141592*2.;",
 "  return clamp((abs(fract(angle+vec3(3.0, 2.0, 1.0)/3.0)*6.0-3.0)-1.0), 0.0, 1.0);",
 "}",
@@ -47,7 +47,7 @@ var vShader = [
   "vec2 previousScreen = previousProjected.xy / previousProjected.w * aspectVec;",
   "vec2 nextScreen = nextProjected.xy / nextProjected.w * aspectVec;",
 
-  "float thickness = lineWidth / 200.;", //TODO: convert lineWidth to pixels
+  "float thickness = lineWidth / 400.;", //TODO: convert lineWidth to pixels
   "float orientation = direction;",
 
   //get directions from (C - B) and (B - A)

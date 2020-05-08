@@ -79,9 +79,6 @@ class LineOutput extends OutputNode{
 		this._geometry.addAttribute( 'nextPointPosition', new THREE.Float32BufferAttribute( this._nextPointVertices, this._outputDimensions ) );
 		this._geometry.addAttribute( 'previousPointPosition', new THREE.Float32BufferAttribute( this._prevPointVertices, this._outputDimensions ) );
         this._geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( this._colors, 3 ) );
-		//this._geometry.addAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
-		//this.geometry.addAttribute( 'uv', new THREE.Float32BufferAttribute( uvs, 2 ) );
-
 
 		this._currentPointIndex = 0; //used during updates as a pointer to the buffer
 		this._activatedOnce = false;
@@ -107,10 +104,6 @@ class LineOutput extends OutputNode{
 
 		// perhaps instead of generating a whole new array, this can reuse the old one?
 
-
-        // Why use (this.numCallsPerActivation-1)*2? 
-        // We want to render a chain with n points, each connected to the one in front of it by a line except the last one. Then because the last vertex doesn't introduce a new line, there are n-1 lines between the chain points.
-        // Each line is rendered using two vertices. So we multiply the number of lines, this.numCallsPerActivation-1, by two.
         const NUM_POINTS_PER_LINE_SEGMENT = 4;
         const numVerts = (this.numCallsPerActivation) * NUM_POINTS_PER_LINE_SEGMENT;
 
@@ -137,36 +130,45 @@ class LineOutput extends OutputNode{
 
         //used to differentiate the left border of the line from the right border
         let direction = new Float32Array(numVerts);
-        for(var i=0; i<numVerts;i++){
+        for(let i=0; i<numVerts;i++){
             direction[i] = i%2==0 ? 1 : -1; //alternate -1 and 1
         }
 		this._geometry.addAttribute( 'direction', new THREE.Float32BufferAttribute( direction, 1) );
 
         //used to differentiate the points which move towards prev vertex from points which move towards next vertex
         let nextOrPrev = new Float32Array(numVerts);
-        for(var i=0; i<numVerts;i++){
+        for(let i=0; i<numVerts;i++){
             nextOrPrev[i] = i%4<2 ? 0 : 1; //alternate 0,0, 1,1
         }
 		this._geometry.addAttribute( 'approachNextOrPrevVertex', new THREE.Float32BufferAttribute( nextOrPrev, 1) );
 
 		//indices
-
         /*
         For each vertex, we connect it to the next vertex like this:
-        n --n+2--n+4
-        |  /  | / |
-       n+1 --n+3--n+5
+        n --n+2--n+4--n+6
+        |  /  | / |  /  |
+       n+1 --n+3--n+5--n+7
+
+       pt1   pt2 pt2   pt3
+
+       vertices n,n+1 are around point 1, n+2,n+3,n+4,n+5 are around pt2, n+6,n+7 are for point3. the middle segment (n+2-n+5) is the polygon used for beveling at point 2.
+
         then we advance n two at a time to move to the next vertex. vertices n, n+1 represent the same point;
         they're separated in the vertex shader to a constant screenspace width */
         let indices = [];
-		for(let vertNum=0;vertNum<(this.numCallsPerActivation-1) * NUM_POINTS_PER_LINE_SEGMENT;vertNum +=NUM_POINTS_PER_LINE_SEGMENT){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
-        	//indices.push( vertNum, vertNum+1, vertNum+2);
-			//indices.push( vertNum+2,vertNum+1, vertNum+3);
-        	indices.push( vertNum+1, vertNum, vertNum+2);
-			indices.push( vertNum+1,vertNum+2, vertNum+3);
-            //extra bevel triangles
-        	indices.push( vertNum+3, vertNum+2, vertNum+4);
-			indices.push( vertNum+3,vertNum+4, vertNum+5);
+		for(let vertNum=0;vertNum<(this.numCallsPerActivation-1);vertNum +=1){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
+		    let firstCoordinate = vertNum % this.itemDimensions[this.itemDimensions.length-1];
+            let endingNewLine = firstCoordinate == this.itemDimensions[this.itemDimensions.length-1]-1;
+    
+            let vertIndex = vertNum * NUM_POINTS_PER_LINE_SEGMENT;
+            
+            if(!endingNewLine){
+        	    indices.push( vertIndex+1, vertIndex,   vertIndex+2);
+			    indices.push( vertIndex+1, vertIndex+2, vertIndex+3);
+
+            	indices.push( vertIndex+3, vertIndex+2, vertIndex+4);
+			    indices.push( vertIndex+3, vertIndex+4, vertIndex+5);
+            }
 		}
 		this._geometry.setIndex( indices );
 

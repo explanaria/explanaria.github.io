@@ -41,7 +41,7 @@ function ThreeasyEnvironment(canvasElem = null){
 	this.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
 
 
-    this.onWindowResize(); //resize canvas to window size and set aspect ratio
+    this.resizeCanvasIfNecessary(); //resize canvas to window size and set aspect ratio
 	/*
 	this.renderer.gammaInput = true;
 	this.renderer.gammaOutput = true;
@@ -62,8 +62,6 @@ function ThreeasyEnvironment(canvasElem = null){
 	this.renderer.domElement.addEventListener( 'mouseup', this.onMouseUp.bind(this), false );
 	this.renderer.domElement.addEventListener( 'touchstart', this.onMouseDown.bind(this), false );
 	this.renderer.domElement.addEventListener( 'touchend', this.onMouseUp.bind(this), false );
-
-	window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
 
 	/*
 	//renderer.vr.enabled = true; 
@@ -123,25 +121,32 @@ ThreeasyEnvironment.prototype.evenify = function(x){
 	}
 	return x;
 }
-ThreeasyEnvironment.prototype.onWindowResize= function() {
+ThreeasyEnvironment.prototype.resizeCanvasIfNecessary= function() {
+    //https://webgl2fundamentals.org/webgl/lessons/webgl-anti-patterns.html yes, every frame.
+    //this handles the edge case where the canvas size changes but the window size doesn't
 
     let width = window.innerWidth;
     let height = window.innerHeight;
     
     if(!this.shouldCreateCanvas){ // a canvas was provided externally
-
         width = this.renderer.domElement.clientWidth;
         height = this.renderer.domElement.clientHeight;
     }
 
-	this.camera.aspect = width / height;
-    //this.camera.setFocalLength(30); //if I use this, the camera will keep a constant width instead of constant height
-	this.aspect = this.camera.aspect;
-	this.camera.updateProjectionMatrix();
-	this.renderer.setSize( this.evenify(width), this.evenify(height),this.shouldCreateCanvas );
+    if(width != this.renderer.domElement.width || height != this.renderer.domElement.height){
+        //canvas dimensions changed, update the internal resolution
+
+	    this.camera.aspect = width / height;
+        //this.camera.setFocalLength(30); //if I use this, the camera will keep a constant width instead of constant height
+	    this.aspect = this.camera.aspect;
+	    this.camera.updateProjectionMatrix();
+	    this.renderer.setSize( this.evenify(width), this.evenify(height),this.shouldCreateCanvas );
+    }
 }
 ThreeasyEnvironment.prototype.listeners = {"update": [],"render":[]}; //update event listeners
 ThreeasyEnvironment.prototype.render = function(timestep){
+    this.resizeCanvasIfNecessary();
+
     var realtimeDelta = this.clock.getDelta();
 	var delta = realtimeDelta*this.timeScale;
 	this.elapsedTime += delta;
@@ -284,7 +289,7 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 			this.capturer.save();
 		}
 	}
-	onWindowResize() {
+	resizeCanvasIfNecessary() {
 		//stop recording if window size changes
 		if(this.rendering && window.innerWidth / window.innerHeight != this.aspect){
 			this.capturer.stop();
@@ -293,7 +298,7 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 			this.rendering = false;
 			return;
 		}
-		super.onWindowResize();
+		super.resizeCanvasIfNecessary();
 	}
 }
 

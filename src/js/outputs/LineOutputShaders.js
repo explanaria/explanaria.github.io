@@ -89,6 +89,11 @@ var vShader = [
 
 "varying vec3 debugInfo;",
 
+"vec3 angle_to_hue(float angle) {",
+"  angle /= 3.141592*2.;",
+"  return clamp((abs(fract(angle+vec3(3.0, 2.0, 1.0)/3.0)*6.0-3.0)-1.0), 0.0, 1.0);",
+"}",
+
 "void main() {",
 
   "vec2 aspectVec = vec2(aspect, 1.0);",
@@ -110,8 +115,10 @@ var vShader = [
 
   "debugInfo = vec3(abs(sin(currentProjected)));", //TODO: remove. it's for debugging colors
 
+  //get directions from (C - B) and (B - A)
   "vec2 dirA = normalize((currentScreen - previousScreen));",
   "vec2 dirB = normalize((nextScreen - currentScreen));",
+
 
   //starting point uses (next - current)
   "vec2 dir = vec2(0.0);",
@@ -125,16 +132,24 @@ var vShader = [
   "}",
   "//somewhere in middle, needs a join",
   "else {",
-  //get directions from (C - B) and (B - A)
   "  if (miter == 1.0) {",
+        //corner type: miter
   "    //now compute the miter join normal and length",
   "    vec2 miterDirection = normalize(dirA + dirB);",
       "vec2 prevLineExtrudeDirection = vec2(-dirA.y, dirA.x);",
       "vec2 miter = vec2(-miterDirection.y, miterDirection.x);",
-      "len = thickness / dot(miter, prevLineExtrudeDirection);", //huh?
+      "len = thickness / (dot(miter, prevLineExtrudeDirection)+0.0001);", //calculate. dot product is always > 0
+
+  //on the inner corner, stop the miter from going beyond the lengths of the two sides
+  "    float cornerAngle = mod(atan(dirA.y,dirA.x) - atan(-dirB.y,-dirB.x),3.14159*2.)-3.14159;", //-1 to 1
+  "    float isOuterCorner = clamp(sign(cornerAngle) * orientation,0.0,1.0);", //1.0 if outer corner, 0.0 if inner corner
+  "    debugInfo = vec3(isOuterCorner);",
+  "    float maxMiterLength = min(length(currentScreen - previousScreen),length(nextScreen - currentScreen));",
+  "    len = mix(min(len*0.5 + maxMiterLength,len), len, isOuterCorner);",
+
   "    dir = miterDirection * orientation;",
   "  } else if (bevel == 1.0){",
-    
+    //corner type: bevel
   "    vec2 perpA = vec2(-dirA.y, dirA.x);",
   "    vec2 perpB = vec2(-dirB.y, dirB.x);",
   "    vec2 yourDirection = mix(dirA, dirB, approachNextOrPrevVertex);",
@@ -143,8 +158,7 @@ var vShader = [
   "    dir = vec2(-dir.y, dir.x) ;", //perp this so it gets unperped later
   "    len = 1.0;",
   "  } else {",
-  //"    dir = dirA;",
-  "    dir = vec2(0,0);",
+  "    dir = dirA;",
   "  }",
   "}",
   //"debugInfo = vec3(approachNextOrPrevVertex, orientation, 0.0);", //TODO: remove. it's for debugging colors
@@ -153,7 +167,7 @@ var vShader = [
   "normal.x /= aspect;",
 
   "vec4 offset = vec4(normal, 0.0, 0.0);",
-  "gl_Position = currentProjected + offset* currentProjected.w;",
+  "gl_Position = currentProjected + offset *currentProjected.w;",
 
   /*the start of some end cap code, which extends the ends a bit beyond in screen space where the line is
   "if (currentScreen == previousScreen) {",
@@ -190,7 +204,7 @@ var uniforms = {
 	},
 	miter: {
 		type: 'f',
-		value: 0.0,
+		value: 1.0,
 	},
 	bevel: {
 		type: 'f',

@@ -52,9 +52,8 @@ class LineOutput extends OutputNode{
         this.mesh = new THREE.Mesh(this._geometry,this.material);
 
         this.opacity = this._opacity; // setter sets transparent flag if necessary
-        this.color = this._color; //setter sets color uniform
+        this.color = this._color; //setter sets color attribute
         this._uniforms.opacity.value = this._opacity;
-        this._uniforms.color.value = this._color;
         this._uniforms.lineWidth.value = this._width / WIDTH_FUDGE_FACTOR;
 
         getThreeEnvironment().scene.add(this.mesh);
@@ -296,8 +295,8 @@ class LineOutput extends OutputNode{
         colorArray[index + 7] = normalizedG;
         colorArray[index + 8] = normalizedB;
 
-        colorArray[index*4 + 9] = normalizedR;
-        colorArray[index*4 + 10] = normalizedG;
+        colorArray[index + 9] = normalizedR;
+        colorArray[index + 10] = normalizedG;
         colorArray[index + 11] = normalizedB;
 
         let colorAttribute = this._geometry.attributes.color;

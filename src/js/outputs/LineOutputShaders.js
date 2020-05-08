@@ -1,8 +1,11 @@
 //LineOutputShaders.js
+
+//based on https://mattdesl.svbtle.com/drawing-lines-is-hard but with several errors corrected, bevel shading added, and more
+
 var vShader = [
 "uniform vec3 color;", //todo: make varying
 "uniform float aspect;", //used to calibrate screen space
-"uniform float thickness;", //width of line
+"uniform float lineWidth;", //width of line
 "uniform float miter;", //enable or disable line miters?
 "uniform float bevel;", //enable or disable line bevels?
 //"attribute vec3 position;", //added automatically by three.js
@@ -44,7 +47,7 @@ var vShader = [
   "vec2 previousScreen = previousProjected.xy / previousProjected.w * aspectVec;",
   "vec2 nextScreen = nextProjected.xy / nextProjected.w * aspectVec;",
 
-  "float len = thickness;",
+  "float thickness = lineWidth / 200.;", //TODO: convert lineWidth to pixels
   "float orientation = direction;",
 
   //get directions from (C - B) and (B - A)
@@ -53,7 +56,7 @@ var vShader = [
   "vec2 dirA = normalize(vecA);",
   "vec2 dirB = normalize(vecB);",
 
-  "    debugInfo = vec3((orientation+1.)/2.,approachNextOrPrevVertex,0.0);", //TODO: remove. it's for debugging colors
+  //"debugInfo = vec3((orientation+1.)/2.,approachNextOrPrevVertex,0.0);", //TODO: remove. it's for debugging colors
 
   //starting point uses (next - current)
   "vec2 offset = vec2(0.0);",
@@ -69,12 +72,12 @@ var vShader = [
   "//somewhere in middle, needs a join",
   "else {",
   "  if (miter == 1.0) {",
-        //corner type: miter
+        //corner type: miter. This is buggy (there's no miter limit yet) so don't use
   "    //now compute the miter join normal and length",
   "    vec2 miterDirection = normalize(dirA + dirB);",
-      "vec2 prevLineExtrudeDirection = vec2(-dirA.y, dirA.x);",
-      "vec2 miter = vec2(-miterDirection.y, miterDirection.x);",
-      "float len = thickness / (dot(miter, prevLineExtrudeDirection)+0.0001);", //calculate. dot product is always > 0
+  "    vec2 prevLineExtrudeDirection = vec2(-dirA.y, dirA.x);",
+  "    vec2 miter = vec2(-miterDirection.y, miterDirection.x);",
+  "    float len = thickness / (dot(miter, prevLineExtrudeDirection)+0.0001);", //calculate. dot product is always > 0
  
        /*   //buggy
        //on the inner corner, stop the miter from going beyond the lengths of the two sides
@@ -88,7 +91,6 @@ var vShader = [
     //corner type: bevel
 
   "    vec2 dir = mix(dirA, dirB, approachNextOrPrevVertex) * orientation;",
-  "    len = thickness;",
   "    offset = offsetPerpendicularAlongScreenSpace(dir, thickness);",
   "  } else {", //no line join type specified, just go for the previous point
   "    offset = offsetPerpendicularAlongScreenSpace(dirA, thickness);",
@@ -107,7 +109,7 @@ var fShader = [
 
 "void main(){",
 "  vec3 col = color.rgb;",
-"  col = debugInfo.rgb;",
+//"  col = debugInfo.rgb;",
 //"  col *= clamp(1.-2.*abs(crossLinePosition),0.0,1.0);", //this goes from 1 in the middle to 0 at the half mark
 "  gl_FragColor = vec4(col, opacity);",
 "}"].join("\n")
@@ -117,9 +119,9 @@ var uniforms = {
 		type: 'c',
 		value: new THREE.Color(0x55aa55),
 	},
-	thickness: {
+	lineWidth: {
 		type: 'f',
-		value: 0.2,
+		value: 1.0,
 	},
 	miter: {
 		type: 'f',

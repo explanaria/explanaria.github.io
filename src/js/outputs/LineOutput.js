@@ -20,9 +20,9 @@ class LineOutput extends OutputNode{
         this._opacity = options.opacity !== undefined ? options.opacity : 1;
         this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
 
-        this.lineJoinType = options.lineJoinType !== undefined ? options.lineJoinType.toUpperCase() : "ROUND";
+        this.lineJoinType = options.lineJoinType !== undefined ? options.lineJoinType.toUpperCase() : "BEVEL";
         if(LINE_JOIN_TYPES[this.lineJoinType] === undefined){
-            this.lineJoinType = "ROUND";
+            this.lineJoinType = "BEVEL";
         }
 
         this.numCallsPerActivation = 0; //should always be equal to this.points.length
@@ -52,7 +52,7 @@ class LineOutput extends OutputNode{
             fragmentShader: fShader,
             uniforms: this._uniforms,
             extensions:{derivatives: true,},
-            alphaTest: 0.1,
+            alphaTest: 0.5,
             transparent:true,
         });
 

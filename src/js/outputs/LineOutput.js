@@ -162,8 +162,9 @@ class LineOutput extends OutputNode{
             let vertIndex = vertNum * NUM_POINTS_PER_LINE_SEGMENT;
             
             if(!endingNewLine){
-                indices.push( vertIndex+1, vertIndex,   vertIndex+2);
-                indices.push( vertIndex+1, vertIndex+2, vertIndex+3);
+                //these triangles should be disabled when doing round joins
+                //indices.push( vertIndex+1, vertIndex,   vertIndex+2);
+                //indices.push( vertIndex+1, vertIndex+2, vertIndex+3);
 
                 indices.push( vertIndex+3, vertIndex+2, vertIndex+4);
                 indices.push( vertIndex+3, vertIndex+4, vertIndex+5);

@@ -47,6 +47,8 @@ class LineOutput extends OutputNode{
             vertexShader: vShader, 
             fragmentShader: fShader,
             uniforms: this._uniforms,
+            extensions:{derivatives: true,},
+            transparent:true,
         });
 
         this.mesh = new THREE.Mesh(this._geometry,this.material);
@@ -317,7 +319,7 @@ class LineOutput extends OutputNode{
     }
     set opacity(opacity){
         this.material.opacity = opacity;
-        this.material.transparent = opacity < 1;
+        //this.material.transparent = opacity < 1;
         this.material.visible = opacity > 0;
         this._opacity = opacity;
         this._uniforms.opacity.value = opacity;

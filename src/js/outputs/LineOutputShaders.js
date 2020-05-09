@@ -2,12 +2,12 @@
 
 //based on https://mattdesl.svbtle.com/drawing-lines-is-hard but with several errors corrected, bevel shading added, and more
 
+const LINE_JOIN_TYPES = {"MITER": 0.2, "BEVEL":1.2,"ROUND":2.2}; //I'd use 0,1,2 but JS doesn't add a decimal place at the end when inserting them in a string. cursed justification
+
 var vShader = [
 "uniform float aspect;", //used to calibrate screen space
 "uniform float lineWidth;", //width of line
-"uniform float miter;", //enable or disable line miters?
-"uniform float bevel;", //enable or disable line bevels?
-"uniform float roundjoin;", //enable or disable round line joins?
+"uniform float lineJoinType;",
 //"attribute vec3 position;", //added automatically by three.js
 "attribute vec3 nextPointPosition;",
 "attribute vec3 previousPointPosition;",
@@ -57,7 +57,7 @@ var vShader = [
   "vColor = color;", //send direction to the fragment shader
 
   "thickness = lineWidth / 400.;", //TODO: convert lineWidth to pixels
-  "float orientation = direction;",
+  "float orientation = (direction-0.5)*2.;",
 
   //get directions from (C - B) and (B - A)
   "vec2 vecA = (currentScreen - previousScreen);",
@@ -68,8 +68,6 @@ var vShader = [
   //DEBUG
   "lineSegmentAClipSpace = mix(previousScreen,currentScreen,approachNextOrPrevVertex) / aspectVec;",//send to fragment shader
   "lineSegmentBClipSpace = mix(currentScreen,nextScreen,approachNextOrPrevVertex) / aspectVec;",//send to fragment shader
-
-  //"debugInfo = vec3((orientation+1.)/2.,approachNextOrPrevVertex,0.0);", //TODO: remove. it's for debugging colors
 
   //starting point uses (next - current)
   "vec2 offset = vec2(0.0);",
@@ -84,7 +82,7 @@ var vShader = [
   "}",
   "//somewhere in middle, needs a join",
   "else {",
-  "  if (miter == 1.0) {",
+  "  if (lineJoinType == "+LINE_JOIN_TYPES.MITER+") {",
         //corner type: miter. This is buggy (there's no miter limit yet) so don't use
   "    //now compute the miter join normal and length",
   "    vec2 miterDirection = normalize(dirA + dirB);",
@@ -92,11 +90,11 @@ var vShader = [
   "    vec2 miter = vec2(-miterDirection.y, miterDirection.x);",
   "    float len = thickness / (dot(miter, prevLineExtrudeDirection)+0.0001);", //calculate. dot product is always > 0
   "    offset = offsetPerpendicularAlongScreenSpace(miterDirection * orientation, len);",
-  "  } else if (bevel == 1.0){",
+  "  } else if (lineJoinType == "+LINE_JOIN_TYPES.BEVEL+"){",
     //corner type: bevel
   "    vec2 dir = mix(dirA, dirB, approachNextOrPrevVertex);",
   "    offset = offsetPerpendicularAlongScreenSpace(dir * orientation, thickness);",
-  "  } else if (roundjoin == 1.0){",
+  "  } else if (lineJoinType == "+LINE_JOIN_TYPES.ROUND+"){",
     //corner type: round
   "    vec2 dir = mix(dirA, dirB, approachNextOrPrevVertex);",
   "    vec2 halfThicknessPastTheVertex = dir*thickness/2. * approachNextOrPrevVertex / aspectVec;",
@@ -114,6 +112,7 @@ var fShader = [
 "uniform float opacity;",
 "uniform vec2 screenSize;",
 "uniform float aspect;",
+"uniform float lineJoinType;",
 "varying vec3 vColor;",
 "varying vec3 debugInfo;",
 "varying vec2 lineSegmentAClipSpace;",
@@ -121,29 +120,47 @@ var fShader = [
 "varying float crossLinePosition;",
 "varying float thickness;",
 
+/* useful for debugging! from https://www.ronja-tutorials.com/2018/11/24/sdf-space-manipulation.html
+"vec3 renderLinesOutside(float dist){",
+"    float _LineDistance = 0.3;",
+"    float _LineThickness = 0.05;",
+"    float _SubLineThickness = 0.05;",
+"    float _SubLines = 1.0;",
+"    vec3 col = mix(vec3(1.0,0.2,0.2), vec3(0.0,0.2,1.2), step(0.0, dist));",
+
+"    float distanceChange = fwidth(dist) * 0.5;",
+"    float majorLineDistance = abs(fract(dist / _LineDistance + 0.5) - 0.5) * _LineDistance;",
+"    float majorLines = smoothstep(_LineThickness - distanceChange, _LineThickness + distanceChange, majorLineDistance);",
+
+"    float distanceBetweenSubLines = _LineDistance / _SubLines;",
+"    float subLineDistance = abs(fract(dist / distanceBetweenSubLines + 0.5) - 0.5) * distanceBetweenSubLines;",
+"    float subLines = smoothstep(_SubLineThickness - distanceChange, _SubLineThickness + distanceChange, subLineDistance);",
+
+"    return col * majorLines * subLines;",
+"}", */
+
 
 "float lineSDF(vec2 point, vec2 lineStartPt,vec2 lineEndPt) {",
   "float h = clamp(dot(point-lineStartPt,lineEndPt-lineStartPt)/dot(lineEndPt-lineStartPt,lineEndPt-lineStartPt),0.0,1.0);",
   "vec2 projectedVec = (point-lineStartPt-(lineEndPt-lineStartPt)*h);",
-  "return length(projectedVec * vec2(aspect,1.0));",
+  "return length(projectedVec);",
 "}",
 
 
 "void main(){",
 "  vec3 col = vColor.rgb;",
 //"  col = debugInfo.rgb;",
-
-"  vec2 vertScreenSpacePosition = gl_FragCoord.xy/screenSize;", //goes from 0 to 1 in both directions
-"  vec2 linePtAScreenSpace = (lineSegmentAClipSpace+1.)/2.;", //convert [-1,1] to [0,1]
-"  vec2 linePtBScreenSpace = (lineSegmentBClipSpace+1.)/2.;",
-
-"  float distFromLine = lineSDF(vertScreenSpacePosition, linePtAScreenSpace,linePtBScreenSpace);",
-"  float sdf = 1.-(1./thickness * 4.0 *distFromLine);",
-"  float opacity2 = sdf/fwidth(sdf);",
-
 "  gl_FragColor = vec4(col, opacity);",
-//"  gl_FragColor = vec4(opacity2,0.0, 0.0,opacity2);",
-"  gl_FragColor = vec4(col,opacity2);",
+
+"  if (lineJoinType == "+LINE_JOIN_TYPES.ROUND+"){",
+"      vec2 vertScreenSpacePosition = gl_FragCoord.xy;", //goes from 0 to screenSize.xy
+"      vec2 linePtAScreenSpace = (lineSegmentAClipSpace+1.)/2. * screenSize;", //convert [-1,1] to [0,1], then *screenSize
+"      vec2 linePtBScreenSpace = (lineSegmentBClipSpace+1.)/2. * screenSize;",
+"      float distFromLine = lineSDF(vertScreenSpacePosition, linePtAScreenSpace,linePtBScreenSpace);",
+"      float sdf = 1.-(1./thickness /screenSize.y * 4.0 *distFromLine);",
+"      float sdfOpacity = clamp(sdf / (abs(dFdx(sdf)) + abs(dFdy(sdf))),0.0,1.0);",
+"      gl_FragColor = vec4(col, opacity * sdfOpacity );",
+"  }",
 "}"].join("\n")
 
 var uniforms = {
@@ -154,17 +171,9 @@ var uniforms = {
 	screenSize: {
 		value: new THREE.Vector2( 1, 1 ),
 	},
-	miter: {
+	lineJoinType: {
 		type: 'f',
-		value: 0.0,
-	},
-	bevel: {
-		type: 'f',
-		value: 0.0,
-	},
-	roundjoin: {
-		type: 'f',
-		value: 1.0,
+		value: LINE_JOIN_TYPES.ROUND,
 	},
 	opacity: {
 		type: 'f',
@@ -176,4 +185,4 @@ var uniforms = {
 	}
 };
 
-export { vShader, fShader, uniforms };
+export { vShader, fShader, uniforms, LINE_JOIN_TYPES };

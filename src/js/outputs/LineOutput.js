@@ -1,25 +1,29 @@
 import {OutputNode} from '../Node.js';
 import { getThreeEnvironment } from '../ThreeEnvironment.js';
-import { vShader, fShader, uniforms } from './LineOutputShaders.js';
-
-const WIDTH_FUDGE_FACTOR = 1;
+import { vShader, fShader, uniforms, LINE_JOIN_TYPES } from './LineOutputShaders.js';
 
 class LineOutput extends OutputNode{
     constructor(options = {}){
         super();
         /* should be .add()ed to a Transformation to work.
-        Crisp lines using the technique in https://mattdesl.svbtle.com/drawing-lines-is-hard.
+        Crisp lines using the technique in https://mattdesl.svbtle.com/drawing-lines-is-hard, but also supporting mitered lines and beveled lines too!
             options:
             {
-                width: number
+                width: number. units are in screenY/400.
                 opacity: number
                 color: hex code or THREE.Color()
+                lineJoin: "bevel" or "round". default: round. Don't change this after initialization.
             }
         */
 
         this._width = options.width !== undefined ? options.width : 5;
         this._opacity = options.opacity !== undefined ? options.opacity : 1;
         this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
+
+        this.lineJoinType = options.lineJoinType !== undefined ? options.lineJoinType.toUpperCase() : "ROUND";
+        if(LINE_JOIN_TYPES[this.lineJoinType] === undefined){
+            this.lineJoinType = "ROUND";
+        }
 
         this.numCallsPerActivation = 0; //should always be equal to this.points.length
         this.itemDimensions = []; // how many times to be called in each direction
@@ -48,6 +52,7 @@ class LineOutput extends OutputNode{
             fragmentShader: fShader,
             uniforms: this._uniforms,
             extensions:{derivatives: true,},
+            alphaTest: 0.1,
             transparent:true,
         });
 
@@ -56,7 +61,8 @@ class LineOutput extends OutputNode{
         this.opacity = this._opacity; // setter sets transparent flag if necessary
         this.color = this._color; //setter sets color attribute
         this._uniforms.opacity.value = this._opacity;
-        this._uniforms.lineWidth.value = this._width / WIDTH_FUDGE_FACTOR;
+        this._uniforms.lineWidth.value = this._width;
+        this._uniforms.lineJoinType.value = LINE_JOIN_TYPES[this.lineJoinType];
 
         getThreeEnvironment().scene.add(this.mesh);
     }
@@ -130,7 +136,7 @@ class LineOutput extends OutputNode{
         //used to differentiate the left border of the line from the right border
         let direction = new Float32Array(numVerts);
         for(let i=0; i<numVerts;i++){
-            direction[i] = i%2==0 ? 1 : -1; //alternate -1 and 1
+            direction[i] = i%2==0 ? 1 : 0; //alternate -1 and 1
         }
         this._geometry.addAttribute( 'direction', new THREE.Float32BufferAttribute( direction, 1) );
 
@@ -163,8 +169,10 @@ class LineOutput extends OutputNode{
             
             if(!endingNewLine){
                 //these triangles should be disabled when doing round joins
-                //indices.push( vertIndex+1, vertIndex,   vertIndex+2);
-                //indices.push( vertIndex+1, vertIndex+2, vertIndex+3);
+                if(this.lineJoinType == "BEVEL"){
+                    indices.push( vertIndex+1, vertIndex,   vertIndex+2);
+                    indices.push( vertIndex+1, vertIndex+2, vertIndex+3);
+                }
 
                 indices.push( vertIndex+3, vertIndex+2, vertIndex+4);
                 indices.push( vertIndex+3, vertIndex+4, vertIndex+5);
@@ -330,7 +338,7 @@ class LineOutput extends OutputNode{
     }
     set width(width){
         this._width = width;
-        this._uniforms.lineWidth.value = width / WIDTH_FUDGE_FACTOR;
+        this._uniforms.lineWidth.value = width;
     }
     get width(){
         return this._width;

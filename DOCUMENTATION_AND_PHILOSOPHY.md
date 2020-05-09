@@ -163,7 +163,7 @@ See the examples in the `/examples` folder for more!
 
 * EXP.LineOutput
 
-	Renders a function's output as lines. 
+	Renders a function's output as lines. These lines are resolution-independent and 
 
 	Technical note: LineOutput renders lines connecting points where the last coordinate varies - for 2-dimensional output, lines will connect the elements of the domain with the same y-value, for example. This is done to ensure that 1-d intervals show up as lines. If you ever want to switch the dimension where lines are drawn, simply permute basis elements using a function such as `(i,t,x,y) => [y,x]`.
 
@@ -171,11 +171,13 @@ See the examples in the `/examples` folder for more!
 	* width: number representing the width of the lines to be drawn. Currently in units of pixels, meaning the output will depend on the user's screen resolution. 
 	* color: a hex number or THREE.Color representing the color each point should be.
 	* opacity: number between 0 and 1 representing how transparent the points are. 1 = fully opaque, 0 = invisible.
+    * lineJoinType: either "BEVEL" or "ROUND". This determines how the corners of a line are rendered. You can also use "round" or "bevel" if lower case is your style. It won't really be noticeable unless your line is extremely wide, . Default: "round".
 	
 	
     Example usage:
 
     ```new EXP.LineOutput({width: 5, color:0xcccccc}));```
+    ```new EXP.LineOutput({width: 10, color:0xffcccc, lineJoinType: "bevel", opacity: 0.3}));```
 * EXP.VectorOutput
 
     A subclass of EXP.LineOutput that renders vectors. The tip of the vector will be placed at the last point and will dynamically shrink and grow.
@@ -191,12 +193,20 @@ See the examples in the `/examples` folder for more!
     This Output only works if the parent Domain is two-dimensional.
 
 	Parameters:
-	* color: a hex number or THREE.Color representing the color of the surface.
+	* color: a hex number or THREE.Color representing the solid color of the surface.
 	* opacity: number between 0 and 1 representing how transparent the surface is. 1 = fully opaque, 0 = invisible.
     * showGrid: boolean: whether or not to show grid lines. Default: true
     * showSolid: boolean: whether to show solid color in between the grid lines, or to make the non-grid-lines portion transparent instead. Default: true.
+    * gridColor: hex code or THREE.Color(). If showGrid is true, grid lines will appear over this surface. gridColor determines their color 
     * gridSquares: number representing the total number of squares along one side to show. Default: 16
     * gridLineWidth: number representing the width of a gridline. Default: 0.15
+
+
+				
+				showGrid: boolean. If true, will display a gridColor-colored grid over the surface. Default: true
+				showSolid: boolean. If true, will display a solid surface. Default: true
+				gridSquares: number representing how many squares per dimension to use in a rendered grid
+				gridLineWidth: number representing how many squares per dimension to use in a rendered grid
 
     Example usage:
 

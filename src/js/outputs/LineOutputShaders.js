@@ -142,8 +142,8 @@ var fShader = [
 "  float opacity2 = sdf/fwidth(sdf);",
 
 "  gl_FragColor = vec4(col, opacity);",
-"  gl_FragColor = vec4(opacity2,0.0, 0.0,opacity);",
-//"  gl_FragColor = vec4(col,opacity2);",
+//"  gl_FragColor = vec4(opacity2,0.0, 0.0,opacity2);",
+"  gl_FragColor = vec4(col,opacity2);",
 "}"].join("\n")
 
 var uniforms = {

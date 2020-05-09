@@ -53,7 +53,6 @@ class LineOutput extends OutputNode{
             uniforms: this._uniforms,
             extensions:{derivatives: true,},
             alphaTest: 0.5,
-            transparent:true,
         });
 
         this.mesh = new THREE.Mesh(this._geometry,this.material);
@@ -329,6 +328,7 @@ class LineOutput extends OutputNode{
     set opacity(opacity){
         //mesh is always transparent
         this.material.opacity = opacity;
+        this.material.transparent = opacity < 1 || this.lineJoinType == "ROUND";
         this.material.visible = opacity > 0;
         this._opacity = opacity;
         this._uniforms.opacity.value = opacity;

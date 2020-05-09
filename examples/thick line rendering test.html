@@ -33,15 +33,22 @@
 
     let c = 2
 	var square = new EXP.Array({data: [[0,1],[-c,-c],[1,0],[2,-3]]});
-    var line2 = new EXP.LineOutput({width:100, color: 0x00ff55});
+    var line2 = new EXP.LineOutput({width:200, color: 0x00ff55});
 	square
 		.add(line2);
 
 
 	var veryZigzaggyLine = new EXP.Array({data: [[-3,1],[-3,-1],[-2.8,1],[-2.7,-1],[-2,1],[-2,1],[-2,2,-1],[-1,2,-1]]});
-    var line3 = new EXP.LineOutput({width:30, color: 0x0000ff});
+    var line3 = new EXP.LineOutput({width:30, color: 0x0000ff, lineJoinType: "round"});
 	veryZigzaggyLine
 		.add(line3);
+
+
+
+	var bevelLine = new EXP.Array({data: [[0,2],[3,2],[3,1]]});
+    var line4 = new EXP.LineOutput({width:30, color: 0xff0055, lineJoinType: "bevel"});
+	bevelLine
+		.add(line4);
 
 
     //debug line
@@ -69,7 +76,7 @@
     //controls.autoRotateSpeed = 30 / Math.PI;
 
 	three.on("update",function(time){
-		[veryZigzaggyLine, unitcircle, square].map((i) => i.activate(time.t));
+		[veryZigzaggyLine, unitcircle, square,bevelLine].map((i) => i.activate(time.t));
 		controls.update();
 
 		//three.camera.lookAt(new THREE.Vector3())

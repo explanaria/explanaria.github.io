@@ -7,6 +7,7 @@ var vShader = [
 "uniform float lineWidth;", //width of line
 "uniform float miter;", //enable or disable line miters?
 "uniform float bevel;", //enable or disable line bevels?
+"uniform float roundjoin;", //enable or disable round line joins?
 //"attribute vec3 position;", //added automatically by three.js
 "attribute vec3 nextPointPosition;",
 "attribute vec3 previousPointPosition;",
@@ -16,6 +17,9 @@ var vShader = [
 "varying float crossLinePosition;",
 "attribute vec3 color;",
 "varying vec3 vColor;",
+"varying vec2 lineSegmentAClipSpace;",
+"varying vec2 lineSegmentBClipSpace;",
+"varying float thickness;",
 
 
 "varying vec3 debugInfo;",
@@ -42,15 +46,17 @@ var vShader = [
   "vec4 currentProjected = projViewModel * vec4(position, 1.0);",
   "vec4 nextProjected = projViewModel * vec4(nextPointPosition, 1.0);",
 
-  "crossLinePosition = direction;", //send direction to the fragment shader
-  "vColor = color;", //send direction to the fragment shader
 
   //get 2D screen space with W divide and aspect correction
   "vec2 currentScreen = currentProjected.xy / currentProjected.w * aspectVec;",
   "vec2 previousScreen = previousProjected.xy / previousProjected.w * aspectVec;",
   "vec2 nextScreen = nextProjected.xy / nextProjected.w * aspectVec;",
 
-  "float thickness = lineWidth / 400.;", //TODO: convert lineWidth to pixels
+  //"centerPointClipSpacePosition = currentProjected.xy / currentProjected.w;",//send to fragment shader
+  "crossLinePosition = direction;", //send direction to the fragment shader
+  "vColor = color;", //send direction to the fragment shader
+
+  "thickness = lineWidth / 400.;", //TODO: convert lineWidth to pixels
   "float orientation = direction;",
 
   //get directions from (C - B) and (B - A)
@@ -58,6 +64,10 @@ var vShader = [
   "vec2 vecB = (nextScreen - currentScreen);",
   "vec2 dirA = normalize(vecA);",
   "vec2 dirB = normalize(vecB);",
+
+  //DEBUG
+  "lineSegmentAClipSpace = mix(previousScreen,currentScreen,approachNextOrPrevVertex) / aspectVec;",//send to fragment shader
+  "lineSegmentBClipSpace = mix(currentScreen,nextScreen,approachNextOrPrevVertex) / aspectVec;",//send to fragment shader
 
   //"debugInfo = vec3((orientation+1.)/2.,approachNextOrPrevVertex,0.0);", //TODO: remove. it's for debugging colors
 
@@ -81,40 +91,60 @@ var vShader = [
   "    vec2 prevLineExtrudeDirection = vec2(-dirA.y, dirA.x);",
   "    vec2 miter = vec2(-miterDirection.y, miterDirection.x);",
   "    float len = thickness / (dot(miter, prevLineExtrudeDirection)+0.0001);", //calculate. dot product is always > 0
- 
-       /*   //buggy
-       //on the inner corner, stop the miter from going beyond the lengths of the two sides
-  "    float smallestEdgeLength = min(length(currentScreen - previousScreen),length(nextScreen - currentScreen));",
-  "    float cornerAngle = mod(atan(dirA.y,dirA.x) - atan(-dirB.y,-dirB.x),3.14159*2.)-3.14159;", //-1 to 1
-  "    float isOuterCorner = clamp(sign(cornerAngle) * orientation,0.0,1.0);", //1.0 if outer corner, 0.0 if inner corner
-  "    len = mix(min(len*0.5 + smallestEdgeLength,len), len, isOuterCorner);",*/
-    
   "    offset = offsetPerpendicularAlongScreenSpace(miterDirection * orientation, len);",
   "  } else if (bevel == 1.0){",
     //corner type: bevel
-
-  "    vec2 dir = mix(dirA, dirB, approachNextOrPrevVertex) * orientation;",
-  "    offset = offsetPerpendicularAlongScreenSpace(dir, thickness);",
+  "    vec2 dir = mix(dirA, dirB, approachNextOrPrevVertex);",
+  "    offset = offsetPerpendicularAlongScreenSpace(dir * orientation, thickness);",
+  "  } else if (roundjoin == 1.0){",
+    //corner type: round
+  "    vec2 dir = mix(dirA, dirB, approachNextOrPrevVertex);",
+  "    vec2 halfThicknessPastTheVertex = dir*thickness/2. * approachNextOrPrevVertex / aspectVec;",
+  "    offset = offsetPerpendicularAlongScreenSpace(dir * orientation, thickness) - halfThicknessPastTheVertex;", //extend rects past the vertex
   "  } else {", //no line join type specified, just go for the previous point
   "    offset = offsetPerpendicularAlongScreenSpace(dirA, thickness);",
   "  }",
   "}",
-  //"debugInfo = vec3(approachNextOrPrevVertex, orientation, 0.0);", //TODO: remove. it's for debugging colors
+
+  "debugInfo = vec3(approachNextOrPrevVertex, orientation, 0.0);", //TODO: remove. it's for debugging colors
   "gl_Position = currentProjected + vec4(offset, 0.0,0.0) *currentProjected.w;",
-  "gl_PointSize = 1.0;",
 "}"].join("\n");
 
 var fShader = [
 "uniform float opacity;",
+"uniform vec2 screenSize;",
+"uniform float aspect;",
 "varying vec3 vColor;",
 "varying vec3 debugInfo;",
+"varying vec2 lineSegmentAClipSpace;",
+"varying vec2 lineSegmentBClipSpace;",
 "varying float crossLinePosition;",
+"varying float thickness;",
+
+
+"float lineSDF(vec2 point, vec2 lineStartPt,vec2 lineEndPt, float radius) {",
+  "float h = clamp(dot(point-lineStartPt,lineEndPt-lineStartPt)/dot(lineEndPt-lineStartPt,lineEndPt-lineStartPt),0.0,1.0);",
+  "return length(point-lineStartPt-(lineEndPt-lineStartPt)*h)-radius;",
+"}",
+
 
 "void main(){",
 "  vec3 col = vColor.rgb;",
-//"  col = debugInfo.rgb;",
+"  col = debugInfo.rgb;",
+//"   gl_FragCoord;",
 //"  col *= clamp(1.-2.*abs(crossLinePosition),0.0,1.0);", //this goes from 1 in the middle to 0 at the half mark
+
+"  vec2 vertScreenSpacePosition = gl_FragCoord.xy/screenSize;", //goes from 0 to 1 in both directions
+"  vec2 linePtAScreenSpace = (lineSegmentAClipSpace+1.)/2.;", //convert [-1,1] to [0,1]
+"  vec2 linePtBScreenSpace = (lineSegmentBClipSpace+1.)/2.;",
+
+"  float distFromLine = lineSDF(vertScreenSpacePosition, linePtAScreenSpace,linePtBScreenSpace,0.0);",
+
 "  gl_FragColor = vec4(col, opacity);",
+"  gl_FragColor = vec4(vertScreenSpacePosition, 0.0,1.0);",
+"  gl_FragColor = vec4(thickness*screenSize.x*distFromLine,0.0, 0.0,1.0);",
+//"  gl_FragColor = vec4((vertScreenSpacePosition - centerPointScreenSpace)*50.0, 0.0,1.0);",
+//"  gl_FragColor = vec4(abs(sin(50.*length(vertScreenSpacePosition - centerPointScreenSpace))), 0.3,0.3,1.0);",
 "}"].join("\n")
 
 var uniforms = {
@@ -122,11 +152,18 @@ var uniforms = {
 		type: 'f',
 		value: 1.0,
 	},
+	screenSize: {
+		value: new THREE.Vector2( 1, 1 ),
+	},
 	miter: {
 		type: 'f',
 		value: 0.0,
 	},
 	bevel: {
+		type: 'f',
+		value: 0.0,
+	},
+	roundjoin: {
 		type: 'f',
 		value: 1.0,
 	},

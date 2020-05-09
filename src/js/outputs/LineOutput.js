@@ -258,7 +258,11 @@ class LineOutput extends OutputNode{
         nextPointPositionAttribute.needsUpdate = true;
 
         //update aspect ratio. in the future perhaps this should only be changed when the aspect ratio changes so it's not being done per frame?
-        if(this._uniforms)this._uniforms.aspect.value = getThreeEnvironment().camera.aspect;
+        if(this._uniforms){
+            const three = getThreeEnvironment();
+            this._uniforms.aspect.value = three.camera.aspect; //TODO: re-enable once debugging is done
+            three.renderer.getDrawingBufferSize(this._uniforms.screenSize.value); //modifies uniform in place
+        }
 
         this._currentPointIndex = 0; //reset after each update
     }

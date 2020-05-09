@@ -327,8 +327,8 @@ class LineOutput extends OutputNode{
         return this._color;
     }
     set opacity(opacity){
+        //mesh is always transparent
         this.material.opacity = opacity;
-        //this.material.transparent = opacity < 1;
         this.material.visible = opacity > 0;
         this._opacity = opacity;
         this._uniforms.opacity.value = opacity;
@@ -344,7 +344,7 @@ class LineOutput extends OutputNode{
         return this._width;
     }
     clone(){
-        return new LineOutput({width: this.width, color: this.color, opacity: this.opacity});
+        return new LineOutput({width: this.width, color: this.color, opacity: this.opacity, lineJoinType: this.lineJoinType});
     }
 }
 

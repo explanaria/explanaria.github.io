@@ -4,8 +4,11 @@ import { threeEnvironment } from '../ThreeEnvironment.js';
 
 export class VectorOutput extends LineOutput{
     constructor(options = {}){
-        /*input: Transformation
-            width: number
+        /*
+                width: number. units are in screenY/400.
+                opacity: number
+                color: hex code or THREE.Color()
+                lineJoin: "bevel" or "round". default: round. Don't change this after initialization.
         */
         super(options);
 
@@ -112,7 +115,7 @@ export class VectorOutput extends LineOutput{
         //I should really make it possible to specify color by a function.
         this._color = color;
         this.setAllVerticesToColor(color);
-        this.arrowMaterial.color = this._color;
+        this.arrowMaterial.color = new THREE.Color(this._color);
     }
 
     get color(){
@@ -124,8 +127,8 @@ export class VectorOutput extends LineOutput{
         this.arrowMaterial.transparent = opacity < 1;
         this.arrowMaterial.visible = opacity > 0;
 
+        //mesh is always transparent
         this.material.opacity = opacity;
-        this.material.transparent = opacity < 1;
         this.material.visible = opacity > 0;
         this._opacity = opacity;
         this._uniforms.opacity.value = opacity;
@@ -141,7 +144,7 @@ export class VectorOutput extends LineOutput{
         }
     }
     clone(){
-        return new VectorOutput({width: this.width, color: this.color, opacity: this.opacity});
+        return new VectorOutput({width: this.width, color: this.color, opacity: this.opacity,lineJoinType: this.lineJoinType});
     }
 }
 

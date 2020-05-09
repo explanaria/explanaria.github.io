@@ -122,35 +122,34 @@ var fShader = [
 "varying float thickness;",
 
 
-"float lineSDF(vec2 point, vec2 lineStartPt,vec2 lineEndPt, float radius) {",
+"float lineSDF(vec2 point, vec2 lineStartPt,vec2 lineEndPt) {",
   "float h = clamp(dot(point-lineStartPt,lineEndPt-lineStartPt)/dot(lineEndPt-lineStartPt,lineEndPt-lineStartPt),0.0,1.0);",
-  "return length(point-lineStartPt-(lineEndPt-lineStartPt)*h)-radius;",
+  "vec2 projectedVec = (point-lineStartPt-(lineEndPt-lineStartPt)*h);",
+  "return length(projectedVec * vec2(aspect,1.0));",
 "}",
 
 
 "void main(){",
 "  vec3 col = vColor.rgb;",
-"  col = debugInfo.rgb;",
-//"   gl_FragCoord;",
-//"  col *= clamp(1.-2.*abs(crossLinePosition),0.0,1.0);", //this goes from 1 in the middle to 0 at the half mark
+//"  col = debugInfo.rgb;",
 
 "  vec2 vertScreenSpacePosition = gl_FragCoord.xy/screenSize;", //goes from 0 to 1 in both directions
 "  vec2 linePtAScreenSpace = (lineSegmentAClipSpace+1.)/2.;", //convert [-1,1] to [0,1]
 "  vec2 linePtBScreenSpace = (lineSegmentBClipSpace+1.)/2.;",
 
-"  float distFromLine = lineSDF(vertScreenSpacePosition, linePtAScreenSpace,linePtBScreenSpace,0.0);",
+"  float distFromLine = lineSDF(vertScreenSpacePosition, linePtAScreenSpace,linePtBScreenSpace);",
+"  float sdf = 1.-(1./thickness * 4.0 *distFromLine);",
+"  float opacity2 = sdf/fwidth(sdf);",
 
 "  gl_FragColor = vec4(col, opacity);",
-"  gl_FragColor = vec4(vertScreenSpacePosition, 0.0,1.0);",
-"  gl_FragColor = vec4(thickness*screenSize.x*distFromLine,0.0, 0.0,1.0);",
-//"  gl_FragColor = vec4((vertScreenSpacePosition - centerPointScreenSpace)*50.0, 0.0,1.0);",
-//"  gl_FragColor = vec4(abs(sin(50.*length(vertScreenSpacePosition - centerPointScreenSpace))), 0.3,0.3,1.0);",
+"  gl_FragColor = vec4(opacity2,0.0, 0.0,opacity);",
+//"  gl_FragColor = vec4(col,opacity2);",
 "}"].join("\n")
 
 var uniforms = {
 	lineWidth: {
 		type: 'f',
-		value: 1.0,
+		value: 1.0, //currently in units of yHeight*400
 	},
 	screenSize: {
 		value: new THREE.Vector2( 1, 1 ),

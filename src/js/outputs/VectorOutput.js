@@ -109,7 +109,6 @@ export class VectorOutput extends LineOutput{
         }
     }
 
-
     set color(color){
         //currently only a single color is supported.
         //I should really make it possible to specify color by a function.
@@ -125,6 +124,7 @@ export class VectorOutput extends LineOutput{
     set opacity(opacity){
         this.arrowMaterial.opacity = opacity;
         this.arrowMaterial.transparent = opacity < 1;
+        this.material.transparent = opacity < 1 || this.lineJoinType == "ROUND";
         this.arrowMaterial.visible = opacity > 0;
 
         //mesh is always transparent

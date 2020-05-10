@@ -159,6 +159,7 @@ var fShader = [
 "      float distFromLine = lineSDF(vertScreenSpacePosition, linePtAScreenSpace,linePtBScreenSpace);",
 "      float sdf = 1.-(1./thickness /screenSize.y * 4.0 *distFromLine);",
 "      float sdfOpacity = clamp(sdf / (abs(dFdx(sdf)) + abs(dFdy(sdf))),0.0,1.0);",
+//"      if(opacity * sdfOpacity < 0.1)discard;",
 "      gl_FragColor = vec4(col, opacity * sdfOpacity );",
 "  }",
 "}"].join("\n")

@@ -43,6 +43,16 @@ class Utils{
 	static clone(vec){
 		return clone(vec);
 	}
+
+
+	static is1DNumericArray(vec){
+        if(!isArray(vec)) return false;
+        for(let i=0;i<vec.length;i++){
+            if(!isNumber(vec[i])) return false;
+        }
+        return true;
+	}
+
 }
 
 export {Utils};

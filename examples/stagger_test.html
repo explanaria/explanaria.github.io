@@ -39,42 +39,42 @@
 	async function animate(){
 		await EXP.delay(500);
 
-		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1500, 1/3);
+		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1500, {staggerFraction: 1/3});
 
 		await EXP.delay(1500);
 
-		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [b,0]}, 1500, 0.2);
+		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [b,0]}, 1500, {staggerFraction: 0.2});
 
 		await EXP.delay(1500);
 
-		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [0,a]}, 1500, 2/3); // F A S T
+		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [0,a]}, 1500, {staggerFraction: 2/3}); // F A S T
 
 		await EXP.delay(1500);
 
-		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,0]}, 1500, 1/3);
+		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,0]}, 1500, {staggerFraction: 1/3});
 
 		await EXP.delay(2000);
 
-		EXP.TransitionTo(proj1, {'expr': function(i,t,a,b,c){return [a*a,-1]}}, 1500, 1/3);
+		EXP.TransitionTo(proj1, {'expr': function(i,t,a,b,c){return [a*a,-1]}}, 1500, {staggerFraction: 1/3});
 
 		await EXP.delay(2000);
 
-		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1000, 0.25);
+		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1000, {staggerFraction: 0.25});
 
 
 		await EXP.delay(1500);
 
-		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b-2*a]}, 1500, 1/3);
+		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b-2*a]}, 1500, {staggerFraction: 1/3});
 
 
 		await EXP.delay(1500);
 
-		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [Math.cos(t)*a,Math.sin(t)*b-2*a]}, 1500, 1/3);
+		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [Math.cos(t)*a,Math.sin(t)*b-2*a]}, 1500, {staggerFraction: 1/3});
 
 
 		await EXP.delay(5000);
 
-		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1500, 1/3);
+		EXP.TransitionTo(proj1, {'expr':(i,t,a,b,c) => [a,b]}, 1500, {staggerFraction: 1/3});
 
 	}
 	animate();

@@ -5,11 +5,17 @@ class Utils{
 	static isArray(x){
 		return x.constructor === Array;
 	}
+	static isObject(x){
+		return x.constructor === Object;
+	}
 	static arrayCopy(x){
 		return x.slice();
 	}
 	static isFunction(x){
 		return x.constructor === Function;
+	}
+	static isNumber(x){
+		return x.constructor === Number;
 	}
 
 	static assert(thing){
@@ -46,9 +52,9 @@ class Utils{
 
 
 	static is1DNumericArray(vec){
-        if(!isArray(vec)) return false;
+        if(!Utils.isArray(vec)) return false;
         for(let i=0;i<vec.length;i++){
-            if(!isNumber(vec[i])) return false;
+            if(!Utils.isNumber(vec[i])) return false;
         }
         return true;
 	}

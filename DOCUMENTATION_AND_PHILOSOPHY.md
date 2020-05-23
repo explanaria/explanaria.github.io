@@ -247,14 +247,18 @@ Explanaria allows for animated transitions between two functions, or parameters,
 
 For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo animates a transition from `target[key]`'s previous value to the specified `newValue`.  
 	When combined with an `EXP.Transformation`, this can be used to smoothly animate between functions, tweak parameters, or more!
+    If `target` is an array, `toValues` can also be an array.
+
 * EXP.TransitionTo()
 
 	Parameters:
 
-	* target: an object, such as an EXP.Transformation; see `toValues` documentation below.
-	* toValues: an object consisting of any number of {key: newValue} pairs. For each pair, TransitionTo effectively sets `target[key] = newValue` 
+	* target: an object, such as an EXP.Transformation, or an array, whose properties will be animated. 
+	* toValues: an object consisting of any number of {key: newValue} pairs. For each pair, TransitionTo effectively sets `target[key] = newValue`. If `target` is an array, `toValues` can alternately be an array.
 	* durationMS: number; the duration, in milliseconds (1000 = 1 second) of transition time before the new properties are fully recognized.
-    * staggerFraction: number representing the fraction of time to wait before the last element begins to animate. Default: 0.0. 0 = all points move simulaneously, 1 = everything instantly teleports from beginning to end. Low values tend to make better-looking animations.
+    * optionalArguments: an object which allows one to specify:
+        * staggerFraction: number representing the fraction of time to wait before the last element begins to animate. Default: 0.0. 0 = all points move simulaneously, 1 = everything instantly teleports from beginning to end. Low values tend to make better-looking animations.
+        * easing: one of the values in EXP.Easing. By default, EXP.Easing.EaseInOut.
 
     Example usage:
 
@@ -266,7 +270,7 @@ For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo 
 
 	EXP.TransitionTo(f, {
 		'expr': (i,t,x) => [x,x*x*x]
-	}, durationMS=1000, staggerFraction=0.2);
+	}, durationMS=1000, {staggerFraction:0.2, easing: EXP.Easing.EaseOut});
 	
     await EXP.delay(2000);
     EXP.TransitionTo(f, {
@@ -277,6 +281,9 @@ For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo 
     EXP.TransitionTo(output, {
 		'opacity':0.8, 'width':1
 	}, 1000);
+
+    let array = [1,2,3];
+    EXP.TransitionTo(array, [4,5,6], 1000);
     ```
 
 Technical note: TransitionTo assumes `target[key]` is either a number or a function (and if a function, it is assumed that this function always returns an array of numbers). Arrays of numbers are not yet supported, but as a workaround one can specify numbers as keys in an object: {0: 2, 1:3, 2:5} will result in an array of [2,3,5]. This is rather suboptimal, and should hopefully be addressed soon.

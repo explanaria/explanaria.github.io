@@ -11,6 +11,13 @@ function vectorAdd(v1,v2){
 	}
 	return vec
 }
+function vectorSub(v1,v2){
+    let vec = clone(v1);
+	for(var i=0;i<v1.length;i++){
+		vec[i] += v2[i];
+	}
+	return vec
+}
 function lerpVectors(t, p1, p2){
 	//assumed t in [0,1]
 	return vectorAdd(multiplyScalar(t,clone(p1)),multiplyScalar(1-t,clone(p2)));
@@ -39,6 +46,6 @@ function multiplyMatrix(vec, matrix){
 }
 
 //hack
-let Math = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix};
+let Math = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, vectorSub: vectorSub, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix};
 
-export {vectorAdd, lerpVectors, clone, multiplyScalar, multiplyMatrix, Math};
+export {vectorAdd, vectorSub, lerpVectors, clone, multiplyScalar, multiplyMatrix, Math};

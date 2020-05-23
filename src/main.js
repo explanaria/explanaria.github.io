@@ -6,7 +6,7 @@ export * from './js/HistoryRecorder.js';
 
 export * from './js/Animation.js';
 
-export { setupThree, ThreeasyEnvironment, ThreeasyRecorder }from './js/three_bootstrap.js';
+export { setupThree, ThreeasyEnvironment, ThreeasyRecorder } from './js/three_bootstrap.js';
 export { threeEnvironment } from './js/ThreeEnvironment.js';
 
 export { Utils } from './js/utils.js';

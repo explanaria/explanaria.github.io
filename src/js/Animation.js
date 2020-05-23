@@ -7,9 +7,7 @@ import { threeEnvironment } from './ThreeEnvironment.js';
 
 let EPS = Number.EPSILON;
 
-const EaseInOut = 1;
-const EaseIn = 2;
-const EaseOut = 3;
+const Easing = {EaseInOut:1,EaseIn:2,EaseOut:3};
 
 class Interpolator{
     constructor(fromValue, toValue, interpolationFunction){
@@ -79,30 +77,66 @@ class TransformationFunctionInterpolator extends Interpolator{
     }
 }
 
+class Numeric1DArrayInterpolator extends Interpolator{
+    constructor(fromValue, toValue, interpolationFunction){
+        super(fromValue, toValue, interpolationFunction);
+        this.largestLength = Math.max(fromValue.length, toValue.length);
+        this.shortestLength = Math.min(fromValue.length, toValue.length);
+        this.fromValueIsShorter = fromValue.length < toValue.length;
+        this.resultArray = new Array(this.largestLength); //cached for speedup
+    }
+    interpolate(percentage){
+		let t = this.interpolationFunction(percentage);
+        for(let i=0;i<this.shortestLength;i++){
+            this.resultArray[i] = t*this.toValue[i] + (1-t)*this.fromValue[i];
+        }
+
+        //if one array is longer than the other, interpolate as if the shorter array is padded with zeroes
+        if(this.fromValueIsShorter){
+            //this.fromValue[i] doesn't exist, so assume it's a zero
+            for(let i=this.shortestLength;i<this.longestLength;i++){
+                this.resultArray[i] = t*this.toValue[i]; // + (1-t)*0;
+            }
+        }else{
+            //this.toValue[i] doesn't exist, so assume it's a zero
+            for(let i=this.shortestLength;i<this.longestLength;i++){
+                this.resultArray[i] = (1-t)*this.fromValue[i]; // + t*0 
+            }
+        }
+        return this.resultArray;
+    }
+}
+
+
 
 
 
 
 
 class Animation{
-	constructor(target, toValues, duration=1, staggerFraction=0, easing=EaseInOut){
-		Utils.assertType(toValues, Object);
+	constructor(target, toValues, duration=1, optionalArguments={}){
+        if(!Utils.isObject(toValues) && !Utils.isArray(toValues)){
+				console.error("Error transitioning: toValues must be an array or an object.");
+        }
 
 		this.toValues = toValues;
 		this.target = target;	
-		this.staggerFraction = staggerFraction; // time in ms between first element beginning the animation and last element beginning the animation. Should be less than duration.
-		Utils.assert(this.staggerFraction >= 0 && this.staggerFraction < 1);
 		this.duration = duration; //in s
 
+        //Parse optional values in optionalArguments
+
         //choose easing function
-        this.interpolationFunction = Animation.cosineEaseInOutInterpolation; //default
-        if(easing == EaseIn){
+        this.easing = optionalArguments.easing === undefined ? Easing.EaseInOut : optionalArguments.easing;//default, Easing.EaseInOut
+        this.interpolationFunction = Animation.cosineEaseInOutInterpolation; 
+        if(this.easing == Easing.EaseIn){
             this.interpolationFunction = Animation.cosineEaseInInterpolation;
-        }else if(easing == EaseOut){
+        }else if(this.easing == Easing.EaseOut){
             this.interpolationFunction = Animation.cosineEaseOutInterpolation;
         }
 
         //setup values needed for staggered animation
+        this.staggerFraction = optionalArguments.staggerFraction === undefined ? 0 : optionalArguments.staggerFraction; // time in ms between first element beginning the animation and last element beginning the animation. Should be less than duration.
+		Utils.assert(this.staggerFraction >= 0 && this.staggerFraction < 1);
 		if(target.constructor === Transformation){
 			this.targetNumCallsPerActivation = target.getTopParent().numCallsPerActivation;
 		}else{
@@ -149,6 +183,9 @@ class Animation{
         }else if(typeof(toValue) === "boolean" && typeof(fromValue) === "boolean"){
             //boolean
             return new BoolInterpolator(fromValue, toValue, interpolationFunction);
+		}else if(Utils.is1DNumericArray(toValue) && Utils.is1DNumericArray(fromValue)){
+            //function-function
+			return new Numeric1DArrayInterpolator(fromValue, toValue, interpolationFunction);
         }else{
             //We don't know how to interpolate this. Instead we'll just do nothing, and at the end of the animation we'll just set the target to the toValue.
 			console.error("Animation class cannot yet handle transitioning between things that aren't numbers or functions!");
@@ -189,9 +226,12 @@ class Animation{
 	}
 }
 
-//todo: put this into a Director class so that it can have an undo stack
-function TransitionTo(target, toValues, durationMS, staggerFraction){
-	var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, staggerFraction);
+function TransitionTo(target, toValues, durationMS, optionalArguments){
+    //if someone's using the old calling strategy of staggerFraction as the last argument, convert it properly
+    if(Utils.isNumber(optionalArguments)){
+        optionalArguments = {staggerFraction: optionalArguments};
+    }
+	var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, optionalArguments);
 }
 
-export {TransitionTo, Animation}
+export {TransitionTo, Animation, Easing}

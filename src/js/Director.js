@@ -14,7 +14,7 @@ Also,
 
 */
 
-import {Animation} from './Animation.js';
+import {Animation, Easing} from './Animation.js';
 import explanarianArrowSVG from './DirectorImageConstants.js';
 
 class DirectionArrow{
@@ -229,9 +229,12 @@ class NonDecreasingDirector{
             window.setTimeout(resolve, waitTime);
         });
     }
-    TransitionTo(target, toValues, durationMS){
-        //Utils.Assert(this.undoStackIndex == 0); //This may not work well.
-        new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000);
+    TransitionTo(target, toValues, durationMS, optionalArguments){
+        //if someone's using the old calling strategy of staggerFraction as the last argument, convert it properly
+        if(Utils.isNumber(optionalArguments)){
+            optionalArguments = {staggerFraction: optionalArguments};
+        }
+        new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, staggerFraction=staggerFraction, optionalArguments);
     }
 }
 
@@ -330,7 +333,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
                     //while redoing, skip any delays
                     break;
                 case TRANSITIONTO:
-                    var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.durationMS === undefined ? undefined : redoItem.durationMS/1000);
+                    var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.durationMS === undefined ? undefined : redoItem.durationMS/1000, redoItem.optionalArguments);
                   //and now redoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
                     break;
                 case NEWSLIDE:
@@ -376,7 +379,9 @@ class UndoCapableDirector extends NonDecreasingDirector{
                 case TRANSITIONTO:
                     let duration = undoItem.durationMS === undefined ? 1 : undoItem.durationMS/1000;
                     duration = Math.min(duration / 2, 1); //undoing should be faster, so cut it in half - but cap durations at 1s
-                    var undoAnimation = new Animation(undoItem.target, undoItem.fromValues, duration);
+                    //todo: invert the easing of the undoItem when creating the undo animation?
+                    let easing = Easing.EaseInOut;
+                    var undoAnimation = new Animation(undoItem.target, undoItem.fromValues, duration, {staggerFraction:0, easing: easing});
                     //and now undoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
                     break;
                 case NEWSLIDE:
@@ -433,10 +438,10 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.undoStackIndex++;
         await super.delay(waitTime);
     }
-    TransitionTo(target, toValues, durationMS){
-        var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000);
+    TransitionTo(target, toValues, durationMS, optionalArguments){
+        var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, optionalArguments);
         let fromValues = animation.fromValues;
-        this.undoStack.push(new UndoItem(target, toValues, fromValues, durationMS));
+        this.undoStack.push(new UndoItem(target, toValues, fromValues, durationMS, optionalArguments));
         this.undoStackIndex++;
     }
 }
@@ -449,12 +454,13 @@ const DELAY=2;
 
 //things that can be stored in a UndoCapableDirector's .undoStack[]
 class UndoItem{
-    constructor(target, toValues, fromValues, durationMS){
+    constructor(target, toValues, fromValues, durationMS, optionalArguments){
         this.target = target;
         this.toValues = toValues;
         this.fromValues = fromValues;
         this.durationMS = durationMS;
         this.type = TRANSITIONTO;
+        this.optionalArguments = optionalArguments;
     }
 }
 

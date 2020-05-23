@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - 4D Knots</title>
+
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <script src="colors.js"></script>
+  <script src="catromspline.js"></script>
+  <script src="bonusknotsarefake.js"></script>
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <style>
+
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" style="grid-template-columns: 1fr 0fr" class="threeDPart canvasGrid">
+        <div class="griddedCanvas">
+            <canvas id="threeDcanvas"></canvas>
+        </div>
+        <div class="griddedCanvas">
+            <canvas id="twoDcanvas"></canvas>
+        </div>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+
+
+          <div class="overlappingItemContainer">
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+                All Knots are Actually Useless
+                <br>
+                (...if you have a fourth dimension)
+            </div>
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0">
+                Sometimes, thinking in four dimensions leads to some surprising results. One cool fact about four dimensional space is that in four dimensions, you can undo every knot. It doesn't matter how complicated you tie a knot - just by moving pieces around you can always turn it back into a smooth piece of string, without cutting or breaking the string.
+<br />
+How? Let's find out.
+            </div>
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0">
+                But before we start thinking about knots in four dimensions, I want to tell you how mathematicians think about knots. "Knot theory" is an entire branch of mathematics which studies, well, knots.
+            <!-- might be better to do this in frame instead of in text -->
+                <ul>
+                    <li> Take a tangled piece of string. Can you undo all the tangles, or is there a knot that makes untangling it impossible?</li>
+                    <li> How do we describe knots?</li>
+                    <li> How many different knots are there?</li>
+                    <li> If you have two knots, is one a tangled version of the other, or are they different?</li>
+                </ul>
+
+            <aside>By the way, if you stretch or shrink part of a knot, or move the string around, we'll still call it the same knot. If you want, imagine the knot is made out of super-flexible rubber. But you can't cut a knot with scissors - that changes the knot.</aside>
+            </div>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0">
+                If I asked you to think of a knot, you'd probably think of this, called the "overhand knot". Can you untangle this knot?
+            </div>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0">
+                Turns out, undoing this knot is easy: just move the loop over the edge of the string and it comes apart easily. 
+            </div>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0">
+                If the string's ends are just random points in space, then you can untie any knot this way with enough effort. 
+
+                Take two knots. Earlier, we asked the question "are they the same knot?" Now we have one answer: if you untangle both knots, they become the same thing: a straight piece of string. 
+
+            <!-- new slide: "I can unknot any knot!" "That's boring..." -->
+                <br />
+                ...but that's not helpful, or interesting. So mathematicians study different, more interesting, types of knots. 
+            </div>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0">
+                Let's define knots like this: a knot is a <u>closed loop</u> of string, <u>with both ends attached</u>. If we join the ends of our overhand knot, we get a new type of knot, called a <u>trefoil</u> knot. 
+
+Defining knots as loops is better, because before, every knot could be turned into every other knot with eough effort. Now you can't turn the knot on the left into a circle without cutting it. (If you don't believe me, grab some string and try it yourself!)
+
+                <!-- Chart: "A Better Definition. A knot: <Trefoil>.  A really boring knot: <unknot>. Not a knot: <overhand>. -->
+            </div>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0">
+                OK, now we're ready to talk about undoing knots in four dimensions. Let's start by focusing on this crossing, right here.
+            </div>
+        </div>
+     </div>
+  </div>
+</body>
+</html>

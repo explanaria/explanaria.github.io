@@ -354,6 +354,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
             await this.redoAnItem(redoItem);
 
             if(this.undoStackIndex == this.undoStack.length-1){
+                //we've now fully caught up.
                 break;
             }
             
@@ -368,7 +369,8 @@ class UndoCapableDirector extends NonDecreasingDirector{
     async redoAnItem(redoItem){
         switch(redoItem.type){
             case DELAY:
-                //while redoing, skip delays
+                //keep in mind during this delay period, the user might push the left arrow key. If that happens, this.currentReplayDirection will be DECREASING, so handleForwardsPress() will quit
+                await this._sleep(redoItem.waitTime);
                 break;
             case TRANSITIONTO:
                 var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.durationMS === undefined ? undefined : redoItem.durationMS/1000, redoItem.optionalArguments);
@@ -381,7 +383,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
         }
     }
 
-    handleBackwardsPress(){
+    async handleBackwardsPress(){
         this.leftArrow.hideSelf();
 
         if(this.undoStackIndex == 0 || this.currentSlideIndex == 0){
@@ -393,7 +395,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.currentReplayDirection = BACKWARDS;
 
         //advance behind the current NewSlideUndoItem we're presumably paused on
-        this.undoAnItem(this.undoStack[this.undoStackIndex]);
+        await this.undoAnItem(this.undoStack[this.undoStackIndex]);
         this.undoStackIndex -= 1;
 
         while(this.undoStack[this.undoStackIndex].constructor !== NewSlideUndoItem){
@@ -411,7 +413,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
 
             //undo transformation in this.undoStack[this.undoStackIndex]
             let undoItem = this.undoStack[this.undoStackIndex];
-            this.undoAnItem(undoItem);
+            await this.undoAnItem(undoItem);
             this.undoStackIndex -= 1;
         }
 
@@ -420,14 +422,16 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.showArrows();
     }
 
-    undoAnItem(undoItem){
+    async undoAnItem(undoItem){
         switch(undoItem.type){
                 case DELAY:
-                    //while undoing, skip any delays
+                    //keep in mind during this delay period, the user might push the right arrow. If that happens, this.currentReplayDirection will be INCREASING, so handleBackwardsPress() will quit instead of continuing.
+                    let waitTime = undoItem.waitTime;
+                    await this._sleep(waitTime/5);
                     break;
                 case TRANSITIONTO:
                     let duration = undoItem.durationMS === undefined ? 1 : undoItem.durationMS/1000;
-                    duration = Math.min(duration / 2, 1); //undoing should be faster, so cut it in half - but cap durations at 1s
+                    duration = duration/5; //undoing should be faster.
                     //todo: invert the easing of the undoItem when creating the undo animation?
                     let easing = Easing.EaseInOut;
                     var undoAnimation = new Animation(undoItem.target, undoItem.fromValues, duration, {staggerFraction:0, easing: easing});
@@ -486,6 +490,19 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.undoStack.push(new DelayUndoItem(waitTime));
         this.undoStackIndex++;
         await this._sleep(waitTime);
+        if(!this.isCaughtUpWithNothingToRedo()){
+            //This is a perilous situation. While we were delaying, the user pressed undo, and now we're in the past.
+            //we SHOULDN't yield back after this, because the presentation code might start running more transformations after this which conflict with the undoing animations. So we need to wait until we reach the right slide again
+            console.log("Egads! This is a perilous situation! Todo: wait until we're fully caught up to release");
+            let self = this;
+            //promise is resolved by calling this.nextSlideResolveFunction() when the time comes
+            return new Promise(function(resolve, reject){
+                self.nextSlideResolveFunction = function(){ 
+                    console.log("Release!");
+                    resolve();
+                }
+            });
+        }
     }
     TransitionTo(target, toValues, durationMS, optionalArguments){
         var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, optionalArguments);

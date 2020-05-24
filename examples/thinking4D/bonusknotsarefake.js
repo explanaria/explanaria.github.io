@@ -9,7 +9,7 @@ let presentation = null;
 let overhandPoints = [[-3,0,0],[-2,1.25,0],[-1,1.5,0],[0,2,0.25],[1,2,0],[0.5,1,-0.25], [-0.5,1,0.25],[-1,2,0],[0,2,-0.25],[1,1.5,0],[2,1.25,0],[3,0,0]];
 let knotPoints = [[-3,0,0],[-2,1.25,0],[-1,1.5,0],[0,2,0.25],[1,2,0],[0.5,1,-0.25], [-0.5,1,0.25],[-1,2,0],[0,2,-0.25],[1,1.5,0],[2,1.25,0],[3,0,0]]; //same as overhandPoints
 
-let knotSpline, knotEndPoints;
+let knotSpline, knotEndPoints, bonkEffect, knotGripPoint;
 
 function setup(){
 	three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
@@ -40,9 +40,13 @@ function setup(){
     knotEndPoints.add(new EXP.PointOutput({color: 0x333333, width: 0.2}));
 
 
+    knotGripPoint = new EXP.Array({data: [knotPoints[4]]});
+    knotGripPoint.add(new EXP.PointOutput({color: 0x333333, width: 0.1, opacity:0}));
+
+
 
     let knotPointsDebug = new EXP.Array({data: knotPoints});
-    knotPointsDebug.add(new EXP.PointOutput({color: 0x333333, width: 0.1}));
+    //knotPointsDebug.add(new EXP.PointOutput({color: 0x333333, width: 0.1}));
 
     knotSpline = new EXP.Area({bounds: [[0,1]], numItems: 100});
     knotSpline
@@ -56,10 +60,20 @@ function setup(){
     }}))
     .add(new EXP.LineOutput({color: 0xffffff, width: 30}));
 
+    
+
+
+    /* cool stagger effect
+    bonkEffectLine = new EXP.Array({data: [[1,0,0],[1,0,0]]});
+    bonkEffectLine.add(new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]}))
+    .add(new EXP.LineOutput({color: blue, width: 5}));*/
+
+    bonkEffect = new THREE.Mesh(new THREE.RingGeometry(0.4,0.5,32),new THREE.MeshBasicMaterial({color: blue, opacity: 0.0, transparent: true}));
+    three.scene.add(bonkEffect);
 
 
 
-    objects = [knotEndPoints, knotSpline,knotPointsDebug];
+    objects = [knotEndPoints, knotSpline,knotPointsDebug,knotGripPoint];
 
     console.log("Loaded.");
 }
@@ -82,128 +96,94 @@ async function animate(){
     //slide loop along
     var l = knotPoints.length-1;
     for(let i=2; i<knotPoints.length-3;i++){
-        presentation.TransitionTo(knotPoints[i], {'0':knotPoints[i][0]+4,'1':knotPoints[i][1]-3,'2':knotPoints[i][2]*2}, 2000);
+        if(i==4)continue;
+        let knotPointSlidAlongLength = EXP.Math.vectorAdd(knotPoints[i],[4,-3,0]);
+        knotPointSlidAlongLength[2] *= 3;
+        presentation.TransitionTo(knotPoints[i], knotPointSlidAlongLength, 2000);
     }
     //compress points near the right end
     for(let i=l-2; i<knotPoints.length;i++){
-        presentation.TransitionTo(knotPoints[i], {'0':knotPoints[l][0],'1':knotPoints[l][1],'2':knotPoints[l][2]}, 1000);
+        presentation.TransitionTo(knotPoints[i], knotPoints[l], 1000);
     }
+    presentation.TransitionTo(knotPoints[1], [1,0,0], 2000);
+    presentation.TransitionTo(knotPoints[4], EXP.Math.vectorAdd(knotPoints[3],[5,-2,0.5]), 2000);
     await presentation.delay(2000);
 
-var l = knotPoints.length-1;
-for(let i=1; i<knotPoints.length-3;i++){
-    presentation.TransitionTo(knotPoints[i], {'0':(i/l)*4-2,'1':0,'2':0}, 2000);
-}
-
-    await presentation.nextSlide();
-    await presentation.nextSlide();
-
-    for(let i=0; i<knotPoints.length;i++){
-        presentation.TransitionTo(knotPoints[i], {'0':overhandPoints[i][0],'1':overhandPoints[i][1],'2':overhandPoints[i][2]}, 1000);
+    //now send each point to a straight line
+    var l = knotPoints.length-1;
+    for(let i=1; i<knotPoints.length-3;i++){
+        presentation.TransitionTo(knotPoints[i], [(i/l)*4-2,0,0], 2000);
     }
-    await presentation.delay(1500);
+
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+
+
+    //go back to the overhand knot
+    presentation.TransitionTo(knotSpline.children[0].children[0], {opacity:0}, 500);
+    await presentation.delay(500);
+    for(let i=0; i<knotPoints.length;i++){
+        presentation.TransitionTo(knotPoints[i], overhandPoints[i], 200);
+    }
+    await presentation.delay(300);
+    presentation.TransitionTo(knotSpline.children[0].children[0], {opacity:1}, 500);
+
+
+    await presentation.delay(1000);
 
 
     let joinPoint = [0,-1,0];
-    presentation.TransitionTo(knotPoints[0], {'0':joinPoint[0],'1':joinPoint[1],'2':joinPoint[2]}, 1000);
-    presentation.TransitionTo(knotPoints[knotPoints.length-1], {'0':joinPoint[0],'1':joinPoint[1],'2':joinPoint[2]}, 1000);
-
-
-    presentation.TransitionTo(knotPoints[1], {'0':joinPoint[0] - 1.5,'1':joinPoint[1]+0.25,'2':joinPoint[2]}, 1000);
-    presentation.TransitionTo(knotPoints[knotPoints.length-2], {'0':joinPoint[0] + 1.5,'1':joinPoint[1]+0.25,'2':joinPoint[2]}, 1000);
+    presentation.TransitionTo(knotPoints[0], joinPoint, 1000);
+    presentation.TransitionTo(knotPoints[knotPoints.length-1], joinPoint, 1000);
+    presentation.TransitionTo(knotPoints[1], EXP.Math.vectorAdd(joinPoint,[-1.5,0.25,0]), 1000);
+    presentation.TransitionTo(knotPoints[knotPoints.length-2], EXP.Math.vectorAdd(joinPoint,[1.5,0.25,0]), 1000);
 
 
     //also make the line closed    
     presentation.TransitionTo(knotSpline.children[0], {'expr': (i,t,x) => getCatRomSpline(x, knotPoints, closed=false, endTangentsAsIfClosed=true)}, 1000);
-        
+    await presentation.nextSlide();
 
-    //original
-    //presentation.TransitionTo(knotPoints[4], {'0':1,'1':2,'2':0}, 750);
+    //Zoom in on the bonk point
+    let bonkPoint = [1,1.5,0];
+    presentation.TransitionTo(three.camera.position, {x:0,y:2,z:2}, 1000); //zoom in a bit. TODO: buggy
+    presentation.TransitionTo(controls.target, {x:bonkPoint[0],y:bonkPoint[1],z:bonkPoint[2]}, 750, {easing:EXP.Easing.EaseIn});
 
+    presentation.TransitionTo(knotGripPoint.children[0], {opacity: 1.0},1000);
 
     await presentation.nextSlide();
-    //zoom in on that crossing
-    let bonkPoint = [0,1.5,0];
-    presentation.TransitionTo(knotPoints[4], {'0':bonkPoint[0],'1':bonkPoint[1],'2':bonkPoint[2]}, 750);
-    await presentation.nextSlide();
-    await presentation.nextSlide();
-    await presentation.nextSlide();
-    //"Let's focus on this crossing."
-    // arrow?
-
-    await presentation.nextSlide();
-    presentation.TransitionTo(knotPoints[4], {'0':0.5,'1':1.75,'2':0}, 750);
-
-    /*
-
-    NEXT STEPS
-    - some sort of TransitionTo numeric array thing
-    if it's a 1D array, pad them both to max(start.length, end.length)
-    fill those with zeroes
-    transition between each number
-
-    - have some storage on the thing being called so that one animation knows if it's interrupting another
-        - in other words, clean blending
-        - use a Symbol? object[symbol] = thisAnimation; then check object[symbol] for the current animation, update this animation's prev value to that animation's post value,
     
-    - some way to set line color
-        - TransitionTo has a color feature? no
-        - LineOutput.color = function(i,t,xyz)? no, because I want to set it via time
-        - feels like I need some kind of render path thing because, you know, maybe I don't want to set it solely based on x,y,z. I'd want to set it pre-something
-        - ArrayOutput and connect it to the .color thing?
-    
-    - Transformation but with a position and scale thing which just does input*scale + position?
-    
-    - add some way of looping things
-        - presentation.loopThis(()=>{
-              presentation.TransitionTo(blah, {'blah':1});
-              await presentation.delay(1000);
-              presentation.TransitionTo(blah, {'blah':0});
-              await presentation.delay(1000);=
-          });
-        //I guess you can't use .nextSlide() in there, and you'd need to implement the undo (just skip right past it? Make the LoopThis() store its own undo cache?)    
-        loopThis? loopTillNextSlide?
-        mathbox made it per-object: loopThis(object, ...)
-    */
-
-    /*
-    presentation.TransitionTo(sphereOutput, {'opacity':0}, 750);
+    //it's bonking time!
+    //anticipation...
+    presentation.TransitionTo(knotPoints[4], EXP.Math.vectorAdd(bonkPoint,[0,0.75,0]), 500);
     await presentation.delay(750);
-    */
+    //go in for the kill
+    presentation.TransitionTo(knotPoints[4], bonkPoint, 750, {easing:EXP.Easing.EaseIn});
+    await presentation.delay(751);
 
-    //Show the 2D canvas. Animation is done in CSS with a time of 1500 ms 
-    await presentation.delay(1500);
+    //bounce off!
+    presentation.TransitionTo(knotPoints[4], [1,2,0], 750, {easing:EXP.Easing.EaseOut});
+
+    //show bonk effect
+    bonkEffect.position.set(...bonkPoint);
+    bonkEffect.scale.setScalar(1.0);
+    bonkEffect.material.opacity = 0.0;
+    presentation.TransitionTo(bonkEffect.material, {'opacity':1.0},200, {easing: EXP.Easing.EaseIn});
+    presentation.TransitionTo(bonkEffect.scale, {x:1.3,y:1.3,z:1.3},1000, {easing: EXP.Easing.EaseOut});
+    await presentation.delay(200);
+    //fade out bonk effect after a bit
+    presentation.TransitionTo(bonkEffect.material, {'opacity':0.0},500, {easing: EXP.Easing.EaseOut});
+
+    //todo: make bonk effect better. Star particles? the word "bonk"?
+
+
+    await presentation.nextSlide();
+    //show coordinates for both points
+
+    await presentation.nextSlide();
+    //replay bonk
 
 
 }
-
-/*
-let centerCameraOnPointEnabled = true;
-let cameraPosIntermediary = new THREE.Vector3();
-let cameraLookTarget = new THREE.Vector3();
-function centerCamera(time){
-    //center the camera so it gives a view of the normal.
-    //a bit nauseating though...
-    let cameraTarget = new THREE.Vector3(...sphereParametrization(0,0,userPointParams.x1,userPointParams.x2));
-
-    if(userPointParams.x1 < 0.7){
-        cameraTarget.set(0,1.3,0);
-    }
-
-    if(userPointParams.x1 > Math.PI - 0.7){
-        cameraTarget.set(0,-1.3,0);
-    }
-
-    let cameraPosTarget = cameraTarget.clone().multiplyScalar(2);
-
-    if(centerCameraOnPointEnabled){
-        cameraPosIntermediary.lerp(cameraPosTarget, 3.1*time.delta);
-        three.camera.position.lerp(cameraPosIntermediary, 3*time.delta);
-        cameraLookTarget.lerp(cameraTarget, 3.1*time.delta);
-        three.camera.lookAt(cameraLookTarget);
-    }
-}*/
-
 
 window.addEventListener("load",function(){
     setup();

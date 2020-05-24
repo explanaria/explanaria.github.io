@@ -245,9 +245,9 @@ class NonDecreasingDirector{
 
 
 
-const FORWARDS = 1;
-const BACKWARDS = 2;
-const NO_SLIDE_MOVEMENT = 3;
+const FORWARDS = ("forwards");
+const BACKWARDS = ("backwards");
+const NO_SLIDE_MOVEMENT = ("not time traveling");
 
 class UndoCapableDirector extends NonDecreasingDirector{
     //thsi director uses both forwards and backwards arrows. the backwards arrow will undo any UndoCapableDirector.TransitionTo()s
@@ -264,6 +264,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
         let self = this;
 
         this.currentReplayDirection = NO_SLIDE_MOVEMENT; //this variable is used to ensure that if you redo, then undo halfway through the redo, the redo ends up cancelled. 
+        this.numArrowPresses = 0;
 
         //if you press right before the first director.nextSlide(), don't error
         this.nextSlideResolveFunction = function(){} 
@@ -323,7 +324,6 @@ class UndoCapableDirector extends NonDecreasingDirector{
     }
 
     async handleForwardsPress(){
-        this.rightArrow.hideSelf();
 
         //if there's nothing to redo, show the next slide
         if(this.isCaughtUpWithNothingToRedo()){
@@ -338,23 +338,43 @@ class UndoCapableDirector extends NonDecreasingDirector{
         if(this.currentReplayDirection == FORWARDS)return;
         this.currentReplayDirection = FORWARDS;
 
+        this.rightArrow.hideSelf();
+
+        this.numArrowPresses += 1;
+        let numArrowPresses = this.numArrowPresses;
+
         //advance past the current NewSlideUndoItem we're presumably paused on
-        await this.redoAnItem(this.undoStack[this.undoStackIndex]);
-        this.undoStackIndex += 1; //We know this.undoStack[this.undoStackIndex+1] exists because if it didn't, this.isCaughtUpWithNothingToRedo() is true
+
+        if(this.undoStack[this.undoStackIndex].constructor === NewSlideUndoItem){
+            this.undoStackIndex += 1;
+        }
+
+        //change HTML slide first so that if there are any delays to undo, they don't slow down the slide
+        this.switchDisplayedSlideIndex(this.currentSlideIndex + 1);
+        this.showArrows();
+        console.log(`Starting arrow press forwards #${numArrowPresses}`);
 
         while(this.undoStack[this.undoStackIndex].constructor !== NewSlideUndoItem){
             //loop through undo stack and redo each undo until we get to the next slide
 
-            //If there's a delay somewhere in the undo stack, and we sleep for some amount of time, the user might have pressed undo during that time. In that case, handleBackwardsPress() will set this.currentReplayDirection to BACKWARDS. But we're still running, so we should stop redoing!
-            if(this.currentReplayDirection != FORWARDS){
-                return;
-            }
 
             let redoItem = this.undoStack[this.undoStackIndex]
             await this.redoAnItem(redoItem);
 
+            //If there's a delay somewhere in the undo stack, and we sleep for some amount of time, the user might have pressed undo during that time. In that case, handleBackwardsPress() will set this.currentReplayDirection to BACKWARDS. But we're still running, so we should stop redoing!
+            if(this.currentReplayDirection != FORWARDS || numArrowPresses != this.numArrowPresses){
+                //this function has been preempted by another arrow press
+                console.log(`forwards has been preempted: this is ${numArrowPresses}, but there's another with ${this.numArrowPresses},${this.currentReplayDirection}`);
+                return;
+            }
+
             if(this.undoStackIndex == this.undoStack.length-1){
                 //we've now fully caught up.
+
+                //if the current undoItem isn't a NewSlideUndoItem, but we do have a nextSlideResolveFunction (meaning the main user code is waiting on this to activate) allow presentation code to proceed
+                if(this.nextSlideResolveFunction){
+                    this.nextSlideResolveFunction();
+                }
                 break;
             }
             
@@ -362,8 +382,6 @@ class UndoCapableDirector extends NonDecreasingDirector{
 
         }
         this.currentReplayDirection = NO_SLIDE_MOVEMENT;
-        this.switchDisplayedSlideIndex(this.currentSlideIndex + 1);
-        this.showArrows();
     }
 
     async redoAnItem(redoItem){
@@ -373,7 +391,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
                 await this._sleep(redoItem.waitTime);
                 break;
             case TRANSITIONTO:
-                var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.durationMS === undefined ? undefined : redoItem.durationMS/1000, redoItem.optionalArguments);
+                var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.duration, redoItem.optionalArguments);
               //and now redoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
                 break;
             case NEWSLIDE:
@@ -384,7 +402,6 @@ class UndoCapableDirector extends NonDecreasingDirector{
     }
 
     async handleBackwardsPress(){
-        this.leftArrow.hideSelf();
 
         if(this.undoStackIndex == 0 || this.currentSlideIndex == 0){
             return;
@@ -394,9 +411,20 @@ class UndoCapableDirector extends NonDecreasingDirector{
         if(this.currentReplayDirection == BACKWARDS)return;
         this.currentReplayDirection = BACKWARDS;
 
+        this.leftArrow.hideSelf();
+
+        this.numArrowPresses += 1;
+        let numArrowPresses = this.numArrowPresses;
+
         //advance behind the current NewSlideUndoItem we're presumably paused on
-        await this.undoAnItem(this.undoStack[this.undoStackIndex]);
-        this.undoStackIndex -= 1;
+        if(this.undoStack[this.undoStackIndex].constructor === NewSlideUndoItem){
+            this.undoStackIndex -= 1;
+        }
+
+
+        //change HTML slide first so that if there are any delays to undo, they don't slow down the slide
+        this.switchDisplayedSlideIndex(this.currentSlideIndex - 1);
+        this.showArrows();
 
         while(this.undoStack[this.undoStackIndex].constructor !== NewSlideUndoItem){
             //loop through undo stack and undo each item until we reach the previous slide
@@ -407,7 +435,9 @@ class UndoCapableDirector extends NonDecreasingDirector{
             }
 
             //If there's a delay somewhere in the undo stack, and we sleep for some amount of time, the user might have pressed redo during that time. In that case, handleForwardsPress() will set this.currentReplayDirection to FORWARDS. But we're still running, so we should stop redoing!
-            if(this.currentReplayDirection != BACKWARDS){
+            if(this.currentReplayDirection != BACKWARDS || numArrowPresses != this.numArrowPresses){
+                //this function has been preempted by another arrow press
+                console.log(`backwards has been preempted: ${numArrowPresses},${this.numArrowPresses},${this.currentReplayDirection}`);
                 return;
             }
 
@@ -416,10 +446,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
             await this.undoAnItem(undoItem);
             this.undoStackIndex -= 1;
         }
-
         this.currentReplayDirection = NO_SLIDE_MOVEMENT;
-        this.switchDisplayedSlideIndex(this.currentSlideIndex - 1);
-        this.showArrows();
     }
 
     async undoAnItem(undoItem){
@@ -430,11 +457,11 @@ class UndoCapableDirector extends NonDecreasingDirector{
                     await this._sleep(waitTime/5);
                     break;
                 case TRANSITIONTO:
-                    let duration = undoItem.durationMS === undefined ? 1 : undoItem.durationMS/1000;
+                    let duration = undoItem.duration;
                     duration = duration/5; //undoing should be faster.
                     //todo: invert the easing of the undoItem when creating the undo animation?
                     let easing = Easing.EaseInOut;
-                    var undoAnimation = new Animation(undoItem.target, undoItem.fromValues, duration, {staggerFraction:0, easing: easing});
+                    var undoAnimation = new Animation(undoItem.target, undoItem.fromValues, duration, undoItem.optionalArguments);
                     //and now undoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
                     break;
                 case NEWSLIDE:
@@ -489,7 +516,9 @@ class UndoCapableDirector extends NonDecreasingDirector{
     async delay(waitTime){
         this.undoStack.push(new DelayUndoItem(waitTime));
         this.undoStackIndex++;
+        console.log(this.undoStackIndex);
         await this._sleep(waitTime);
+        console.log(this.undoStackIndex);
         if(!this.isCaughtUpWithNothingToRedo()){
             //This is a perilous situation. While we were delaying, the user pressed undo, and now we're in the past.
             //we SHOULDN't yield back after this, because the presentation code might start running more transformations after this which conflict with the undoing animations. So we need to wait until we reach the right slide again
@@ -505,9 +534,10 @@ class UndoCapableDirector extends NonDecreasingDirector{
         }
     }
     TransitionTo(target, toValues, durationMS, optionalArguments){
-        var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, optionalArguments);
+        let duration = durationMS === undefined ? 1 : durationMS/1000;
+        var animation = new Animation(target, toValues, duration, optionalArguments);
         let fromValues = animation.fromValues;
-        this.undoStack.push(new UndoItem(target, toValues, fromValues, durationMS, optionalArguments));
+        this.undoStack.push(new UndoItem(target, toValues, fromValues, duration, optionalArguments));
         this.undoStackIndex++;
     }
 }
@@ -520,11 +550,11 @@ const DELAY=2;
 
 //things that can be stored in a UndoCapableDirector's .undoStack[]
 class UndoItem{
-    constructor(target, toValues, fromValues, durationMS, optionalArguments){
+    constructor(target, toValues, fromValues, duration, optionalArguments){
         this.target = target;
         this.toValues = toValues;
         this.fromValues = fromValues;
-        this.durationMS = durationMS;
+        this.duration = duration;
         this.type = TRANSITIONTO;
         this.optionalArguments = optionalArguments;
     }

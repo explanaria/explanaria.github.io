@@ -1,7 +1,6 @@
 "use strict";
 
 import { DomainNode }  from './Node.js';
-//test??
 class EXPArray extends DomainNode{
 	constructor(options){
 		super();

@@ -49,6 +49,19 @@ class ThreeJsColorInterpolator extends Interpolator{
         return this.tempValue.lerp(this.toValue, t);
     }
 }
+class ThreeJsVec3Interpolator extends Interpolator{
+    constructor(fromValue, toValue, interpolationFunction){
+        super(fromValue, toValue, interpolationFunction);
+        if(Utils.isArray(toValue) && toValue.length <= 3){
+            this.toValue = new THREE.Vector3(...this.toValue);
+        }
+        this.tempValue = new THREE.Vector3();
+    }
+    interpolate(percentage){
+        let t = this.interpolationFunction(percentage);
+        return this.tempValue.lerpVectors(this.fromValue, this.toValue, t); //this modifies this.tempValue in-place and returns it
+    }
+}
 
 class TransformationFunctionInterpolator extends Interpolator{
     constructor(fromValue, toValue, interpolationFunction, staggerFraction, targetNumCallsPerActivation){
@@ -111,6 +124,7 @@ class Numeric1DArrayInterpolator extends Interpolator{
 
 
 
+const ExistingAnimationSymbol = Symbol('CurrentEXPAnimation')
 
 
 class Animation{
@@ -166,10 +180,27 @@ class Animation{
 		this.elapsedTime = 0;
         this.prevTrueTime = 0;
 
+        if(this.target[ExistingAnimationSymbol] !== undefined){
+            this.dealWithExistingAnimation();
+        }
+        this.target[ExistingAnimationSymbol] = this;
+
 		//begin
 		this._updateCallback = this.update.bind(this)
 		threeEnvironment.on("update",this._updateCallback);
 	}
+    dealWithExistingAnimation(){
+        //if another animation is halfway through playing when this animation starts, preempt it
+        let previousAnimation = this.target[ExistingAnimationSymbol];
+
+        //todo: fancy blending
+        previousAnimation.end();
+		for(var property in this.fromValues){
+            if(property in previousAnimation.toValues){
+                this.fromValues[property] = previousAnimation.toValues[property];
+    		}
+		}
+    }
     chooseInterpolator(fromValue, toValue, interpolationFunction){
 		if(typeof(toValue) === "number" && typeof(fromValue) === "number"){
             //number-number
@@ -180,6 +211,9 @@ class Animation{
 		}else if(toValue.constructor === THREE.Color && fromValue.constructor === THREE.Color){
             //THREE.Color
             return new ThreeJsColorInterpolator(fromValue, toValue, interpolationFunction);
+        }else if(fromValue.constructor === THREE.Vector3 && (toValue.constructor === THREE.Vector3 || Utils.is1DNumericArray(toValue))){
+            //THREE.Vector3 - but we can also interpret a toValue of [a,b,c] as new THREE.Vector3(a,b,c)
+            return new ThreeJsVec3Interpolator(fromValue, toValue, interpolationFunction);
         }else if(typeof(toValue) === "boolean" && typeof(fromValue) === "boolean"){
             //boolean
             return new BoolInterpolator(fromValue, toValue, interpolationFunction);
@@ -223,12 +257,13 @@ class Animation{
 			this.target[prop] = this.toValues[prop];
 		}
 		threeEnvironment.removeEventListener("update",this._updateCallback);
+        this.target[ExistingAnimationSymbol] = undefined;
 	}
 }
 
 function TransitionTo(target, toValues, durationMS, optionalArguments){
     //if someone's using the old calling strategy of staggerFraction as the last argument, convert it properly
-    if(Utils.isNumber(optionalArguments)){
+    if(optionalArguments && Utils.isNumber(optionalArguments)){
         optionalArguments = {staggerFraction: optionalArguments};
     }
 	var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, optionalArguments);

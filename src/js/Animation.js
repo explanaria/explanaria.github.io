@@ -33,7 +33,11 @@ class BoolInterpolator extends Interpolator{
     }
     interpolate(percentage){
         let t = this.interpolationFunction(percentage);
-        this.target[propertyName] = t > 0.5 ? this.toValue : this.fromValue;
+        if(t > 0.5){
+            return this.toValue;
+        }else{
+            return this.fromValue;
+        }
     }
 }
 
@@ -117,6 +121,15 @@ class Numeric1DArrayInterpolator extends Interpolator{
             }
         }
         return this.resultArray;
+    }
+}
+
+class FallbackDoNothingInterpolator extends Interpolator{
+    constructor(fromValue, toValue, interpolationFunction){
+        super(fromValue, toValue, interpolationFunction);
+    }
+    interpolate(percentage){
+        return this.fromValue;
     }
 }
 
@@ -223,6 +236,7 @@ class Animation{
         }else{
             //We don't know how to interpolate this. Instead we'll just do nothing, and at the end of the animation we'll just set the target to the toValue.
 			console.error("Animation class cannot yet handle transitioning between things that aren't numbers or functions!");
+            return new FallbackDoNothingInterpolator(fromValue, toValue, interpolationFunction);
 		}
     }
 	update(time){

@@ -219,6 +219,7 @@ class NonDecreasingDirector{
         //items with class exp-slide
         if(slideNumber < this.slides.length){
             this.slides[slideNumber].style.opacity = 1;
+            this.slides[slideNumber].scrollIntoView();
         }
 
     }

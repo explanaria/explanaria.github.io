@@ -55,7 +55,7 @@ function distanceToSquared(a,b){
 }
 
 
-var px = new CubicPoly(), py = new CubicPoly(), pz = new CubicPoly();
+var px = new CubicPoly(), py = new CubicPoly(), pz = new CubicPoly(), pw = new CubicPoly();
 
 
 function getCatRomSpline( t, points, isClosed=false, endTangentsAsIfClosed=false) {
@@ -109,9 +109,13 @@ function getCatRomSpline( t, points, isClosed=false, endTangentsAsIfClosed=false
 	py.initNonuniformCatmullRom( p0[1], p1[1], p2[1], p3[1], dt0, dt1, dt2 );
 	pz.initNonuniformCatmullRom( p0[2], p1[2], p2[2], p3[2], dt0, dt1, dt2 );
 
+    const fourth = (arr) => arr.length >= 4 ? arr[3] : 0;
+	pw.initNonuniformCatmullRom( fourth(p0),fourth(p1),fourth(p2),fourth(p3), dt0, dt1, dt2 );
+
 	return [px.calc( weight ),
 		py.calc( weight ),
-		pz.calc( weight )
+		pz.calc( weight ),
+		pw.calc( weight )
 	];
 };
 

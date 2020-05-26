@@ -99,11 +99,10 @@ html{
     flex:0 1 auto;
 }
 
-#twoDcanvasOverlay{
+.canvasOverlay{
     z-index: 2;
     pointer-events: none;
     opacity: 1.0;
-    taransition: 1s linear opacity;
 /* hack to position 2D canvas over 3D canvas*/
     position: absolute;
     top:0%;

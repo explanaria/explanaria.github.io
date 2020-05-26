@@ -52,6 +52,10 @@ class ThreeJsColorInterpolator extends Interpolator{
         this.tempValue.copy(this.fromValue);
         return this.tempValue.lerp(this.toValue, t);
     }
+    interpolateAndCopyTo(percentage, target){
+        let resultArray = this.interpolate(percentage);
+        target.copy(resultArray);
+    }
 }
 class ThreeJsVec3Interpolator extends Interpolator{
     constructor(fromValue, toValue, interpolationFunction){
@@ -64,6 +68,10 @@ class ThreeJsVec3Interpolator extends Interpolator{
     interpolate(percentage){
         let t = this.interpolationFunction(percentage);
         return this.tempValue.lerpVectors(this.fromValue, this.toValue, t); //this modifies this.tempValue in-place and returns it
+    }
+    interpolateAndCopyTo(percentage, target){
+        let resultArray = this.interpolate(percentage);
+        target.copy(resultArray);
     }
 }
 
@@ -111,16 +119,22 @@ class Numeric1DArrayInterpolator extends Interpolator{
         //if one array is longer than the other, interpolate as if the shorter array is padded with zeroes
         if(this.fromValueIsShorter){
             //this.fromValue[i] doesn't exist, so assume it's a zero
-            for(let i=this.shortestLength;i<this.longestLength;i++){
+            for(let i=this.shortestLength;i<this.largestLength;i++){
                 this.resultArray[i] = t*this.toValue[i]; // + (1-t)*0;
             }
         }else{
             //this.toValue[i] doesn't exist, so assume it's a zero
-            for(let i=this.shortestLength;i<this.longestLength;i++){
+            for(let i=this.shortestLength;i<this.largestLength;i++){
                 this.resultArray[i] = (1-t)*this.fromValue[i]; // + t*0 
             }
         }
         return this.resultArray;
+    }
+    interpolateAndCopyTo(percentage, target){
+        let resultArray = this.interpolate(percentage);
+        for(let i=0;i<resultArray.length;i++){
+            target[i] = resultArray[i];
+        }
     }
 }
 
@@ -171,23 +185,33 @@ class Animation{
 				console.error("staggerFraction can only be used when TransitionTo's target is an EXP.Transformation!");
 			}
 		}
+
+        this.mode = "copyProperties";
         
 		this.fromValues = {};
         this.interpolators = [];
         this.interpolatingPropertyNames = [];
-		for(var property in this.toValues){
-			Utils.assertPropExists(this.target, property);
+        if(!Utils.isArray(toValues)){
+		    for(var property in this.toValues){
+			    Utils.assertPropExists(this.target, property);
 
-			//copy property, making sure to store the correct 'this'
-			if(Utils.isFunction(this.target[property])){
-				this.fromValues[property] = this.target[property].bind(this.target);
-			}else{
-				this.fromValues[property] = this.target[property];
-			}
+			    //copy property, making sure to store the correct 'this'
+			    if(Utils.isFunction(this.target[property])){
+				    this.fromValues[property] = this.target[property].bind(this.target);
+			    }else{
+				    this.fromValues[property] = this.target[property];
+			    }
 
-            this.interpolators.push(this.chooseInterpolator(this.fromValues[property], this.toValues[property],this.interpolationFunction));
-            this.interpolatingPropertyNames.push(property);
-		}
+                this.interpolators.push(this.chooseInterpolator(this.fromValues[property], this.toValues[property],this.interpolationFunction));
+                this.interpolatingPropertyNames.push(property);
+		    }
+        }else{
+            this.mode = "copyToTarget";
+            //support Animation([a,b,c],[a,b,c,d,e]) where fromValues[property] might not be interpolatable, but fromValues is
+		    this.fromValues = EXP.Math.clone(this.target);
+            let wholeThingInterpolator = this.chooseInterpolator(this.fromValues, this.toValues,this.interpolationFunction);
+            this.interpolators.push(wholeThingInterpolator);
+        }
 
 
 		this.elapsedTime = 0;
@@ -235,7 +259,7 @@ class Animation{
 			return new Numeric1DArrayInterpolator(fromValue, toValue, interpolationFunction);
         }else{
             //We don't know how to interpolate this. Instead we'll just do nothing, and at the end of the animation we'll just set the target to the toValue.
-			console.error("Animation class cannot yet handle transitioning between things that aren't numbers or functions!");
+			console.error("Animation class cannot yet handle transitioning between things that aren't numbers or functions or arrays!");
             return new FallbackDoNothingInterpolator(fromValue, toValue, interpolationFunction);
 		}
     }
@@ -245,10 +269,15 @@ class Animation{
 		let percentage = this.elapsedTime/this.duration;
 
 		//interpolate values
-		for(let i=0;i<this.interpolators.length;i++){
-            let propertyName = this.interpolatingPropertyNames[i];
-			this.target[propertyName] = this.interpolators[i].interpolate(percentage);
-		}
+        if(this.mode == 'copyProperties'){
+		    for(let i=0;i<this.interpolators.length;i++){
+                let propertyName = this.interpolatingPropertyNames[i];
+			    this.target[propertyName] = this.interpolators[i].interpolate(percentage);
+		    }
+        }else{
+            //copy to target
+            this.interpolators[0].interpolateAndCopyTo(percentage, this.target);
+        }
 
 		if(this.elapsedTime >= this.duration){
 			this.end();

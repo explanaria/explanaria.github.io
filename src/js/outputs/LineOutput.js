@@ -1,6 +1,9 @@
 import {OutputNode} from '../Node.js';
+import { Utils } from '../utils.js';
 import { getThreeEnvironment } from '../ThreeEnvironment.js';
 import { vShader, fShader, uniforms, LINE_JOIN_TYPES } from './LineOutputShaders.js';
+
+const tmpColor = new THREE.Color(0x000000);
 
 class LineOutput extends OutputNode{
     constructor(options = {}){
@@ -18,7 +21,14 @@ class LineOutput extends OutputNode{
 
         this._width = options.width !== undefined ? options.width : 5;
         this._opacity = options.opacity !== undefined ? options.opacity : 1;
-        this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
+
+        this._hasCustomColorFunction = false;
+        if(Utils.isFunction(options.color)){
+            this._hasCustomColorFunction = true;
+            this._color = options.color;
+        }else{
+            this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
+        }
 
         this.lineJoinType = options.lineJoinType !== undefined ? options.lineJoinType.toUpperCase() : "BEVEL";
         if(LINE_JOIN_TYPES[this.lineJoinType] === undefined){
@@ -179,12 +189,14 @@ class LineOutput extends OutputNode{
         }
         this._geometry.setIndex( indices );
 
-        this.setAllVerticesToColor(this.color);
+        if(!this._hasCustomColorFunction){
+            this.setAllVerticesToColor(this.color);
+        }
 
         positionAttribute.needsUpdate = true;
         colorAttribute.needsUpdate = true;
     }
-    evaluateSelf(i, t, x, y, z){
+    evaluateSelf(i, t, x, y, z, ...otherArgs){
         if(!this._activatedOnce){
             this._activatedOnce = true;
             this._onFirstActivation();    
@@ -199,6 +211,19 @@ class LineOutput extends OutputNode{
         let zValue =  z === undefined ? 0 : z;
 
         this.saveVertexInfoInBuffers(this._vertices, this._currentPointIndex, xValue,yValue,zValue);
+
+        if(this._hasCustomColorFunction){
+            let color = this._color(i,t,x,y,z,...otherArgs);
+            //if return type is [r,g,b]
+            if(Utils.isArray(color)){
+                this._setColorForVertexRGB(i, color[0],color[1],color[2]);
+            }else{
+                //if return type is either a hex string, THREE.Color, or even an HTML color string
+                tmpColor.set(color);
+                this._setColorForVertex(i, tmpColor);
+            }
+            
+        }
 
         /* we're drawing like this:
         *----*----*
@@ -317,10 +342,14 @@ class LineOutput extends OutputNode{
         colorAttribute.needsUpdate = true;
     }
     set color(color){
-        //currently only a single color is supported.
-        //I should really make it possible to specify color by a function.
+        //color can be a THREE.Color(), or a function (i,t,x,y,z) => THREE.Color(), which will be called on every point.
         this._color = color;
-        this.setAllVerticesToColor(color);
+        if(Utils.isFunction(color)){
+            this._hasCustomColorFunction = true;
+        }else{
+            this._hasCustomColorFunction = false;
+            this.setAllVerticesToColor(color);
+        }
     }
     get color(){
         return this._color;

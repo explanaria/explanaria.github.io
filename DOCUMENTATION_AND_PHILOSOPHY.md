@@ -169,7 +169,7 @@ See the examples in the `/examples` folder for more!
 
 	Parameters:
 	* width: number representing the width of the lines to be drawn. Currently in units of pixels, meaning the output will depend on the user's screen resolution. 
-	* color: a hex number or THREE.Color representing the color each point should be.
+	* color: a hex number or THREE.Color representing the color each point should be. Alternately, if `color` is a function, the function will be called once per line vertex to determine that point's color. Like the `expr` function of a EXP.Transformation(), a color function will be supplied the arguments `(i,t,x,y,z,...otherCoordinates)` and must return either `[r,g,b]` or a `THREE.Color()`.
 	* opacity: number between 0 and 1 representing how transparent the points are. 1 = fully opaque, 0 = invisible.
     * lineJoinType: either "BEVEL" or "ROUND". This determines how the corners of a line are rendered. You can also use "round" or "bevel" if lower case is your style. It won't really be noticeable unless your line is extremely wide, . Default: "round".
 	

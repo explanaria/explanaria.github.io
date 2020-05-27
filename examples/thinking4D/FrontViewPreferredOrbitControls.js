@@ -5,15 +5,21 @@ class FrontViewPreferredOrbitControls extends THREE.OrbitControls{
             super(...arguments);
             this._autoRotateSpeed = this.autoRotateSpeed;
             let superUpdate = this.update;
+
+            this.isCallingSuperUpdate = false; //horrible hack
             this.update = function(){
                 this._update();
+                this.isCallingSuperUpdate = true;
                 superUpdate();
+                this.isCallingSuperUpdate = false;
             }
         }
 
         set autoRotateSpeed(n){
             this._autoRotateSpeed = n;
-            this._absAutoRotateSpeed = Math.abs(n);
+            if(!this.isCallingSuperUpdate){
+                this._absAutoRotateSpeed = Math.abs(n);
+            }
         }
 
         get autoRotateSpeed(){

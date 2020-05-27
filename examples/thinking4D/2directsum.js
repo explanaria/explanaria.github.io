@@ -6,7 +6,7 @@ let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070
 
 function setup(){
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
-	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	controls = new FrontViewPreferredOrbitControls(three.camera,three.renderer.domElement);
     
 
 	three.camera.position.z = 6;

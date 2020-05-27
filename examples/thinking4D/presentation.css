@@ -14,6 +14,7 @@
   width:100%;
   margin: 0;
   font-family: "Computer Modern Sans";
+  margin-bottom: 2.5em; /*dodge the next/back arrows */
 }
 
 

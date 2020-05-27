@@ -56,7 +56,10 @@ class overlayCanvas{
         this.canvas.width = this.canvas.parentElement.clientWidth;
         this.canvas.height = this.canvas.parentElement.clientHeight;
     
-        this.maxFontSize = Math.min(48, Math.min(this.canvas.width, this.canvas.height)/20);
+        this.maxFontSize = Math.max(24, Math.min(48, Math.min(this.canvas.width, this.canvas.height)/20));
+    }
+    calcFontSize(relativeFraction){
+        return relativeFraction * this.maxFontSize;
     }
     activate(t){
         this.onWindowResize(); //also clears canvas
@@ -66,9 +69,9 @@ class overlayCanvas{
         this.canvas.style.opacity = this.opacity;
 
         
-        this.drawCoordsForAPoint(knotPoints[4], this.movingPoint4DSize * this.maxFontSize, this.movingPointTextOffset);
+        this.drawCoordsForAPoint(knotPoints[4], this.calcFontSize(this.movingPoint4DSize), this.movingPointTextOffset);
         
-        this.drawCoordsForAPoint(knotPoints[9], this.fixedPoint4DSize * this.maxFontSize, this.fixedPointTextOffset)
+        this.drawCoordsForAPoint(knotPoints[9], this.calcFontSize(this.fixedPoint4DSize), this.fixedPointTextOffset)
 
     }
     drawCoordsForAPoint(pointInArrayFormat, fourthCoordSize = 0, offset=[50,-50]){
@@ -106,7 +109,7 @@ class overlayCanvas{
             if(i == 7 || (i == 6 && allStrings[i] == ',')){
                 this.context.font = fourthCoordSize+"px Computer Modern Serif";
             }else{
-                this.context.font = this.maxFontSize+"px Computer Modern Serif";
+                this.context.font = this.calcFontSize(1.0)+"px Computer Modern Serif";
             }
 
             let metrics = this.context.measureText(allStrings[i]);
@@ -146,7 +149,7 @@ class overlayCanvas{
             if(i == 7 || (i == 6 && allStrings[i] == ',')){
                 this.context.font = fourthCoordSize+"px Computer Modern Serif";
             }else{
-                this.context.font = this.maxFontSize+"px Computer Modern Serif";
+                this.context.font = this.calcFontSize(1.0)+"px Computer Modern Serif";
             }
 
             this.drawText(allStrings[i], textX, textY, fillStyle);
@@ -443,7 +446,6 @@ async function animate(){
     for(let i=0; i<knotPoints.length;i++){
         presentation.TransitionTo(knotPoints[i], finalCirclePoints[i], 2000);
     }
-
 
 }
 

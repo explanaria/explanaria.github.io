@@ -122,7 +122,7 @@ class overlayCanvas{
         //ensure labels don't go offscreen
         if(startTextX + totalTextWidth > this.canvas.width)startTextX = this.canvas.width - totalTextWidth;
         if(startTextX - totalTextWidth < 0)startTextX = totalTextWidth;
-        if(startTextY + totalTextHeight > this.canvas.height)startTextY = this.canvas.height - totalTextWidth;
+        if(startTextY + totalTextHeight > this.canvas.height)startTextY = this.canvas.height - totalTextHeight;
         if(startTextY - totalTextHeight < 0)startTextY = totalTextHeight;
 
         let textX = startTextX;
@@ -214,7 +214,7 @@ class overlayCanvas{
 
 function setup(){
 	three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
-	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	controls = new FrontViewPreferredOrbitControls(three.camera,three.renderer.domElement);
 
     presentation = new EXP.UndoCapableDirector();
     
@@ -443,44 +443,6 @@ async function animate(){
     for(let i=0; i<knotPoints.length;i++){
         presentation.TransitionTo(knotPoints[i], finalCirclePoints[i], 2000);
     }
-
-
-    /*
-
-    NEXT STEPS
-    [x]
-    - some sort of TransitionTo numeric array thing
-    if it's a 1D array, pad them both to max(start.length, end.length)
-    fill those with zeroes
-    transition between each number
-
-    [x]- have some storage on the thing being called so that one animation knows if it's interrupting another
-        [ ]- in other words, clean blending
-        - use a Symbol? object[symbol] = thisAnimation; then check object[symbol] for the current animation, update this animation's prev value to that animation's post value,
-    
-    -[x] some way to set line color
-        - TransitionTo has a color feature? no
-                   - LineOutput.color = function(i,t,xyz)? no, because I want to set it via time
-        - feels like I need some kind of render path thing because, you know, maybe I don't want to set it solely based on x,y,z. I'd want to set it pre-something
-        - ArrayOutput and connect it to the .color thing?
-    
-    [nah]- Transformation but with a position and scale thing which just does input*scale + position?
-    
-    - add some way of looping things
-        - presentation.loopThis(()=>{
-              presentation.TransitionTo(blah, {'blah':1});
-              await presentation.delay(1000);
-              presentation.TransitionTo(blah, {'blah':0});
-              await presentation.delay(1000);=
-          });
-        //I guess you can't use .nextSlide() in there, and you'd need to implement the undo (just skip right past it? Make the LoopThis() store its own undo cache?)    
-        loopThis? loopTillNextSlide?
-        mathbox made it per-object: loopThis(object, ...)
-    presentation.TransitionTo(three.camera.position, {x:0,y:2,z:2}, 1000); //zoom in a bit. TODO: buggy
-    presentation.TransitionTo(controls.target, {x:bonkPoint[0],y:bonkPoint[1],z:bonkPoint[2]}, 750, {easing:EXP.Easing.EaseIn});
-
-    */
-
 
 
 }

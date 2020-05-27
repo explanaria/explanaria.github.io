@@ -262,7 +262,7 @@ function setup(){
         let cameraDirection = new THREE.Vector3(x,y,z).sub(three.camera.position).normalize(); //move away from camera
         return [x+cameraDirection.x* 0.05, y+cameraDirection.y* 0.05,z+cameraDirection.z * 0.05];
     }}))
-    .add(new EXP.LineOutput({color: 0xffffff, width: 30}));
+    .add(new EXP.LineOutput({color: 0xffffff, width: 15}));
 
     
 

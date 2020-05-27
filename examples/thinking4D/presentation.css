@@ -403,6 +403,16 @@ ul {
 }
 
 
+@media screen and (max-width:600px){
+    .fullscreenText{
+        font-size: 1.3em;
+    }
+
+    .fullscreenShortPopup{
+        font-size: 3em;
+    }
+}
+
 
 #canvasContainer canvas{
     width: 100%;

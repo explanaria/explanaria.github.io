@@ -241,7 +241,8 @@ html{
     z-index: 1;
 }
 
-.fullscreenText h1, .fullscreenShortPopup h1{
+.fullscreenText h1, .fullscreenShortPopup h1, .threeDPartHeader h1
+{
     font-size: 150%;
     text-align: center;  
 }
@@ -249,7 +250,7 @@ html{
     line-height: 1.2; 
 }
 
-.fullscreenText aside, .fullscreenShortPopup aside{
+.fullscreenText aside, .fullscreenShortPopup aside, .threeDPartHeader aside{
     font-size: 70%;
 }
 
@@ -321,6 +322,14 @@ html{
 .flexBR{
     flex-grow: 1;
     max-height: 1em;
+}
+
+.threeDPartHeader{
+    font-size: 1.3em;
+    pointer-events: none;
+    font-family: "Computer Modern Serif";
+    margin: 0;
+    padding: 1em;
 }
 
 /* used in bonuses */
@@ -398,6 +407,9 @@ ul {
      .chart canvas{
         width: 100px;
         height: 100px;
+    }
+    .threeDPartHeader{
+        padding: 0.25em;
     }
     
 }

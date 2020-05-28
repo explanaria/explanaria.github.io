@@ -354,6 +354,11 @@ async function animate(){
             presentation.TransitionTo(threeDCoords.style, {'opacity':0}, 0);
         }catch(e){}
 
+        //undo color shifting, too
+        [xAxis, yAxis, zAxis].forEach((axis) => axis.getDeepestChildren().forEach((output) => {
+            presentation.TransitionTo(output, {"color": new THREE.Color(output.color).offsetHSL(0,0.15,-0.15)});
+        }));
+
         await presentation.nextSlide();
         await animate4D();
 

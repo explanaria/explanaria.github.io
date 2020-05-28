@@ -57,7 +57,7 @@ class Polychoron{
 
 
             //calculate the appropriate 4D color and set it. Manually. this is terrible. todo: make this dynamic and Transformation-chainable
-            let ptA = this.points[this.lineData[i][0]];
+            let ptA = this.points[this.lineData[i][0]];hypercubeControl
             let ptB = this.points[this.lineData[i][1]];
 
             let ptA4DCoordinates = ptA;

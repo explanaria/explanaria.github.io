@@ -16,12 +16,12 @@ let pointColorDragging =  '#f07000';
 let coordinateLine1Color = 'hsl(260,81%,69%)';
 let coordinateLine1ColorDarker = 'hsl(260,71%,50%)';
 
-let coordinateLine2Color = 'hsl(160,81%,69%)';
+let coordinateLine2Color = 'hsl(140,81%,69%)';
 let coordinateLine2ColorLighter = 'hsl(160,81%,85%)';
 let coordinateLine2ColorDarker = 'hsl(160,71%,50%)';
 
-let coordinateLine3Color = 'hsl(60,81%,69%)';
-let coordinateLine3ColorDarker = 'hsl(60,71%,50%)';
+let coordinateLine3Color = 'hsl(40,81%,69%)';
+let coordinateLine3ColorDarker = 'hsl(40,71%,50%)';
 
 let coordinateLine4Color = 'hsl(305,99%,74%)'; //matches thing in 7 visualizing 4d.js
 let coordinateLine4ZeroColor = 'hsl(205,99%,74%)'; //color for w=0. identical to hypercube

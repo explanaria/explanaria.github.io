@@ -93,19 +93,23 @@ class NonDecreasingDirector{
             this.slides[i].style.display = 'none';//opacity=0 alone won't be instant because of the 1s CSS transition
         }
         let self = this;
-        //undo setting display-none after a bit of time
-        window.setTimeout(function(){
-            for(var i=0;i<self.slides.length;i++){
-                self.slides[i].style.display = '';
-            }
-        },1);
-
         //now handle exp-slide-<n>
         let allSpecificSlideElements = document.querySelectorAll('[class*="exp-slide-"]'); //this is a CSS attribute selector, and I hate that this exists. it's so ugly
         for(var i=0;i<allSpecificSlideElements.length;i++){
             allSpecificSlideElements[i].style.opacity = 0; 
             allSpecificSlideElements[i].style.display = 'none';//opacity=0 alone won't be instant because of the 1s CSS transition
         }
+
+        //undo setting display-none after a bit of time
+        window.setTimeout(function(){
+            for(var i=0;i<self.slides.length;i++){
+                self.slides[i].style.display = '';
+            }
+            for(var i=0;i<allSpecificSlideElements.length;i++){
+                allSpecificSlideElements[i].style.display = '';
+            }
+        },1);
+
     }
 
     setupClickables(){

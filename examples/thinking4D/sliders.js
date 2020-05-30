@@ -299,6 +299,7 @@ class PlaneSlider extends Slider{
         this.size = 130;
         this.pointRadius = 15;
         this.lineColor = color;
+        this.lineColor2 = color;
 
         this.values = [0,0];
         this.lastValues = [0,0];
@@ -362,6 +363,7 @@ class PlaneSlider extends Slider{
         let arrowWidth = 20 / 150 * this.canvas.width;
 
         drawHorizontalArrow(this.context, this.pos, axisLength, arrowWidth, arrowHeight);
+        this.context.strokeStyle = this.lineColor2;
         drawVerticalArrow(this.context, this.pos, axisLength, arrowWidth, arrowHeight);
 
 

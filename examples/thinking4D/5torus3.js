@@ -1,12 +1,16 @@
 let three, controls, objects, knotParams;
 
 let userPointParams = {x1:0,x2:0,x3:0};
+let userPointParamController = null;
 
 let presentation = null;
 
 let sphereOutput = null;
 let sphereLineOutput = null;
 let coord1SliderC, coord2SliderC, coord3SliderC = null;
+
+let cube,cube2 = null;
+let userPoint1, userPoint2, coord1,coord2,coord3,torus = null;
 
 function wrapToInterval(x,size){
     //move number into [-1, +1]
@@ -78,6 +82,24 @@ class CircleToSidewaysSlider extends CircleSlider{
 }
 
 
+class CoordMover{
+    constructor(){
+        this.x1Speed = 0
+        this.x2Speed = 0;
+        this.x3Speed = 0;
+    
+        this.prevT = 0;
+    }
+    activate(t){
+        let dt = t-this.prevT;
+        this.prevT=t; 
+        userPointParams.x1 += dt * this.x1Speed;
+        userPointParams.x2 += dt * this.x2Speed;
+        userPointParams.x3 += dt * this.x3Speed;
+    }
+
+}
+
 function wrapToInterval(x,size){
     //move number into [-1, +1]
     //x%1 would work, but -1%1 == 0 in JS
@@ -134,7 +156,7 @@ function setup(){
         cubeGeom.faces[i].color = new THREE.Color(coordinateLine3ColorDarker);
     }
 
-    var cube = new THREE.Mesh(cubeGeom, new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, vertexColors: THREE.FaceColors}));
+    cube = new THREE.Mesh(cubeGeom, new THREE.MeshBasicMaterial({ opacity:1, side: THREE.BackSide, vertexColors: THREE.FaceColors, transparent: true}));
     three.scene.add(cube);
 
     let cubeMaterial2 = new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, vertexColors: THREE.FaceColors, transparent: true});
@@ -145,19 +167,22 @@ function setup(){
         cubeMaterial2.transparent = true;
     });
 
-    var cube2 = new THREE.Mesh(new THREE.BoxGeometry(boxWidth-0.01,boxWidth-0.01,boxWidth-0.01), cubeMaterial2);
+    cube2 = new THREE.Mesh(new THREE.BoxGeometry(boxWidth-0.01,boxWidth-0.01,boxWidth-0.01), cubeMaterial2);
     three.scene.add(cube2);
 
+    cube.visible = false;
+    cube2.visible = false;
 
-    var userPoint1 = new EXP.Array({data: [[0,1]]}); //discarded
+
+    userPoint2 = new EXP.Array({data: [[0,1]]}); //discarded
     let manifoldParametrization = new EXP.Transformation({expr: (i,t,x,y,z) => [wrapToInterval(x/Math.PI,1),wrapToInterval(y/Math.PI,1),wrapToInterval(z/Math.PI,1)]});
-    userPoint1
+    userPoint2
     .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,userPointParams.x2, userPointParams.x3]}))
     .add(manifoldParametrization.makeLink())
     .add(new EXP.PointOutput({width:0.3, color: pointColor}));
     
 
-    var coord1 = new EXP.Area({bounds: [[0,1]], numItems: 20});
+   coord1 = new EXP.Area({bounds: [[0,1]], numItems: 20});
     let coord1Range = 2*Math.PI; //how wide the coordinate display should be
     coord1
     .add(new EXP.Transformation({expr: (i,t,x) => [(x-0.5)*coord1Range,userPointParams.x2, userPointParams.x3]}))
@@ -165,62 +190,192 @@ function setup(){
     .add(new EXP.LineOutput({width:10, color: coordinateLine1Color}));
 
 
-    var coord2 = new EXP.Area({bounds: [[0,1]], numItems: 20});
+    coord2 = new EXP.Area({bounds: [[0,1]], numItems: 20});
     let coord2Range = 2*Math.PI; //how wide the coordinate should be
     coord2
     .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,(x-0.5)*coord2Range, userPointParams.x3]}))
     .add(manifoldParametrization.makeLink())
     .add(new EXP.LineOutput({width:10, color: coordinateLine2Color}));
 
-    var coord3 = new EXP.Area({bounds: [[0,1]], numItems: 20});
+    coord3 = new EXP.Area({bounds: [[0,1]], numItems: 20});
     let coord3Range = 2*Math.PI; //how wide the coordinate should be
     coord3
     .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,userPointParams.x2, (x-0.5)*coord3Range]}))
     .add(manifoldParametrization.makeLink())
     .add(new EXP.LineOutput({width:10, color: coordinateLine3Color}));
 
+    userPointParamController = new CoordMover();
+
+    let a=0.5;
+    let b=1;
+    torus = new EXP.Area({bounds: [[0,Math.PI*2],[0,Math.PI*2]], numItems:24});
+    let torusParametrization = new EXP.Transformation({expr: (i,t,theta1,theta2) => [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]})
+    torus.add(torusParametrization)
+    .add(new EXP.SurfaceOutput({color: blue, opacity: 1.0, showGrid: true, gridLineWidth: 0.05, showSolid:true}));
+
+    userPoint1 = new EXP.Array({data: [[0,1]]}); //discarded
+    userPoint1
+    .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,userPointParams.x2]}))
+    .add(torusParametrization.makeLink())
+    .add(new EXP.PointOutput({width:0.3, color: pointColor}));
+
+
+    torusCoord1 = new EXP.Area({bounds: [[0,1]], numItems: 20});
+    let torusCoord1Range = Math.PI; //how wide the coordinate display should be
+    torusCoord1
+    .add(new EXP.Transformation({expr: (i,t,x) => [(x)*torusCoord1Range,userPointParams.x2]}))
+    .add(torusParametrization.makeLink())
+    .add(new EXP.LineOutput({width:10, color: coordinateLine1Color}));
+
+    torusCoord2 = new EXP.Area({bounds: [[0,1]], numItems: 200});
+    let torusCoord2Range = 2*Math.PI; //how wide the coordinate should be
+    torusCoord2
+    .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,(x-0.5)*torusCoord2Range + userPointParams.x2]}))
+    .add(torusParametrization.makeLink())
+    .add(new EXP.LineOutput({width:10, color: coordinateLine2Color}));
+
+
     coord1SliderC = new CircleToSidewaysSlider(coordinateLine1Color, 'circle1', ()=>userPointParams.x1, (x)=>{userPointParams.x1=x});
     coord2SliderC = new CircleToSidewaysSlider(coordinateLine2Color, 'circle2', ()=>userPointParams.x2, (x)=>{userPointParams.x2=x});
     coord3SliderC = new CircleToSidewaysSlider(coordinateLine3Color, 'circle3', ()=>userPointParams.x3, (x)=>{userPointParams.x3=x});
 
-    objects = [coord1, coord2, coord3, userPoint1, coord1SliderC, coord2SliderC, coord3SliderC];
+    let flatSlider = new PlaneSlider(coordinateLine2Color, 'flatTorus2D', 
+        ()=>{
+            return [-userPointParams.x2/(Math.PI), (userPointParams.x1)/(Math.PI)];
+        }, 
+        (x,y)=>{
+            userPointParams.x1=y*(Math.PI);
+            userPointParams.x2=-x*Math.PI;
+        });
+    flatSlider.lineColor2 = coordinateLine1Color;
+
+    objects = [coord1, coord2, coord3, userPoint2, coord1SliderC, coord2SliderC, coord3SliderC, userPointParamController, torus, torusCoord1,torusCoord2, userPoint1, flatSlider];
 }
 
 async function animate(){
 
     await presentation.begin();
+    cube.material.opacity = 0;
+    cube2.material.opacity = 0;
+
+    cube.visible = false;
+    cube2.visible = false;
+
+    [userPoint2,coord1, coord2, coord3].forEach( (item) => item.getDeepestChildren().forEach((output) =>
+    presentation.TransitionTo(output, {'opacity':0}, 1000)
+    ));
 
     await presentation.nextSlide();
-    [coord1SliderC,coord2SliderC,coord3SliderC].forEach( (item) => presentation.TransitionTo(item,{lineAnimationFactor:1}),1500);
 
-    await presentation.nextSlide();
+    let threeCoordinates = document.getElementById("secondTimesSign");
+    presentation.TransitionTo(threeCoordinates.style, {'transform':'scale(0)'}, 0);
 
-    //cube: appear!
+    let twoCoordinates = document.getElementById("circleContainer2");
+    presentation.TransitionTo(twoCoordinates.style, {'transform':'scale(0)'}, 0);
 
-    let coordSystem1 = document.getElementById("questionMarks");
-    presentation.TransitionTo(coordSystem1.style, {'opacity':0, 'pointerEvents': "none"}, 0);
+
+
+    let questionMarks = document.getElementById("questionMarks");
+    presentation.TransitionTo(questionMarks.style, {'opacity':0, 'pointerEvents': "none"}, 0);
 
     let threeDcanvas = document.getElementById("threeDcanvas");
     presentation.TransitionTo(threeDcanvas.style, {'opacity':1, 'pointerEvents':"all"}, 0);
 
     await presentation.nextSlide();
 
-    let prevT = 0;
-    let x1Mover = {activate: function(t){let dt = t-prevT; prevT=t; userPointParams.x1 += dt;}};
-    objects.push(x1Mover);
+   
 
 
-    await presentation.nextSlide();
-    //slide 2: change y
-    objects.pop();
-    let x2Mover = {activate: function(t){let dt = t-prevT; prevT=t; userPointParams.x2 += dt;}};
-    objects.push(x2Mover);
+    [coord1SliderC,coord2SliderC,coord3SliderC].forEach( (item) => presentation.TransitionTo(item,{lineAnimationFactor:1}),1500);
 
     await presentation.nextSlide();
-    //slide 3: change z
-    objects.pop()
-    let x3Mover = {activate: function(t){let dt = t-prevT; prevT=t; userPointParams.x3 += dt;}};
-    objects.push(x3Mover);
+
+    let directSumFactors = document.getElementById("directSumFactors");
+    presentation.TransitionTo(directSumFactors.style, {'opacity':0, 'pointerEvents': "none"}, 0);
+
+    let flatTorus = document.getElementById("flatTorus");
+    presentation.TransitionTo(flatTorus.style, {'opacity':1, 'pointerEvents':"all"}, 0);
+
+
+    //show the 2D coordinate system. While this is happening, let's reset the three circle coordinates so they'll appear like this again when they unhide.
+    [coord1SliderC,coord2SliderC,coord3SliderC].forEach( (item) => presentation.TransitionTo(item,{lineAnimationFactor:0}),1);
+    await presentation.nextSlide();
+
+
+    [torusCoord1, torusCoord2, torus, userPoint1].forEach( (item) => item.getDeepestChildren().forEach((output) =>
+        presentation.TransitionTo(output, {'opacity':0}, 1000)
+    ));
+    presentation.TransitionTo(flatTorus.style, {'opacity':0, 'pointerEvents': "none"}, 0);
+    presentation.TransitionTo(directSumFactors.style, {'opacity':1, 'pointerEvents':"all"}, 0);
+    presentation.TransitionTo(questionMarks.style, {'opacity':1}, 0);
+
+
+    await presentation.delay(1000);
+    presentation.TransitionTo(twoCoordinates.style, {'transform':'scale(1)'}, 0);
+    presentation.TransitionTo(threeCoordinates.style, {'transform':'scale(1)'}, 0);
+
+
+
+
+
+    //cube: appear!
+
+    await presentation.nextSlide();
+    presentation.TransitionTo(questionMarks.style, {'opacity':0}, 0);
+    [coord1SliderC,coord2SliderC,coord3SliderC].forEach( (item) => presentation.TransitionTo(item,{lineAnimationFactor:1},1000));
+
+    presentation.TransitionTo(cube, {'visible':true}, 1);
+    presentation.TransitionTo(cube2, {'visible':true}, 1);
+
+    await presentation.delay(1000);
+
+    [userPoint2, coord1, coord2, coord3].forEach(
+        (item) => {
+            item.getDeepestChildren().forEach(
+                (output) => {
+                    presentation.TransitionTo(output, {'opacity':1}, 1000);
+                }
+            )
+        }
+	);
+
+    presentation.TransitionTo(cube.material, {'opacity':1}, 1000)
+    presentation.TransitionTo(cube2.material, {'opacity':1}, 1000)
+
+    await presentation.nextSlide();
+
+    /*
+    presentation.TransitionTo(userPointParamController, {'x1Speed':8}, 125);
+    await presentation.delay(125);
+    presentation.TransitionTo(userPointParamController, {'x1Speed':-8}, 125);
+    await presentation.delay(125);
+    presentation.TransitionTo(userPointParamController, {'x1Speed':8}, 125);
+    await presentation.delay(125);
+    presentation.TransitionTo(userPointParamController, {'x1Speed':-8}, 125);
+    await presentation.delay(125);
+    presentation.TransitionTo(userPointParamController, {'x1Speed':0}, 125);
+    await presentation.delay(250);
+
+    presentation.TransitionTo(userPointParamController, {'x2Speed':4}, 1000);
+    await presentation.delay(1250);
+    presentation.TransitionTo(userPointParamController, {'x2Speed':-4}, 1000);
+    await presentation.delay(1250);
+    presentation.TransitionTo(userPointParamController, {'x2Speed':0}, 1000);
+
+    presentation.TransitionTo(userPointParamController, {'x3Speed':4}, 1000);
+    await presentation.delay(1250);
+    presentation.TransitionTo(userPointParamController, {'x3Speed':-4}, 1000);
+    await presentation.delay(1250);
+    presentation.TransitionTo(userPointParamController, {'x3Speed':0}, 1000);
+    */
+
+
+    presentation.TransitionTo(userPointParams, {'x1':Math.PI*2}, 2000);
+    await presentation.delay(2000);
+    presentation.TransitionTo(userPointParams, {'x2':Math.PI*2}, 2000);
+    await presentation.delay(2000);
+    presentation.TransitionTo(userPointParams, {'x3':Math.PI*2}, 2000);
+
 
     await presentation.nextSlide();
     //slide 4: fancy pattern
@@ -228,11 +383,11 @@ async function animate(){
     let fancyFlight = {activate: function(t){userPointParams.x1 = 2*Math.sin(t/2);userPointParams.x2 = 5*Math.sin(t/1.7);userPointParams.x3 = 2*Math.sin(t/1.3);}};
     objects.push(fancyFlight);
 
-    [coord1SliderC,coord2SliderC,coord3SliderC].forEach( (item) => presentation.TransitionTo(item,{lineAnimationFactor:0}),1500);
+    //[coord1SliderC,coord2SliderC,coord3SliderC].forEach( (item) => presentation.TransitionTo(item,{lineAnimationFactor:0}),1500);
 
-    await presentation.nextSlide();
-    objects.pop();
     //back to user controllable
+    //await presentation.nextSlide();
+    //objects.pop();
 }
 
 

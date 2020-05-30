@@ -45,23 +45,65 @@
         
       </div>
       <div id="textArea" class="non3DFooterPart">
-          <div class="factors columns is-mobile">
-            <div id="circleContainer1" class="column">
-                <div id="circle1" class="chartCanvasContainer"></div>
+          <div class="overlappingItemContainer">
+              <div class="overlappingItem factors columns is-mobile willFadeOutFromJS" id="directSumFactors">
+                <div id="circleContainer1" class="column">
+                    <div id="circle1" class="chartCanvasContainer"></div>
+                </div>
+                <div class="timesSign">
+                    <span>⨯</span>
+                </div>
+                <div id="circleContainer3" class="column">
+                    <div id="circle2" class="chartCanvasContainer"></div>
+                </div>
+
+                <div class="timesSign" id="secondTimesSign">
+                    <span>⨯</span>
+                </div>
+                <div id="circleContainer2" class="column">
+                    <div id="circle3" class="chartCanvasContainer"></div>
+                </div>
+	        </div>
+              <div class="overlappingItem willFadeInFromJS" id="flatTorus" style="pointer-events: none;">
+                <div class="column">
+                    <div id="flatTorus2D" class="chartCanvasContainer"></div>
+                </div>
+	          </div>
+          </div>
+
+          <div class="overlappingItemContainer">
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+                Armed with the idea of manifolds, we can start to understand 4 dimensions. For example, we saw earlier that a shape built out of two circle coordinates is a torus. What shape do you get by combining three independent circle coordinates?
+
+                <br />
+                Let's call this new shape a <b>3-torus</b>, because it's made out of 3 circle coordinates. A normal torus is built out of two circle coordinates, but in order to draw it as a smooth surface (without self-intersecting) we need three dimensions. If we add another independent circle coordinate to make a 3-torus, we'll be adding another dimension. Somehow, whatever this 3-torus is, it's going to be four-dimensional. How do we imagine it?
             </div>
-            <div class="timesSign">
-                <span>⨯</span>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+    To understand a 3-torus, first let's think about a shape we're already familiar with: the 2-torus. But this time, let's think of a torus as a manifold. Can we make a 2-dimensional coordinate system which covers the entire shape?
             </div>
-            <div id="circleContainer3" class="column">
-                <div id="circle2" class="chartCanvasContainer"></div>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+            Yes, and here's how: if we use the angle of a point on each circle as a coordinate, we get two coordinates. 
             </div>
-            <div class="timesSign">
-                <span>⨯</span>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+            Now we can combine these two coordinates into a single XY coordinate system which covers the entire torus. Moving up and down controls one coordinate, and moving left and right controls the other.
             </div>
-            <div id="circleContainer2" class="column">
-                <div id="circle3" class="chartCanvasContainer"></div>
+
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+                The exact same technique works with the 3-torus. For each of the three circles, we can use the angle of a point on that circle as a coordinate. As long as we remember that an angle of negative 360 degrees is the same as an angle of zero, we can use the angles on those three points as our 3D coordinate system! Because the 3-torus is a manifold, instead of twisting our brain trying to imagine four-dimensional shapes, we can use three-dimensional coordinate systems. 
             </div>
-	    </div>
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+                Here's our 3D coordinate system. Each point in this 3D coordinate system represents a point on the four-dimensional 3-torus.
+            </div>
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+                Varying each coordinate gives us a different point in the coordinate system. It may seem like the points teleport when they reach the edge of the coordinate system, but that's just because of the transition function we're using for this manifold. In four dimensions, there's no teleporting, because the faces of this cube are actually connected in 4D space.
+            </div>
+            <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
+                Now, armed with this coordinate system, we can move around the 3-torus in whatever way we want. Manifolds are useful because we can study four-dimensional objects using more familiar 3D coordinates.
+            </div>
       </div>
     
   </div>

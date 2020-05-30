@@ -318,6 +318,10 @@ html{
     pointer-events: none;
 }
 
+.factors *{
+    transition: 1s transform ease-in-out;
+}
+
 /* used in 6 */
 .flexBR{
     flex-grow: 1;

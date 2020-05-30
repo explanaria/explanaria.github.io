@@ -222,19 +222,19 @@ function setup(){
     northPoleChartSurface = new EXP.Area({bounds: [[0, poleChartDiameter],[0,2*Math.PI]], numItems: [10,30]});
     northPoleChartSurface
     .add(manifoldParametrization.makeLink())
-    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine4Color, opacity:0, gridLineWidth: 0.1, showSolid:true, gridSquares: 8}));
+    .add(new EXP.SurfaceOutput({width:10, showGrid:true, color: coordinateLine4Color, opacity:0, gridLineWidth: 0.1, showSolid:false, gridSquares: 8}));
     northPoleChartSurface.children[0].children[0].mesh.scale.set(1.001, 1.001, 1.001);//ensure no z-fighting
 
     southPoleChartSurface = new EXP.Area({bounds: [[Math.PI-poleChartDiameter,Math.PI],[0,2*Math.PI]], numItems: [10,30]});
     southPoleChartSurface
     .add(manifoldParametrization.makeLink())
-    .add(new EXP.SurfaceOutput({width:10, color: coordinateLine3Color, opacity:0, gridLineWidth: 0.1, showSolid:true, gridSquares: 8}));
+    .add(new EXP.SurfaceOutput({width:10, showGrid:true, color: coordinateLine3Color, opacity:0, gridLineWidth: 0.1, showSolid:false, gridSquares: 8}));
     southPoleChartSurface.children[0].children[0].mesh.scale.set(1.001, 1.001, 1.001);//ensure no z-fighting
 
     middleChartSurface = new EXP.Area({bounds: [[middleChartDiameter,Math.PI-middleChartDiameter],[0.3,2*Math.PI+0.3]], numItems: [10,30]});
     middleChartSurface
     .add(manifoldParametrization.makeLink())
-    .add(new EXP.SurfaceOutput({width:10, color: blue, opacity:0, gridLineWidth: 0.1, gridSquares: 8}));
+    .add(new EXP.SurfaceOutput({width:10, showGrid:true, showSolid:false, gridColor: coordinateLine2ColorLighter, opacity:0, gridLineWidth: 0.1, gridSquares: 24}));
     middleChartSurface.children[0].children[0].mesh.scale.set(1.01, 1.01, 1.01); //ensure no z-fighting
 
 
@@ -316,19 +316,21 @@ async function animate(){
     });
 
     await presentation.delay(1000);
-    objects.pop(); //delete that last object
 
 
     presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'}, 0);
 
+
+    presentation.TransitionTo(sphereOutput, {'opacity':0.2}, 1000);
+
     [northPoleChartSurface,southPoleChartSurface].forEach( (item) => {
         item.getDeepestChildren().forEach( (output) => {
-            presentation.TransitionTo(output, {'opacity': 1});
+            presentation.TransitionTo(output, {'opacity': 0.9});
         })
     });
 
     middleChartSurface.getDeepestChildren().forEach( (output) => {
-        presentation.TransitionTo(output, {'opacity': 0.7});
+        presentation.TransitionTo(output, {'opacity': 0.9});
     });
 
 

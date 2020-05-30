@@ -22,7 +22,7 @@ class SurfaceOutput extends OutputNode{
 
 		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
 
-		this._gridColor = options.gridColor !== undefined ? new THREE.Color(options.gridColor) : new THREE.Color(0x55aa55);
+		this._gridColor = options.gridColor;
         this._useCustomGridColor = options.gridColor !== undefined;
 
 		this._gridSquares = options.gridSquares !== undefined ? options.gridSquares : 16;
@@ -65,7 +65,10 @@ class SurfaceOutput extends OutputNode{
 		this._uniforms.showGrid.value = this.toNum(this._showGrid);
 		this._uniforms.showSolid.value = this.toNum(this._showSolid);
 		this._uniforms.lineWidth.value = this._gridLineWidth;
-        this._uniforms.useCustomGridColor = this._useCustomGridColor;
+        this._uniforms.useCustomGridColor.value = this._useCustomGridColor ? 1.0 : 0.0;
+        if(this._useCustomGridColor){
+		    this._uniforms.gridColor.value = new THREE.Color(this._gridColor);
+        }
 
 		if(!this.showSolid)this.material.transparent = true;
 
@@ -274,7 +277,7 @@ class SurfaceOutput extends OutputNode{
 		//I should really make this a function
 		this._gridColor = color;
 		this._uniforms.gridColor.value = new THREE.Color(color);
-        this._uniforms.useCustomGridColor = 1.0;
+        this._uniforms.useCustomGridColor.value = 1.0;
 	}
 	get gridColor(){
 		return this._gridColor;

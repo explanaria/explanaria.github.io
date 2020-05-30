@@ -89,7 +89,8 @@ class NonDecreasingDirector{
 
         //hide all slides except first one
         for(var i=0;i<this.numHTMLSlides;i++){
-            this.slides[i].style.opacity = 0; 
+            this.slides[i].style.opacity = 0;
+            this.slides[i].style.pointerEvents = 'none';
             this.slides[i].style.display = 'none';//opacity=0 alone won't be instant because of the 1s CSS transition
         }
         let self = this;
@@ -97,6 +98,7 @@ class NonDecreasingDirector{
         let allSpecificSlideElements = document.querySelectorAll('[class*="exp-slide-"]'); //this is a CSS attribute selector, and I hate that this exists. it's so ugly
         for(var i=0;i<allSpecificSlideElements.length;i++){
             allSpecificSlideElements[i].style.opacity = 0; 
+            allSpecificSlideElements[i].style.pointerEvents = 'none';
             allSpecificSlideElements[i].style.display = 'none';//opacity=0 alone won't be instant because of the 1s CSS transition
         }
 
@@ -196,12 +198,14 @@ class NonDecreasingDirector{
         //items with class exp-slide
         if(prevSlideNumber < this.slides.length){
             this.slides[prevSlideNumber].style.opacity = 0;
+            this.slides[prevSlideNumber].style.pointerEvents = 'none';
         }
         
         //items with HTML class exp-slide-n
         let prevSlideElems = document.getElementsByClassName("exp-slide-"+(prevSlideNumber+1))
         for(var i=0;i<prevSlideElems.length;i++){
             prevSlideElems[i].style.opacity = 0;
+            prevSlideElems[i].style.pointerEvents = 'none';
         }
 
 
@@ -218,11 +222,13 @@ class NonDecreasingDirector{
 
         for(var i=0;i<elemsToDisplayOnlyOnThisSlide.length;i++){
             elemsToDisplayOnlyOnThisSlide[i].style.opacity = 1;
+            elemsToDisplayOnlyOnThisSlide[i].style.pointerEvents = 'all';
         }
 
         //items with class exp-slide
         if(slideNumber < this.slides.length){
             this.slides[slideNumber].style.opacity = 1;
+            this.slides[slideNumber].style.pointerEvents = 'all';
             this.scrollUpToTopOfContainer(this.slides[slideNumber]);
         }
 

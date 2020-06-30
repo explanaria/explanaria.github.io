@@ -201,7 +201,64 @@ class SurfaceOutput extends OutputNode{
 		normalAttribute.needsUpdate = true;
 
 		this._currentPointIndex = 0; //reset after each update
+        if(this.opacity < 1 && this.opacity > 0){
+            this.sortFacesByDepth();
+        }
 	}
+    sortFacesByDepth(){
+        //if this surface is transparent, for proper face rendering we should sort the faces so that they're drawn from back to front
+        let indexArray = this._geometry.index.array;
+        let positionArray = this._geometry.attributes.position.array;
+
+        let numFaces = this._geometry.index.array.length/3;
+
+        let distancesForEachFaceToCamera = new Float32Array(numFaces);
+        let cameraPos = getThreeEnvironment().camera.position;
+
+        for(let faceNo=0;faceNo<numFaces;faceNo++){
+            // the index array stores the indices of the 3 vertices which make a triangle, in order
+			let vert1Index = indexArray[3*faceNo];
+            let vert2Index = indexArray[3*faceNo+1];
+            let vert3Index = indexArray[3*faceNo+2];
+
+            let centroidX = (positionArray[3*vert1Index] +positionArray[3*vert2Index]  +positionArray[3*vert3Index])/3;
+		    let centroidY = (positionArray[3*vert1Index+1]+positionArray[3*vert2Index+1]+positionArray[3*vert3Index+1])/3; //Y
+			let centroidZ = (positionArray[3*vert1Index+2]+positionArray[3*vert2Index+2]+positionArray[3*vert3Index+2])/3;
+
+            //compute distance from centroid to camera
+            let dx = centroidX - cameraPos.x;
+            let dy = centroidY - cameraPos.y;
+            let dz = centroidZ - cameraPos.z;
+            distancesForEachFaceToCamera[faceNo] = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        }
+
+        //run insertion sort on distancesForEachFaceToCamera. every time you move a piece there, move the things in indexArray too
+        for(let i=1;i<numFaces;i++){
+            let j = i;
+            while(j > 0 && distancesForEachFaceToCamera[j-1] < distancesForEachFaceToCamera[j]){
+                //swap distancesForEachFaceToCamera[j] and distancesForEachFaceToCamera[j-1]
+                let temp = distancesForEachFaceToCamera[j];
+                distancesForEachFaceToCamera[j] = distancesForEachFaceToCamera[j-1];
+                distancesForEachFaceToCamera[j-1] = temp;
+
+                //also swap the indices for face #j and face #j-1, so this sort uses distancesForEachFaceToCamera as the key
+                let vert1Index = indexArray[3*j];
+                let vert2Index = indexArray[3*j+1];
+                let vert3Index = indexArray[3*j+2];
+
+                indexArray[3*j] = indexArray[3*(j-1)];
+                indexArray[3*j+1] = indexArray[3*(j-1)+1];
+                indexArray[3*j+2] = indexArray[3*(j-1)+2];
+
+                indexArray[3*(j-1)] = vert1Index;
+                indexArray[3*(j-1)+1] = vert2Index;
+                indexArray[3*(j-1)+2] = vert3Index;
+                j--;
+            }
+        }
+        //now indexArray is sorted according to the distance to the camera
+        this._geometry.index.needsUpdate = true;
+    }
 	_recalcNormals(){
 		let positionAttribute = this._geometry.attributes.position;
 		let normalAttribute = this._geometry.attributes.normal;
@@ -285,6 +342,8 @@ class SurfaceOutput extends OutputNode{
 	set opacity(opacity){
 		this.material.opacity = opacity;
 		this.material.transparent = (opacity < 1) || (!this.showSolid);
+        this.material.depthWrite = !this.material.transparent; // only depthWrite if not transparent, so that things show up behind this
+
 		this.material.visible = opacity > 0;
 		this._opacity = opacity;
         this._uniforms.opacity.value = opacity;

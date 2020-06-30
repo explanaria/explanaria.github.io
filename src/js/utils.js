@@ -3,18 +3,30 @@ import {clone} from './math.js'
 class Utils{
 
 	static isArray(x){
+        if(x === undefined){
+            return false;
+        }
 		return x.constructor === Array;
 	}
 	static isObject(x){
+        if(x === undefined){
+            return false;
+        }
 		return x.constructor === Object;
 	}
 	static arrayCopy(x){
 		return x.slice();
 	}
 	static isFunction(x){
+        if(x === undefined){
+            return false;
+        }
 		return x.constructor === Function;
 	}
 	static isNumber(x){
+        if(x === undefined){
+            return false;
+        }
 		return x.constructor === Number;
 	}
 

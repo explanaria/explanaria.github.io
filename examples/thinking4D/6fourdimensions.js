@@ -398,6 +398,15 @@ async function animateBackTo3DEmbedding(){
     });
     //re-move points back to the single path
     presentation.TransitionTo(manifoldPointPositions, {expr: (i,t,x) => pointPath(i,t,x)},1000);
+
+    //for better viewing angle, change the ortho vector a little. TOTAL HACK ALERT
+    presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3+0.2,1/sq3]}, 1000);
+
+    await presentation.nextSlide();
+    //"Let's just choose a random direction, and put the fourth axis there."
+
+    let redOrthoDirectionShowerVec = grayProjectionVisualizingAxes.getDeepestChildren()[6];
+    presentation.TransitionTo(redOrthoDirectionShowerVec, {opacity: 1}, 1000);
     
     await presentation.nextSlide();
 
@@ -410,15 +419,15 @@ async function animateBackTo3DEmbedding(){
     //put the w axis back together. First, move the w axis
     presentation.TransitionTo(wAxisControl, {expr: (i,t,x,y,z,w) => [x,y,z,w]},1000);
 
-    //for better viewing angle, change the ortho vector a little. TOTAL HACK ALERT
-    presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3+0.2,1/sq3]}, 1000);
-
     presentation.TransitionTo(wAxis.children[0], {'expr': (i,t,x)=>[0,0,0,x*Math.sqrt(3)]}, 1000);
     presentation.TransitionTo(wAxis.children[1], {'expr': (i,t,x)=>[0,0,0,-x*Math.sqrt(3)]}, 1000);
 
     //also move the w-axisarrow to start from the origin
     presentation.TransitionTo(wAxisCoordinateArrow, {'expr': (i,t,x,y,z,w)=>i==0 ? [0,0,0,0]: [0,0,0,pointCoords[3]]}, 1000);
     presentation.TransitionTo(wAxisPointPosition, {'expr': (i,t,x,y,z,w)=> [0,0,0,pointCoords[3]]}, 1000);
+
+    await presentation.delay(1000);
+    presentation.TransitionTo(redOrthoDirectionShowerVec, {opacity: 0}, 100); //hide this now that the W axis is covering it
 
     await presentation.nextSlide();
     //then, move the arrow to be parallel to the w axis, but starting from that point

@@ -46,7 +46,7 @@ coordinateLine4Color = 'hsl('+(205+110)+', 99%, 50%)'; //pink
 coordinateLine4ZeroColor = 'hsl('+(205+80)+', 40%, 40%)' // deep purple
 coordinateLine4NegativeColor = 'hsl('+(205+100)+', 85%, 40%)'
 
-let orthographic4VecColor = 'hsl('+(205+160)+', 99%, 50%)'; //pink
+let orthographic4VecColor = 'hsl('+(205+160)+', 99%, 50%)'; //red
 
 /*
 // green -> red

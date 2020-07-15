@@ -171,47 +171,113 @@
       <div id="textArea" class="non3DFooterPart">
         <span class="flexBR"></span>
 
-	    <div id="coords" style="opacity: 1" class="willFadeInFromJS is-mobile">
-            <span id="">
-                [
-            </span>
-            <span class="coord1 coord1-num"></span>
-            <span id="">
-                ,
-            </span>
-            <span class="coord2 coord2-num"></span>
-            <span id="">
-                ,
-            </span>
-            <span class="coord3 coord3-num"></span>
 
-            <span id="coord4Reveal" class="coord4Reveal" style="font-size: 0px;">
-                <span id="coord4comma">
-                    ,
-                </span>
-                <span class="coord4 coord4-num"></span>
-            </span>
-            <span id="">
-                ]
-            </span>
-	    </div>
+        <div class="overlappingItemContainer">
+            <div class="slideTextItem"> <!-- slides with the coordinates -->
+	            <div id="coords" style="opacity: 1" class="willFadeInFromJS is-mobile slideTextItem">
+                    <span id="">
+                        [
+                    </span>
+                    <span class="coord1 coord1-num"></span>
+                    <span id="">
+                        ,
+                    </span>
+                    <span class="coord2 coord2-num"></span>
+                    <span id="">
+                        ,
+                    </span>
+                    <span class="coord3 coord3-num"></span>
 
+                    <span id="coord4Reveal" class="coord4Reveal" style="font-size: 0px;">
+                        <span id="coord4comma">
+                            ,
+                        </span>
+                        <span class="coord4 coord4-num"></span>
+                    </span>
+                    <span id="">
+                        ]
+                    </span>
+	            </div>
+                <div class="overlappingItemContainer slideTextItem"> <!-- slide text with the coordinates -->
+                    <div class="exp-slide slideTextItem">Finally, let's talk about what you've all been waiting for: four dimensions.
+                        <br><br>
+                        By now, you're probably familiar with this 3-dimensional <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system.
+                    </div>
+	                <div class="exp-slide slideTextItem">We already know that in an <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system, we can think of each point as a combination of points on three different number lines. Can we do the same thing for four dimensions?</div>
+	                <!-- <div class="exp-slide slideTextItem">We may not know how to visualize it...</div> -->
+	                <div class="exp-slide slideTextItem">Yup - to make a four-dimensional coordinate system, we can use four numbers instead of three. That's it! <br /></div>
+                    <div class="exp-slide slideTextItem"> </div>
+                    <div class="exp-slide slideTextItem"> </div>
+                    <div class="exp-slide slideTextItem"> </div>
+                    <div class="exp-slide slideTextItem"> </div>
 
-        <div class="hideWhenPresenting" style="opacity: 0"> <!-- these are for the benefit of web audiences, not talk --> 
-	        <div class="exp-slide">Finally, let's talk about four dimensions. 
-                <br>
-                As a reminder, here's how mathematicians think about three dimensions.
+                    <div class="exp-slide slideTextItem">To visualize a 4D shape in our 3D universe, we need some rule that tells us where each 4D point should be placed in 3D space, called a "projection". There's infinitely many ways to do this, but I'll show you two of them.</div>
+                    <div class="exp-slide slideTextItem">
+                        In an <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system, increasing a point's <span class="coord1">x</span> coordinate will move that point in the direction of the <span class="coord1">x</span> axis. Can we add a <span class="coord4">fourth</span> direction to an <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system to represent a <span class="coord4">fourth</span> coordinate?
+                    </div>
+                    <div class="exp-slide slideTextItem">
+                        Let's try choosing a <span class="directionVecColor">random direction</span> to represent our <span class="coord4">new coordinate axis</span>. Following the theme of "letters at the end of the alphabet", let's call this fourth coordinate "<span class="coord4">W</span>".
+                    </div>
+                    <div class="exp-slide slideTextItem">
+                        Now we can add our "<span class="coord4">w</span> axis" to our <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system, making an "<span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span><span class="coord4">W</span> coordinate system". 
+                        <br />
+                        <aside>
+                            Don't forget that you aren't seeing a real 4-dimensional XYZW coordinate system - just a 3D projection of it. In four dimensions, all four axes should make a right angle with every other axis, but that's impossible in our lame 3D universe. For us, this imperfection means that changing a point's <span class="coord4">W</span> coordinate will make it seem like the point's <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinates are changing too, unfortunately)
+                        </aside>
+                    </div>
+                    <div class="exp-slide slideTextItem">Here's how this visualization works: if a point's fourth coordinate goes up, we'll move that point in the direction of our "w axis".</div>
+                    <div class="exp-slide slideTextItem">Points with negative <span class="coord4">W</span> coordinates will be moved in the opposite direction.</div>
+                    <div class="exp-slide slideTextItem">If you halve the fourth coordinate, you'll move only half the distance along the "w axis", and so on.</div>
+                </div>
             </div>
-	        <div class="exp-slide">You can break this up into three different coordinates, each one a real number.</div>
-	        <!-- <div class="exp-slide">We may not know how to visualize it...</div> -->
-	        <div class="exp-slide">So how do mathematicians think about four dimensions? Buy adding another number. That's it! It almost seems simple when you think about it this way.</div>
 
+            <div class="overlappingItemContainer slideTextItem"> <!-- slides without the coordinates -->
+	            
+                <div class="exp-slide slideTextItem"> Now we can use this <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span><span class="coord4">W</span> coordinate system for something more fun: visualizing 4D shapes!</div>
+
+                <div class="exp-slide slideTextItem">Let's start with some simple patterns. To make a <span class="coord1"><b>1</b></span>-dimensional line, you take a point, make a copy that's moved along <span class="coord1">some direction</span>, and connect the two.</div>
+                <div class="exp-slide slideTextItem">To make a <span class="coord2"><b>2</b></span>-dimensional square, you take a <span class="coord1"><b>1</b></span>-dimensional line, make a copy in a second direction, and connect the two.</div>
+                <div class="exp-slide slideTextItem">
+                    To make a <span class="coord3"><b>3</b></span>-dimensional cube, you take a <span class="coord2"><b>2</b></span>-dimensional square, make a copy in a third direction, and connect the two.
+                    <br />
+                    So what happens if we continue the pattern?
+                </div>
+                <div class="exp-slide slideTextItem">
+                    Let's continue the pattern into the <span class="coord4"><b>4</b></span>th dimension: to make a <span class="coord4"><b>4</b></span>-dimensional <b>hypercube</b>, you take a <span class="coord3"><b>3</b></span>-dimensional cube, make a copy in a <span class="coord4">fourth direction</span>, and connect the two.
+                    <br />
+                    Looks cool, right?
+                </div>
+                <div class="exp-slide slideTextItem">
+                    (If it helps, you can think about it as two cubes with every point connected. I've faded out some of the edges to make it easier to see.)
+                </div>
+                <div class="exp-slide slideTextItem">
+                    This type of 4D visualization, where we move points a distance along <span class="directionVecColor">some direction</span> depending on their <span class="coord4">fourth coordinate</span>, is called an <b> orthographic projection</b>.
+                </div>
+                <div class="exp-slide slideTextItem">
+                    Of course, there was nothing special about the <span class="directionVecColor">random direction</span> we chose to represent the fourth dimension. If we change the <span class="directionVecColor">direction</span> we chose, we get different types of orthographic projection. The hypercube isn't moving - it's just the way we're visualizing four dimensions that's changing.
+                </div>
+                <div class="exp-slide slideTextItem">
+                    One other type of 4D visualization is <b>perspective projection</b>. In this type of projection, we divide the first three coordinates by the fourth coordinate, so points that are farther away in the fourth dimension seem smaller. 
+
+                    <aside>There's many different types of perspective projections; you can make other perspective projections by transforming the coordinates before and after dividing, but I won't talk about that here.</aside>
+                </div>
+                <div class="exp-slide slideTextItem">
+                    One fun thing that we can do with four-dimensional shapes is rotate them!
+                </div>
+                <div class="exp-slide slideTextItem">
+                    But first, let's remind ourselves what three-dimensional rotations are.
+                </div>
+                <div class="exp-slide slideTextItem">
+                    Here's some ways to rotate a 3D cube. 
+                </div>
+                <div class="exp-slide slideTextItem">
+                </div>
+            </div>
         </div>
 
-    <div class="exp-slide"> </div>
-    <div class="exp-slide"> </div>
-    <div class="exp-slide"> </div>
-    <div class="exp-slide"> </div>
+    </div>
+
+
 
 
 

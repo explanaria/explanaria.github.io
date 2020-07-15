@@ -222,13 +222,13 @@ class NonDecreasingDirector{
 
         for(var i=0;i<elemsToDisplayOnlyOnThisSlide.length;i++){
             elemsToDisplayOnlyOnThisSlide[i].style.opacity = 1;
-            elemsToDisplayOnlyOnThisSlide[i].style.pointerEvents = 'all';
+            elemsToDisplayOnlyOnThisSlide[i].style.pointerEvents = ''; //not "all", because that might override CSS which sets pointer-events to none
         }
 
         //items with class exp-slide
         if(slideNumber < this.slides.length){
             this.slides[slideNumber].style.opacity = 1;
-            this.slides[slideNumber].style.pointerEvents = 'all';
+            this.slides[slideNumber].style.pointerEvents = ''; //not "all", because that might override CSS which sets pointer-events to none
             this.scrollUpToTopOfContainer(this.slides[slideNumber]);
         }
 

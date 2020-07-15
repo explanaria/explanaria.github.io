@@ -109,7 +109,7 @@ html{
     top:0%;
     left:0%;
     right:100%;
-    bottom:100%;
+    bottom:0%;
 }   
 
 /* used in 2 directsum*/
@@ -217,7 +217,7 @@ html{
     height: 100%;
 }
 
-/*these may seem the same, but they're responsive differently on mobile */
+/*these may seem the same, but they're responsive differently on mobile. FullscreenShortPopup doesn't shrink when the window gets small, but fullscreenText does. */
 .fullscreenShortPopup{
     font-size: 2.5em;
 }

@@ -30,7 +30,7 @@ function ThreeasyEnvironment(canvasElem = null){
 	this.scene.add(this.camera);
 
 	//renderer
-	let rendererOptions = { antialias: true};
+	let rendererOptions = { alpha: true, antialias: true};
 
     if(!this.shouldCreateCanvas){
         rendererOptions.canvas = canvasElem;

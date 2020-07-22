@@ -341,7 +341,7 @@ class SurfaceOutput extends OutputNode{
 	}
 	set opacity(opacity){
 		this.material.opacity = opacity;
-		this.material.transparent = (opacity < 1) || (!this.showSolid);
+		this.material.transparent = (opacity < 1) || (!this._showSolid);
         this.material.depthWrite = !this.material.transparent; // only depthWrite if not transparent, so that things show up behind this
 
 		this.material.visible = opacity > 0;

@@ -9,6 +9,9 @@
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
 
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
 
   <link type="text/css" rel="stylesheet" href="../../src/style.css" />
 
@@ -26,8 +29,6 @@
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
     controls.enableKeys = false;
     controls.enableRotate = false;
-
-    if(screen && screen.orientation)screen.orientation.lock("landscape-primary");
 
 	console.log("Loaded.");
 
@@ -58,12 +59,8 @@
         }
 
         eraseSelf(){
-            EXP.TransitionTo(this.array.children[0],{'opacity':0});
-            EXP.TransitionTo(this.array.children[1].children[0],{'opacity':0});
-            window.setTimeout(function(){
-                this.array.children[0].removeSelfFromScene();
-                this.array.children[1].children[0].removeSelfFromScene();
-            }.bind(this),1050);
+            dir.TransitionTo(this.array.children[0],{'opacity':0});
+            dir.TransitionTo(this.array.children[1].children[0],{'opacity':0});
         }
         activate(t){
             let dt = Math.min(t - this.t,1/10);
@@ -167,7 +164,7 @@
 		//controls.update();
 	});
 
-    var dir = new EXP.NonDecreasingDirector();
+    var dir = new EXP.UndoCapableDirector();
 
 	async function animate(){
         await dir.begin();
@@ -178,17 +175,18 @@
 
 
         await dir.nextSlide();
-        await dir.nextSlide();
 
         await dir.nextSlide();
-        pendulum.paused=true;
-        EXP.TransitionTo(pendulum, {'theta': 1.6,'v_theta':0},500);
+        dir.TransitionTo(pendulum, {'paused':true});
+        dir.TransitionTo(pendulum, {'theta': 1.6,'v_theta':0},500);
 
         await dir.delay(1000);
         pendulum2 = new Pendulum(2,g, 0xffd701 - 0x220000, 0.9);
+        pendulum2.paused = true;
         objects.push(pendulum2);
 
         pendulum3 = new Pendulum(2,g, 0xffd701 - 0x002200, 0.9);
+        pendulum3.paused=true;
         objects.push(pendulum3);
 
         pendulum2.theta = 1.6;
@@ -197,12 +195,12 @@
         pendulum2.v_theta = 4.3;
         pendulum3.v_theta = 7;
 
-        [pendulum,pendulum2,pendulum3].forEach((i)=>{i.paused=true;})
+        [pendulum,pendulum2,pendulum3].forEach((i)=>{dir.TransitionTo(i, {'paused':true}, 1);})
 
         await dir.nextSlide();
-        [pendulum,pendulum2,pendulum3].forEach((i)=>{i.paused=false;})
+        [pendulum,pendulum2,pendulum3].forEach((i)=>{dir.TransitionTo(i, {'paused':false}, 1);})
 
-//EXP.TransitionTo(dynamics,{'expr':(i,t, velocity, theta) => [theta, velocity, theta]})
+//dir.TransitionTo(dynamics,{'expr':(i,t, velocity, theta) => [theta, velocity, theta]})
 
 		await dir.nextSlide();
         //fade out pendulums
@@ -214,99 +212,99 @@
         let cameraTarget = new THREE.Vector3(0,-1.5,0);
         let cameraPos = new THREE.Vector3(0,-1.5,15);
 
-        objects.splice(objects.indexOf(pendulum2), 1);
-        objects.splice(objects.indexOf(pendulum3), 1);
-        EXP.TransitionTo(three.camera.position,{'x':cameraPos.x,'y':cameraPos.y,'z':cameraPos.z},1500);
-        EXP.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},1500);
+        //objects.splice(objects.indexOf(pendulum2), 1);
+        //objects.splice(objects.indexOf(pendulum3), 1);
+        dir.TransitionTo(three.camera.position,{'x':cameraPos.x,'y':cameraPos.y,'z':cameraPos.z},1500);
+        dir.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},1500);
 
-        pendulum.renderSideways=true;
-        EXP.TransitionTo(pendulum.centerPos,{0:9.5,1:0,2:0}); //I really need an array-transition feature
-        await EXP.delay(1500);
+        dir.TransitionTo(pendulum, {'renderSideways':true});
+        dir.TransitionTo(pendulum.centerPos,{0:9.5,1:0,2:0}); //I really need an array-transition feature
+        await dir.delay(1500);
 
         await dir.nextSlide();
         controls.target.copy(cameraTarget);
-        controls.enableRotate = true;
+        dir.TransitionTo(controls, {'enableRotate':true});
 
-        EXP.TransitionTo(phasePointOutput, {"opacity":1});
-        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,0,0]},1);
-        EXP.TransitionTo(angleLabel.material,{'opacity':1});
-        EXP.TransitionTo(angleZero.material,{'opacity':1});
-
-       await dir.nextSlide();
-        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,0,0]},500);
-        EXP.TransitionTo(momentumLabel.material,{'opacity':1});
-        EXP.TransitionTo(velocityZero.material,{'opacity':1});
-        await EXP.delay(600);
-        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,velocity,0]},500);
+        dir.TransitionTo(phasePointOutput, {"opacity":1});
+        dir.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,0,0]},1);
+        dir.TransitionTo(angleLabel.material,{'opacity':1});
+        dir.TransitionTo(angleZero.material,{'opacity':1});
 
        await dir.nextSlide();
-        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,0.01]});
-        EXP.TransitionTo(output, {"opacity":0.7});
-        EXP.TransitionTo(phasePointTrail, {"opacity":1});
+        dir.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,0,0]},500);
+        dir.TransitionTo(momentumLabel.material,{'opacity':1});
+        dir.TransitionTo(velocityZero.material,{'opacity':1});
+        await dir.delay(600);
+        dir.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,velocity,0]},500);
+
+       await dir.nextSlide();
+        dir.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,0.01]});
+        dir.TransitionTo(output, {"opacity":0.7});
+        dir.TransitionTo(phasePointTrail, {"opacity":1});
 
        await dir.nextSlide();
 
         await dir.nextSlide();
-        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
+        dir.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
 
         await dir.nextSlide();
-      EXP.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':1.3},2000);
-        EXP.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.1,'y':0,'z':0},2000);
+      dir.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':1.3},2000);
+        dir.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.1,'y':0,'z':0},2000);
 
-        await EXP.delay(2000);
-        new EXP.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x,y,1.0]});
+        await dir.delay(2000);
+        dir.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x,y,1.0]});
 
         await dir.nextSlide();
-        EXP.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
-        EXP.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},3000);
+        dir.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
+        dir.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},3000);
         await dir.nextSlide();
-        EXP.TransitionTo(three.camera.position,{'x':0,'y':1.5,'z':20},3000);
+        dir.TransitionTo(three.camera.position,{'x':0,'y':1.5,'z':20},3000);
 
         //give pendulum more energy
-        pendulum.paused=true;
-        EXP.TransitionTo(pendulum, {'theta': 2,'v_theta':6});
-        EXP.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x*1.2,y*1.6,3.1]});
-        await EXP.delay(1500);
-        pendulum.paused=false;
+        dir.TransitionTo(pendulum, {'paused':true});
+        dir.TransitionTo(pendulum, {'theta': 2,'v_theta':6});
+        dir.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x*1.2,y*1.6,3.1]});
+        await dir.delay(1500);
+        dir.TransitionTo(pendulum, {'paused':false});
 
         await dir.nextSlide();
         await dir.nextSlide();
         await dir.nextSlide();
         //different hamiltonian, measured in height
 
-        EXP.TransitionTo(momentumLabel.material,{'opacity':0});
-        EXP.TransitionTo(velocityLabel.material,{'opacity':1});
-        EXP.TransitionTo(angleLabel.material,{'opacity':0});
-        EXP.TransitionTo(heightLabel.material,{'opacity':1});
-        EXP.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
+        dir.TransitionTo(momentumLabel.material,{'opacity':0});
+        dir.TransitionTo(velocityLabel.material,{'opacity':1});
+        dir.TransitionTo(angleLabel.material,{'opacity':0});
+        dir.TransitionTo(heightLabel.material,{'opacity':1});
+        dir.TransitionTo(three.camera.position,{'x':0,'y':-1.5,'z':15},3000);
 
-        pendulum.paused = true;
-        EXP.TransitionTo(pendulum, {'theta': 1.6,'v_theta':0},500);
-        await EXP.delay(1000);
-        pendulum.paused=false;
+        dir.TransitionTo(pendulum, {'paused':true});
+        dir.TransitionTo(pendulum, {'theta': 1.6,'v_theta':0},500);
+        await dir.delay(1000);
+        dir.TransitionTo(pendulum, {'paused':false});
         
-        EXP.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x*1.2,y*2,1]});
+        dir.TransitionTo(planeDefinition,{'expr':(i,t,x,y)=>[x*1.2,y*2,1]});
         //Notice, by the way, that this works no matter what quantities we choose to graph!
-        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[1-Math.cos(theta),velocity,(PE+KE)/g]});
+        dir.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[1-Math.cos(theta),velocity,(PE+KE)/g]});
         await dir.nextSlide();
         await dir.nextSlide();
 
         //cool glamour shot
 
-        EXP.TransitionTo(momentumLabel.material,{'opacity':1});
-        EXP.TransitionTo(velocityLabel.material,{'opacity':0});
-        EXP.TransitionTo(angleLabel.material,{'opacity':1});
-        EXP.TransitionTo(heightLabel.material,{'opacity':0});
-    EXP.TransitionTo(planeDefinition.children[0], {'opacity':0});
-      EXP.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':10},2000);
-        EXP.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.5,'y':0,'z':0},2000);
-        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
+        dir.TransitionTo(momentumLabel.material,{'opacity':1});
+        dir.TransitionTo(velocityLabel.material,{'opacity':0});
+        dir.TransitionTo(angleLabel.material,{'opacity':1});
+        dir.TransitionTo(heightLabel.material,{'opacity':0});
+    dir.TransitionTo(planeDefinition.children[0], {'opacity':0});
+      dir.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':10},2000);
+        dir.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.5,'y':0,'z':0},2000);
+        dir.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
         //await dir.nextSlide();
 
 	}
 	animate();
   </script>
-     <a href="../../index.html"role="button"><img src="../BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
+    <a href="../../index.html"role="button"><img src="../BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
 
 	<section id="label1" class="exp-label exp-slide">
 			<h1>How Manifolds help Aim Wrecking Balls</h1>
@@ -319,13 +317,9 @@
 	</section>
 
 	<section id="label1" class="exp-label exp-slide" style="opacity:0">
-        As you can see, as it moves, the angle the pendulum makes with the horizontal plane changes.
-	</section>
-
-	<section id="label1" class="exp-label exp-slide" style="opacity:0">
         <div style="position:relative"><img style="position:fixed;top:5%;left:5%;" src="pause-small.png"></img></div>
 
-	    If I take a pendulum at this angle and let this pendulum go, how do you think it'll move?
+			As you can see, as it moves, the angle the pendulum makes with the horizontal plane changes. If I take a pendulum at this angle and let this pendulum go, how do you think it'll move?
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">

@@ -223,7 +223,7 @@
         EXP.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},1500);
 
         pendulum.renderSideways=true;
-        EXP.TransitionTo(pendulum.centerPos,{0:9.5,1:0,2:0}); //I really need an array-transition feature
+        EXP.TransitionTo(pendulum.centerPos, {0:9.5,1:0,2:0}); //need to do it this way because you can't overwrite pendulum.centerPos or else pendulum.array[0] will point to the old version. Curse you, javascript!
         await EXP.delay(1500);
 
         await dir.nextSlide();
@@ -243,13 +243,14 @@
         EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[0,velocity,0]},500);
 
        await dir.nextSlide();
-        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,0.01]});
-        EXP.TransitionTo(greenPhasePlane, {"opacity":0.7});
         EXP.TransitionTo(phasePointTrail, {"opacity":1});
+        EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,0.01]});
 
        await dir.nextSlide();
 
         await dir.nextSlide();
+        EXP.TransitionTo(greenPhasePlane, {"opacity":0.7});
+        await EXP.delay(1000);
         EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
 
         await dir.nextSlide();
@@ -292,7 +293,6 @@
         //Notice, by the way, that this works no matter what quantities we choose to graph!
         EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[1-Math.cos(theta),velocity,(PE+KE)/g]});
         await dir.nextSlide();
-        await dir.nextSlide();
 
         //cool glamour shot
 
@@ -300,8 +300,8 @@
         EXP.TransitionTo(velocityLabel.material,{'opacity':0});
         EXP.TransitionTo(angleLabel.material,{'opacity':1});
         EXP.TransitionTo(heightLabel.material,{'opacity':0});
-    EXP.TransitionTo(planeDefinition.children[0], {'opacity':0});
-      EXP.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':10},2000);
+        //EXP.TransitionTo(planeDefinition.children[0], {'opacity':1});
+        EXP.TransitionTo(three.camera.position,{'x':0,'y':-15,'z':10},2000);
         EXP.TransitionTo(three.camera.rotation,{'x':Math.PI/2-0.5,'y':0,'z':0},2000);
         EXP.TransitionTo(plotPhase,{'expr': (i,t,KE,PE,velocity,theta)=>[theta,velocity,(PE+KE)/g]});
         //await dir.nextSlide();
@@ -380,7 +380,7 @@
      With this much energy, the slice gets high enough that the path the pendulum takes stops being an ellipse and instead becomes an infinitely long line. And that tells us that angle will get bigger and bigger, and this corresponds to the over-the-top pendulum motion we saw earlier!
 	</section>
 	<section class="exp-label exp-slide" style="opacity:0">
-        This green "energy graph" you're looking at right now is called "phase space". But more importantly - it's also a two-dimensional manifold!
+        This green "energy graph" you're looking at right now is called "phase space", and it's a very useful idea. Phase space lets us study every possible state a system like this pendulum can be in at once - and even better, it lets us take knowledge about surfaces (and higher-dimensional spaces) and apply them to problems like this pendulum.
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
@@ -388,15 +388,11 @@
 	</section>
 
 <section class="exp-label exp-slide" style="opacity:0">
-        But the cool thing about manifolds is that the coordinates you choose don't change the underlying mathematical space. Here I'll measure height on the x-axis instead of angle - the slicing strategy of hamiltonian mechanics still gives you the path the pendulum follows in phase space.
+        It turns out that Hamiltonian mechanics still gives you the right answer. If you change your x-axis to measure height instead of angle, the slicing strategy of hamiltonian mechanics still gives you the path the pendulum follows in phase space. Somehow we're capturing some property of the underlying space, which isn't affected by the way we choose our coordinate system.
 	</section>
 
 	<section class="exp-label exp-slide" style="opacity:0">
-        That's the curious thing about manifolds: you can transform them in weird ways, but some properties  - such as the path a pendulum takes - stay the same even if you deform it.
-	</section>
-
-	<section class="exp-label exp-slide" style="opacity:0">
-        So what is a manifold? The answer: A (2D) manifold is a surface which you can get by plugging in two coordinates (such as angle and momentum) into a nice and smooth function.
+        Mathematicians use the idea of "manifolds" to study smooth spaces like this one. Phase space shows you why they're so useful: you can transform them in weird ways, but some properties  - such as the path a pendulum traces - stay the same, no matter the coordinates you choose to measure with.
 	</section>
 </body>
 </html>

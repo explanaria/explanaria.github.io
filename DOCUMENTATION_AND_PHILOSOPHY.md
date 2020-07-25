@@ -18,7 +18,32 @@ Let's say a mathematician wants to graph a function, such as `f(x) = x^3`. Along
 
 In Explanaria, domains, functions, and ranges are represented as three different categories of objects. Domains represent the inputs where the function should be called, functions run a javascript function, and ranges are passed to a subclass of `EXP.OutputNode` (such as a `EXP.PointOutput` or `EXP.LineOutput`) which represents its output onscreen. 
 
-This domain-function-range chain is at the core of how Explanaria operates internally. `Node`s must be connected via .add() to form such a chain. Calling `.activate()` on a Domain will recursively call and update each of its children in turn.
+For example, let's say we want to graph `f(x) = x^3`. Explanaria represents this as an instance of an `EXP.Transformation` class:
+
+```
+var xCubed = new EXP.Transformation({'expr': (i,t,x) => x*x*x});
+```
+
+But this isn't enough to draw something. What range of `x` values will the function be evaluated on?Should the result be displayed as points or lines? To answer these questions, Explanaria needs some Domains and OutputNode objects. Let's graph this function over the interval `[0,4]` and output it as a line:
+
+```
+var output = new EXP.LineOutput({width: 5, color: 0xff0000});
+var domain = new EXP.Area({bounds: [[0,4]], numItems: 16});
+```
+
+`EXP.Area` represents an interval like `[0,4]` (or multidimensional interval like `[0,4] x [1,5]`, which covers a 2D area). Because of `numItems: 16`, this interval will be divided into 16 discrete steps. This means `domain` will call xCubed with `x=0`, then `x=0.25`, then `x=0.5`, and so on until it reaches `x=4`, at which point it will have run exactly `16` times. For more detail, increase `numItems`.
+
+Finally, we need to connect the objects we've created together so that they all know about one another. We can do this with `add()`.
+
+```
+domain.add(xCubed).add(output);
+```
+
+This line of code creates a chain: `domain -> xCubed -> output`. Internally, this is stored as a [tree](https://en.wikipedia.org/wiki/Tree_(data_structure)) - you can see that `domain.children` is now `[xCubed]`, while `xCubed.parent` is `domain`. Now that the objects have been added to one another, calling `domain.update()` will first cause `xCubed` to run, and that will cause `output` to run and draw a line.
+
+This domain-function-range chain is at the core of how Explanaria operates internally. `Node`s must be connected via .add() to form such a chain. Calling `.activate()` on a Domain will recursively call and update each of its children in turn. 
+
+Now everything is set up - all you need to do is call `domain.activate()` every frame, and Explanaria will render your function. To make this easier, Explanaria comes with `EXP.setupThree()`, which will take care of creating a `THREE.js` environment (which explanaria needs to run). Using `setupThree` will create a render loop and handle drawing to the screen every frame, and you can run a function every frame using `three.on("update", function(time){ doWhateverYouWant(time.t) } */);`.
 
 # Example code
 
@@ -80,16 +105,16 @@ See the examples in the `/examples` folder for more!
 	    data: [1,2,3,4,5]
 	 });
 	 //data can also be an array of vectors:
-	 new EXP.Array({
+	new EXP.Array({
 	    data: [[0,1,2],[3,4,5]]
-	 });
+	});
     ```
 
 * EXP.HistoryRecorder
 
     Stores the last few outputs of an EXP.Transformation(). Useful for adding a LineOutput trail behind a PointOutput, for example. 
 
-    Like a Transformation, this to be connected to a Domain to work, but it also acts as a Domain in its own right. If a HistoryRecorder's parent is an n-dimensional Domain, then the HistoryRecorder acts as an (n+1)-dimensional domain. Any child's `evaluateSelf()` will be called with n arguments, same as the input, but it'll be called `memoryLength` times per time the `HistoryRecorder`'s `evaluateSelf()` is called.
+    Like a Transformation, this to be connected to a Domain to work, but it also acts as a Domain in its own right. If a HistoryRecorder's parent is an n-dimensional Domain, then the HistoryRecorder acts as an (n+1)-dimensional domain. Any child's `evaluateSelf()` will be called in the same way as if the child was connected to this domain's parent itself, with the same number of arguments, but for every time the `HistoryRecorder`'s `evaluateSelf()` is called, its childrens' `evaluateSelf()` function will be called `memoryLength` times.
 
     Parameters:
         * memoryLength: integer representing the number of past values to remember
@@ -138,12 +163,12 @@ See the examples in the `/examples` folder for more!
 	```
 	var norm = new EXP.Transformation({ 'expr':(i,t,x,y,z) => Math.sqrt(x*x+y*y+z*z)});
 	var norm2 = norm.makeLink();
-    //can now add norm and norm2 to different Domains, or connect them to different outputs...
+    //you can now add norm and norm2 to different Domains, or connect them to different outputs, and adding children to norm won't affect norm2 at all...
 
     await EXP.delay(1000);
     //After a while, perhaps we want to demonstrate the manhattan metric
     EXP.TransitionTo(norm, {'expr':(i,t,x,y,z) => Math.abs(x) + Math.abs(y) + Math.abs(z)});
-    //norm2's expr() is now also the function (i,t,x,y,z) => Math.abs(x) + Math.abs(y) + Math.abs(z)!
+    //norm2's expr() is now also the function (i,t,x,y,z) => Math.abs(x) + Math.abs(y) + Math.abs(z)! 
 	```
 
 ## Outputs
@@ -165,7 +190,7 @@ See the examples in the `/examples` folder for more!
 
 	Renders a function's output as lines. These lines are resolution-independent and 
 
-	Technical note: LineOutput renders lines connecting points where the last coordinate varies - for 2-dimensional output, lines will connect the elements of the domain with the same y-value, for example. This is done to ensure that 1-d intervals show up as lines. If you ever want to switch the dimension where lines are drawn, simply permute basis elements using a function such as `(i,t,x,y) => [y,x]`.
+	Technical note: LineOutput renders lines connecting points where the last coordinate varies - for 2-dimensional output, lines will connect the elements of the domain with the same y-value, for example. This is done to ensure that 1-d intervals show up as lines. If you ever want to switch the dimension where lines are drawn, switch the coordinates using a function such as `(i,t,x,y) => [y,x]`.
 
 	Parameters:
 	* width: number representing the width of the lines to be drawn. Currently in units of pixels, meaning the output will depend on the user's screen resolution. 
@@ -196,17 +221,10 @@ See the examples in the `/examples` folder for more!
 	* color: a hex number or THREE.Color representing the solid color of the surface.
 	* opacity: number between 0 and 1 representing how transparent the surface is. 1 = fully opaque, 0 = invisible.
     * showGrid: boolean: whether or not to show grid lines. Default: true
-    * showSolid: boolean: whether to show solid color in between the grid lines, or to make the non-grid-lines portion transparent instead. Default: true.
-    * gridColor: hex code or THREE.Color(). If showGrid is true, grid lines will appear over this surface. gridColor determines their color 
-    * gridSquares: number representing the total number of squares along one side to show. Default: 16
+    * showSolid: boolean: whether to show solid color (as determined by the `color` argument) in between the grid lines. If false, the surface will appear as grid lines with transparent portions in between them. Default: true.
+    * gridColor: hex code or THREE.Color(). By default, if showGrid is true, the surface will render with grid lines, and the color of those grid lines is calculated automatically based on `color`. If `gridColor` is declared, it will override the default color and color the grid lines with `gridColor`.
+    * gridSquares: number representing the total number of squares along one side to show. There will be `gridSquares`^2 squares in total. Default: 16
     * gridLineWidth: number representing the width of a gridline. Default: 0.15
-
-
-				
-				showGrid: boolean. If true, will display a gridColor-colored grid over the surface. Default: true
-				showSolid: boolean. If true, will display a solid surface. Default: true
-				gridSquares: number representing how many squares per dimension to use in a rendered grid
-				gridLineWidth: number representing how many squares per dimension to use in a rendered grid
 
     Example usage:
 
@@ -286,7 +304,7 @@ For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo 
     EXP.TransitionTo(array, [4,5,6], 1000);
     ```
 
-Technical note: TransitionTo assumes `target[key]` is either a number or a function (and if a function, it is assumed that this function always returns an array of numbers). Arrays of numbers are not yet supported, but as a workaround one can specify numbers as keys in an object: {0: 2, 1:3, 2:5} will result in an array of [2,3,5]. This is rather suboptimal, and should hopefully be addressed soon.
+Technical note: TransitionTo assumes `target[key]` is either a number, boolean, array, or a function (and if a function, it is assumed that this function always returns an array of numbers). If `target` is an array, it's not yet supported, but as a workaround one can either wrap the array in an object `{myArray: [1,2,3]}`), or one can specify numbers as keys in an object: `EXP.TransitionTo(target, {0: 2, 1:3, 2:5})` will result in an array of [2,3,5]. This is a bit suboptimal.
 
 
 # Other things

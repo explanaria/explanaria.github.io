@@ -1,7 +1,3 @@
-.hideWhenPresenting{
-    daisplay: none;
-}
-
 /* text */
 .textContainer{
   display: grid;
@@ -15,6 +11,15 @@
   margin: 0;
   font-family: "Computer Modern Sans";
   margin-bottom: 2.5em; /*dodge the next/back arrows */
+}
+
+.nextbtn{
+    pointer-events:all;
+    position:absolute;
+    bottom:0.5em;
+    right:0.5em;
+    font-weight:bold;
+    text-decoration:underline;
 }
 
 

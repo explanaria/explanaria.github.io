@@ -70,8 +70,6 @@ class SurfaceOutput extends OutputNode{
 		    this._uniforms.gridColor.value = new THREE.Color(this._gridColor);
         }
 
-		if(!this.showSolid)this.material.transparent = true;
-
 		getThreeEnvironment().scene.add(this.mesh);
 	}
     toNum(x){

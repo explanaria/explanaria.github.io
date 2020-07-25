@@ -90,6 +90,7 @@ html{
     flex-wrap: wrap;
     width:100%;
     justify-content: center;
+    pointer-events: none;
 }
 
 #coords:nth-child(2n){

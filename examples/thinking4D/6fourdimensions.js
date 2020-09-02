@@ -188,6 +188,7 @@ function setup(){
     Array.prototype.slice.call(document.getElementsByClassName("coord3")).forEach( (elem) => { elem.style.color = coordinateLine3Color; } );
     Array.prototype.slice.call(document.getElementsByClassName("coord4")).forEach( (elem) => { elem.style.color = coordinateLine4Color; } );
     Array.prototype.slice.call(document.getElementsByClassName("directionVecColor")).forEach( (elem) => { elem.style.color = orthographic4VecColor; } );
+    Array.prototype.slice.call(document.getElementsByClassName("planeOfRotationGraphicColor")).forEach( (elem) => { elem.style.color = planeOfRotationColor; } );
 
 	presentation = new EXP.UndoCapableDirector();
 
@@ -468,6 +469,8 @@ async function animateBackTo3DEmbedding(){
     presentation.TransitionTo(window, {'pointPath':(i,t,x) => fourDDemonstrateAxisHalfPoint},1000);
 
     await presentation.nextSlide();
+
+    //the rest of the presentation code is in 7 visualizing4d.js
 }
 
 window.addEventListener("load",function(){

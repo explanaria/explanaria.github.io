@@ -20,6 +20,7 @@ var vShader = [
 "}"].join("\n")
 
 var fShader = [
+"#extension GL_OES_standard_derivatives : enable",
 "varying vec3 vNormal;",
 "varying vec3 vPosition;",
 "varying vec2 vUv;",
@@ -40,9 +41,9 @@ var fShader = [
 "  return 1.0 - c * c;",
 "}",
 
-"vec4 getShadedColor(vec4 rgba) { ",
-"  vec3 color = rgba.xyz;",
-"  vec3 color2 = offSpecular(rgba.xyz);",
+"vec4 getShadedColor(vec3 rgb) { ",
+"  vec3 color = rgb.xyz;",
+"  vec3 color2 = offSpecular(rgb.xyz);",
 
 "  vec3 normal = normalize(vNormal);",
 "  vec3 light = normalize(vLight);",
@@ -55,7 +56,7 @@ var fShader = [
 "  float rimLighting = max(min(1.0 - side*dot(normal, light), 1.0),0.0);",
 
 "	float specular = max(0.0, abs(cosine) - 0.5);", //double sided specular
-"   return vec4(diffuse*color + 0.9*rimLighting*color + 0.4*color2 * specular, rgba.a);",
+"   return vec4(diffuse*color + 0.9*rimLighting*color + 0.4*color2 * specular,1.0);",
 "}",
 
 // Smooth HSV to RGB conversion from https://www.shadertoy.com/view/MsS3Wc
@@ -77,22 +78,20 @@ var fShader = [
 "}",
  //chooses the color for the gridlines by varying lightness. 
 //NOT continuous or else by the intermediate function theorem there'd be a point where the gridlines were the same color as the material.
-"vec3 gridLineColor(vec3 color){",
-" vec3 hsv = rgb2hsv(color.xyz);",
+"vec3 autoCalculatedGridLineColor(vec3 diffuseColor){",
+" vec3 hsv = rgb2hsv(diffuseColor.xyz);",
 " //hsv.x += 0.1;",
 " if(hsv.z < 0.8){hsv.z += 0.2;}else{hsv.z = 0.85-0.1*hsv.z;hsv.y -= 0.0;}",
-" return hsv2rgb_smooth(hsv);",
+" vec3 autoCalculatedColor = hsv2rgb_smooth(hsv);",
+" return mix(autoCalculatedColor, diffuseColor, (1.0-showSolid)*(1.0-useCustomGridColor));", //if showSolid is 0.0 and useCustomGridColor is 0.0, just use the diffuse color as the grid color
 "}",
 
-"vec4 renderGridlines(vec4 existingColor, vec2 uv, vec4 solidColor) {",
-"  vec2 distToEdge = abs(mod(vUv.xy*gridSquares + lineWidth/2.0,1.0));",
-"  vec3 chosenGridLineColor = mix(gridLineColor(solidColor.xyz), gridColor, useCustomGridColor); ", //use either gridLineColor() or override with custom grid
-"  vec3 blendedGridLine = showSolid * chosenGridLineColor + (1.0-showSolid)*solidColor.xyz;", //if showSolid =0, use solidColor as the gridline color, otherwise shade
-
-"  if( distToEdge.x < lineWidth || distToEdge.y < lineWidth){",
-"    return mix(existingColor, vec4(blendedGridLine, 1.0),showGrid);",
-"  }",
-"  return existingColor;",
+"vec4 renderGridlines(vec4 existingColor, vec2 uv, vec3 chosenGridLineColor) {",
+"  vec2 vdistToGridEdge = (0.5-abs(mod(vUv.xy*gridSquares, 1.0)-0.5));", //thanks, desmos
+"  float distToGridEdge = min(vdistToGridEdge.x,vdistToGridEdge.y);",
+"  vec4 blendedGridLineColor = showGrid * vec4(chosenGridLineColor,1.0) + (1.0-showGrid)*existingColor.rgba;", //if showGrid =0, use solidColor as the gridline color, hiding the grid
+"  float blendBetweenGridColorVsSolidColorFactor = (smoothstep(lineWidth-1.*fwidth(distToGridEdge), lineWidth, distToGridEdge));", //if distToEdge.x < lineWidth || distToEdge.y < lineWidth, but with a smoothstep
+"  return mix(blendedGridLineColor,existingColor,blendBetweenGridColorVsSolidColorFactor);",
 "}",
 /*
 "vec4 getShadedColorMathbox(vec4 rgba) { ",
@@ -115,9 +114,10 @@ var fShader = [
 //"  //gl_FragColor = vec4(vNormal.xyz, 1.0); // view debug normals",
 //"  //if(vNormal.x < 0.0){gl_FragColor = vec4(offSpecular(color.rgb), 1.0);}else{gl_FragColor = vec4((color.rgb), 1.0);}", //view specular and non-specular colors
 //"  gl_FragColor = vec4(mod(vUv.xy,1.0),0.0,1.0); //show uvs
-"  vec4 solidColor = vec4(color.rgb, showSolid);",
-"  vec4 solidColorOut = showSolid*getShadedColor(solidColor);",
-"  vec4 colorWithGridlines = renderGridlines(solidColorOut, vUv.xy, solidColor);",
+"  vec4 solidColor = showSolid*showSolid*vec4(color.rgb, 1.0);",
+"  vec4 solidColorOut = showSolid*getShadedColor(color.rgb);",
+"  vec3 chosenGridLineColor = mix(autoCalculatedGridLineColor(color.rgb), gridColor, useCustomGridColor); ", //use either autoCalculatedGridLineColor(color) or override with user-specified gridColor variable.
+"  vec4 colorWithGridlines = renderGridlines(solidColorOut, vUv.xy, chosenGridLineColor);",
 "  colorWithGridlines.a *= opacity;",
 "  gl_FragColor = colorWithGridlines;",	
 "}"].join("\n")

@@ -54,7 +54,6 @@ export class VectorOutput extends LineOutput{
             this.arrowheads[i] = new THREE.Mesh(this.coneGeometry, this.arrowMaterial);
             this.mesh.add(this.arrowheads[i]);
         }
-        console.log("number of arrowheads (= number of lines):"+ this.numArrowheads);
     }
     evaluateSelf(i, t, x, y, z){
         //it's assumed i will go from 0 to this.numCallsPerActivation, since this should only be called from an Area.

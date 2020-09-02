@@ -19,6 +19,8 @@ let grayProjectionVisualizingAxes = null, R3Rotation=null, inwardsLineControl = 
 let shadowAxes = null, shadowAxesParent=new THREE.Object3D(); //axes to make understanding 4D motion a bit easier
 let shadowPlane = null;
 
+let planeOfRotation = null, planeOfRotationGraphicTransformation=null;
+
 
 const zeroWColor = new THREE.Color(coordinateLine4ZeroColor);
 const oneWColor = new THREE.Color(coordinateLine4Color);
@@ -105,6 +107,36 @@ function rotationAll3DAxesSequentially(){
         }
     }
 }
+
+
+//functions for the plane-of-rotation plane
+function showPlaneThatrotationAll3DAxesSequentiallyIsRotatingAbout(){
+    return function(i,t, x,y){
+        //NOTE: this technically teleports from pi/2 rotation to 0 rotation. 
+        let numSecondsPerHalfRotation = 2;
+        let animationFactor = t/numSecondsPerHalfRotation % 3;
+        //first show an XY rotation, then YZ, then XZ, in sequence
+        if(animationFactor < 1){
+            return [x,y,0];
+        }else if(animationFactor < 2){
+            return [0,x,y];
+        }else{ //animationFactor < 3
+            return [x, 0,y];
+        }
+    }
+}
+function showZWPlane(){
+    //z axis is in the direction of the z axis, w axis is in the direction of whatever userParams.orthographic4Vec is.
+    //to make a clean plane, we orthonormalize these vectors! practical application of linear algebra: making diagrams clean.
+    return function showZWPlane(i,t,x,y){
+        let wDirection = EXP.Math.clone(userParams.orthographic4Vec);
+        wDirection[2] = 0; //grahm shmidt time: subtracting the projection onto [0,0,1] for lazybones like me
+        let norm = Math.sqrt(wDirection[0]*wDirection[0]+wDirection[1]*wDirection[1]);
+        let wDirectionComponentOfPlane = [wDirection[0]*x/norm,wDirection[1]*x/norm,0];
+        return EXP.Math.vectorAdd([0,0,y], wDirectionComponentOfPlane); 
+    }
+}
+
 
 
 function R4EmbeddingFunc(i,t,x,y,z,w){
@@ -262,6 +294,18 @@ function setup4DAxes(){
     shadowPlane.activate(0);
     shadowAxesParent.add(flatPlaneMesh);
     shadowAxesParent.add(flatPlaneMesh2);
+
+
+    planeOfRotation = new EXP.Area({bounds: [[-2,2],[-2,2]], numItems: 2});
+    planeOfRotationGraphicTransformation = new EXP.Transformation({expr: (i,t,x,y) => [0,0,0]})
+    planeOfRotation.add(planeOfRotationGraphicTransformation).add(new EXP.SurfaceOutput({color: new THREE.Color(planeOfRotationColor), showSolid: false, gridSquares: 1, opacity: 0.7, gridLineWidth:0.2}));
+    objects.push(planeOfRotation);
+    planeOfRotation.getDeepestChildren().forEach((child) => axesParent.add(child.mesh)); //allow rotating the plane
+
+    /*
+    planeOfRotationGraphicTransformation.add(new EXP.SurfaceOutput({color: new THREE.Color(0xff0000), gridColor: new THREE.Color(0x000000), showSolid: false, gridSquares: 2, opacity: 0.3}));
+    shadowAxesParent.add(planeOfRotationGraphicTransformation.children[1].mesh);
+    */
 
 
     //a separate coordinate system that shows the type of 4D projection being used
@@ -484,6 +528,7 @@ async function animate4DRotations(){
     await presentation.nextSlide();
 
     presentation.TransitionTo(R4Rotation, {'expr': rotationAll3DAxesSequentially()})
+    presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': showPlaneThatrotationAll3DAxesSequentiallyIsRotatingAbout()})
     await presentation.nextSlide();
 
     //"those rotations don't change in 4D"
@@ -496,20 +541,24 @@ async function animate4DRotations(){
     //thing #1: ortho rotation!
 
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': showZWPlane()})
     await presentation.nextSlide();
 
     //perspective OH NO EVERYTHING GOES WRONG because we animate through w=0
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0)});
+    presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': (i,t,x,y)=>[0,0,0]}) //no rotation graphic shown
     await animateTo4DPerspective();
     await presentation.nextSlide();
 
     //if we add 1 to w, we're fine
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': (i,t,x,y)=>[0,0,0]}) //no rotation graphic shown
     await presentation.nextSlide();
 
     //now introduce a 5-cell?
 
     await presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w) => [x,y,z,w]});
+    presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': (i,t,x,y)=>[0,0,0]}) //no rotation graphic shown
     await presentation.nextSlide();
 }
 
@@ -559,10 +608,12 @@ async function animateFiveCell(){
 
     //now that a fivecell is here let's rotate it
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0)});
+    presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': showZWPlane()})
     await presentation.nextSlide();
 
     //perspective too, that's cool
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
+    presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': (i,t,x,y)=>[0,0,0]}) //no rotation graphic shown during perspective projection, it's just a line
     await animateTo4DPerspective();
 
     //LAST-MINUTE ADDITION: 3-torus
@@ -570,6 +621,7 @@ async function animateFiveCell(){
 
 
     presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w) => [x,y,z,w]});
+    presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': (i,t,x,y)=>[0,0,0]}) //no rotation graphic shown
     presentation.TransitionTo(hypercube.objectParent.position, {x:6,y:1}, 1000);
     presentation.TransitionTo(fivecell.objectParent.position, {x:3,y:1}, 1000);
 

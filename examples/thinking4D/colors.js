@@ -48,6 +48,8 @@ coordinateLine4NegativeColor = 'hsl('+(205+100)+', 85%, 40%)'
 
 let orthographic4VecColor = 'hsl('+(205+160)+', 99%, 50%)'; //red
 
+let planeOfRotationColor = '#AF6E8A'
+
 /*
 // green -> red
 coordinateLine4Color = 'hsl(140, 70%, 60%)';

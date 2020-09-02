@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - To Higher Dimensions!</title>
+
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/socket.io.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+
+  <script src="colors.js"></script>
+  <script src="sliders.js"></script>
+  <script src="4.5 3dcharts.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <style>
+
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
+    .nextbtn{
+        pointer-events:all;
+    }
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart canvasGrid">
+        <div class="exp-text fullscreenText manifoldComparisonChart" style="padding-bottom:0; padding-top:0;">
+            <h1> Manifolds in Higher Dimensions</h1>
+            <br style="height:50%">
+            <div class="level columns is-mobile" style="border-bottom: 1px solid #555">
+                <div class="column smolColumn" style="opacity:0"><aside>n-manifolds</aside></div> <!-- to make columns line up. sorry screenreaders -->
+                <div class="column"><div>Using these...</div></div>
+                <div class="column smolSymbolColumn"></div>
+                <div class="column"><div>We can study these</div></div>
+            </div>
+
+            <div class="level columns is-mobile">
+                <div class="column smolColumn">
+                    <div>2D:</div>
+                    <aside id="twomanifoldtext" class="willFadeInFromJS">2-manifolds</aside>
+                </div>
+                <div class="column">
+                    <div> 2D Cartesian coordinate systems</div>
+                    <div id="2dchart" class="chart"></div>
+
+                </div>
+                <div class="column smolSymbolColumn">→</div>
+                <div class="column"> 
+                    <div>Surfaces, even in 3D:</div>
+                    <img style="max-height:150px;height: 5em;" src="sphere.png"></img>
+                </div>
+            </div>
+
+            <div class="level columns is-mobile willFadeInFromJS" id="threeDRow">
+                <div class="column smolColumn">
+                    <div>3D:</div>
+                    <aside id="threemanifoldtext" class="willFadeInFromJS">3-manifolds</aside>
+                </div>
+                <div class="column" id="">
+                    <div> 3D Cartesian coordinate systems</div>
+                    <canvas id="threeDcanvas" class="griddedCanvas" style="max-width: 50%"></canvas>
+                </div>
+                <div class="column smolSymbolColumn">→</div>
+                <div class="column">
+                    <div> Spaces, even in 4D!</div>
+                    <!-- <div> <img style="height:150px" src="Schlegel_wireframe_8-cell.png"></img> </div> -->
+                    <div>???</div>
+                </div>
+            </div>
+
+            <a class="exp-slide-3 nextbtn" href="5 torus3.html">Next</a>
+                
+        </div>
+      </div>
+<div id="textArea" class="non3DFooterPart">
+        <div class="overlappingItemContainer"> <!-- these are for the benefit of web audiences, not talk --> 
+	        <div class="exp-slide slideTextItem">
+
+                You might be wondering why we spent so much time talking about manifolds.
+
+                <br>The manifolds we've seen so far are useful because we can use 2D coordinate systems (which we know very well), to understand surfaces in 3D (which we might not know very well).
+            </div>
+            <div class="exp-slide slideTextItem">
+                Now, armed with the idea of manifolds, we can use manifolds built out of <u>3D</u> coordinate systems (which we also know very well), to understand spaces in 4D!
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                
+                By the way, you can make manifolds with as many dimensions in your coordinate systems as you want. Manifolds which use 2D coordinate systems are called 2-manifolds, and manifolds which use 3D coordinate systems are called 3-manifolds, and so on.
+                <br/>
+
+                 The beauty of manifolds is that we can still study higher dimensions without knowing how to visualize them. All we need are Cartesian coordinates - which are just lists of numbers - and we can study things we can't imagine. 
+                <br/>
+
+                Now, using manifolds, let's go study things in four dimensions!
+            </div>
+        </div>
+      </div>
+  </div>
+</body>
+</html>

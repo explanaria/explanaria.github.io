@@ -80,7 +80,9 @@
                 Armed with the idea of manifolds, we can start to understand 4 dimensions. For example, we saw earlier that a shape built out of two circle coordinates is a torus. What shape do you get by combining three independent circle coordinates?
 
                 <br />
-                Let's call this new shape a <b>3-torus</b>, because it's made out of 3 circle coordinates. A normal torus is built out of two circle coordinates, but in order to draw it as a smooth surface (without self-intersecting) we need three dimensions. If we add another independent circle coordinate to make a 3-torus, we'll be adding another dimension. Somehow, whatever this 3-torus is, it's going to be four-dimensional. How do we imagine it?
+                Let's call this new shape a <b>3-torus</b>, because it's made out of 3 circle coordinates. To avoid confusing the 3-torus with the torus you're probably used to, the one built out of 2 circle coordinates, we'll call that shape a 2-torus. 
+
+                <br />In order to draw a 2-torus a smooth surface (without self-intersecting) we need three dimensions. If we add <span class="coord3">another independent circle coordinate</span> to a 2-torus, making a 3-torus, we'll be adding another dimension to a torus which already lives in 3 dimensions. Somehow, whatever this 3-torus is, it's going to be four-dimensional. How do we imagine it?
             </div>
 
             <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
@@ -88,24 +90,25 @@
             </div>
 
             <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
-            Yes, and here's how: if we use the angle of a point on each circle as a coordinate, we get two coordinates. 
+            Yes - since a 2-torus is a 2-manifold, by definition we can always find 2D coordinate systems which cover a 2-manifold. In fact, a 2-torus is a particularly nice shape because we only need one coordinate system. 
+            <br>Here's how to find it: to give a point some coordinates, look at these <span class="coord1">two</span> <span class="coord2">circles</span>, and measure the angle of the point on each circle. To the left is 0°, to the right is 360°, and moving past 360° is the same as starting from 0° again.
             </div>
 
             <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
-            Now we can combine these two coordinates into a single XY coordinate system which covers the entire torus. Moving up and down controls one coordinate, and moving left and right controls the other.
+            Then, combine <span class="coord1">angle #1</span> and <span class="coord2">angle #2</span> into a 2D coordinate system. This new <span class="coord1">X</span><span class="coord2">Y</span> coordinate system covers the entire torus. Dragging left and right controls <span class="coord2">one angle coordinate, rotating the point through the "hole" of the torus</span>, while dragging up and down controls <span class="coord1">the other angle coordinate, moving the point the long way around the torus</span>.
             </div>
 
             <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
-                The exact same technique works with the 3-torus. For each of the three circles, we can use the angle of a point on that circle as a coordinate. As long as we remember that an angle of negative 360 degrees is the same as an angle of zero, we can use the angles on those three points as our 3D coordinate system! Because the 3-torus is a manifold, instead of twisting our brain trying to imagine four-dimensional shapes, we can use three-dimensional coordinate systems. 
+                The exact same technique works with the 3-torus. For each of <span class="coord1">the</span> <span class="coord2">three</span> <span class="coord3">circles</span> we're building a 3-torus out of, we can measure the angle of a point on that circle and use it a coordinate. As long as we remember that an angle of 360° is the same as an angle of 0°, we can use the angles on those three points as our 3D coordinate system! Because the 3-torus is a manifold, instead of twisting our brain trying to imagine four-dimensional shapes, we can use three-dimensional coordinate systems. 
             </div>
             <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
                 Here's our 3D coordinate system. Each point in this 3D coordinate system represents a point on the four-dimensional 3-torus.
             </div>
             <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
-                Varying each coordinate gives us a different point in the coordinate system. It may seem like the points teleport when they reach the edge of the coordinate system, but that's just because of the transition function we're using for this manifold. In four dimensions, there's no teleporting, because the faces of this cube are actually connected in 4D space.
+                Varying each coordinate gives us a different point in the coordinate system. It may seem like the points teleport when they reach the edge of the coordinate system, but that's just because 360°=0°. If you want to be technical, you could say it's because of the transition function we're using for this coordinate system in this manifold. In four dimensions, there's no teleporting, because the faces of this cube are actually connected in 4D space.
             </div>
             <div class="overlappingItem exp-slide slideTextItem"  style="opacity: 0"> 
-                Now, armed with this coordinate system, we can move around the 3-torus in whatever way we want. Manifolds are useful because we can study four-dimensional objects using more familiar 3D coordinates.
+                Now, armed with this 3D coordinate system, we can move around the 3-torus in whatever way we want. One reason manifolds are so useful is because we can study four-dimensional objects, just using our old friends the 3D coordinate systems.
                 <a style="position:absolute;bottom:0.5em;right:0.5em;font-weight:bold;text-decoration:underline;" href="6 tofourdimensions.html">Next</a>
             </div>
       </div>

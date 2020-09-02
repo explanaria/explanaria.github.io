@@ -194,6 +194,19 @@ body{
 	margin: 0;
 }
 
+.exp-backbtn{
+    width: 15%;
+    max-width: 4em;
+    height: 15%;
+    max-height: 4em;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding:0.5em;
+}
+.exp-backbtn:hover{
+	transform: scale(1.1);
+}
 
 
 

@@ -113,6 +113,11 @@ function setup(){
 	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
     presentation = new EXP.UndoCapableDirector();
+
+    //set HTML colors
+    Array.prototype.slice.call(document.getElementsByClassName("coord1")).forEach( (elem) => { elem.style.color = coordinateLine1Color; } );
+    Array.prototype.slice.call(document.getElementsByClassName("coord2")).forEach( (elem) => { elem.style.color = coordinateLine2Color; } );
+    Array.prototype.slice.call(document.getElementsByClassName("coord3")).forEach( (elem) => { elem.style.color = coordinateLine3Color; } );
     
 
 	three.camera.position.z = 3;
@@ -211,7 +216,7 @@ function setup(){
     torus = new EXP.Area({bounds: [[0,Math.PI*2],[0,Math.PI*2]], numItems:24});
     let torusParametrization = new EXP.Transformation({expr: (i,t,theta1,theta2) => [(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]})
     torus.add(torusParametrization)
-    .add(new EXP.SurfaceOutput({color: blue, opacity: 1.0, showGrid: true, gridLineWidth: 0.05, showSolid:true}));
+    .add(new EXP.SurfaceOutput({color: blue, opacity: 0.3, showGrid: true, gridLineWidth: 0.05, showSolid:true}));
 
     userPoint1 = new EXP.Array({data: [[0,1]]}); //discarded
     userPoint1
@@ -221,7 +226,7 @@ function setup(){
 
 
     torusCoord1 = new EXP.Area({bounds: [[0,1]], numItems: 20});
-    let torusCoord1Range = Math.PI; //how wide the coordinate display should be
+    let torusCoord1Range = Math.PI*2; //how wide the coordinate display should be
     torusCoord1
     .add(new EXP.Transformation({expr: (i,t,x) => [(x)*torusCoord1Range,userPointParams.x2]}))
     .add(torusParametrization.makeLink())

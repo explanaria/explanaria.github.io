@@ -170,7 +170,7 @@ class LineOutput extends OutputNode{
         then we advance n two at a time to move to the next vertex. vertices n, n+1 represent the same point;
         they're separated in the vertex shader to a constant screenspace width */
         let indices = [];
-        for(let vertNum=0;vertNum<(this.numCallsPerActivation-1);vertNum +=1){ //not sure why this -3 is there. i guess it stops vertNum+3 two lines down from going somewhere it shouldn't?
+        for(let vertNum=0;vertNum<(this.numCallsPerActivation-1);vertNum +=1){
             let firstCoordinate = vertNum % this.itemDimensions[this.itemDimensions.length-1];
             let endingNewLine = firstCoordinate == this.itemDimensions[this.itemDimensions.length-1]-1;
     

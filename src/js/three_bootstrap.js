@@ -70,15 +70,17 @@ function ThreeasyEnvironment(canvasElem = null){
 	document.body.appendChild( WEBVR.createButton( renderer ) );
 	*/
 
-	window.addEventListener('load', this.onPageLoad.bind(this), false);
+
 
 	this.clock = new THREE.Clock();
 
 	this.IS_RECORDING = false; // queryable if one wants to do things like beef up particle counts for render
 
-    if(!this.shouldCreateCanvas && canvasElem.offsetWidth){
-        //If the canvasElement is already loaded, then the 'load' event has already fired. We need to trigger it ourselves.
-        window.requestAnimationFrame(this.onPageLoad.bind(this));
+    //If the canvasElement is already loaded, then the 'load' event has already fired. We need to trigger it ourselves.
+    if(document.readyState == "loading"){
+	    window.addEventListener('load', this.onPageLoad.bind(this), false);  
+    }else{
+        this.onPageLoad();
     }
 }
 

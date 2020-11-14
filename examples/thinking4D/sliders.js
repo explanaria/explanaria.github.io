@@ -127,7 +127,10 @@ class CircleSlider extends Slider{
 
         this.radius = 50;
         this.pointRadius = 15;
-        this.pointColor = color
+        this.trackColor = color;
+        this.pointColor = pointColorCanvas;
+
+        this.canDrag = true;
 
         this.disabled = false;
         this.disabledColor = disabledGray;
@@ -151,13 +154,13 @@ class CircleSlider extends Slider{
         this.canvas.width = this.canvas.width;
         this.context.lineWidth = this.lineWidth;
 
-        this.context.strokeStyle = this.pointColor;
+        this.context.strokeStyle = this.trackColor;
         if(this.disabled)this.context.strokeStyle = this.disabledColor;
         this.drawPointTrack();
 
-        this.context.fillStyle = pointColorCanvas
+        this.context.fillStyle = this.pointColor
         if(this.dragging){
-            this.context.fillStyle = pointColorDragging
+            this.context.fillStyle = this.pointColorDragging
         }
         if(!this.disabled)this.drawPoint();
     }
@@ -174,7 +177,7 @@ class CircleSlider extends Slider{
     onmousedown(x,y){
         let ptX = this.pos[0] + this.radius*Math.cos(this.value);
         let ptY = this.pos[1] + this.radius*Math.sin(this.value);
-        if(dist(x,y, ptX, ptY) < this.pointRadius + 200){
+        if(this.canDrag && dist(x,y, ptX, ptY) < this.pointRadius + 200){
             this.dragging = true;
             this.onmousemove(x,y);
         }
@@ -205,7 +208,11 @@ class RealNumberSlider extends Slider{
     
         this.pointRadius = 15;
         this.lineColor = color;
+        this.pointColor = pointColorCanvas;
+        this.pointColorDragging = pointColorDragging;
         this.disabledColor = disabledGray;
+
+        this.canDrag = true;
 
         this.mode = "horizontal"; //or 'vertical'
 
@@ -248,9 +255,9 @@ class RealNumberSlider extends Slider{
         }
 
         //point
-        this.context.fillStyle = pointColorCanvas;
+        this.context.fillStyle = this.pointColor;
         if(this.dragging){
-            this.context.fillStyle = pointColorDragging;
+            this.context.fillStyle = this.pointColorDragging;
         }
         let xCoord = this.value*this.width/2;
         if(!this.disabled){
@@ -264,7 +271,7 @@ class RealNumberSlider extends Slider{
     onmousedown(x,y){
         let ptX = this.value*this.width/2 + this.pos[0];
         let ptY = this.pos[1]
-        if(dist(x,y, ptX, ptY) < this.pointRadius + 200){
+        if(this.canDrag && dist(x,y, ptX, ptY) < this.pointRadius + 200){
             this.dragging = true;
         }
     }

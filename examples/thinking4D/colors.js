@@ -13,6 +13,8 @@ let pointColor = 0xff8C00;
 let pointColorCanvas = '#ff8C00';
 let pointColorDragging =  '#f07000';
 
+let airplanePointColor = "hsl(0,100%,50%)";
+
 let coordinateLine1Color = 'hsl(260,81%,69%)';
 let coordinateLine1ColorDarker = 'hsl(260,71%,50%)';
 

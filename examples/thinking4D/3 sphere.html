@@ -89,6 +89,33 @@
                 </div>
             </div>
 
+            <div class="overlappingItem willFadeInFromJS" id="northPoleFlight" style="pointer-events: none"> <!-- coords #2: oh no multiples lead to the same one -->
+
+
+                <div class="factors">
+                    <div class="columns is-mobile chartArrayInner">
+                        <div class="column">
+                            <div id="airplaneR" class="chartCanvasContainer"></div>
+                        </div>
+                        <div class="timesSign">
+                            <div>⨯</div>
+                        </div>
+                        <div class="column">
+                            <div id="airplaneC" class="chartCanvasContainer"></div>
+                        </div>
+                    </div>
+                </div>
+
+        
+            
+                <div class="exp-slide slideTextItem">
+                    Imagine we're using this coordinate system to fly an airplane around the earth's surface. If you're the plane's pilot, you probably want to know the plane's speed (so you don't crash) and direction (so you fly the right way).
+ <br />
+ But when we fly over the north pole, our <span class="coord2">east/west coordinate</span> suddenly teleports! 
+                <br /> Teleporting's pretty bad. Teleporting means changing position in zero time - or in other words, moving infinitely fast. But you can see that the plane's moving pretty slowly, so a coordinate system shouldn't suddenly break down and give us ugly infinities. Something's gone horribly wrong!
+                </div>
+            </div>
+
 
             <div class="overlappingItem willFadeInFromJS" id="notInjective" style="pointer-events: none"> <!-- coords #2: oh no multiples lead to the same one -->
 
@@ -127,13 +154,12 @@
                         </div>
                     </div>
                 </div>
-
         
             
                 <div class="exp-slide slideTextItem">
-                    When our "line-and-circle" coordinate system becomes a "line-and-point" coordinate system, it means we're being lied to: our two-dimensional coordinate system really only gives you one dimension of control. And that means there's infinitely many sets of coordinates that give you the same point on the sphere. 
+                    The real problem here is that our line was never a line at all - it was a line segment which ends at the north pole, and we've hit the edge of the line segment. There's infinitely many sets of coordinates that give you the same point on the sphere. 
                     <br>
-                    When multiple different coordinates secretly represent the same point, that's usually not good. For example, if we used this coordinate system to draw a map, it would look super distorted around the poles. Personally, I don't like being lied to - if we see two different points on a coordinate system, they should actually be two different points. I guess we can't make a sphere out of pairs of simpler shapes.
+                    When multiple different coordinates secretly represent the same point, that's usually not good. For example, if we used this coordinate system to draw a map, it would look super distorted around the poles. Personally, I don't like being lied to - if we draw two different points on a coordinate system, they should always represent two different points on the surface. I guess we can't make a sphere out of pairs of points on simpler shapes.
                     <br> <aside>(You can see this distortion on most real maps by looking at Antarctica!)</aside>
                 </div>
 

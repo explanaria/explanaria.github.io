@@ -1,12 +1,16 @@
 let three, controls, objects, knotParams;
 
-let userPointParams = {x1:Math.PI/2,x2:0,factors:['linear','linear']};
+let userPointParams = {x1:Math.PI/2,x2:0};
+
+let airplaneCoords = [0,0];
 
 let presentation = null;
 
 let sphereOutput = null;
 let sphereLineOutput = null;
 let coord1SliderR = null;
+let airplaneOutput = null;
+let userPointOutput = null;
 
 //*/
 
@@ -132,9 +136,11 @@ function setup(){
     sphereOutput.mesh.material.depthWrite = false;
     sphere.add(timeChange).add(manifoldParametrization).add(sphereOutput);
 
+
     //sphere's lines
     sphereLineOutput = new EXP.LineOutput({width: 10, color: coordinateLine2ColorLighter, opacity: 0});
     manifoldParametrization.add(sphereLineOutput);
+
 
     coord1 = new EXP.Area({bounds: [[0,1]], numItems: 20});
     let coord1Range = Math.PI; //how wide the coordinate display should be
@@ -143,12 +149,29 @@ function setup(){
     .add(manifoldParametrization.makeLink())
     .add(new EXP.LineOutput({width:10, color: coordinateLine1Color}));
 
+    //the airplane point which moves over the north pole
+    let moveSpeed = 2;
+    let airplane = new EXP.Array({data: [[0]]});
+    airplaneOutput = new EXP.PointOutput({width:0.3, opacity: 0.0, color: airplanePointColor});
+    let airplaneCoordGenerator = new EXP.Transformation({expr: (i,t,x) => {
+        let latitude = Math.PI/4*Math.cos(moveSpeed*t);
+        return [Math.abs(latitude), userPointParams.x2 + (latitude > 0 ? 0 : -Math.PI)]
+        }
+    });
+    airplane.add(airplaneCoordGenerator)
+    airplaneCoordGenerator.add(new EXP.FlatArrayOutput({array: airplaneCoords}))
+    airplaneCoordGenerator.add(manifoldParametrization.makeLink()).add(airplaneOutput);
+
+    
+    
+
 
     var userPoint1 = new EXP.Array({data: [[0,1]]}); //discarded
+    userPointOutput = new EXP.PointOutput({width:0.3, color: pointColor});
     userPoint1
     .add(new EXP.Transformation({expr: (i,t,x) => [userPointParams.x1,userPointParams.x2]}))
     .add(manifoldParametrization.makeLink())
-    .add(new EXP.PointOutput({width:0.3, color: pointColor}));
+    .add(userPointOutput);
     
     coord2 = new EXP.Area({bounds: [[0,1]], numItems: 200});
     let coord2Range = 2*Math.PI; //how wide the coordinate should be
@@ -159,21 +182,40 @@ function setup(){
 
     coord1SliderR = new RealNumberSlider(coordinateLine1Color, '1real', ()=>userPointParams.x1/(Math.PI/2)-1, (x)=>{userPointParams.x1=(x+1)*(Math.PI/2)});
     let coord1SliderC = new CircleSlider(coordinateLine2Color, '1circle', ()=>userPointParams.x2, (x)=>{userPointParams.x2=x});
-
     coord1SliderR.mode = 'vertical';
 
-    console.log("Todo: make the second coordinate sliders either work or noninteractable");
-    let twoCoordinates1R = new RealNumberSlider(coordinateLine1Color, 'twoCoordinates1R', ()=>userPointParams.x1/(Math.PI/2)-1, (x)=>{});
 
+    
+    //might not use
+    let twoCoordinates1R = new RealNumberSlider(coordinateLine1Color, 'twoCoordinates1R', ()=>userPointParams.x1/(Math.PI/2)-1, (x)=>{});
     twoCoordinates1R.mode = 'vertical';
+    twoCoordinates1R.canDrag = false;
+
     let twoCoordinates1C = new CircleSlider(coordinateLine2Color, 'twoCoordinates1C', ()=>userPointParams.x2, (x)=>{});
+    twoCoordinates1C.canDrag = false;
+
+
+
 
     let twoCoordinates2R = new RealNumberSlider(coordinateLine1Color, 'twoCoordinates2R', ()=>userPointParams.x1/(Math.PI/2)-1, (x)=>{});
-
     twoCoordinates2R.mode = 'vertical';
-    let twoCoordinates2C = new CircleSlider(coordinateLine2Color, 'twoCoordinates2C', ()=>userPointParams.x2+Math.PI/2, (x)=>{});
+    twoCoordinates2R.canDrag = false;
 
-    coord1SliderR.mode = 'vertical';
+    let twoCoordinates2C = new CircleSlider(coordinateLine2Color, 'twoCoordinates2C', ()=>userPointParams.x2+Math.PI/2, (x)=>{});
+    twoCoordinates2C.canDrag = false;
+
+
+
+
+    let airplaneSliderC = new CircleSlider(coordinateLine2Color, 'airplaneC', ()=>airplaneCoords[1], (x)=>{});
+    airplaneSliderC.canDrag = false;
+    let airplaneSliderR = new RealNumberSlider(coordinateLine1Color, 'airplaneR', ()=>airplaneCoords[0]/(Math.PI/2)-1, (x)=>{});
+    airplaneSliderR.mode = 'vertical';
+    for(var slider of [airplaneSliderR,airplaneSliderC]){
+        slider.canDrag = false;
+        slider.pointColor = airplanePointColor;
+    }
+
 
     //coordinate charts for north pole, south pole
     const poleChartDiameter = Math.PI/2-0.1;
@@ -259,7 +301,11 @@ Array.prototype.slice.call(document.getElementsByClassName("middleChartColor")).
 
 
 
-    objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, coord1SliderC, coord1SliderR, singularPoints, northPoleSlider, southPoleSlider, middleCircleChart, twoCoordinates1R, twoCoordinates1C, twoCoordinates2R, twoCoordinates2C];
+    objects = [twoDCanvasHandler, sphere, coord1, coord2, userPoint1, 
+            coord1SliderC, coord1SliderR, singularPoints, 
+            northPoleSlider, southPoleSlider, middleCircleChart, 
+        twoCoordinates1R, twoCoordinates1C, twoCoordinates2R, twoCoordinates2C,
+        airplane, airplaneSliderR, airplaneSliderC];
 
     //these things could go in objects, but for optimization are only called once
     staticActivateOnceObjects = [sphere, northPoleChartSurface, southPoleChartSurface,middleChartSurface];
@@ -294,12 +340,25 @@ async function animate(){
     await presentation.nextSlide();
 
 
-
     let coordSystem1 = document.getElementById("firstCoordSystem");
     presentation.TransitionTo(coordSystem1.style, {'opacity':0, 'pointer-events': "none"}, 0);
 
+    let northPoleFlight = document.getElementById("northPoleFlight");
+    presentation.TransitionTo(northPoleFlight.style, {'opacity':1, 'pointer-events':"all"}, 0);
+    presentation.TransitionTo(airplaneOutput, {opacity:1});
+    presentation.TransitionTo(userPointOutput, {opacity:0});
+
+    await presentation.nextSlide();
+
+
+    presentation.TransitionTo(northPoleFlight.style, {'opacity':0, 'pointer-events': "none"}, 0);
+
     let notInjective = document.getElementById("notInjective");
     presentation.TransitionTo(notInjective.style, {'opacity':1, 'pointer-events':"all"}, 0);
+
+    presentation.TransitionTo(airplaneOutput, {opacity:0});
+    presentation.TransitionTo(userPointOutput, {opacity:1});
+
 
     await presentation.nextSlide();
 

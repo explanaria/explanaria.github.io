@@ -15,3 +15,7 @@ This tool is most definitely a work in progress.
 [See here for documentation and instructions.](./DOCUMENTATION_AND_PHILOSOPHY.md)
 
 Additionally, see [https://explanaria.github.io](https://explanaria.github.io) for several explanatory demos! View the `examples/` folder for usage and more.
+
+## Contributing
+
+See the file CONTRIBUTING.md

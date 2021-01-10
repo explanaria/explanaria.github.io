@@ -6,12 +6,13 @@
   <title>Explanarian - Fold up shapes into manifolds</title>
 
   <script src="../../src/lib/three.min.js"></script>
-  <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../build/explanaria-bundle.js"></script>
 
 
-  <script src="two.js"></script>
-  <script src="main.js"></script>
+  <script type="module">
+    import Manifolder from './Manifolder.js';
+    window.game = new Manifolder("threeDCanvas");
+    window.three = game.three;
+  </script>
 
   <link type="text/css" href="./bulma.css" rel="stylesheet" />
   <link type="text/css" href="./style.css" rel="stylesheet" />

@@ -194,9 +194,11 @@ See the examples in the `/examples` folder for more!
 
 	Parameters:
 	* width: number representing the width of the lines to be drawn. Currently in units of pixels, meaning the output will depend on the user's screen resolution. 
-	* color: a hex number or THREE.Color representing the color each point should be. Alternately, if `color` is a function, the function will be called once per line vertex to determine that point's color. Like the `expr` function of a EXP.Transformation(), a color function will be supplied the arguments `(i,t,x,y,z,...otherCoordinates)` and must return either `[r,g,b]` or a `THREE.Color()`.
+	* color: a hex number, THREE.Color, or function representing the color each point should be.
+        If `color` is a number like 0xff0000 or THREE.Color, all points will be that color.
+        Alternately, if `color` is a function, the function will be called once per line vertex to determine that point's color. Like the `expr` function of a EXP.Transformation(), a color function will be supplied the arguments `(i,t,x,y,z,...otherCoordinates)` and must return either `[r,g,b]` or a `THREE.Color()`.
 	* opacity: number between 0 and 1 representing how transparent the points are. 1 = fully opaque, 0 = invisible.
-    * lineJoinType: either "BEVEL" or "ROUND". This determines how the corners of a line are rendered. You can also use "round" or "bevel" if lower case is your style. It won't really be noticeable unless your line is extremely wide, . Default: "round".
+    * lineJoinType: either "BEVEL" or "ROUND". This determines how the corners of a line are rendered. You can also use "round" or "bevel" if lower case is your style. It won't really be noticeable unless your line is extremely wide or has sharp angles. Default: "round".
 	
 	
     Example usage:
@@ -205,7 +207,9 @@ See the examples in the `/examples` folder for more!
     ```new EXP.LineOutput({width: 10, color:0xffcccc, lineJoinType: "bevel", opacity: 0.3}));```
 * EXP.VectorOutput
 
-    A subclass of EXP.LineOutput that renders vectors. The tip of the vector will be placed at the last point and will dynamically shrink and grow.
+    A subclass of EXP.LineOutput that renders vectors. The tip of the vector will be placed at the last point and will dynamically shrink and grow as the line size changes.
+
+    Arguments: Same as EXP.LineOutput
 
     Example usage:
 
@@ -218,11 +222,11 @@ See the examples in the `/examples` folder for more!
     This Output only works if the parent Domain is two-dimensional.
 
 	Parameters:
-	* color: a hex number or THREE.Color representing the solid color of the surface.
+	* color: a hex number or THREE.Color representing the solid color of the surface. Will only display if `showSolid` is true.
 	* opacity: number between 0 and 1 representing how transparent the surface is. 1 = fully opaque, 0 = invisible.
-    * showGrid: boolean: whether or not to show grid lines. Default: true
-    * showSolid: boolean: whether to show solid color (as determined by the `color` argument) in between the grid lines. If false, the surface will appear as grid lines with transparent portions in between them. Default: true.
-    * gridColor: hex code or THREE.Color(). By default, if showGrid is true, the surface will render with grid lines, and the color of those grid lines is calculated automatically based on `color`. If `gridColor` is declared, it will override the default color and color the grid lines with `gridColor`.
+    * showGrid: boolean: whether or not to show grid lines. Default: `true`
+    * showSolid: boolean: whether to show solid color (as determined by the `color` argument) in between the grid lines. If `false`, the surface will appear as grid lines with transparent portions in between them. Default: true.
+    * gridColor: hex code or THREE.Color(). By default, if `showGrid` is true, the surface will render with grid lines, and the color of those grid lines is calculated automatically based on `color`. If `gridColor` is declared, it will override the default color and color the grid lines with `gridColor`.
     * gridSquares: number representing the total number of squares along one side to show. There will be `gridSquares`^2 squares in total. Default: 16
     * gridLineWidth: number representing the width of a gridline. Default: 0.15
 
@@ -263,7 +267,7 @@ See the examples in the `/examples` folder for more!
 
 Explanaria allows for animated transitions between two functions, or parameters, or in fact any numeric key. This is done through the `EXP.TransitionTo` function.
 
-For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo animates a transition from `target[key]`'s previous value to the specified `newValue`.  
+For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo animates a transition from `target[key]`'s previous value to the specified `newValue`.
 	When combined with an `EXP.Transformation`, this can be used to smoothly animate between functions, tweak parameters, or more!
     If `target` is an array, `toValues` can also be an array.
 
@@ -306,6 +310,7 @@ For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo 
 
 Technical note: TransitionTo assumes `target[key]` is either a number, boolean, array, or a function (and if a function, it is assumed that this function always returns an array of numbers). If `target` is an array, it's not yet supported, but as a workaround one can either wrap the array in an object `{myArray: [1,2,3]}`), or one can specify numbers as keys in an object: `EXP.TransitionTo(target, {0: 2, 1:3, 2:5})` will result in an array of [2,3,5]. This is a bit suboptimal.
 
+If `target[key]` is not one of those things, such as a string, interpolation is technically unsupported, but TransitionTo will dutifully swap instantly between the start and end values halfway through the animation's duration.
 
 # Other things
 

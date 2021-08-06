@@ -1,0 +1,59 @@
+MOBIUS TRANSFORMATIONS
+
+- define them
+
+- they behave 
+
+- take circles to circles
+
+
+- az+b cz+d if you combine them they behave like matrices
+
+---------
+
+OH YEAH I CAN DO THE ELLIPTIC CURVE THING
+THE CONGRUN
+
+Start with the triangle problem
+
+"can you draw a triangle, where all the sides are rational numbers, whose area is 3?"
+
+"click to reveal spoilers"
+Turns out, it's impossible.
+
+Let's turn for a second to an ancient problem, which seems unrelated, but turns out to be equivalent.
+
+The ancient greeks were very interested in "arithmetic progressions". Here's a problem: Can you find 3 square numbers, each of which are the same distance $s$ apart?
+
+a^2        b^2        c^2
+   s apart     s apart
+
+
+
+draw em
+
+_______
+|   |  |
+|--- s |
+|______|
+
+
+do the triangle cut and paste thing
+
+Therefore, solving the congruent number problem will give us a triangle with area s!
+
+So how do we solve this equation? If you stare at this for a while, you might remember that multiplying together square numbers gives you a square number. Therefore, a^2 * b^2 * c^2 will be a square number - call it y^2. Write a^2 = (b^2 - s) and c^2 = (b^2 + s)
+
+Therefore, we get 
+
+y^2 = (b^2 - s) * b^2 * (b^2 + s)
+
+
+Hey look that's an elliptic curve!
+
+PART 2: ELLIPTIC CURVES
+
+- elliptic curve addition
+
+What this means for us: if we find one point, we can "add" that point to itself to generate new points. So if we find one rational triangle with area 3, we can use it to generate more rational triangles with area 3!
+

@@ -1,0 +1,443 @@
+/* text */
+.textContainer{
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.slideTextItem{
+
+ grid-row-start: 1;
+ grid-column-start: 1;
+  width:100%;
+  margin: 0;
+  font-family: "Computer Modern Sans";
+  margin-bottom: 2.5em; /*dodge the next/back arrows */
+}
+
+.nextbtn{
+    pointer-events:all;
+    position:absolute;
+    bottom:0.5em;
+    right:0.5em;
+    font-weight:bold;
+    text-decoration:underline;
+}
+
+
+.slideTextItem br{
+    margin-bottom: 0.75em;
+}
+.slideTextItem aside{
+    display: inline;
+    font-size: 80%;
+    opacity: 0.8;
+}
+
+
+html{
+    overflow-y: auto;
+}
+
+.grid{
+    width: 100%;
+    height: 100%;
+    position:absolute;
+}
+
+
+
+.headerPart{
+    width: 100%;
+    /*height: 3%;*/
+    /*background-color: red;*/
+}
+
+.threeDPart{
+    height: 62%;
+    width: 100%;
+    /*background-color: green;*/
+    min-height: 2;
+    position:relative;
+}
+
+.non3DFooterPart{
+    height: 35%;
+    width: 100%;
+    overflow-y: auto;
+    padding: 0.5em;
+    border-top: 1px solid #ccc;
+    line-height: 1.0;
+
+    font-size: 24px;
+}
+
+#chartCanvases{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 3em);
+    grid-template-rows: repeat(auto-fill, 3em);
+    grid-gap: 0.5rem;
+    font-size: 3em;
+}
+.chart{
+
+}
+
+/* used in 1 coordinate systems */
+
+#coords{
+    padding: 5;
+    color: black;
+    font-size: 3em;
+    font-family: "Computer Modern Serif";
+    text-align: center;
+    margin-bottom: 0.2em;
+
+    display: flex;
+    flex-wrap: wrap;
+    width:100%;
+    justify-content: center;
+    pointer-events: none;
+}
+
+#coords:nth-child(2n){
+    flex:1 1 auto;
+
+}
+#coords:nth-child(2n+1){
+    flex:0 1 auto;
+}
+
+.canvasOverlay{
+    z-index: 2;
+    pointer-events: none;
+    opacity: 1.0;
+/* hack to position 2D canvas over 3D canvas*/
+    position: absolute;
+    top:0%;
+    left:0%;
+    right:100%;
+    bottom:0%;
+}   
+
+/* used in 2 directsum*/
+.factors canvas{
+    width: 6em;
+    height: 6em;
+}
+.factors .column{
+    padding-bottom: 0;
+    padding-top: 0;
+    margin-bottom: 0;
+}
+
+
+.bigEquationSymbol, .timesSign{
+    text-align: center;
+    font-size: 3em;
+    flex-grow: 1;
+    pointer-events: none;
+
+    display: flex;
+    justify-content: center;
+}
+.timesSign *, .bigEquationSymbol *{ /*vertically align children */
+    margin: auto 0;
+}
+
+/* a times sign shouldn't take up any extra width when screen size is tight. */
+.timesSign{
+    width: 0;
+    min-width: 0; /*key property to allow overlapping */
+}
+
+/* used in 3 circle */
+.overlappingItemContainer{
+  display: grid;
+  grid-template-columns: 1fr;
+ width:100%;
+}
+.overlappingItem{
+ grid-row-start: 1;
+ grid-column-start: 1;
+ width:100%;
+}
+
+.notInjectiveContainer{
+   display: flex;
+   
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: repeat(auto-fill, min-content);
+
+    max-width:100%;
+    
+    flex-wrap: wrap;
+}
+
+.threeCoordinateSystems{
+
+    max-width:90%;
+}
+
+.chart{
+    margin: auto;
+    height: 100%;
+}
+
+#textArea h1{
+    text-align: center;
+    font-family: "Computer Modern Serif";
+    font-size: 1.5em;
+}
+
+/* fancy animation? heck yeah */
+@keyframes appear {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+.chart:not(:first-child){
+    animation: appear 0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000); /* ease-out-exponential */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart {
+    animation: none;
+  }
+}
+
+.chartCanvasContainer canvas{
+    height:100%;
+}
+
+.canvasGrid{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 100%;
+    transition: 1.5s grid-template-columns ease-in-out;
+}
+
+.griddedCanvas{
+    width: 100%;
+    height: 100%;
+}
+
+/*these may seem the same, but they're responsive differently on mobile. FullscreenShortPopup doesn't shrink when the window gets small, but fullscreenText does. */
+.fullscreenShortPopup{
+    font-size: 2.5em;
+}
+.fullscreenText{
+    font-size: 2.5em;
+}
+
+.fullscreenText, .fullscreenShortPopup{
+    background-color: rgba(255,255,255,0.8);
+    pointer-events: none;
+    font-family: "Computer Modern Serif";
+    margin: 0;
+    padding: 1em;
+    width:100%;
+    top: 0%;
+    z-index: 1;
+}
+
+.coverBG{
+    background-color: rgba(255,255,255,0.9);
+    z-index: 1;
+}
+
+.fullscreenText h1, .fullscreenShortPopup h1, .threeDPartHeader h1
+{
+    font-size: 150%;
+    text-align: center;  
+}
+.fullscreenText .columns{
+    line-height: 1.2; 
+}
+
+.fullscreenText aside, .fullscreenShortPopup aside, .threeDPartHeader aside{
+    font-size: 70%;
+}
+
+/* used in 6 tofourdimensions */
+
+.coord4Reveal{
+    transition: all 1s ease-in-out;
+}
+
+/* used in 4 coordinate charts */
+ .chart canvas{
+    width: 3em;
+    height: 3em;
+
+    pointer-events: all;
+}
+
+/* used in 4.5 3dcharts */
+
+.smolSymbolColumn{
+    display: block;
+    flex-basis: 0;
+    flex-grow: 0.25;
+    flex-shrink: 1;
+    padding: 0.75rem;
+
+    text-align: center;
+    font-size: 3em;
+
+    margin: -1.5em;
+}
+.smolColumn{
+    flex-grow: 0;
+}
+.smolishColumn{
+    flex-grow: 0.5;
+}
+
+.manifoldComparisonChart{
+    font-size: 2em;
+}
+
+.willFadeInFromJS{
+    opacity:0; 
+    transition: opacity 0.75s ease-in-out;
+}
+.willFadeOutFromJS{
+    opacity:1; 
+    transition: opacity 0.75s ease-in-out;
+}
+/* used in 5 */
+
+.relativePos{
+    position: relative;
+}
+.absolutePos{
+  position: absolute;
+  top:0px;
+  width:100%;
+}
+
+.disappearingQuestionMarks{
+    text-align: center;
+    font-size: 3em;
+    pointer-events: none;
+}
+
+.factors *{
+    transition: 1s transform ease-in-out;
+}
+
+/* used in 6 */
+.flexBR{
+    flex-grow: 1;
+    max-height: 1em;
+}
+
+.threeDPartHeader{
+    font-size: 1.3em;
+    pointer-events: none;
+    font-family: "Computer Modern Serif";
+    margin: 0;
+    padding: 1em;
+}
+
+/* used in bonuses */
+ul {
+    list-style: disc;
+    padding-left: 1em;
+}
+
+
+@media screen and (max-height:600px){
+
+    body{
+        font-size: 12px;
+    }
+
+    #coords{
+        font-size: 1.5em;
+    }
+
+    .threeDPart{
+        width: 60%;
+        height:100%;
+        float:left;
+        overflow-y: hidden; /* I'm not sure about this. disabling it does get rid of a scrollbar, but that scrollbar shouldn't be there in the first place.*/
+    }
+
+    .non3DFooterPart{
+        width: calc(40% - 0.25em);
+        height: 100%;
+        float:right;
+        bottom:0%;
+        border-top: none;
+        border-left: 1px solid #ccc;
+    }
+
+    .factors canvas{ /* shrink canvases a bit */
+        width: 4em;
+        height: 4em;
+    }
+
+    .factors .column{
+        padding: 0;
+    }
+    .factors{
+        margin: 0;
+    }
+
+    .timesSign{
+        font-size: 3em;
+    }
+
+    /* used in 3 */
+
+    .chartCanvasContainer canvas{
+        height:100%;
+        max-height: 10em;
+    }
+
+    .fullscreenText{
+        font-size: 1.3em;
+    }
+
+    .fullscreenShortPopup{
+        font-size: 3em;
+    }
+   
+    /* used in 4*/
+    #chartCanvases{
+        grid-template-columns: repeat(auto-fill, 100px);
+        grid-template-rows: repeat(auto-fill, 100px);
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+     .chart canvas{
+        width: 100px;
+        height: 100px;
+    }
+    .threeDPartHeader{
+        padding: 0.25em;
+    }
+    
+}
+
+
+@media screen and (max-width:600px){
+    .fullscreenText{
+        font-size: 1.3em;
+    }
+
+    .fullscreenShortPopup{
+        font-size: 3em;
+    }
+}
+
+
+#canvasContainer canvas{
+    width: 100%;
+    height: 100%;
+}
+

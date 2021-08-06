@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Impossible Triangles</title>
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+  <script type="module" src="1-integertriangles.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart"> 
+        <canvas id="threeDcanvas">
+
+        </canvas>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+        <div class="overlappingItemContainer"> <!-- these are for the benefit of web audiences, not talk --> 
+        <div class="exp-slide slideTextItem">
+            Here's a really simple question: If I have a triangle whose sides are all rational numbers, what numbers can their areas be?
+        </div>
+        <div class="exp-slide slideTextItem">
+              We're getting a lot of numbers. Can you make a triangle whose sides are all rational numbers, and whose area is 3?
+        </div>
+      </div>
+  </div>
+</body>
+</html>

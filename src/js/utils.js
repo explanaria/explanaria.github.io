@@ -1,7 +1,6 @@
 import {clone} from './math.js'
 
 class Utils{
-
 	static isArray(x){
         if(x === undefined){
             return false;
@@ -53,7 +52,8 @@ class Utils{
 
 	static assertPropExists(thing, name){
 		if(!thing || !(name in thing)){
-			console.error("ERROR! "+name+" not present in required property");
+			console.error("ERROR! This object should have the property "+name+", but it was missing:");
+            console.log(thing);
             console.trace();
 		}
 	}
@@ -70,6 +70,16 @@ class Utils{
         }
         return true;
 	}
+
+    static dist(vec1, vec2){
+        let sum = 0;
+        Utils.assert(Utils.is1DNumericArray(vec1));
+        Utils.assert(Utils.is1DNumericArray(vec2));
+        for(let i=0;i<vec1.length;i++){
+            sum += (vec1[i]-vec2[i])*(vec1[i]-vec2[i])
+        }
+        return Math.sqrt(sum);
+    }
 
 }
 

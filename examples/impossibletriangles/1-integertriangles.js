@@ -1,4 +1,5 @@
 import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mouseinteraction.js";
+import {areAllSideLengthsIntegers, computeTriangleArea} from "./1-computedTriangleProperties.js";
 
 function dist(vec1, vec2){
     //move to EXP.Utils soon
@@ -12,36 +13,6 @@ function dist(vec1, vec2){
 }
 
 window.trianglePoints = [[2,2],[1,0],[1,1]];
-function computeTriangleArea(){
-    
-}
-
-function isDistanceInteger(point1, point2){
-        let distanceSquared = (point1[0]-point2[0])(point1[0]-point2[0]) + (point1[0]-point2[0])*(point1[0]-point2[0])
-        if(distanceSquared % 1 == 0){ //if distance squared is an integer
-            return true;
-        }
-        return false;
-}
-
-function areAllSideLengthsIntegers(){
-    pairs = [
-        [ trianglePoints[0], trianglePoints[1]],
-
-        [ trianglePoints[0], trianglePoints[1]]
-
-        [ trianglePoints[0], trianglePoints[1]]
-    ]
-    let allSidesIntegers = true;
-    for(var pair in pairs){
-        let point1 = pair[0];
-        let point2 = pair[1];
-        if (!isDistanceInteger(point1, point2)){
-            allSidesIntegers = false;
-        }
-    }
-    return allSidesIntegers;
-}
 
 
 //y^2 = x^3 + -2x + 1
@@ -67,21 +38,12 @@ function setup(){
     getTrianglePoints.add(trianglePointsDrawn);
 
     
-
     sceneObjects = [integerGrid, triangleLine]; 
     three.on("update",function(time){
 	    sceneObjects.forEach(i => i.activate(time.t));
     });
 
 
-    //move a dragged point
-    onThreejsMousemove(three, function(worldPoint){
-        if(grabbedPointIndex != null){
-            trianglePoints[grabbedPointIndex][0] = worldPoint.x
-            trianglePoints[grabbedPointIndex][1] = worldPoint.y
-        }
-        //mesh.position.copy(worldPoint);
-    })
 
     //grab a point if you click on it
     let grabbedPointIndex = null;
@@ -93,7 +55,15 @@ function setup(){
             }
         }
     })
-
+    //move a dragged point
+    onThreejsMousemove(three, function(worldPoint){
+        if(grabbedPointIndex != null){
+            trianglePoints[grabbedPointIndex][0] = worldPoint.x
+            trianglePoints[grabbedPointIndex][1] = worldPoint.y
+        }
+        //mesh.position.copy(worldPoint);
+    })
+    //snap to grid
     onThreejsMouseup(three, function(worldPoint){
         if(grabbedPointIndex != null){
             trianglePoints[grabbedPointIndex][0] = parseInt(worldPoint.x+0.5);
@@ -101,16 +71,12 @@ function setup(){
             grabbedPointIndex = null;
         }
     })
-
     console.log("Loaded.");
 }
 
 async function animate(){
-	//
-	await EXP.delay(3000);
-	//animate a fancy wiggle
+	//await EXP.delay(3000);
 	//EXP.TransitionTo(pt3output,{opacity:1, width:0.6},400);
-	await EXP.delay(400);
 
 }
 window.addEventListener("load",function(){

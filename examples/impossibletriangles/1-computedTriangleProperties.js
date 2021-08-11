@@ -7,7 +7,7 @@ function computeTriangleArea(){
     let y2 = trianglePoints[1][1];
     let x3 = trianglePoints[2][0];
     let y3 = trianglePoints[2][1];
-    return 1/2 * ((x2-x1)*(y3-y1) - (x3-x1)*(y2-y1));
+    return 1/2 * Math.abs((x2-x1)*(y3-y1) - (x3-x1)*(y2-y1));
 }
 
 function isDistanceInteger(point1, point2){

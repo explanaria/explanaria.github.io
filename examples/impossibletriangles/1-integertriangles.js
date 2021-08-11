@@ -1,5 +1,19 @@
 import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mouseinteraction.js";
 import {areAllSideLengthsIntegers, computeTriangleArea} from "./1-computedTriangleProperties.js";
+import {Dynamic3DText, setup2DCanvas} from "./1-twoDCanvas.js";
+
+function vecAdd(vec1, vec2){
+    //move to EXP.Utils soon
+    let addedVec = [];
+    EXP.Utils.assert(EXP.Utils.is1DNumericArray(vec1));
+    EXP.Utils.assert(EXP.Utils.is1DNumericArray(vec2));
+    for(let i=0;i<vec1.length;i++){
+        addedVec.push(vec1[i]+vec2[i])
+    }
+    return addedVec;
+}
+
+
 
 function dist(vec1, vec2){
     //move to EXP.Utils soon
@@ -20,6 +34,7 @@ window.trianglePoints = [[2,2],[1,0],[1,1]];
 let sceneObjects = []
 function setup(){
     window.three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
+    window.twoD = setup2DCanvas();
     //var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
     three.camera.position.set(5,5,10);
@@ -36,13 +51,6 @@ function setup(){
     let grabbablePointSize = 0.5;
     window.trianglePointsDrawn = new EXP.PointOutput({color: 0xff0000, width: grabbablePointSize})
     getTrianglePoints.add(trianglePointsDrawn);
-
-    
-    sceneObjects = [integerGrid, triangleLine]; 
-    three.on("update",function(time){
-	    sceneObjects.forEach(i => i.activate(time.t));
-    });
-
 
 
     //grab a point if you click on it
@@ -71,6 +79,26 @@ function setup(){
             grabbedPointIndex = null;
         }
     })
+
+
+
+    /*
+    let areaText = new Dynamic3DText({
+        text: (t) => trianglePoints[0]}, 
+        position3D: (t) => vecAdd(vecAdd(trianglePoints[0] + trianglePoints[1]), EXP.Utils.vecScale(trianglePoints[2], -0.3))
+    })*/
+
+    let areaText = new Dynamic3DText({
+        text: (t) => computeTriangleArea(trianglePoints), 
+        position3D: (t) => vecAdd(vecAdd(trianglePoints[0], trianglePoints[1]),trianglePoints[2]), //midpoint
+    })
+
+    
+    sceneObjects = [integerGrid, triangleLine, areaText]; 
+    three.on("update",function(time){
+	    sceneObjects.forEach(i => i.activate(time.t));
+    });
+
     console.log("Loaded.");
 }
 

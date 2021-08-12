@@ -2,6 +2,16 @@ import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mous
 import {areAllSideLengthsIntegers, computeTriangleArea} from "./1-computedTriangleProperties.js";
 import {Dynamic3DText, setup2DCanvas} from "./1-twoDCanvas.js";
 
+function vecScale(vec1, scaleFactor){
+    //move to EXP.Utils soon
+    let addedVec = [];
+    EXP.Utils.assert(EXP.Utils.is1DNumericArray(vec1));
+    for(let i=0;i<vec1.length;i++){
+        addedVec.push(vec1[i]*scaleFactor)
+    }
+    return addedVec;
+}
+
 function vecAdd(vec1, vec2){
     //move to EXP.Utils soon
     let addedVec = [];
@@ -82,19 +92,32 @@ function setup(){
 
 
 
-    /*
-    let areaText = new Dynamic3DText({
-        text: (t) => trianglePoints[0]}, 
-        position3D: (t) => vecAdd(vecAdd(trianglePoints[0] + trianglePoints[1]), EXP.Utils.vecScale(trianglePoints[2], -0.3))
-    })*/
-
     let areaText = new Dynamic3DText({
         text: (t) => computeTriangleArea(trianglePoints), 
-        position3D: (t) => vecAdd(vecAdd(trianglePoints[0], trianglePoints[1]),trianglePoints[2]), //midpoint
+        position3D: (t) => vecScale(vecAdd(vecAdd(trianglePoints[0], trianglePoints[1]),trianglePoints[2]), 1/3), //midpoint
+    })
+
+
+    //Sides!
+    //todo: convert from number to square root sign
+    //TeX? use HTML?
+    let side1Text = new Dynamic3DText({
+        text: (t) => dist(trianglePoints[0], trianglePoints[1]), 
+        position3D: (t) => vecAdd(vecScale(vecAdd(trianglePoints[0], trianglePoints[1]),0.5), vecScale(trianglePoints[2], -0.3))
+    })
+
+    let side2Text = new Dynamic3DText({
+        text: (t) => dist(trianglePoints[1], trianglePoints[2]), 
+        position3D: (t) => vecAdd(vecScale(vecAdd(trianglePoints[1], trianglePoints[2]),0.5), vecScale(trianglePoints[0], -0.3))
+    })
+
+    let side3Text = new Dynamic3DText({
+        text: (t) => dist(trianglePoints[0], trianglePoints[2]), 
+        position3D: (t) => vecAdd(vecScale(vecAdd(trianglePoints[0], trianglePoints[2]),0.5), vecScale(trianglePoints[1], -0.3))
     })
 
     
-    sceneObjects = [integerGrid, triangleLine, areaText]; 
+    sceneObjects = [integerGrid, triangleLine, areaText, side1Text, side2Text, side3Text]; 
     three.on("update",function(time){
 	    sceneObjects.forEach(i => i.activate(time.t));
     });

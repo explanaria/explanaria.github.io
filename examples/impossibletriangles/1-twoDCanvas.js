@@ -1,3 +1,5 @@
+import katex from './dist/katex-v0.13.13/katex.mjs';
+
 class overlayCanvas{
     constructor(canvasID){
         this.canvas = document.getElementById(canvasID);
@@ -41,9 +43,6 @@ class overlayCanvas{
         arr[1] = (-arr[1]+1)/2 * this.canvas.height;
         return arr; //yeah theres an extra arr[2] but just ignore it   
     }
-    format(x, precision=2){
-        return Number(x).toFixed(2);
-    }
     drawText(text, textX, textY, fillStyle){
         let metrics = this.context.measureText(text);
         //draw a transparent rectangle under the text
@@ -69,6 +68,8 @@ function setup2DCanvas(){
     return canvas;
 }
 
+/*
+Dynamic3DText using a 2D drawn-on-canvas implementation*/
 class Dynamic3DText{
     //text positioned in 3D space, but always perpendicular to the camera.
     //able to change its position
@@ -104,8 +105,8 @@ class Dynamic3DText{
             this._text = this.text;
         }else if(this.text.constructor == Function){
             this._text = this.text(t);
-            if(this.text.constructor == Number){ //function which returns a number
-                this._text = this.format(this.text)
+            if(this._text.constructor == Number){ //function which returns a number
+                this._text = this.format(this._text)
             }
         }else if(this.text.constructor == Number){ //text IS a number
             this._text = this.format(this.text)
@@ -113,12 +114,21 @@ class Dynamic3DText{
 
         this.draw(); //does this go here?
     }
+
+    format(x, precision=2){
+        if(x%1 == 0){ //if is integer
+            return x;            
+        }
+        return Number(x).toFixed(2);
+    }
     draw(){
         this.canvas.drawText(this._text, this.position2D[0], this.position2D[1], "black")
     }
 }
 
 /*
+
+
 let x = new Dynamic3DText({
     text: (t) => trianglePoints[0]}, 
     position3D: (t) => EXP.Utils.vecAdd(EXP.Utils.vecAdd(trianglePoints[0] + trianglePoints[1]), EXP.Utils.vecScale(trianglePoints[2], -0.3))

@@ -1,4 +1,3 @@
-import katex from './dist/katex-v0.13.13/katex.mjs';
 
 class overlayCanvas{
     constructor(canvasID){

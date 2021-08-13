@@ -82,8 +82,8 @@ class Dynamic3DText{
             this._prevText = this._text;
             this.renderDisplayedText(); //does this go here?
         }
-        this.htmlElem.style.left = this.position2D[0] + 'px';
-        this.htmlElem.style.top = this.position2D[1] + 'px';
+        this.htmlElem.style.left = this.position2D[0]/window.devicePixelRatio + 'px';
+        this.htmlElem.style.top = this.position2D[1]/window.devicePixelRatio + 'px';
     }
 
     format(x, precision=2){

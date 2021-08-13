@@ -99,6 +99,7 @@ function setup(){
             }
         }
     })
+
     //move a dragged point
     onThreejsMousemove(three, function(worldPoint){
         if(grabbedPointIndex != null){

@@ -119,8 +119,8 @@ function setup(){
     //snap to grid
     onThreejsMouseup(three, function(worldPoint){
         if(grabbedPointIndex != null){
-            trianglePoints[grabbedPointIndex][0] = parseInt(worldPoint.x+0.5);
-            trianglePoints[grabbedPointIndex][1] = parseInt(worldPoint.y+0.5);
+            trianglePoints[grabbedPointIndex][0] = Math.round(worldPoint.x);
+            trianglePoints[grabbedPointIndex][1] = Math.round(worldPoint.y);
             grabbedPointIndex = null;
         }
     })

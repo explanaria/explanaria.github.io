@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - ClosedPolygonOutput Testing</title>
+  <script src="../src/lib/three.js"></script>
+  <script src="../src/lib/OrbitControls.js"></script>
+  <script src="../build/explanaria-bundle.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+  <link type="text/css" rel="stylesheet" href="../src/style.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script>
+	var three = EXP.setupThree(60,15);
+	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+	console.log("Loaded.");
+
+	var area = new EXP.Area({bounds: [[0, Math.PI]],numItems: 18});
+	var id = new EXP.Transformation({'expr': (i,t,x) => [Math.cos(x+t),Math.sin(x+t),0]});
+
+	var grid = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
+	grid.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
+
+	area.add(id); //transformation -> output
+	//id.add(output);
+
+	three.on("update",function(time){
+		grid.activate(time.t);
+		area.activate(time.t);
+		controls.update();
+	});
+
+	var polygon = new EXP.ClosedPolygonOutput({color: new THREE.Color(0xff0000)});
+	id.add(polygon);
+
+	async function animate(){
+
+        /*
+		await EXP.delay(1000);
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x/5+y*x/5,0]});
+
+		await EXP.delay(5000);
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x) + y,0]});
+
+		await EXP.delay(3000);
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(t),x*x+y*y*y/30]});
+
+
+		await EXP.delay(3000);
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x), y*Math.sin(x),0]});
+
+		await EXP.delay(3000);
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x*Math.cos(y), x*Math.sin(y),0]});*/
+	}
+	animate();
+  </script>
+</body>
+</html>

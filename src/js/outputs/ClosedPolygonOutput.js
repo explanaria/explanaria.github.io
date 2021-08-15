@@ -30,7 +30,6 @@ class ClosedPolygonOutput extends OutputNode{
     }
     init(){
         this._geometry = new THREE.BufferGeometry();
-        this._vertices;
         this.makeGeometry();
 
         this.material = new THREE.MeshBasicMaterial({
@@ -56,7 +55,7 @@ class ClosedPolygonOutput extends OutputNode{
 
         this._geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( this._vertices, this._outputDimensions ) );
         this._geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( this._colors, 3 ) );
-        this._geometry.setIndex(new THREE.Uint32BufferAttribute( this._faceIndices, 3 ) );
+        this._geometry.setIndex(new THREE.Uint32BufferAttribute( this._faceIndices, 1 ) );
 
         this._currentPointIndex = 0; //used during updates as a pointer to the buffer
         this._activatedOnce = false;
@@ -92,7 +91,7 @@ class ClosedPolygonOutput extends OutputNode{
         this._colors = new Float32Array( 3 * numVerts);
         colorAttribute.setArray(this._colors);
 
-        this._faceIndices = new Uint32Array( 3 * numVerts _); //at most one face per vertex.
+        this._faceIndices = new Uint32Array( 3 * numVerts); //at most one face per vertex.
         //is this enough? probably?? todo: do the math and see whether a polygon with n vertices can have n faces. It can definitely have at least n-2 cases (n-gon). I think no but I haven't checked
         let faceAttribute = this._geometry.index;
         faceAttribute.setArray(this._faceIndices);
@@ -100,6 +99,7 @@ class ClosedPolygonOutput extends OutputNode{
         this._projected2DCoords = new Float32Array( 2 * numVerts);
 
         this.triangulateAndGenerateFaces();
+        this.setAllVerticesToColor(this.color);
     }
 
     triangulateAndGenerateFaces(){
@@ -158,6 +158,10 @@ class ClosedPolygonOutput extends OutputNode{
         positionAttribute.needsUpdate = true;
 
         this.triangulateAndGenerateFaces();
+
+        let indexAttribute = this._geometry.index;
+        indexAttribute.needsUpdate = true;
+
         this._geometry.computeBoundingSphere(); //unsure if needed
 
         this._currentPointIndex = 0; //reset after each update

@@ -4889,11 +4889,14 @@
 	class ClosedPolygonOutput extends OutputNode{
 	    constructor(options = {}){
 	        super();
-	        /* should be .add()ed to a Transformation to work.
-	        Interpret each output as the vertices of a planar polygon.
+	        /* 
+	        Interpret the points as the vertices of a 2D planar polygon. The polygon can be nonconvex, but ideally non-self-intersecting.
 
-	        Todo: Will attempt to do fancy things for non-convex polygons.
+	        Currently this means each vertex will have its position projected to the XY plane, with the Z component lost.
+	        Todo: support [0,x,y] and [x,0,y] and so on by dynamically computing the plane of best fit then projecting there
 
+
+	        Should be .add()ed to a Transformation to work.
 	            options:
 	            {
 	                opacity: number
@@ -4999,6 +5002,7 @@
 
 	            const projectedX = this._vertices[i*this._outputDimensions]; //vertex x
 	            const projectedY = this._vertices[i*this._outputDimensions+1]; //vertex y, throwing away z. todo: actually do a smart, dynamic projection. and not do that
+	            //const ignored = this._vertices[i*this._outputDimensions+2];
 	    
 	            this._projected2DCoords[i*2] = projectedX;
 	            this._projected2DCoords[i*2+1] = projectedY;

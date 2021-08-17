@@ -41,6 +41,7 @@ class Dynamic3DText{
         this.position3D = options.position3D; 
         this.text = options.text;
         this.color = options.color || "black";
+        this.opacity = options.opacity === undefined ? 1 : options.opacity;
         this.htmlElem = makeLabel();
         this.roundingDecimals = 2;
 
@@ -103,6 +104,7 @@ class Dynamic3DText{
             throwOnError: false
         });
         this.htmlElem.style.color = this._color;
+        this.htmlElem.style.opacity = this.opacity;
     }
 }
 

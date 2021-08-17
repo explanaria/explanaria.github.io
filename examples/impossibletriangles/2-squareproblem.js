@@ -72,10 +72,16 @@ function setup(){
         
     //todo: hide
     var bigBorder1 = new EXP.Array({data: [[0,c],[0,a],[a,a],[a,0], [c,0],[c,c], [0,c]]});
-    window.firstBorderLine = new EXP.LineOutput({color: 0xff88ff, opacity:0, width:10})
+    window.firstBorderLine = new EXP.LineOutput({color: twoNColor, opacity:0, width:10})
     bigBorder1
         .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y,0.01]}))
         .add(firstBorderLine);
+
+    var bigBorder2 = new EXP.Array({data: [[0,a], [0,c],[c+a,c], [c+a,a], [0,a]]});
+    window.secondBorderLine = new EXP.LineOutput({color: twoNColor, opacity:0, width:10})
+    bigBorder2
+        .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y,0.01]}))
+        .add(secondBorderLine);
     
 
 
@@ -105,7 +111,7 @@ function setup(){
     })
 
     window.secondTwoNText = new Dynamic3DText({
-        text: (t) => "\\text{Still} 2N", 
+        text: (t) => "\\text{Still }2N", 
         color: (t) => twoNColor,
         position3D: (t) => [(a+c)/2,(a+c)/2],
         opacity: 0, //0
@@ -114,7 +120,7 @@ function setup(){
     var grid = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
     grid.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
 
-    window.objects = [aSquare, bSquareTop, bSquareBottom, cSquareTop, cSquareBottom, bigBorder1, aText, bText, cText, firstTwoNText, secondTwoNText]
+    window.objects = [aSquare, bSquareTop, bSquareBottom, cSquareTop, cSquareBottom, bigBorder1, aText, bText, cText, firstTwoNText, secondTwoNText,bigBorder2]
     three.on("update",function(time){
 	    objects.forEach(i => i.activate(time.t));
 	    //controls.update();
@@ -122,35 +128,36 @@ function setup(){
 }
 
 async function animate(){
-
-	await EXP.delay(5000);
-
+    let presentation = new EXP.UndoCapableDirector();
+    await presentation.begin();
+    await presentation.nextSlide();
     
-    await EXP.TransitionTo(bText, {'opacity':0});
-    await EXP.TransitionTo(cText, {'opacity':0});
+    await presentation.TransitionTo(bText, {'opacity':0}, 500);
+    await presentation.TransitionTo(cText, {'opacity':0}, 500);
+    await presentation.TransitionTo(aSquarePos, {'expr': (i,t,x,y) => [x-1.2,y-0.2]})
+    await presentation.delay(1000);
 
-    //await presentation.nextSlide();
+    await presentation.TransitionTo(firstBorderLine, {'opacity':1});
+    await presentation.TransitionTo(firstTwoNText, {'opacity':1});
+    await presentation.nextSlide();
 
-    await EXP.TransitionTo(aSquarePos, {'expr': (i,t,x,y) => [x-1.2,y-0.2]})
-    await EXP.delay(1000);
+    await presentation.nextSlide();
 
-    await EXP.TransitionTo(firstBorderLine, {'opacity':1});
-    await EXP.TransitionTo(firstTwoNText, {'opacity':1});
+    await presentation.TransitionTo(firstBorderLine, {'opacity':0}, 500);
+    await presentation.TransitionTo(firstTwoNText, {'opacity':0}), 500;
 
-    //await presentation.nextSlide();
+    //replace this with drawing a line
+    await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [x,y-0.2]}) 
+    await presentation.nextSlide();
 
-    await EXP.TransitionTo(firstBorderLine, {'opacity':0});
-    await EXP.TransitionTo(firstTwoNText, {'opacity':0});
-
-    await EXP.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [x,y-0.2]})
-    await EXP.delay(1000);
-
-    await EXP.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [x+c+2,y-0.2]})
-    await EXP.delay(1000);
-    await EXP.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [-y+c+a+1,x]}, 1000)
-    await EXP.delay(2000);
-    await EXP.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [-y+c+a,x]}, 1000)
-    await EXP.TransitionTo(secondTwoNText, {'opacity':1});
+    await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [x+c+2,y-0.2]})
+    await presentation.delay(1000);
+    await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [-y+c+a+1,x]}, 1000)
+    await presentation.delay(1000);
+    await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [-y+c+a,x]}, 500)
+    await presentation.delay(500);
+    await presentation.TransitionTo(secondTwoNText, {'opacity':1});
+    await presentation.TransitionTo(secondBorderLine, {'opacity':1});
 }
 
 

@@ -19,6 +19,7 @@ function setup(){
 
     three.camera.position.z *= 10;
     three.camera.zoom *= 10; //remove distortion from FOV and appear orthographic
+    three.camera.updateProjectionMatrix();
 
     window.firstLine = new EXP.Area({bounds: [[-15,19]], numItems: 35});
     firstLine.add(new EXP.LineOutput({width: 5, color: 0x777777, opacity: 0}));

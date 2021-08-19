@@ -165,21 +165,21 @@ function setup(){
         color: sideLengthColor,
         position3D: (t) => [(0+c)/2,a],
         opacity: 0,
-        frostedBG: true,
+        //frostedBG: true,
     })
     window.side2Text = new Dynamic3DText({ //vertical
         text: "c-a", 
         color: sideLengthColor,
         position3D: (t) => [c+a,(a+c)/2],
         opacity: 0,
-        frostedBG: true,
+        //frostedBG: true,
     })
     window.side3Text = new Dynamic3DText({ //hypotenuse
         text: "2b", 
         color: sideLengthColor,
         position3D: (t) => [(0+c)/2,(a+c)/2],
         opacity: 0,
-        frostedBG: true,
+        //frostedBG: true,
     })
 
     /*
@@ -276,7 +276,7 @@ async function animate(){
     await presentation.nextSlide();
     [side1Text,side2Text,side3Text].forEach(item => presentation.TransitionTo(item, {'opacity':1})); //not awaited. should these be awaited?
     await presentation.nextSlide();
-    [side1Text,side2Text,side3Text].forEach(item => presentation.TransitionTo(item, {'opacity':0}));
+    [side1Text,side2Text,side3Text, triangleNText].forEach(item => presentation.TransitionTo(item, {'opacity':0}));
 
     
     [rSquare, sSquareTop, sSquareBottom, tSquareTop, tSquareBottom, thirdTriangleOutline].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':0.2}, 500)));

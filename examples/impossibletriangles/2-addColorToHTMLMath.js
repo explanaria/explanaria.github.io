@@ -25,7 +25,7 @@ function walkAndAddColor(elem){
     if(elem.children.length == 0){
         //no children, add color
         if(getAppropriateColor(elem.innerHTML) != ""){
-            elem.style.color = getAppropriateColor(elem.innerHTML);
+            if(elem.style)elem.style.color = getAppropriateColor(elem.innerHTML);
         }
         return;
     }
@@ -43,7 +43,7 @@ function scanPageAndAddColor(){
         });
         walkAndAddColor(elem);
         if("color" in elem.attributes && getAppropriateColor(elem.attributes.color.value) != ""){ //<kmath color='N'>10</kmath>
-            elem.style.color = getAppropriateColor(elem.attributes.color.value);
+            if(elem.style)elem.style.color = getAppropriateColor(elem.attributes.color.value);
         }
     }
 }

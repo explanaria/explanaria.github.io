@@ -1,6 +1,6 @@
 import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mouseinteraction.js";
 import {areAllSideLengthsIntegers, computeTriangleArea} from "./1-computedTriangleProperties.js";
-import {Dynamic3DText} from "./1-katex-labels.js";
+import {Dynamic3DText} from "./katex-labels.js";
 
 function vecScale(vec1, scaleFactor){
     //move to EXP.Utils soon

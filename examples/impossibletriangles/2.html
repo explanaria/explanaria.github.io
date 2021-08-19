@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - ClosedPolygonOutput Testing</title>
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./dist/katex-v0.13.13/katex.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+  <script type="module" src="2-squareproblem.js"></script>
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart"> 
+        <canvas id="threeDcanvas">
+
+        </canvas>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-1" style="pointer-events: none;">
+            <h1>The Three Successive Squares Problem</h1>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-2" style="pointer-events: none;">
+            <h1>The Three Successive Squares Problem</h1>
+            <span>Choose a number <kmath>N</kmath>, such as <kmath color="N">10</kmath>. Can you find three numbers <kmath>r, s, t</kmath> such that:
+            <ul>
+                <li><kmath>r, s, t</kmath> are all squares, and</li>
+                <li><kmath>r + N = s</kmath>, <kmath>s+N = t</kmath>?
+            </ul>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-3" style="pointer-events: none;">
+            <h1>Three Successive Squares w/difference <kmath>N</kmath> <kmath>\implies</kmath> <kmath>N</kmath> is a Congruent Number</h1>
+
+            <span>Here's a Geometric Proof</span>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-4 exp-slide-5 exp-slide-6 exp-slide-7 exp-slide-8" style="pointer-events: none;">
+            <h1>Three Successive Squares w/difference <kmath>N</kmath> <kmath>\implies</kmath> <kmath>N</kmath> is a Congruent Number</h1>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-9" style="pointer-events: none;">
+            <h1>A bit of Algebra...</h1>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-10" style="pointer-events: none;">
+            <h1>A bit of Algebra...</h1>
+            <p>Multiplying together square numbers gives us another square number.</p>
+            <p>Hey, <kmath>r, s, t</kmath> are all square numbers!</p>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-11" style="pointer-events: none;">
+            <h1>A bit of Algebra...</h1>
+            <span>Multiplying together <kmath>r, s,</kmath> and <kmath>t</kmath> gives us another square number <kmath>y^2</kmath>.</span>
+            <ul>
+                <li><kmath>y^2 = r \cdot s \cdot t</kmath></li>
+            </ul>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-12" style="pointer-events: none;">
+            <h1>A bit of Algebra...</h1>
+            <span>Multiplying together <kmath>r, s,</kmath> and <kmath>t</kmath> gives us another square number <kmath>y^2</kmath>.</span>
+            <ul>
+                <li><kmath>y^2 = r \cdot s \cdot t</kmath></li>
+                <li><kmath>y^2 = (s-N) \cdot s \cdot (s+N)</kmath></li>
+                <li><kmath>y^2 = s^3 - N^2 s</kmath></li>
+            </ul>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-13" style="pointer-events: none;">
+            <h1>A bit of Algebra...</h1>
+            <span>Multiplying together <kmath>r, s,</kmath> and <kmath>t</kmath> gives us another square number <kmath>y^2</kmath>.</span>
+            <ul>
+                <li><kmath>y^2 = r \cdot s \cdot t</kmath></li>
+                <li><kmath>y^2 = (s-N) \cdot s \cdot (s+N)</kmath></li>
+                <li><kmath>y^2 = s^3 - N^2 s</kmath></li>
+                <li>This equation is what's known as an "elliptic curve". </li>
+            </ul>
+        </div>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+        <div class="overlappingItemContainer"> 
+            <div class="exp-slide slideTextItem">
+                Next, I want to tell you about a seemingly unrelated problem, which will lead us to an easier way to solve the congruent number problem.
+            </div>
+            <div class="exp-slide slideTextItem">
+                Choose your favorite <kmath>N</kmath>, such as <kmath color="N">10</kmath>. Can you find three square numbers, such that the difference between each two neighboring square numbers is <kmath>N</kmath>?
+            </div>
+            <div class="exp-slide slideTextItem">
+                <!-- Here's another way of visualizing the problem, geometrically. Can you find three squares such that the green area and the blue area are each N?-->
+        
+                Fibbonacci, the namesake of the Fibbonacci numbers, studied this problem. 
+                As it turns out, if we can find three square numbers each <kmath>N</kmath> apart, it means <kmath>N</kmath> is a congruent number! Let's see why.
+
+                Assume we already found these three square numbers. Then we can draw three squares - one with area <kmath>r</kmath>, one with area <kmath>s</kmath>, and one with area $t$.
+            </div>
+            <div class="exp-slide slideTextItem">
+                If we remove the square representing <kmath>r</kmath>, the rest of the area is <kmath>2N</kmath> - the <kmath color="s">\text{green area}</kmath> is <kmath>N</kmath>, and the  <kmath color="t">\text{blue L-shaped area}</kmath> has area <kmath>N</kmath>, so combined their area is <kmath>2N</kmath>.
+            </div>
+            <div class="exp-slide slideTextItem">
+                Now, we're going to cut this little rectangle...
+            </div>
+            <div class="exp-slide slideTextItem">
+                ...and paste it on the side of this shape to make a rectangle. Since we haven't added or removed any area, this rectangle has the same area as the shape before: its area is <kmath>2N</kmath>.
+            </div>
+            <div class="exp-slide slideTextItem">
+                Finally, drawing a diagonal across this rectangle splits it into two right triangles, with area <kmath>N</kmath>!
+
+                <br>In other words - if we can solve the three successive squares problem for a certain <kmath>N</kmath>, this triangle shows <kmath>N</kmath> is a congruent number!
+            </div>
+            <div class="exp-slide slideTextItem">
+                Just to check, we can also calculate the sides of this triangle - and if you do the math, because <kmath>r</kmath>, <kmath>s</kmath>, and <kmath>t</kmath> are square numbers, we're guaranteed that all the sides are rational numbers.
+            </div>
+            <div class="exp-slide slideTextItem">
+                Great - so if we solve the three successive squares problem, we solve the congruent number problem.
+
+                Let's start using some algebra to simplify the three successive squares problem!
+            </div>
+            <div class="exp-slide slideTextItem">
+                It's a math fact that if you multiply square numbers together, you get another square number.
+
+                <br>If we try to solve the three successive squares problem, we need to find three square numbers <kmath>r</kmath>, <kmath>s</kmath>, and <kmath>t</kmath>. Let's try multiplying <kmath>r</kmath>, <kmath>s</kmath>, and <kmath>t</kmath> together and seeing if we can simplify the equation.<br>
+            </div>
+            <div class="exp-slide slideTextItem">
+                When we multiply together our three square numbers, <kmath>r</kmath>, <kmath>s</kmath>, and <kmath>t</kmath>, we'll get another square number, which I'll call <kmath>y^2</kmath>.
+            </div>
+            <div class="exp-slide slideTextItem">
+
+                We can simplify this with some substitution. Our square numbers<kmath>r, s, t</kmath> are all related - once we choose <kmath>r=s+N</kmath> and <kmath>t=s+N</kmath>. 
+
+                <br> To reduce the number of variables, let's get rid of <kmath>r</kmath> and <kmath>t</kmath> by writing them in terms of <kmath>s</kmath>: since all three square numbers are <kmath>N</kmath> away, we can substitute in <kmath>r = s-N</kmath> and <kmath>t = s+N</kmath>. Once we substitute into the equation and simplify, we get the equation <kmath>y^2 = x^3 - N^2 s</kmath>. Great - now we've reduced our problem to studying solutions of one equation!
+
+                Finally, let's rename <kmath>s</kmath> to <kmath>x</kmath>, giving us the equation <kmath>y^2 = x^3 - N^2 x</kmath>. That's it for the algebra!
+            </div>
+            <div class="exp-slide slideTextItem">
+                To recap: we've turned the problem of "is <kmath>N</kmath> a congruent number?" into "Does <kmath>y^2 = x^3 - N^2 x</kmath> have any rational solutions"? <!-- put more explanation in, i'm introducing rational solutions -->
+                The equation <kmath>y^2 = x^3 - N^2 x</kmath> is an example of an "elliptic curve". Elliptic curves are very useful. But what we're interested in is solutions: every single pair of rational numbers <kmath>(x,y)</kmath> for which <kmath>y^2 = x^3 - N^2 x</kmath>.
+            </div> 
+        </div>        
+      </div>
+  </div>
+</body>
+</html>

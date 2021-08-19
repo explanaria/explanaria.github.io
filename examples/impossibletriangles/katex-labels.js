@@ -1,11 +1,20 @@
 import katex from './dist/katex-v0.13.13/katex.mjs';
 
-function makeLabel(){
+function cssDropShadowOutline(blurRadius="0.05rem", color='#0005', moveRadius="0.15rem"){
+    return "drop-shadow("+moveRadius+" 0 "+blurRadius+" "+color+") drop-shadow(0 "+moveRadius+" "+blurRadius+" "+color+") drop-shadow(-"+moveRadius+" 0 "+blurRadius+" "+color+") drop-shadow(0 -"+moveRadius+" "+blurRadius+" "+color+")"
+}
+
+function makeLabel(frostedBG=false){
     let parent = document.getElementById("canvasContainer");
     let positioningElem = document.createElement("div");
     positioningElem.style.position = "absolute";
     positioningElem.style.transform="translate(-50%, -50%)";
-    positioningElem.style.backgroundColor="rgba(255,255,255,0.5)";
+    if(frostedBG){
+        //positioningElem.style.backgroundColor="rgba(255,255,255,0.3)";
+        positioningElem.style.filter=cssDropShadowOutline("0.15rem",'#0002', "0.15rem"); //soft gray shadow
+        //positioningElem.style.filter=cssDropShadowOutline("0.15rem",'#0008', "0.15rem"); //soft gray shadow
+        //positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#000f', "0.05rem"); //harder black shadow
+    }
     positioningElem.style.fontSize="24px"; //might need changing
     positioningElem.style.pointerEvents="none";
     positioningElem.className = "EXP-textlabel"
@@ -39,9 +48,11 @@ class Dynamic3DText{
         */
            
         this.position3D = options.position3D; 
+        this.position2D = [0,0]
         this.text = options.text;
+        this.frostedBG = options.frostedBG || false;
+        this.htmlElem = makeLabel(this.frostedBG);
         this.color = options.color || "black";
-        this.htmlElem = makeLabel();
         this.opacity = options.opacity === undefined ? 1 : options.opacity; //setter changes HTML
         this.roundingDecimals = 2;
 
@@ -50,6 +61,17 @@ class Dynamic3DText{
 
         window.addEventListener("resize", this.updatePosition.bind(this), false)
 
+    }
+    updateHTMLColor(){
+        let htmlColor = "black";
+        if(this._color.constructor == String){
+            htmlColor = this._color;
+        }else if(this._color.constructor == Function){
+            htmlColor = this._color(t);
+        }else if(this._color.constructor == THREE.Color){
+            htmlColor = this._color.getStyle();
+        }
+        this.htmlElem.style.color = htmlColor;
     }
     activate(t){
         
@@ -74,16 +96,12 @@ class Dynamic3DText{
         }
 
         //compute color
-        if(this.color.constructor == String){
-            this._color = this.color;
-        }else if(this.color.constructor == Function){
-            this._color = this.color(t);
-        }
+        this.updateHTMLColor();
 
         //if text has changed, re-render
         if(this._text != this._prevText){
             this._prevText = this._text;
-            this.renderDisplayedText(); //does this go here?
+            this.renderDisplayedText();
         }
 
         this.updatePosition();
@@ -103,7 +121,6 @@ class Dynamic3DText{
         katex.render(this._text, this.htmlElem, {
             throwOnError: false
         });
-        this.htmlElem.style.color = this._color;
     }
     set opacity(val){
         this.htmlElem.style.opacity = val;
@@ -111,6 +128,13 @@ class Dynamic3DText{
     }
     get opacity(){
         return this._opacity;
+    }
+    set color(val){
+        this._color = val;
+        this.updateHTMLColor();
+    }
+    get color(){
+        return this._color;    
     }
 }
 

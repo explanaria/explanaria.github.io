@@ -1,9 +1,12 @@
-import {Dynamic3DText} from "./1-katex-labels.js";
+import {Dynamic3DText} from "./katex-labels.js";
+import {rColor, sColor, tColor, twoNColor, white, black, twoNTextColor} from "./colors.js";
+import addColorToHTML from './2-addColorToHTMLMath.js';
 
 let a=1;
 let b=5;
 let c=7;
 
+addColorToHTML();
 
 function setup(){
     window.three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
@@ -11,116 +14,183 @@ function setup(){
 
     console.log("Loaded.");
 
-    var area = new EXP.Area({bounds: [[0, Math.PI*1]],numItems: 16});
-    var id = new EXP.Transformation({'expr': (i,t,x) => [5*Math.cos(x+t),5*Math.sin(x+t),0]});
-
-
-
     three.camera.position.set(c/2,c/2,8);
     three.camera.lookAt(new THREE.Vector3(c/2,c/2,0))
 
-    /*
-    var aSquare = new EXP.Array({data: [[0,0], [a,0],[a,a],[0,a]]});
-    aSquare
+    three.camera.position.z *= 10;
+    three.camera.zoom *= 10; //remove distortion from FOV and appear orthographic
+
+    window.firstLine = new EXP.Area({bounds: [[-15,19]], numItems: 35});
+    firstLine.add(new EXP.LineOutput({width: 5, color: 0x777777, opacity: 0}));
+    firstLine.add(new EXP.PointOutput({width: 0.3, color: 0xaaaaaa, opacity: 0}));
+
+
+    //positions of the dots
+    let fakeN = 3;
+    let fakeB = Math.round(c/2);
+    let fakeA = fakeB-fakeN;
+    let fakeC = fakeB+fakeN;
+
+    window.firstNLine = new EXP.Area({bounds: [[fakeA, fakeC]], numItems: 2});
+    firstNLine.add(new EXP.Transformation({expr: (i,t,x) => [x,0,0.1]})).add(new EXP.LineOutput({width: 10, color: twoNColor, opacity: 0}));
+
+    window.dots = new EXP.Array({data: [[fakeA, 0],[fakeB, 0],[fakeC, 0]]});
+    dots.add(new EXP.PointOutput({width: 0.5, opacity: 0, color:sColor}));
+
+
+    window.firstNText1 = new Dynamic3DText({
+        text: "N", 
+        color: twoNColor,
+        position3D: (t) => [(fakeA+fakeB)/2, -1],//(t) => window.rSquarePos.expr(0,t,a/2,a/2),
+        opacity: 0,
+    })
+
+    window.firstNText2 = new Dynamic3DText({
+        text: "N", 
+        color: twoNColor,
+        position3D: (t) => [(fakeB+fakeC)/2, -1],//(t) => [b/2,b/2],
+        opacity: 0,
+    })
+
+
+    window.rSquarePos = new EXP.Transformation({'expr':(i,t,x,y) => [x,y]});
+    window.rSquare = new EXP.Array({data: [[0,0], [a,0],[a,a],[0,a]]});
+    rSquare
+        .add(rSquarePos)
+        .add(new EXP.ClosedPolygonOutput({color: rColor, opacity: 0}));
+
+    window.sSquareTop = new EXP.Array({data: [[0,b],[0,a], [b,a],[b,b]]});
+    sSquareTop
         .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y]}))
-        .add(new EXP.ClosedPolygonOutput({color: 0x00ff55}));
+        .add(new EXP.ClosedPolygonOutput({color: sColor, opacity: 0}));
+    //sSquare.children[0].add(new EXP.LineOutput({color: 0x4488ff, width: 20}))
 
-    var bSquare = new EXP.Array({data: [[0,b],[0,a],[a,a],[a,0], [b,0],[b,b]]});
-    bSquare
+    window.tSquareTop = new EXP.Array({data: [[0,c],[0,b],[b,b],[b,a], [c,a],[c,c]]});
+    tSquareTop
         .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y]}))
-        .add(new EXP.ClosedPolygonOutput({color: 0x0055ff, opacity:0.5}));
-    bSquare.children[0].add(new EXP.LineOutput({color: 0x4488ff, width: 20}))
-
-    var cSquare = new EXP.Array({data: [[0,c],[0,b],[b,b],[b,0], [c,0],[c,c]]});
-    cSquare
-        .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y]}))
-        .add(new EXP.ClosedPolygonOutput({color: 0x55ff00}));
-    */
-
-    let aColor = 0x00ff55
-    let bColor = 0x4488ff
-    let cColor = 0x55ff00
-    let twoNColor = 0xff66ff;
-
-    window.aSquarePos = new EXP.Transformation({'expr':(i,t,x,y) => [x,y]});
-    var aSquare = new EXP.Array({data: [[0,0], [a,0],[a,a],[0,a]]});
-    aSquare
-        .add(aSquarePos)
-        .add(new EXP.ClosedPolygonOutput({color: aColor}));
-
-    var bSquareTop = new EXP.Array({data: [[0,b],[0,a], [b,a],[b,b]]});
-    bSquareTop
-        .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y]}))
-        .add(new EXP.ClosedPolygonOutput({color: bColor}));
-    //bSquare.children[0].add(new EXP.LineOutput({color: 0x4488ff, width: 20}))
-
-    var cSquareTop = new EXP.Array({data: [[0,c],[0,b],[b,b],[b,a], [c,a],[c,c]]});
-    cSquareTop
-        .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y]}))
-        .add(new EXP.ClosedPolygonOutput({color: cColor}));
+        .add(new EXP.ClosedPolygonOutput({color: tColor, opacity: 0}));
 
     window.bottomPartPos = new EXP.Transformation({'expr':(i,t,x,y) => [x,y]});
-    var bSquareBottom = new EXP.Array({data: [[a,a],[a,0], [b,0],[b,a]]});
-    bSquareBottom
+    window.sSquareBottom = new EXP.Array({data: [[a,a],[a,0], [b,0],[b,a]]});
+    sSquareBottom
         .add(bottomPartPos.makeLink())
-        .add(new EXP.ClosedPolygonOutput({color: bColor}));
+        .add(new EXP.ClosedPolygonOutput({color: sColor, opacity: 0}));
 
-    var cSquareBottom = new EXP.Array({data: [[b,a],[b,0],[c,0],[c,a]]});
-    cSquareBottom
+    window.tSquareBottom = new EXP.Array({data: [[b,a],[b,0],[c,0],[c,a]]});
+    tSquareBottom
         .add(bottomPartPos.makeLink())
-        .add(new EXP.ClosedPolygonOutput({color: cColor}));
+        .add(new EXP.ClosedPolygonOutput({color: tColor, opacity: 0}));
         
-    //todo: hide
+
     var bigBorder1 = new EXP.Array({data: [[0,c],[0,a],[a,a],[a,0], [c,0],[c,c], [0,c]]});
-    window.firstBorderLine = new EXP.LineOutput({color: twoNColor, opacity:0, width:10})
+    window.firstBorderLine = new EXP.LineOutput({color: twoNColor, opacity:0, width:15})
     bigBorder1
         .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y,0.01]}))
         .add(firstBorderLine);
 
     var bigBorder2 = new EXP.Array({data: [[0,a], [0,c],[c+a,c], [c+a,a], [0,a]]});
-    window.secondBorderLine = new EXP.LineOutput({color: twoNColor, opacity:0, width:10})
+    window.secondBorderLine = new EXP.LineOutput({color: twoNColor, opacity:0, width:15})
     bigBorder2
         .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y,0.01]}))
         .add(secondBorderLine);
-    
+
+    var triangleOutline = new EXP.Array({data: [[0,a],[c+a,c], [c+a,a], [0,a], [c+a,c]]});
+    window.thirdTriangleOutline = new EXP.LineOutput({color: twoNColor, opacity:0, width:15})
+    triangleOutline
+        .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y,0.01]}))
+        .add(thirdTriangleOutline);
+
 
 
     window.aText = new Dynamic3DText({
-        text: (t) => "a^2", 
-        color: (t) => "black",
-        position3D: (t) => window.aSquarePos.expr(0,t,a/2,a/2)
+        text: "r", 
+        color: rColor,
+        position3D: (t) => [fakeA, 1],//(t) => window.rSquarePos.expr(0,t,a/2,a/2),
+        frostedBG: true,
+        opacity: 0,
     })
 
     window.bText = new Dynamic3DText({
-        text: (t) => "b^2", 
-        color: (t) => "black",
-        position3D: (t) => [b/2,b/2]
+        text: "s", 
+        color: sColor,
+        position3D: (t) => [fakeB, 1],//(t) => [b/2,b/2],
+        frostedBG: true,
+        opacity: 0,
     })
 
     window.cText = new Dynamic3DText({
-        text: (t) => "c^2", 
-        color: (t) => "black",
-        position3D: (t) => [(b+c)/2,(b+c)/2]
+        text: "t", 
+        color: tColor,
+        position3D: (t) => [fakeC, 1],//(t) => [(b+c)/2,(b+c)/2],
+        frostedBG: true,
+        opacity: 0,
     })
 
     window.firstTwoNText = new Dynamic3DText({
-        text: (t) => "2N", 
-        color: (t) => twoNColor,
+        text: "2N", 
+        color: twoNTextColor,
         position3D: (t) => [(a+c)/2,(a+c)/2],
-        opacity: 0, //0
+        opacity: 0,
+        frostedBG: true,
     })
 
     window.secondTwoNText = new Dynamic3DText({
-        text: (t) => "\\text{Still }2N", 
-        color: (t) => twoNColor,
+        text: "\\text{Still }2N", 
+        color: twoNTextColor,
         position3D: (t) => [(a+c)/2,(a+c)/2],
         opacity: 0, //0
+        frostedBG: true,
     })
 
-    var grid = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
-    grid.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
+    window.triangleNText = new Dynamic3DText({ //below
+        text: "N", 
+        color: twoNTextColor,
+        position3D: (t) => [(2*c+a)/3,(2*a+c)/3],
+        opacity: 0, //0
+        frostedBG: true,
+    })
 
-    window.objects = [aSquare, bSquareTop, bSquareBottom, cSquareTop, cSquareBottom, bigBorder1, aText, bText, cText, firstTwoNText, secondTwoNText,bigBorder2]
+    window.triangleNText2 = new Dynamic3DText({ //top
+        text: "N", 
+        color: twoNTextColor,
+        position3D: (t) => [(2*a+c)/3,(2*c+a)/3],
+        opacity: 0, //0
+        frostedBG: true,
+    })
+
+    let sideLengthColor = black; //"green"
+
+    window.side1Text = new Dynamic3DText({ //horizontal
+        text: "c+a", 
+        color: sideLengthColor,
+        position3D: (t) => [(0+c)/2,a],
+        opacity: 0,
+        frostedBG: true,
+    })
+    window.side2Text = new Dynamic3DText({ //vertical
+        text: "c-a", 
+        color: sideLengthColor,
+        position3D: (t) => [c+a,(a+c)/2],
+        opacity: 0,
+        frostedBG: true,
+    })
+    window.side3Text = new Dynamic3DText({ //hypotenuse
+        text: "2b", 
+        color: sideLengthColor,
+        position3D: (t) => [(0+c)/2,(a+c)/2],
+        opacity: 0,
+        frostedBG: true,
+    })
+
+    /*
+    var grid = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
+    grid.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid*/
+
+    window.objects = [];
+    objects = objects.concat([firstLine, firstNLine, dots, firstNText1, firstNText2]);// firstALabel, firstBLabel, firstCLabel]);
+    objects = objects.concat([rSquare, sSquareTop, sSquareBottom, tSquareTop, tSquareBottom, aText, bText, cText,]);
+    objects = objects.concat([bigBorder1, firstTwoNText, secondTwoNText,bigBorder2])
+    objects = objects.concat([triangleNText, triangleNText2, triangleOutline, side1Text,side2Text,side3Text])
     three.on("update",function(time){
 	    objects.forEach(i => i.activate(time.t));
 	    //controls.update();
@@ -130,34 +200,90 @@ function setup(){
 async function animate(){
     let presentation = new EXP.UndoCapableDirector();
     await presentation.begin();
+
+
     await presentation.nextSlide();
+
+    [aText, bText, cText, firstNText1, firstNText2].forEach(label => presentation.TransitionTo(label, {'opacity':1}));
+
+    [firstLine, dots, firstNLine].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':1})));
+    [firstNText1, firstNText2].forEach(item => 
+    presentation.TransitionTo(item, {'opacity': 1}))
+
+
+    await presentation.nextSlide();
+
+    //let firstTexts = [firstALabel, firstBLabel, firstCLabel];
+    //firstTexts.forEach(label => presentation.TransitionTo(label, {'opacity':0}, 500));
+
+    [firstNText1, firstNText2].forEach(item => 
+    presentation.TransitionTo(item, {'opacity':0 }));
+    [firstLine, dots, firstNLine].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':0}, 500)));
+
+    presentation.TransitionTo(aText, {'position3D':(t) => window.rSquarePos.expr(0,t,a/2,a/2)});
+    presentation.TransitionTo(bText, {'position3D':(t) => [b/2,b/2]});
+    presentation.TransitionTo(cText, {'position3D':(t) => [(b+c)/2,(b+c)/2]});
+
+    
+
+    await presentation.delay(1000);
+
+    [rSquare, sSquareTop, sSquareBottom, tSquareTop, tSquareBottom].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':1}, 500)));
+    [aText, bText, cText].forEach(output => presentation.TransitionTo(output, {'color':new THREE.Color('white')}, 500))
+    await presentation.nextSlide();
+
+    
     
     await presentation.TransitionTo(bText, {'opacity':0}, 500);
     await presentation.TransitionTo(cText, {'opacity':0}, 500);
-    await presentation.TransitionTo(aSquarePos, {'expr': (i,t,x,y) => [x-1.2,y-0.2]})
+    await presentation.TransitionTo(rSquarePos, {'expr': (i,t,x,y) => [x-1.2,y-0.2]})
     await presentation.delay(1000);
 
-    await presentation.TransitionTo(firstBorderLine, {'opacity':1});
-    await presentation.TransitionTo(firstTwoNText, {'opacity':1});
+    await presentation.TransitionTo(firstBorderLine, {'opacity':1}, 500);
+    await presentation.TransitionTo(firstTwoNText, {'opacity':1}, 500);
     await presentation.nextSlide();
 
-    await presentation.nextSlide();
-
+    await presentation.TransitionTo(aText, {'opacity':0}, 500);
     await presentation.TransitionTo(firstBorderLine, {'opacity':0}, 500);
     await presentation.TransitionTo(firstTwoNText, {'opacity':0}), 500;
 
     //replace this with drawing a line
     await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [x,y-0.2]}) 
+    //await presentation.delay(1000);
+    //await presentation.TransitionTo(rSquarePos, {'expr': (i,t,x,y) => [x-1.2,y-8.2]},3000) //yeet
     await presentation.nextSlide();
 
-    await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [x+c+2,y-0.2]})
+    await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [x+c,y-0.2]})
     await presentation.delay(1000);
-    await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [-y+c+a+1,x]}, 1000)
+    await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [-y+c+a+0.5,x]}, 1000)
     await presentation.delay(1000);
     await presentation.TransitionTo(bottomPartPos, {'expr': (i,t,x,y) => [-y+c+a,x]}, 500)
     await presentation.delay(500);
-    await presentation.TransitionTo(secondTwoNText, {'opacity':1});
-    await presentation.TransitionTo(secondBorderLine, {'opacity':1});
+    await presentation.TransitionTo(secondTwoNText, {'opacity':1}, 500);
+    await presentation.TransitionTo(secondBorderLine, {'opacity':1}, 500);
+
+    await presentation.nextSlide();
+    //show triangles
+    //todo: fancy pull away?
+    await presentation.TransitionTo(secondTwoNText, {'opacity':0}, 500);
+    await presentation.TransitionTo(secondBorderLine, {'opacity':0});
+
+    await presentation.TransitionTo(thirdTriangleOutline, {'opacity':1}, 500);
+    await presentation.TransitionTo(triangleNText, {'opacity':1}, 500);
+    //triangleNText2?
+
+    //even better - all the sides are rational!
+    await presentation.nextSlide();
+    [side1Text,side2Text,side3Text].forEach(item => presentation.TransitionTo(item, {'opacity':1})); //not awaited. should these be awaited?
+    await presentation.nextSlide();
+    [side1Text,side2Text,side3Text].forEach(item => presentation.TransitionTo(item, {'opacity':0}));
+
+    
+    [rSquare, sSquareTop, sSquareBottom, tSquareTop, tSquareBottom, thirdTriangleOutline].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':0.2}, 500)));
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
 }
 
 

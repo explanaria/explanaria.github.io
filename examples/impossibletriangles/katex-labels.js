@@ -58,11 +58,12 @@ class Dynamic3DText{
 
         this._text = '';
         this._prevText = '';
+        this._prevT = 0;
 
-        window.addEventListener("resize", this.updatePosition.bind(this), false)
+        window.addEventListener("resize", this.updatePosition.bind(this), false);
 
     }
-    updateHTMLColor(){
+    updateHTMLColor(t){
         let htmlColor = "black";
         if(this._color.constructor == String){
             htmlColor = this._color;
@@ -96,7 +97,9 @@ class Dynamic3DText{
         }
 
         //compute color
-        this.updateHTMLColor();
+        this.updateHTMLColor(t);
+
+        this.updatePosition();
 
         //if text has changed, re-render
         if(this._text != this._prevText){
@@ -104,7 +107,7 @@ class Dynamic3DText{
             this.renderDisplayedText();
         }
 
-        this.updatePosition();
+        this._prevT =t;
     }
     updatePosition(){
         this.htmlElem.style.left = this.position2D[0]/window.devicePixelRatio + 'px';
@@ -131,7 +134,7 @@ class Dynamic3DText{
     }
     set color(val){
         this._color = val;
-        this.updateHTMLColor();
+        this.updateHTMLColor(this._prevT);
     }
     get color(){
         return this._color;    

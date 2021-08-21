@@ -107,7 +107,7 @@ function setup(){
         text: "r", 
         color: rColor,
         position3D: (t) => [fakeA, 1],//(t) => window.rSquarePos.expr(0,t,a/2,a/2),
-        frostedBG: true,
+        frostedBG: false,
         opacity: 0,
     })
 
@@ -115,7 +115,7 @@ function setup(){
         text: "s", 
         color: sColor,
         position3D: (t) => [fakeB, 1],//(t) => [b/2,b/2],
-        frostedBG: true,
+        frostedBG: false,
         opacity: 0,
     })
 
@@ -123,7 +123,7 @@ function setup(){
         text: "t", 
         color: tColor,
         position3D: (t) => [fakeC, 1],//(t) => [(b+c)/2,(b+c)/2],
-        frostedBG: true,
+        frostedBG: false,
         opacity: 0,
     })
 
@@ -162,21 +162,21 @@ function setup(){
     let sideLengthColor = black; //"green"
 
     window.side1Text = new Dynamic3DText({ //horizontal
-        text: "c+a", 
+        text: "\\sqrt{r}+\\sqrt{t}", 
         color: sideLengthColor,
         position3D: (t) => [(0+c)/2,a],
         opacity: 0,
         //frostedBG: true,
     })
     window.side2Text = new Dynamic3DText({ //vertical
-        text: "c-a", 
+        text: "\\sqrt{r}-\\sqrt{t}", 
         color: sideLengthColor,
         position3D: (t) => [c+a,(a+c)/2],
         opacity: 0,
         //frostedBG: true,
     })
     window.side3Text = new Dynamic3DText({ //hypotenuse
-        text: "2b", 
+        text: "2\\sqrt{s}", 
         color: sideLengthColor,
         position3D: (t) => [(0+c)/2,(a+c)/2],
         opacity: 0,
@@ -230,7 +230,7 @@ async function animate(){
     await presentation.delay(1000);
 
     [rSquare, sSquareTop, sSquareBottom, tSquareTop, tSquareBottom].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':1}, 500)));
-    [aText, bText, cText].forEach(output => presentation.TransitionTo(output, {'color':new THREE.Color('white')}, 500))
+    [aText, bText, cText].forEach(output => presentation.TransitionTo(output, {'color':new THREE.Color('white'), 'frostedBG': true}, 500))
     await presentation.nextSlide();
 
     

@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <link rel="shortcut icon" href="../favicon.ico"/>
-  <title>Explanarian - Impossible Triangles</title>
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanarian - Impossible Triangles #1: The Congruent Number Problem</title>
   <script src="../../src/lib/three.min.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
   <script src="../../build/explanaria-bundle.js"></script>
@@ -29,33 +29,110 @@
         <canvas id="threeDcanvas">
 
         </canvas>
-        <canvas id="2dcanvas" class="canvasOverlay">
-
-        </canvas>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-1" style="pointer-events: none;">
+            <h1>The Case of the Impossible Triangles</h1>
+            <p>The Congruent Number Problem and Elliptic Curves</p>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-2" style="pointer-events: none;">
+            <h1>The Congruent Number Problem</h1>
+            <p>Choose an integer <kmath color="N">N</kmath>. Can you find a right triangle with area <kmath color="N">N</kmath> whose sides are <u>all rational numbers</u>?</p>
+            <p>If so, <kmath color="N">N</kmath> is called a "congruent number."</p>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-3" style="pointer-events: none;">
+            <p>A right triangle with area <kmath color="N">30</kmath> whose sides are <b>NOT</b> all rational numbers</p>
+            <p>(<kmath>\sqrt{136}</kmath> isn't rational)</p>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-4" style="pointer-events: none;">
+            <p>A right triangle with area <kmath color="N">30</kmath> whose sides are all rational numbers</p>
+            <p>This shows <kmath color="N">30</kmath> is a congruent number.</p>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-5 exp-slide-6" style="pointer-events: none;">
+            <h1>Your Turn!</h1>
+            <p>Is <kmath color="N">24</kmath> a congruent number?</p>
+            <p>Can you find a right triangle with area <kmath color="N">24</kmath> whose sides are <u>all rational numbers</u>?</p>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-8" style="pointer-events: none;">
+            <h1>Scaling Rational Triangles Gives Rational Triangles</h1>
+            <p><kmath color="N">6</kmath> is a congruent number</p>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-9 exp-slide-10" style="pointer-events: none;">
+            <h1>Your Turn!</h1>
+            <p>Is <kmath color="N">7</kmath> a congruent number?</p>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-text willFadeInFromJS exp-slide-12" style="pointer-events: none;">
+            <h1>Your Turn!</h1>
+            <p>Is <kmath color="N">8</kmath> a congruent number?</p>
+        </div>
       </div>
       <div id="textArea" class="non3DFooterPart">
         <div class="overlappingItemContainer"> 
-        <div class="exp-slide slideTextItem">
-            Can you find a triangle with area 10 whose side lengths are all integers? 
+            <div class="exp-slide slideTextItem">
+                Can you find a right triangle with area <kmath color="N">30</kmath> whose side lengths are all rational numbers? 
 
-            <br>Sounds easy, right? Here's a triangle with the side lengths marked, with the triangle's the area written in the middle. But this triangle's area is 6, not 10. Think you can find a triangle with the right area? Drag the red dots and play around.
-        </div>
-        <div class="exp-slide slideTextItem">
-            The question might sound simple, but it turns out to have some unexpected connections to number theory. In this explanarian, we'll dive into this problem, and introduce these things called elliptic curves, which are used every day by computers to connect to websites securely. Along the way we'll explore a way to "add" points, and problem with a million-dollar prize.
+                <br>This problem is called the "congruent number problem". It's very simple to state, but this problem has tons of interesting connections to number theory and these things called elliptic curves.
 
-           <br>Can you find a triangle with area 10 whose side lengths are all integers? Once you're ready to see spoilers, click next.
-        </div>
+                <br>Elliptic curves are one of applied math's biggest success stories. One of the most common questions people ask about math is "Does this have any real-world applications?". For elliptic curves, the answer is "absolutely". Every time you connect to the internet, your computer uses elliptic curves to encrypt your connection so hackers can't steal your credit card numbers when you shop online. Non-applied mathematicians also care a lot about elliptic curves because they connect many different subfields of math, such as number theory, geometry, and abstract algebra. In fact, they're so important that there's a million-dollar prize offered by the Clay Mathematics Institute for solving an unsolved problem about elliptic curves called the BSD conjecture. To mathematicians, elliptic curves are serious business.
 
-        <div class="exp-slide slideTextItem">
-            Turns out: <b>It's impossible!</b>
+                <br>This presentation is an introduction to elliptic curves and how they solve the congruent number problem. First we'll introduce the congruent number problem, then reframe the problem in a beautifully geometric way that's easier to solve, and finally discover how elliptic curves let us generate new triangles from old ones. Let's dive right in!
+            </div>
 
-            <br>In fact, there's a proof that tells you the ONLY numbers which are the area of a triangle with all-integer sides - but the proof relies on an unsolved conjecture called the BSD Conjecture. If you solve that conjecture, you win a million dollars from the Clay Math Institute.
 
-            <br>But why is it impossible? By the end of this presentation, we'll see!
-        </div>
-        <div class="exp-slide slideTextItem">
-            (To be continued...)
-        </div>
+            <div class="exp-slide slideTextItem">
+                First, let's take a look at the congruent number problem. Can you find a right triangle with area <kmath color="N">30</kmath> whose side lengths are all rational numbers?
+            </div>
+            <div class="exp-slide slideTextItem">
+                We're looking for triangles where all the sides are rational numbers. This triangle does have area <kmath color="N">30</kmath>, but it doesn't mean that <kmath color="N">30</kmath> is a congruent number, because the side with length <kmath>\sqrt{136}</kmath> isn't rational.
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                In this other triangle, however, all three sides are rational numbers. We did it! Because all three sides of this triangle are rational, and it has area <kmath color="N">30</kmath>, we've shown <kmath color="N">30</kmath> is a congruent number.
+            </div>
+            <div class="exp-slide slideTextItem">
+                What about other numbers? For example, is <kmath color="N">24</kmath> a congruent number? Drag the red circle to explore triangles.
+                <br>
+                <button onclick="twentyFourHint.getDeepestChildren().forEach(output => EXP.TransitionTo(output, {'opacity':1}, 500));">Click for a hint</button>
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                This triangle has area <kmath color="N">24</kmath>! Therefore, <kmath color="N">24</kmath> is a congruent number.
+            </div>
+            <div class="exp-slide slideTextItem">
+                Alright, so we know <kmath color="N">30</kmath> and <kmath color="N">24</kmath> are congruent numbers. What about other numbers?
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                We can construct new congruent numbrers out of old ones by scaling the sides up and down. For example, if we start with one of the triangles we already found and multiply each side by two, we get another right triangle with all-rational sides.
+
+                Similarly, since <kmath color="N">24</kmath><kmath>=6\cdot2^2</kmath>, we can take the triangle we found with area <kmath color="N">24</kmath> and divide each side by <kmath>2</kmath> to get a triangle wth area <kmath>\frac{24}{2^2} =</kmath><kmath>6</kmath>. 
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                What about the number after 6, 7? Can you find a right triangle with area <kmath color="N">7</kmath> and rational sides?
+
+                Click the right arrow when you want a hint.
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                Turns out <kmath color="N">7</kmath> is a congruent number, but even for really small numbers it can become really hard to find right triangles. The simplest right triangle with area <kmath color="N">7</kmath> has sides <kmath>35/12, 24/5, </kmath> and <kmath>337/60</kmath>. <kmath color="N">N=7</kmath> hasn't even reached double-digits, and these triangles are already involving fractions with numbers over a hundred!
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                Things get even more hairy for <kmath color="N">N=13</kmath> - it's not that much bigger than <kmath color="N">7</kmath>, but the simplest triangle with area <kmath color="N">13</kmath> has sides <kmath>\frac{780}{323}, \frac{323}{30}, </kmath> and - wait for it - <kmath>\frac{106921}{9690}</kmath>. Those may be huge numbers in the numerator and denominator, but they're still rational.
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                And what about <kmath color="N">8</kmath>? Is <kmath color="N">8</kmath> is a congruent number? Try for yourself - can you find a triangle with area 8 and rational sides?
+            </div>
+
+            <div class="exp-slide slideTextItem">
+                Turns out: For n=<kmath color="N">8</kmath>, it's <b>impossible!</b> There are no right triangles whatsoever with rational sides with area 8.
+
+                <br>But... how would you prove that it's impossible? Right triangles, rational sides, and area 8 are all straightforward conditions. How do you know I'm not lying to you and there's some triangle whose sides are ridiculously complicated fractions out there with area 8? With these eye-popping fractions, hunting for triangles manually clearly won't be enough. Is there a systematic way to figure out whether or not <kmath>N</kmath> is a congruent number?
+
+                <br> To find out, we'll need to reframe the question and take a look at some geometry.
+
+                <a style="position:absolute;bottom:0.5em;right:0.5em;font-weight:bold;text-decoration:underline;" href="2.html">Next</a>
+            </div>
       </div>
   </div>
 </body>

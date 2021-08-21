@@ -63,7 +63,7 @@ function ThreeasyEnvironment(canvasElem = null){
 	this.renderer.domElement.addEventListener( 'mouseup', this.onMouseUp.bind(this), false );
 	this.renderer.domElement.addEventListener( 'touchstart', this.onMouseDown.bind(this), false );
 	this.renderer.domElement.addEventListener( 'touchend', this.onMouseUp.bind(this), false );
-	this.renderer.domElement.addEventListener( 'resize', this.resizeCanvasIfNecessary.bind(this), false );
+	window.addEventListener( 'resize', this.resizeCanvasIfNecessary.bind(this), false );
 
 	/*
 	//renderer.vr.enabled = true; 
@@ -140,15 +140,11 @@ ThreeasyEnvironment.prototype.resizeCanvasIfNecessary= function() {
         height = window.innerHeight;
     }
 
-    if(width != this.renderer.domElement.width || height != this.renderer.domElement.height){
-        //canvas dimensions changed, update the internal resolution
-
-	    this.camera.aspect = width / height;
-        //this.camera.setFocalLength(30); //if I use this, the camera will keep a constant width instead of constant height
-	    this.aspect = this.camera.aspect;
-	    this.camera.updateProjectionMatrix();
-	    this.renderer.setSize( this.evenify(width), this.evenify(height),this.shouldCreateCanvas );
-    }
+    this.camera.aspect = width / height;
+    //this.camera.setFocalLength(30); //if I use this, the camera will keep a constant width instead of constant height
+    this.aspect = this.camera.aspect;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize( this.evenify(width), this.evenify(height),this.shouldCreateCanvas );
 }
 ThreeasyEnvironment.prototype.listeners = {"update": [],"render":[]}; //update event listeners
 ThreeasyEnvironment.prototype.render = function(timestep){

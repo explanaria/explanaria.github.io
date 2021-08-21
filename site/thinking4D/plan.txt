@@ -1,5 +1,11 @@
-In 3 circle, I say this is bad because 'useless coordinates' are bad. what I should really do is draw  a path of an airplane flying over the north pole, make graphs of r(t) and phi(t), show the discontinuity, complain about the discontinuity.
+Rhetorical shift:
+    Manifolds as products of smaller ones
+    ->
+    Manifolds as things with "circle coordinates"
 
+    -> Manifolds have "more than one set of coordinates"
+
+then to "what manifolds can't be made by combining coordinates out of smaller ones?"
 
 
 In bonus RP2, the entire horizontal axis of the red coordinate chart maps to the same point: north pole. this is because blue coordinate chart isn't actually right - blue coordinate chart right now is [lat, lon]. the entire top part of the blue coordinate chart maps to the same point: north pole.

@@ -9,11 +9,14 @@ function makeLabel(frostedBG=false){
     Need this CSS:
     .katexlabel{
         position: absolute;
-        transform: translate(-50%, -50%);
+        top: 0px;
+        left: 0px;
         font-size: 24px;
         pointer-events: none;
     }
 */
+
+
     let parent = document.getElementById("canvasContainer");
     let positioningElem = document.createElement("div");
     if(frostedBG){
@@ -23,6 +26,9 @@ function makeLabel(frostedBG=false){
         positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#fff', "0.05rem");  //white border
     }
     //positioningElem.style.fontSize="24px"; //might need changing
+
+    //changing a CSS transform doesn't cause a repaint according to https://csstriggers.com/, so it's much faster
+    positioningElem.style.transform = "translate(-50%, -50%) translate(0px, 0px)";
     positioningElem.className = "katexlabel";
     parent.appendChild(positioningElem);
 
@@ -75,7 +81,7 @@ class Dynamic3DText{
         this._prevText = null;
         this._prevPosition = [0,0];
 
-        window.addEventListener("resize", this.updatePosition.bind(this), false);
+        window.addEventListener("resize", () => this.updatePosition(this._prevT), false);
 
     }
     updateHTMLColor(t){
@@ -98,11 +104,6 @@ class Dynamic3DText{
             return; //we don't need to render anything!
         }
         
-        if(this.position3D.constructor == Function){
-            this._position3D = this.position3D(t);
-        }else{
-            this._position3D = this.position3D;
-        }
 
         //figure out what text to display
         if(this.text.constructor == String){
@@ -119,7 +120,7 @@ class Dynamic3DText{
         //compute color
         this.updateHTMLColor(t);
 
-        this.updatePosition();
+        this.updatePosition(t);
 
         //if text has changed, re-render
         if(this._text != this._prevText){
@@ -129,13 +130,19 @@ class Dynamic3DText{
 
         this._prevT =t;
     }
-    updatePosition(){
+    updatePosition(t){
+        if(this.position3D.constructor == Function){
+            this._position3D = this.position3D(t);
+        }else{
+            this._position3D = this.position3D;
+        }
+
         this.position2D = screenSpaceCoordsOf3DPoint(this._position3D);
 
         if(this.position2D[0] != this._prevPosition[0] || this.position2D[1] != this._prevPosition[1]){
 
-            this.htmlElem.style.left = this.position2D[0] + 'px';
-            this.htmlElem.style.top = this.position2D[1] + 'px';
+            //Assumes we're at top: 0px, left 0px, the 50% 50% ensures the element is centered
+            this.htmlElem.style.transform = "translate(-50%, -50%) translate("+this.position2D[0]+"0px, "+this.position2D[1]+"px)";
             this._prevPosition[0] = this.position2D[0];
             this._prevPosition[1] = this.position2D[1];
         }

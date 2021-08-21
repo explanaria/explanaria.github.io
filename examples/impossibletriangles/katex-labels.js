@@ -29,8 +29,8 @@ function screenSpaceCoordsOf3DPoint(point){
     three.camera.matrixWorldNeedsUpdate = true;
     let vec = new THREE.Vector3(...point).applyMatrix4(three.camera.matrixWorldInverse).applyMatrix4(three.camera.projectionMatrix)
     let arr = vec.toArray(); 
-    arr[0] = (arr[0]+1)/2 * three.renderer.domElement.width;
-    arr[1] = (-arr[1]+1)/2 * three.renderer.domElement.height;
+    arr[0] = (arr[0]+1)/2 * three.renderer.domElement.clientWidth;
+    arr[1] = (-arr[1]+1)/2 * three.renderer.domElement.clientHeight;
     return arr; //yeah theres an extra arr[2] but just ignore it   
 }
 
@@ -111,8 +111,9 @@ class Dynamic3DText{
         this._prevT =t;
     }
     updatePosition(){
-        this.htmlElem.style.left = this.position2D[0]/window.devicePixelRatio + 'px';
-        this.htmlElem.style.top = this.position2D[1]/window.devicePixelRatio + 'px';
+        this.position2D = screenSpaceCoordsOf3DPoint(this._position3D);
+        this.htmlElem.style.left = this.position2D[0] + 'px';
+        this.htmlElem.style.top = this.position2D[1] + 'px';
     }
 
     format(x, precision=2){

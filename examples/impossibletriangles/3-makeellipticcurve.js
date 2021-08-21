@@ -14,8 +14,8 @@ export function constructEXPEllipticCurve(p=-2, q=1){
 	    var leftCurveComponent = new EXP.Area({bounds: [[realroots[0], realroots[1]]], numItems: 30});
 	    var positiveLeftHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, positiveY(x)]});
 	    var negativeLeftHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, -positiveY(x)]});
-	    leftCurveComponent.add(positiveLeftHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0}));
-        leftCurveComponent.add(negativeLeftHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0}));
+	    leftCurveComponent.add(positiveLeftHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));
+        leftCurveComponent.add(negativeLeftHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));
         curveObjects.push(leftCurveComponent);
     }
     //right connected component of the curve, or the entire thing if there's only one root (untested)
@@ -23,8 +23,8 @@ export function constructEXPEllipticCurve(p=-2, q=1){
     var rightCurveComponent = new EXP.Area({bounds: [[realroots[realroots.length-1],20]], numItems: 30});
     var positiveRightHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, positiveY(x)]});
     var negativeRightHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, -positiveY(x)]});
-    rightCurveComponent.add(positiveRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0}));
-    rightCurveComponent.add(negativeRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0}));
+    rightCurveComponent.add(positiveRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));
+    rightCurveComponent.add(negativeRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));
     curveObjects.push(rightCurveComponent);
     return [curveObjects, curveProjection];
 }

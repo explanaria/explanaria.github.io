@@ -18,8 +18,8 @@ let white = new THREE.Color("white");
 let black = new THREE.Color("black");
 
 
-let yColor = new THREE.Color("hsl(180, 80%, 50%)");
-let xColor = new THREE.Color("hsl(60, 80%, 50%)");
+let yColor = new THREE.Color("hsl(180, 50%, 50%)");
+let xColor = new THREE.Color("hsl(60, 50%, 50%)");
 
 let gridColor = new THREE.Color(0xcccccc);
 

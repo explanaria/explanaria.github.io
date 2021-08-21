@@ -5,20 +5,25 @@ function cssDropShadowOutline(blurRadius="0.05rem", color='#0005', moveRadius="0
 }
 
 function makeLabel(frostedBG=false){
+    /*
+    Need this CSS:
+    .katexlabel{
+        position: absolute;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        pointer-events: none;
+    }
+*/
     let parent = document.getElementById("canvasContainer");
     let positioningElem = document.createElement("div");
-    positioningElem.style.position = "absolute";
-    positioningElem.style.transform="translate(-50%, -50%)";
     if(frostedBG){
-        //positioningElem.style.backgroundColor="rgba(255,255,255,0.3)";
-        positioningElem.style.filter=cssDropShadowOutline("0.15rem",'#0002', "0.15rem"); //soft gray shadow
+        //positioningElem.style.filter=cssDropShadowOutline("0.15rem",'#0002', "0.15rem"); //soft gray shadow
         //positioningElem.style.filter=cssDropShadowOutline("0.15rem",'#0008', "0.15rem"); //soft gray shadow
         //positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#000f', "0.05rem"); //harder black shadow
-        positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#fff', "0.05rem"); 
+        positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#fff', "0.05rem");  //white border
     }
-    positioningElem.style.fontSize="24px"; //might need changing
-    positioningElem.style.pointerEvents="none";
-    positioningElem.className = "EXP-textlabel"
+    //positioningElem.style.fontSize="24px"; //might need changing
+    positioningElem.className = "katexlabel";
     parent.appendChild(positioningElem);
 
     return positioningElem;
@@ -143,6 +148,8 @@ class Dynamic3DText{
         return Number(x).toFixed(2);
     }
     renderDisplayedText(){
+        this.htmlElem.innerHTML = this._text;
+        
         katex.render(this._text, this.htmlElem, {
             throwOnError: false
         });

@@ -1,6 +1,6 @@
 import {Dynamic3DText} from "./katex-labels.js";
 import {rColor, sColor, tColor, twoNColor, white, black, twoNTextColor} from "./colors.js";
-import addColorToHTML from './2-addColorToHTMLMath.js';
+import {addColorToHTML, AutoColoring3DText} from './2-addColorToHTMLMath.js';
 
 let a=1;
 let b=5;
@@ -104,7 +104,7 @@ function setup(){
 
 
     window.aText = new Dynamic3DText({
-        text: "r", 
+        text: "r^2", 
         color: rColor,
         position3D: (t) => [fakeA, 1],//(t) => window.rSquarePos.expr(0,t,a/2,a/2),
         frostedBG: false,
@@ -112,7 +112,7 @@ function setup(){
     })
 
     window.bText = new Dynamic3DText({
-        text: "s", 
+        text: "s^2", 
         color: sColor,
         position3D: (t) => [fakeB, 1],//(t) => [b/2,b/2],
         frostedBG: false,
@@ -120,7 +120,7 @@ function setup(){
     })
 
     window.cText = new Dynamic3DText({
-        text: "t", 
+        text: "t^2", 
         color: tColor,
         position3D: (t) => [fakeC, 1],//(t) => [(b+c)/2,(b+c)/2],
         frostedBG: false,
@@ -161,26 +161,26 @@ function setup(){
 
     let sideLengthColor = black; //"green"
 
-    window.side1Text = new Dynamic3DText({ //horizontal
-        text: "\\sqrt{r}+\\sqrt{t}", 
+    window.side1Text = new AutoColoring3DText({ //horizontal
+        text: "r+t", 
         color: sideLengthColor,
         position3D: (t) => [(0+c)/2,a],
         opacity: 0,
-        //frostedBG: true,
+        frostedBG: true,
     })
-    window.side2Text = new Dynamic3DText({ //vertical
-        text: "\\sqrt{r}-\\sqrt{t}", 
+    window.side2Text = new AutoColoring3DText({ //vertical
+        text: "r-t", 
         color: sideLengthColor,
         position3D: (t) => [c+a,(a+c)/2],
         opacity: 0,
-        //frostedBG: true,
+        frostedBG: true,
     })
-    window.side3Text = new Dynamic3DText({ //hypotenuse
-        text: "2\\sqrt{s}", 
+    window.side3Text = new AutoColoring3DText({ //hypotenuse
+        text: "2s", 
         color: sideLengthColor,
         position3D: (t) => [(0+c)/2,(a+c)/2],
         opacity: 0,
-        //frostedBG: true,
+        frostedBG: true,
     })
 
     /*
@@ -188,14 +188,18 @@ function setup(){
     grid.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid*/
 
     window.objects = [];
-    objects = objects.concat([firstLine, firstNLine, dots, firstNText1, firstNText2]);// firstALabel, firstBLabel, firstCLabel]);
+    window.staticObjects = [firstLine, dots, firstNLine];
+    objects = objects.concat([firstNText1, firstNText2]);// firstALabel, firstBLabel, firstCLabel]);
+    staticObjects = staticObjects.concat([triangleOutline])
     objects = objects.concat([rSquare, sSquareTop, sSquareBottom, tSquareTop, tSquareBottom, aText, bText, cText,]);
     objects = objects.concat([bigBorder1, firstTwoNText, secondTwoNText,bigBorder2])
-    objects = objects.concat([triangleNText, triangleNText2, triangleOutline, side1Text,side2Text,side3Text])
+    staticObjects = staticObjects.concat([triangleOutline])
+    objects = objects.concat([triangleNText, triangleNText2, side1Text,side2Text,side3Text])
     three.on("update",function(time){
 	    objects.forEach(i => i.activate(time.t));
 	    //controls.update();
     });
+    staticObjects.forEach(i => i.activate(0));
 }
 
 async function animate(){
@@ -203,14 +207,14 @@ async function animate(){
     await presentation.begin();
 
 
-    await presentation.nextSlide();
-
     [aText, bText, cText, firstNText1, firstNText2].forEach(label => presentation.TransitionTo(label, {'opacity':1}));
 
     [firstLine, dots, firstNLine].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':1})));
     [firstNText1, firstNText2].forEach(item => 
     presentation.TransitionTo(item, {'opacity': 1}))
 
+
+    await presentation.nextSlide();
 
     await presentation.nextSlide();
 

@@ -14,6 +14,7 @@ function makeLabel(frostedBG=false){
         positioningElem.style.filter=cssDropShadowOutline("0.15rem",'#0002', "0.15rem"); //soft gray shadow
         //positioningElem.style.filter=cssDropShadowOutline("0.15rem",'#0008', "0.15rem"); //soft gray shadow
         //positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#000f', "0.05rem"); //harder black shadow
+        positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#fff', "0.05rem"); 
     }
     positioningElem.style.fontSize="24px"; //might need changing
     positioningElem.style.pointerEvents="none";
@@ -140,13 +141,5 @@ class Dynamic3DText{
         return this._color;    
     }
 }
-
-/*
-
-
-let x = new Dynamic3DText({
-    text: (t) => trianglePoints[0]}, 
-    position3D: (t) => EXP.Utils.vecAdd(EXP.Utils.vecAdd(trianglePoints[0] + trianglePoints[1]), EXP.Utils.vecScale(trianglePoints[2], -0.3))
-})*/
 
 export {Dynamic3DText};

@@ -7,7 +7,7 @@ const invalidIntegerColor = "maroon";
 let rColor = new THREE.Color("hsl(0, 80%, 50%)");0x00ff55;
 let sColor = new THREE.Color("hsl(120, 80%, 50%)");0x4488ff;
 let tColor = new THREE.Color("hsl(240, 80%, 50%)");0x55ff00;
-let twoNColor = new THREE.Color("hsl(300, 80%, 80%)");0xff66ff;
+let twoNColor = new THREE.Color("hsl(300, 50%, 50%)");0xff66ff;
 
 let white = new THREE.Color("white");
 let black = new THREE.Color("black");

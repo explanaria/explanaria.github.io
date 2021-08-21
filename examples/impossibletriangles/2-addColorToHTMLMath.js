@@ -1,6 +1,8 @@
 import {rColor, sColor, tColor, yColor, xColor, twoNColor, white, black, twoNTextColor} from "./colors.js";
 import katex from './dist/katex-v0.13.13/katex.mjs';
 
+import {Dynamic3DText} from "./katex-labels.js";
+
 function getAppropriateColor(string){
         if(string == "N"){
             return twoNColor.getStyle();
@@ -51,7 +53,19 @@ function scanPageAndAddColor(){
     }
 }
 
-export default function addColorToHTML(){
+export function addColorToHTML(){
     //call before page loaded
     document.addEventListener("DOMContentLoaded", scanPageAndAddColor);
 }
+
+
+
+export class AutoColoring3DText extends Dynamic3DText{
+    renderDisplayedText(){
+        katex.render(this._text, this.htmlElem, {
+            throwOnError: false
+        });
+        walkAndAddColor(this.htmlElem);
+    }
+}
+

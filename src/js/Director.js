@@ -41,7 +41,6 @@ class DirectionArrow{
     showSelf(){
         this.arrowImage.style.pointerEvents = '';
         this.arrowImage.style.opacity = 1;
-        
     }
     hideSelf(){
         this.arrowImage.style.opacity = 0;
@@ -411,6 +410,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
 
         }
         this.currentReplayDirection = NO_SLIDE_MOVEMENT;
+        this.showArrows();
     }
 
     async redoAnItem(redoItem){

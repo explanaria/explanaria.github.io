@@ -5,7 +5,6 @@ body{
     border: 0;
 	overflow: hidden; /* oh fine */
     
-
     font-size:16px;
 	transition: opacity 1s ease-in-out;
 }
@@ -13,7 +12,7 @@ body{
 	font-family: 'Lora', "serif"; 
 	position:absolute; bottom:10%; 
 	text-align:center;
-	width: 90%;
+	width: 99%;
 	text-underline-position: under;
     -webkit-text-decoration-skip: auto;
 	text-decoration-skip-ink: auto;

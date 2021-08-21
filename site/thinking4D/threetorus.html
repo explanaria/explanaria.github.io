@@ -2,13 +2,13 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <link rel="shortcut icon" href="../../../favicon.ico"/>
+  <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Visualizing 4D</title>
 
-  <script src="../../src/lib/three.min.js"></script>
+  <script src="../src/lib/three.min.js"></script>
   
   
-  <script src="../../resources/build/explanaria-bundle.js"></script>
+  <script src="../resources/build/explanaria-bundle.js"></script>
 
 
   <script src="colors.js"></script>
@@ -16,11 +16,8 @@
   <script src="RotateAboutCenterControls.js"></script>
   <script src="polychora.js"></script>
 
-  <script data-goatcounter="https://explanaria.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
 
-
-  <link type="text/css" href="../../resources/style.css" rel="stylesheet" />
+  <link type="text/css" href="../resources/style.css" rel="stylesheet" />
   <link type="text/css" href="./bulma.css" rel="stylesheet" />
   <link type="text/css" href="./presentation.css" rel="stylesheet" />
 
@@ -77,6 +74,7 @@
 
     }
 
+ 
     function setup3DAxes(){
         let axisSize = 1.5;
         xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
@@ -137,11 +135,12 @@
     function setup4DPolychora(){
 
         polychora = [];
-        let hypercube = makeHypercube(R4Embedding, [R4Rotation]);
-        hypercube.objectParent.position.x = 0;
 
-        objects.push(hypercube);
-        polychora.push(hypercube);
+        let torus3 = makeTorus3(R4Embedding, [R4Rotation]);
+        torus3.objectParent.position.x = 0;
+
+        objects.push(torus3);
+        polychora.push(torus3);
     }
 
     async function animate(){
@@ -204,7 +203,7 @@
         </canvas>
       </div>
       <div id="textArea" class="non3DFooterPart">
-        It's a hypercube!
+        It's a 3-torus, visualized in 4D! Isn't it so much simpler to just think about a coordinate chart?
 
         <br>
         <button onclick="animateTo4DOrtho()" class="button"> Stereographic </button>

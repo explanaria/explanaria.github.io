@@ -13,7 +13,7 @@ function setupCharts(){
 function setup(){
 
 	three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
-	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
     presentation = new EXP.UndoCapableDirector();
 

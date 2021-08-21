@@ -6,130 +6,30 @@ body{
 	transition: opacity 1s ease-in-out;
 }
 
-/* index.html specific CSS */
-
-.container{
-}
-#mainiframecontainer{
-    max-height:800px;
-    height:60%;
-    width:80%;
-    margin: auto;
-}
-#mainiframe{
-    width:100%;
-    height:60vh; /* 60% of height */
-    border: none;
-    margin: 0;
-    overflow: hidden;
-    border-bottom: 1px solid #ddd;
-
-}
-.mainheader{
-    background-color: #222;
-    color: #eee;
-    padding: 0.25em 0 1em 0;
-	font-family: "Computer Modern Sans", serif;
-	text-align:center;
-    line-height:0.9;
-}  
-
-
-.mainheader h1{
-    font-size: 3em;
-    margin: 0em;
-    font-family: "Computer Modern Serif", serif;
-}  
-.mainheader aside{
-    font-size: 1em;
-    margin: 0.025em;
-}  
-
-.footer{
-    background-color: #222;
-    color: #eee;
-    padding: 0.25em 0 0.25em 0;
-	font-family: "Computer Modern Sans", serif;
-	text-align:center;
-    font-size: 70%;
-    margin-top: 5em;
-}  
-
-#examplecontainer{
-    margin: auto;
-    max-width: 1000px;
-    padding: 0 15px;
-	font-family: "Computer Modern Sans", sans-serif;
-	text-align:center;
-}
-
-#examplecontainer h2{
-    margin-bottom: 0px;
-}
-
-.row {
-  display: flex;
-  flex-flow: row wrap;
-    justify-content: space-around;
-}
-
-.examplelink {
-  flex-basis: 100%;
-  margin:16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: inset 0 0 1px #ccc, 0 0 5px #ccc;
-  padding:0em 1em;
-
-  font-size: 1.5em;
-   display: inline-block;
-   position: relative;
-}
-
-.examplelink p{
-    color: black;
-    bottom: -1em;
-    position: absolute;
-    width: 100%;
-    line-height: 1.3;
-    background-color: rgba(255,255,255,0.8);
-    border-top: 1px solid #ccc;
-    left: 0em; /*I don't know why I need this to make everything line up*/
-    padding: 0.3em 0em;
-} 
-.examplelink span{
-    line-height: 0.5;
-} 
-
-.examplepic{
-    max-height: 200px;
-    max-width: 100%; /* unsure about this */
-}
-
-.column {
-  flex-basis: 100%;
-}
-
-@media screen and (min-width: 800px) {
-  .column {
-    flex: 1;
-  }
-  .examplelink {
-    flex: 20%;
-  }
-    .mainheader h1{
-        font-size: 6em;
-        margin: 0em;
-    }  
-    .mainheader aside{
-        font-size: 1.2em;
-    }  
-}
-
-
-
 /*  explanaria-specific CSS                               */
+
+/* Required for forwards/backwards arrows to work */
+.exp-arrow{
+	z-index: 1;
+	bottom: 2%;
+	position: absolute;
+	width: 15vw;
+	max-width: 5em;
+	transition: opacity 0.5s ease-in-out;
+}
+.exp-arrow-right{
+	right: 2%;
+}
+.exp-arrow-left{
+	left: 2%;
+    transform: scale(-1, 1);
+}
+.exp-arrow-right:hover{
+	transform: scale(1.1);
+}
+.exp-arrow-left:hover{
+	transform: scale(-1.1, 1.1);
+}
 
 
 .exp-label, .exp-text{

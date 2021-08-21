@@ -22,7 +22,7 @@ function pointPath(i,t,x){
 
 function setup(){
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
-	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
     
 
 	three.camera.position.z = 3;

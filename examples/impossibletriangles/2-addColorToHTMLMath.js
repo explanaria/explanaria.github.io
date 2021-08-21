@@ -1,4 +1,4 @@
-import {rColor, sColor, tColor, yColor, twoNColor, white, black, twoNTextColor} from "./colors.js";
+import {rColor, sColor, tColor, yColor, xColor, twoNColor, white, black, twoNTextColor} from "./colors.js";
 import katex from './dist/katex-v0.13.13/katex.mjs';
 
 function getAppropriateColor(string){
@@ -16,6 +16,9 @@ function getAppropriateColor(string){
         }
         if(string == "y"){
             return yColor.getStyle();
+        }
+        if(string == "x"){
+            return xColor.getStyle();
         }
         return "";
 }

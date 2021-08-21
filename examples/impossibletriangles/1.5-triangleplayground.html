@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Impossible Triangles</title>
+  <script src="../../src/lib/three.min.js"></script>
+  <script src="../../src/lib/OrbitControls.js"></script>
+  <script src="../../build/explanaria-bundle.js"></script>
+
+  <script type="module" src="1.5-triangleplayground.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+
+  <link type="text/css" href="../../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+  <link type="text/css" href="./dist/katex-v0.13.13/katex.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart"> 
+        <canvas id="threeDcanvas">
+
+        </canvas>
+        <canvas id="2dcanvas" class="canvasOverlay">
+
+        </canvas>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+        <div class="overlappingItemContainer"> 
+        <div class="exp-slide slideTextItem">
+            Can you find a triangle with area 10 whose side lengths are all integers? 
+
+            <br>Sounds easy, right? Here's a triangle with the side lengths marked, with the triangle's the area written in the middle. But this triangle's area is 6, not 10. Think you can find a triangle with the right area? Drag the red dots and play around.
+        </div>
+        <div class="exp-slide slideTextItem">
+            The question might sound simple, but it turns out to have some unexpected connections to number theory. In this explanarian, we'll dive into this problem, and introduce these things called elliptic curves, which are used every day by computers to connect to websites securely. Along the way we'll explore a way to "add" points, and problem with a million-dollar prize.
+
+           <br>Can you find a triangle with area 10 whose side lengths are all integers? Once you're ready to see spoilers, click next.
+        </div>
+
+        <div class="exp-slide slideTextItem">
+            Turns out: <b>It's impossible!</b>
+
+            <br>In fact, there's a proof that tells you the ONLY numbers which are the area of a triangle with all-integer sides - but the proof relies on an unsolved conjecture called the BSD Conjecture. If you solve that conjecture, you win a million dollars from the Clay Math Institute.
+
+            <br>But why is it impossible? By the end of this presentation, we'll see!
+        </div>
+        <div class="exp-slide slideTextItem">
+            (To be continued...)
+        </div>
+      </div>
+  </div>
+</body>
+</html>

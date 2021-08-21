@@ -1,3 +1,4 @@
+import * as THREE from "../../lib/three.module.js";
 import { LineOutput } from './LineOutput.js';
 import { Utils } from '../utils.js';
 import { threeEnvironment } from '../ThreeEnvironment.js';

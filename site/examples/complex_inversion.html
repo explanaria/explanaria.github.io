@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
   <title>Explanarian - 1/z</title>
-  <script src="../src/lib/three.min.js"></script>
-  <script src="../src/lib/socket.io.js"></script>
-  <script src="../src/lib/OrbitControls.js"></script>
-  <script src="../build/explanaria-bundle.js"></script>
+  
+  
+  
+  <script src="../resources/build/explanaria-bundle.js"></script>
 
-  <link type="text/css" href="../src/style.css" rel="stylesheet" />
+  <link type="text/css" href="../resources/oldstyle.css" rel="stylesheet" />
 
   <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
@@ -19,7 +19,7 @@
 <body>
   <script>
 	var three = EXP.setupThree(60,15);
-	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.z = 4;
 

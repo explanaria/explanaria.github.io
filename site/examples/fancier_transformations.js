@@ -2,7 +2,7 @@
 
     var controls, area, id, output;
     function init(){
-	    controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 	    console.log("Loaded.");
 
 	    area = new EXP.Area({bounds: [[-5,5],[-5,5]]});

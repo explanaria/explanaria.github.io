@@ -6,7 +6,7 @@
  * @author Don McCurdy / https://www.donmccurdy.com
  */
 
-THREE.GLTFLoader = ( function () {
+GLTFLoader = ( function () {
 
 	function GLTFLoader( manager ) {
 

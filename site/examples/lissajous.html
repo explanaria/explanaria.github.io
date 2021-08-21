@@ -4,26 +4,26 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
   <title>Explanarian - Cyclical Snake</title>
-  <script src="../src/lib/three.min.js"></script>
-  <script src="../src/lib/socket.io.js"></script>
-  <script src="../src/lib/OrbitControls.js"></script>
-  <script src="../build/explanaria-bundle.js"></script>
+  
+  
+  
+  <script src="../resources/build/explanaria-bundle.js"></script>
 
   <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
 
 
-  <link type="text/css" rel="stylesheet" href="../src/style.css" />
+  <link type="text/css" rel="stylesheet" href="../resources/oldstyle.css" />
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
   <script>var three = EXP.setupThree(60,15);
-var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 var area = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 16});
 var varyParameters = new EXP.Transformation({'expr': (i,t,theta) => [theta, 1.1+Math.sin(t)]});
-var outputCurve = new EXP.Transformation({'expr': (i,t,theta,a) => [Math.cos(theta+t), Math.sin(theta+t)*a)]});
+var outputCurve = new EXP.Transformation({'expr': (i,t,theta,a) => [Math.cos(theta+t), Math.sin(theta+t)*a]});
 var output = new EXP.PointOutput({width:0.2, color: 0x00ff00});
 
 area.add(varyParameters).add(outputCurve).add(output)

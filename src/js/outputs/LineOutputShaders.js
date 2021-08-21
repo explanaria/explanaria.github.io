@@ -1,4 +1,4 @@
-//LineOutputShaders.js
+import * as THREE from "../../lib/three.module.js";
 
 //based on https://mattdesl.svbtle.com/drawing-lines-is-hard but with several errors corrected, bevel shading added, and more
 

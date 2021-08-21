@@ -1,3 +1,4 @@
+import * as THREE from "../../lib/three.module.js";
 import {OutputNode} from '../Node.js';
 import { Utils } from '../utils.js';
 import { getThreeEnvironment } from '../ThreeEnvironment.js';

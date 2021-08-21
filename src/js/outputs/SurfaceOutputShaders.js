@@ -1,4 +1,5 @@
 //SurfaceOutputShaders.js
+import * as THREE from "../../lib/three.module.js";
 
 //experiment: shaders to get the triangle pulsating!
 var vShader = [

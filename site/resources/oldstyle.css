@@ -1,0 +1,200 @@
+#gui { position: absolute; top: 50px; left: 0px }
+body{ 
+    margin: 0;
+    padding: 0;
+    border: 0;
+	overflow: hidden; /* oh fine */
+    
+    font-size:16px;
+	transition: opacity 1s ease-in-out;
+}
+.exp-label, .exp-text{
+	font-family: 'Lora', "serif"; 
+	position:absolute; bottom:10%; 
+	text-align:center;
+	width: 99%;
+	text-underline-position: under;
+    -webkit-text-decoration-skip: auto;
+	text-decoration-skip-ink: auto;
+	-webkit-text-decoration-skip-ink: auto;
+    text-decoration-skip: auto;
+	pointer-events: none; 
+	text-shadow:
+
+		 4px  0px 0px rgb(255, 255, 255),
+		-4px  0px 0px rgb(255, 255, 255),
+		 0px  4px 0px rgb(255, 255, 255),
+		 0px -4px 0px rgb(255, 255, 255),
+
+		-3px -2px 0px rgb(255, 255, 255),
+		-3px  2px 0px rgb(255, 255, 255),
+		 3px  2px 0px rgb(255, 255, 255),
+		 3px -2px 0px rgb(255, 255, 255),
+
+		-2px -3px 0px rgb(255, 255, 255),
+		-2px  3px 0px rgb(255, 255, 255),
+		 2px  3px 0px rgb(255, 255, 255),
+		 2px -3px 0px rgb(255, 255, 255),
+
+		-1px -2px 1px rgb(255, 255, 255),
+		-2px -1px 1px rgb(255, 255, 255),
+		-1px  2px 1px rgb(255, 255, 255),
+		-2px  1px 1px rgb(255, 255, 255),
+		 1px  2px 1px rgb(255, 255, 255),
+		 2px  1px 1px rgb(255, 255, 255),
+		 1px -2px 1px rgb(255, 255, 255),
+		 2px -1px 1px rgb(255, 255, 255);
+	transition: inherit;
+}
+.exp-label{
+	font-size: 2em; 
+}
+.exp-text{
+	font-size: 1.5em; 
+}
+.exp-text aside{
+	font-size: 80%;
+}
+
+
+.exp-math{
+	font-family: "Computer Modern Serif", serif; /* But of course! */
+	font-style: normal;
+	font-size: 3em; 
+	transition: inherit;
+}
+.exp-math sup, sub{
+	z-index:-1;
+	position: relative
+}
+
+.exp-small{
+	font-size: 75%;
+	margin: 0;
+}
+
+
+.exp-slide{
+	transition: opacity 0.5s ease-in-out;
+	margin: 0 5% 0;
+	width: 90%;
+}
+.exp-arrow{
+	z-index: 1;
+	bottom: 2%;
+	position: absolute;
+	width: 15vw;
+	max-width: 5em;
+	transition: opacity 0.5s ease-in-out;
+}
+.exp-arrow-right{
+	right: 2%;
+}
+.exp-arrow-left{
+	left: 2%;
+    transform: scale(-1, 1);
+}
+.exp-arrow-right:hover{
+	transform: scale(1.1);
+}
+.exp-arrow-left:hover{
+	transform: scale(-1.1, 1.1);
+}
+
+.exp-backbtn{
+    width: 15%;
+    max-width: 4em;
+    height: 15%;
+    max-height: 4em;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding:0.5em;
+}
+.exp-backbtn:hover{
+	transform: scale(1.1);
+}
+
+.show-if-small{
+	display: none;
+}
+.hide-if-small{
+}
+
+
+@media (max-width: 45em) {
+	.exp-text{
+		font-size: 1em; 
+		bottom:5%; 
+	}
+    .exp-text aside{
+	    font-size: 90%;
+    }
+	.exp-label{
+		font-size: 1em; 
+
+	}
+	.exp-math{
+		font-size: 110%; 
+	}
+	.show-if-small{
+		display: inline;
+	}
+	.hide-if-small{
+		display: none;
+	}
+
+}
+
+/* From google fonts */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lora Regular'), local('Lora-Regular'), url(./fonts/Lora-ext.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lora Regular'), local('Lora-Regular'), url(./fonts/Lora.woff2) format('woff2');
+  src: url("./lora.regular.ttf")
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* From spratt.github.io/Computer-Modern */
+  @font-face {
+    font-family: "Computer Modern Sans";
+    src: url('./fonts/cmunss-webfont.woff') format('woff');
+  }
+  @font-face {
+    font-family: "Computer Modern Sans";
+    src: url('./fonts/cmunsx-webfont.woff') format('woff');
+    font-weight: bold;
+  }
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunrm-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunsl-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunbl-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Computer Modern Serif";
+    src: url('./fonts/cmunbx-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+

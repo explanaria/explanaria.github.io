@@ -21,3 +21,8 @@ export * from './js/outputs/FlatArrayOutput.js';
 export * from './js/outputs/ClosedPolygonOutput.js';
 
 export * from './js/Director.js';
+
+// bundle three.js as well
+import * as THREE from "./lib/three.module.js";
+window.THREE = THREE;
+export { OrbitControls } from "./lib/OrbitControls";

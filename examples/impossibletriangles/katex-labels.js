@@ -88,6 +88,10 @@ class Dynamic3DText{
         }
     }
     activate(t){
+
+        if(this._opacity == 0){
+            return; //we don't need to render anything!
+        }
         
         if(this.position3D.constructor == Function){
             this._position3D = this.position3D(t);
@@ -123,13 +127,13 @@ class Dynamic3DText{
     updatePosition(){
         this.position2D = screenSpaceCoordsOf3DPoint(this._position3D);
 
-        //if(this.position2D[0] != this._prevPosition[0] || this.position2D[1] != this._prevPosition[1]){
+        if(this.position2D[0] != this._prevPosition[0] || this.position2D[1] != this._prevPosition[1]){
 
             this.htmlElem.style.left = this.position2D[0] + 'px';
             this.htmlElem.style.top = this.position2D[1] + 'px';
             this._prevPosition[0] = this.position2D[0];
             this._prevPosition[1] = this.position2D[1];
-        //}
+        }
     }
 
     format(x, precision=2){

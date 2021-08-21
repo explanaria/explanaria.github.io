@@ -1,12 +1,14 @@
 import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mouseinteraction.js";
 import {areAllSideLengthsIntegers, computeTriangleArea, colorHighlightingIrrationals, renderLengthHighlightingIrrationals} from "./1-computedTriangleProperties.js";
 import {Dynamic3DText} from "./katex-labels.js";
-import {gridColor, twoNColor, hintArrowColor} from "./colors.js";
+import {gridColor, twoNColor, hintArrowColor, triangleLineColor} from "./colors.js";
 
 import {addColorToHTML} from './2-addColorToHTMLMath.js';
 addColorToHTML();
 
 import {vecScale, vecAdd, dist, distSquared, isInteger, roundPointIfCloseToInteger, roundToIntegerIfClose, roundPoint, roundCoord} from "./1-trianglemath.js"
+
+import {makeIntroObjects} from "./1-introShinies.js"
 
 window.fixedPoint = [-1,-1];
 window.draggablePoint = EXP.Math.vectorAdd([10,6], fixedPoint);
@@ -33,7 +35,7 @@ function setup(){
 
     window.triangleLine = new EXP.Array({data: [0,1,2,0]});
     let getTrianglePoints = triangleLine.add(new EXP.Transformation({'expr':(i,t,index) => trianglePoints[index]}))
-    getTrianglePoints.add(new EXP.LineOutput({opacity:0})); //line between the triangles
+    getTrianglePoints.add(new EXP.LineOutput({opacity:0, color: triangleLineColor})); //line between the triangles
 
     let grabbablePointSize = 0.5;
 
@@ -107,28 +109,37 @@ function setup(){
         text: (t) => renderLengthHighlightingIrrationals(trianglePoints[0], trianglePoints[1]), 
         color: (t) => colorHighlightingIrrationals(trianglePoints[0], trianglePoints[1]),
         position3D: (t) => vecAdd(vecScale(vecAdd(trianglePoints[0], trianglePoints[1]),0.5), vecScale(trianglePoints[2], -0.0)),
-        opacity: 0
+        opacity: 0,
+        frostedBG: true,
     })
 
     window.side2Text = new Dynamic3DText({
         text: (t) => renderLengthHighlightingIrrationals(trianglePoints[1], trianglePoints[2]), 
         color: (t) => colorHighlightingIrrationals(trianglePoints[1], trianglePoints[2]),
         position3D: (t) => vecAdd(vecScale(vecAdd(trianglePoints[1], trianglePoints[2]),0.5), vecScale(trianglePoints[0], -0.0)),
-        opacity: 0
+        opacity: 0,
+        frostedBG: true,
     })
 
     window.side3Text = new Dynamic3DText({
         text: (t) => renderLengthHighlightingIrrationals(trianglePoints[0], trianglePoints[2]), 
         color: (t) => colorHighlightingIrrationals(trianglePoints[0], trianglePoints[2]),
         position3D: (t) => vecAdd(vecScale(vecAdd(trianglePoints[0], trianglePoints[2]),0.5), vecScale(trianglePoints[1], -0.0)),
-        opacity: 0
+        opacity: 0,
+        frostedBG: true,
     })
 
     
     let staticSceneObjects = [integerGrid];
     sceneObjects = [triangleLine, areaText, side1Text, side2Text, side3Text, grabbablePoints, fixedPointDisplay, twentyFourHint]; 
+
+    window.introObjects = makeIntroObjects();
+    window.introSettings = {"introObjectsActive":true};
+
     three.on("update",function(time){
 	    sceneObjects.forEach(i => i.activate(time.t));
+
+	    if(introSettings.introObjectsActive)introObjects.forEach(i => i.activate(time.t));
 
         grabbablePoints.getDeepestChildren()[0].width = 0.5 + 0.1*Math.sin(time.t*2); //animate grabbable points
     });
@@ -142,6 +153,14 @@ async function animate(){
     await presentation.begin();
     await presentation.nextSlide();
 
+    let introCount = 0;
+    introObjects.forEach(object => object.getDeepestChildren().forEach( async (output) => {
+        introCount += 1;
+        await EXP.delay(500*introCount/5); //these are going to be running concurrently, which is a bit weird and messes with undoing
+        presentation.TransitionTo(output, {'opacity':0}, 500);
+    }))
+
+    await presentation.delay(1000);
     integerGrid.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':1}, 500));
     await presentation.delay(250);
     grabbablePoints.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':1}, 500));
@@ -152,6 +171,8 @@ async function animate(){
     
     //[integerGrid, triangleLine, grabbablePoints, fixedPointDisplay].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':1}, 500, {staggerFraction: 2/3})));
     presentation.TransitionTo(areaText, {opacity: 1});
+
+    presentation.TransitionTo(introSettings, {introObjectsActive: false}, 1);
 
     await presentation.nextSlide();
     presentation.TransitionTo(side1Text, {opacity: 1});

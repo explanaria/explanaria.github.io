@@ -24,14 +24,19 @@ function makeLabel(frostedBG=false){
     return positioningElem;
 }
 
-//let three = xxxx;
+const spareVec3 = new THREE.Vector3();
 function screenSpaceCoordsOf3DPoint(point){
     three.camera.matrixWorldNeedsUpdate = true;
-    let vec = new THREE.Vector3(...point).applyMatrix4(three.camera.matrixWorldInverse).applyMatrix4(three.camera.projectionMatrix)
-    let arr = vec.toArray(); 
+
+    spareVec3.x = point[0] || 0;
+    spareVec3.y = point[1] || 0;
+    spareVec3.z = point[2] || 0; //may be undefined, if so default to 0
+
+    let vec = spareVec3.applyMatrix4(three.camera.matrixWorldInverse).applyMatrix4(three.camera.projectionMatrix);
+    let arr = [vec.x, vec.y];
     arr[0] = (arr[0]+1)/2 * three.renderer.domElement.clientWidth;
     arr[1] = (-arr[1]+1)/2 * three.renderer.domElement.clientHeight;
-    return arr; //yeah theres an extra arr[2] but just ignore it   
+    return arr;
 }
 
 class Dynamic3DText{
@@ -61,6 +66,10 @@ class Dynamic3DText{
         this._prevText = '';
         this._prevT = 0;
 
+        this._prevColor = null;
+        this._prevText = null;
+        this._prevPosition = [0,0];
+
         window.addEventListener("resize", this.updatePosition.bind(this), false);
 
     }
@@ -73,7 +82,10 @@ class Dynamic3DText{
         }else if(this._color.constructor == THREE.Color){
             htmlColor = this._color.getStyle();
         }
-        this.htmlElem.style.color = htmlColor;
+        if(htmlColor != this._prevColor){
+            this.htmlElem.style.color = htmlColor;
+            this._prevColor = htmlColor;
+        }
     }
     activate(t){
         
@@ -82,8 +94,6 @@ class Dynamic3DText{
         }else{
             this._position3D = this.position3D;
         }
-        
-        this.position2D = screenSpaceCoordsOf3DPoint(this._position3D);
 
         //figure out what text to display
         if(this.text.constructor == String){
@@ -112,8 +122,14 @@ class Dynamic3DText{
     }
     updatePosition(){
         this.position2D = screenSpaceCoordsOf3DPoint(this._position3D);
-        this.htmlElem.style.left = this.position2D[0] + 'px';
-        this.htmlElem.style.top = this.position2D[1] + 'px';
+
+        //if(this.position2D[0] != this._prevPosition[0] || this.position2D[1] != this._prevPosition[1]){
+
+            this.htmlElem.style.left = this.position2D[0] + 'px';
+            this.htmlElem.style.top = this.position2D[1] + 'px';
+            this._prevPosition[0] = this.position2D[0];
+            this._prevPosition[1] = this.position2D[1];
+        //}
     }
 
     format(x, precision=2){

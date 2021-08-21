@@ -2,8 +2,10 @@
 
 .katexlabel{
     position: absolute;
+    top: 0px;
+    left: 0px;
     transform: translate(-50%, -50%);
-    font-size: 24px;
+    font-size: 22px;
     pointer-events: none;
 }
 

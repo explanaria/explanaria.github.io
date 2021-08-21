@@ -63,6 +63,7 @@ function ThreeasyEnvironment(canvasElem = null){
 	this.renderer.domElement.addEventListener( 'mouseup', this.onMouseUp.bind(this), false );
 	this.renderer.domElement.addEventListener( 'touchstart', this.onMouseDown.bind(this), false );
 	this.renderer.domElement.addEventListener( 'touchend', this.onMouseUp.bind(this), false );
+	this.renderer.domElement.addEventListener( 'resize', this.resizeCanvasIfNecessary.bind(this), false );
 
 	/*
 	//renderer.vr.enabled = true; 
@@ -128,12 +129,15 @@ ThreeasyEnvironment.prototype.resizeCanvasIfNecessary= function() {
     //https://webgl2fundamentals.org/webgl/lessons/webgl-anti-patterns.html yes, every frame.
     //this handles the edge case where the canvas size changes but the window size doesn't
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    let width = 0;
+    let height = 0;
     
     if(!this.shouldCreateCanvas){ // a canvas was provided externally
         width = this.renderer.domElement.clientWidth;
         height = this.renderer.domElement.clientHeight;
+    }else{
+        width = window.innerWidth;
+        height = window.innerHeight;
     }
 
     if(width != this.renderer.domElement.width || height != this.renderer.domElement.height){
@@ -148,8 +152,6 @@ ThreeasyEnvironment.prototype.resizeCanvasIfNecessary= function() {
 }
 ThreeasyEnvironment.prototype.listeners = {"update": [],"render":[]}; //update event listeners
 ThreeasyEnvironment.prototype.render = function(timestep){
-    this.resizeCanvasIfNecessary();
-
     var realtimeDelta = this.clock.getDelta();
 	var delta = realtimeDelta*this.timeScale;
 	this.elapsedTime += delta;

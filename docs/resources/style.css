@@ -31,8 +31,16 @@ body{
 	transform: scale(-1.1, 1.1);
 }
 
+/*commonly used in presentations*/
 
-.exp-label, .exp-text{
+.exp-toptext{
+
+	position:absolute; bottom:10%; 
+	text-align:center;
+	width: 99%;
+}
+
+.exp-label, .exp-text, .exp-toptext{
 	font-family: 'Computer Modern Sans', "sans-serif";
 	text-underline-position: under;
     -webkit-text-decoration-skip: auto;
@@ -40,6 +48,7 @@ body{
 	-webkit-text-decoration-skip-ink: auto;
     text-decoration-skip: auto;
 	pointer-events: none; 
+    /*
 	text-shadow:
 
 		 4px  0px 0px rgb(255, 255, 255),
@@ -65,6 +74,15 @@ body{
 		 2px  1px 1px rgb(255, 255, 255),
 		 1px -2px 1px rgb(255, 255, 255),
 		 2px -1px 1px rgb(255, 255, 255);
+    */
+    --move-radius: 0.08rem;
+    --negative-move-radius: -0.05rem;
+    --blur-radius: 0.02rem;
+    --outline-color: #fff;
+    filter: drop-shadow(var(--move-radius) 0 var(--blur-radius) var(--outline-color))
+            drop-shadow(0 var(--move-radius) var(--blur-radius) var(--outline-color)) 
+            drop-shadow(var(--negative-move-radius) 0 var(--blur-radius) var(--outline-color)) 
+            drop-shadow(0 calc(var(--negative-move-radius)) var(--blur-radius) var(--outline-color));
 	transition: inherit;
 }
 .exp-label{

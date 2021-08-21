@@ -1,9 +1,9 @@
 import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mouseinteraction.js";
 import {areAllSideLengthsIntegers, computeTriangleArea, colorHighlightingIrrationals, renderLengthHighlightingIrrationals} from "./1-computedTriangleProperties.js";
 import {Dynamic3DText} from "./katex-labels.js";
-import {gridColor, twoNColor, validIntegerColor} from "./colors.js";
+import {gridColor, twoNColor, hintArrowColor} from "./colors.js";
 
-import addColorToHTML from './2-addColorToHTMLMath.js';
+import {addColorToHTML} from './2-addColorToHTMLMath.js';
 addColorToHTML();
 
 import {vecScale, vecAdd, dist, distSquared, isInteger, roundPointIfCloseToInteger, roundToIntegerIfClose, roundPoint, roundCoord} from "./1-trianglemath.js"
@@ -51,7 +51,7 @@ function setup(){
     let hintTarget = [8+fixedPoint[0],6+fixedPoint[0]];
     twentyFourHint
         .add(new EXP.Transformation({'expr':(i,t) => i == 0 ? draggablePoint : vecAdd(vecScale(draggablePoint, 0.5),vecScale(hintTarget, 0.5))}))
-        .add(new EXP.VectorOutput({opacity:0, color: validIntegerColor})); //line between the triangles
+        .add(new EXP.VectorOutput({opacity:0, color: hintArrowColor})); //line between the triangles
 
 
     //grab a point if you click on it

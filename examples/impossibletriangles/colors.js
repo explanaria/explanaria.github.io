@@ -1,6 +1,8 @@
 
-const validIntegerColor = "green";
-const invalidIntegerColor = "maroon";
+export const validIntegerColor = "green";
+export const invalidIntegerColor = "maroon";
+
+export const hintArrowColor = new THREE.Color("hsl(0, 80%, 50%)");
 
 
 //2 colors
@@ -28,5 +30,5 @@ rTextColor = sTextColor = tTextColor = white;
 
 
 
-export {rColor, sColor, tColor, twoNColor, yColor, xColor, gridColor, white, black, rTextColor, sTextColor, tTextColor, twoNTextColor, invalidIntegerColor, validIntegerColor};
+export {rColor, sColor, tColor, twoNColor, yColor, xColor, gridColor, white, black, rTextColor, sTextColor, tTextColor, twoNTextColor};
 

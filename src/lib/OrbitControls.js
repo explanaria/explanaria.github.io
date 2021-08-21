@@ -1,3 +1,6 @@
+import * as THREE from "./three.module.js";
+//modified to export properly
+
 /**
  * @author qiao / https://github.com/qiao
  * @author mrdoob / http://mrdoob.com
@@ -13,7 +16,7 @@
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finger swipe
 
-THREE.OrbitControls = function ( object, domElement ) {
+export function OrbitControls ( object, domElement ) {
 
 	this.object = object;
 
@@ -914,10 +917,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 };
 
-THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
-THREE.OrbitControls.prototype.constructor = THREE.OrbitControls;
+OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
+OrbitControls.prototype.constructor = OrbitControls;
 
-Object.defineProperties( THREE.OrbitControls.prototype, {
+Object.defineProperties( OrbitControls.prototype, {
 
 	center: {
 

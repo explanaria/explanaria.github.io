@@ -3,6 +3,7 @@
 
 //also, change Threeasy_Environment to Threeasy_Recorder to download high-quality frames of an animation
 
+import * as THREE from "../lib/three.module.js";
 import CCapture from 'ccapture.js';
 import { Detector } from '../lib/WebGL_Detector.js';
 import { setThreeEnvironment, getThreeEnvironment } from './ThreeEnvironment.js';

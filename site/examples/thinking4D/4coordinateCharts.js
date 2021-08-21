@@ -8,7 +8,7 @@ let meshBeingCoveredInCharts= null;
 function setup() {
     
 	three = EXP.setupThree(60,15,document.getElementById("canvas"));
-	controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.z = 4;
 
@@ -48,7 +48,7 @@ let mammothLoaded = false;
 function loadMeshBeingCoveredInCharts() {
 
     
-	var loader = new THREE.GLTFLoader();
+	var loader = new GLTFLoader();
 
 	loader.load( 'mammoth.glb', function ( gltf ) {
 

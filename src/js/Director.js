@@ -9,10 +9,32 @@ dir.nextSlide();
 into a sequence that only advances when the right arrow is pressed.
 
 Any divs with the exp-slide class will also be shown and hidden one by one.
-
-Also,
-
 */
+
+/* Inteded to be used with this CSS:
+.exp-arrow{
+	z-index: 1;
+	bottom: 2%;
+	position: absolute;
+	width: 15vw;
+	max-width: 5em;
+	transition: opacity 0.5s ease-in-out;
+}
+.exp-arrow-right{
+	right: 2%;
+}
+.exp-arrow-left{
+	left: 2%;
+    transform: scale(-1, 1);
+}
+.exp-arrow-right:hover{
+	transform: scale(1.1);
+}
+.exp-arrow-left:hover{
+	transform: scale(-1.1, 1.1);
+}
+*/
+
 
 import {Animation, Easing} from './Animation.js';
 import explanarianArrowSVG from './DirectorImageConstants.js';
@@ -233,7 +255,22 @@ class NonDecreasingDirector{
 
     }
     scrollUpToTopOfContainer(element){
-        element.scrollIntoView(true);
+        this.getScrollParent(element).scrollTop = 0;
+    }
+    getScrollParent(element, includeHidden){
+        //from https://stackoverflow.com/questions/35939886/find-first-scrollable-parent
+        var style = getComputedStyle(element);
+        var excludeStaticParent = style.position === "absolute";
+        var overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+        if (style.position === "fixed") return document.body;
+        for (var parent = element; (parent = parent.parentElement);) {
+            style = getComputedStyle(parent);
+            if (excludeStaticParent && style.position === "static") {
+                continue;
+            }
+            if (overflowRegex.test(style.overflow + style.overflowY + style.overflowX)) return parent;
+        }
+        return document.body;
     }
 
     //verbs

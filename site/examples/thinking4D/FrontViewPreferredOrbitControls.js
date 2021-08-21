@@ -1,5 +1,5 @@
 
-class FrontViewPreferredOrbitControls extends THREE.OrbitControls{
+class FrontViewPreferredOrbitControls extends EXP.OrbitControls{
     
         constructor(){
             super(...arguments);

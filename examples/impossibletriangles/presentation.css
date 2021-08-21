@@ -1,4 +1,12 @@
 /* text */
+
+.katexlabel{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    pointer-events: none;
+}
+
 .textContainer{
   display: grid;
   grid-template-columns: 1fr;

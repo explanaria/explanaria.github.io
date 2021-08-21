@@ -8,7 +8,7 @@ export function makeIntroObjects(){
 
     let points = [[0,0],[6,0],[6,3]];
     for(let i=0;i<3;i++){
-        points[i][0] -= 1;
+        points[i][0] -= 0;
         points[i][1] += 4;
     }
 
@@ -17,13 +17,28 @@ export function makeIntroObjects(){
     getTrianglePoints.add(new EXP.LineOutput({opacity:1, color: triangleLineColor})); //line between the triangles
     getTrianglePoints.add(new EXP.PointOutput({opacity:1, color: triangleGrabbableCornerColor, width:0.4})); //line between the triangles
 
+    //abuse of javascript: this transformation is doing nothing but setting points, so that it stops when shinyTriangle stops being updated
+    //todo: not error
+    shinyTriangle.add(new EXP.Transformation({'expr':(i,t,index) => {
+        let angle = Math.cos(t)/30 + Math.PI/6;
+
+        let x = Math.cos(angle)*6 + points[0][0];
+        let y = Math.sin(angle)*6 + points[0][1];
+
+        points[1][0] = x;
+
+        points[2][0] = x;
+        points[2][1] = y;
+        return [0];
+    }}))
+
 
     let a=1;
     let b=5;
     let c=7;
 
 
-    window.squaresPos = new EXP.Transformation({'expr':(i,t,x,y) => [x/1.5+2.5,y/1.5-2]});
+    window.squaresPos = new EXP.Transformation({'expr':(i,t,x,y) => [x/1.5+2.5 + Math.cos(t)/10,y/1.5-2]});
     window.shinySquareA = new EXP.Array({data: [[0,0], [a,0],[a,a],[0,a]]});
     shinySquareA
         .add(squaresPos)
@@ -41,7 +56,9 @@ export function makeIntroObjects(){
 
     let [curveObjects, curvePos] = constructEXPEllipticCurve(-9,5); //x^3 - 3x + 0
 
-    curvePos.expr = (i,t,x,y) => [x/2+c+1.5, y/2 + c/2 + 2, 1]
+    curvePos.expr = (i,t,x,y) => [x/2+c+1.5, y/2 + c/2 + 2 + Math.cos(t+0.25)/8, 1];
+    //todo: subtle curve-adding animation?
+    //two points, line stretching to the third?
 
     objects = [shinyTriangle, shinySquareA, shinySquareB, shinySquareC]
     objects = objects.concat(curveObjects);

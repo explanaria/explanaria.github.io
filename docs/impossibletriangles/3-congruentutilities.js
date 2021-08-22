@@ -31,13 +31,13 @@ export class Line{
 }
 
 export class LongLineThrough extends Line{
-	constructor(p1,p2, color, numSamples){
+	constructor(p1,p2, color, numSamples, howLong=5){
 		super(p1,p2,color,numSamples);
-		this.interval.bounds = [[-5, 5]];
+		this.interval.bounds = [[-howLong, howLong]];
 	}
 }
 
-function elliptic_curve_add(p1,p2, curveparams){
+export function elliptic_curve_add(p1,p2, curveparams){
 	//carry out elliptic curve group law
 	//assumed p1,p2 are not inverses and so p3 won't be O
 
@@ -62,7 +62,7 @@ function elliptic_curve_add(p1,p2, curveparams){
 	return [x3,y3];
 }
 
-function elliptic_curve_add_fractions(p1,p2, curveparams){
+export function elliptic_curve_add_fractions(p1,p2, curveparams){
 	//this one assumes all arguments are arrays of fractions
 	let slope=0;
 	if(p1[0].equals(p2[0])){

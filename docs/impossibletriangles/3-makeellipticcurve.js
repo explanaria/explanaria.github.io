@@ -1,5 +1,14 @@
 
 import {cardanoRealRoots} from "./3-cubicroots.js";
+
+function range(startAt = 0,endAt=10, numSubdivisions = 10) { // from https://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-a-range-within-the-supp#10050831
+    let arr = Array(numSubdivisions)
+    for(let i=0;i<numSubdivisions;i++){
+        arr[i] = startAt + (endAt-startAt) * (i/numSubdivisions);
+    }  
+    return arr;
+}
+
 export function constructEXPEllipticCurve(p=-2, q=1){
     //construct EXP.LineOutputs() representing the elliptuc curve y^2 = x^3 + px + q
 
@@ -20,7 +29,8 @@ export function constructEXPEllipticCurve(p=-2, q=1){
     }
     //right connected component of the curve, or the entire thing if there's only one root (untested)
     //todo: pack more values close to the rightmost root so you can see the curve smoothly
-    var rightCurveComponent = new EXP.Area({bounds: [[realroots[realroots.length-1],20]], numItems: 30});
+    let lastRoot = realroots[realroots.length-1];
+    var rightCurveComponent = new EXP.Array({data: range(lastRoot, lastRoot+3, 20).concat(range(lastRoot+3, 10, 10).concat(range(10, 100, 10)))});
     var positiveRightHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, positiveY(x)]});
     var negativeRightHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, -positiveY(x)]});
     rightCurveComponent.add(positiveRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));

@@ -12,6 +12,9 @@ class PointOutput extends OutputNode{
 		*/
 
 		this._width = options.width !== undefined ? options.width : 1;
+        if(this._width == 0){
+            this._width = 0.00000001;
+        }
 		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
 		this._opacity = options.opacity !== undefined ? options.opacity : 1;
 
@@ -81,6 +84,9 @@ class PointOutput extends OutputNode{
 		for(var i=0;i<this.points.length;i++){
 			this.getPoint(i).mesh.scale.setScalar(width);
 		}
+        if(width == 0){
+            width = 0.00000001;
+        }
 		this._width = width;
 	}
 	get width(){

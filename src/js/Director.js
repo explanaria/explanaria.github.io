@@ -360,7 +360,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
     moveFurtherIntoPresentation(){
             //if there's nothing to redo, (so we're not in the past of the undo stack), advance further.
             //if there are less HTML slides than calls to director.newSlide(), complain in the console but allow the presentation to proceed
-            console.log("Moving further into presentation!");
+            //console.log("Moving further into presentation!");
             if(this.currentSlideIndex < this.numSlides){
                 this.furthestSlideIndex += 1; 
 
@@ -402,7 +402,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
         //change HTML slide first so that if there are any delays to undo, they don't slow down the slide
         this.switchDisplayedSlideIndex(this.currentSlideIndex + 1);
         this.showArrows();
-        console.log(`Starting arrow press forwards #${numArrowPresses}`);
+        //console.log(`Starting arrow press forwards #${numArrowPresses}`);
 
         while(this.undoStack[this.undoStackIndex].constructor !== NewSlideUndoItem){
             //loop through undo stack and redo each undo until we get to the next slide
@@ -414,7 +414,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
             //If there's a delay somewhere in the undo stack, and we sleep for some amount of time, the user might have pressed undo during that time. In that case, handleBackwardsPress() will set this.currentReplayDirection to BACKWARDS. But we're still running, so we should stop redoing!
             if(this.currentReplayDirection != FORWARDS || numArrowPresses != this.numArrowPresses){
                 //this function has been preempted by another arrow press
-                console.log(`forwards has been preempted: this is ${numArrowPresses}, but there's another with ${this.numArrowPresses},${this.currentReplayDirection}`);
+                //console.log(`forwards has been preempted: this is ${numArrowPresses}, but there's another with ${this.numArrowPresses},${this.currentReplayDirection}`);
                 return;
             }
 
@@ -488,7 +488,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
             //If there's a delay somewhere in the undo stack, and we sleep for some amount of time, the user might have pressed redo during that time. In that case, handleForwardsPress() will set this.currentReplayDirection to FORWARDS. But we're still running, so we should stop redoing!
             if(this.currentReplayDirection != BACKWARDS || numArrowPresses != this.numArrowPresses){
                 //this function has been preempted by another arrow press
-                console.log(`backwards has been preempted: ${numArrowPresses},${this.numArrowPresses},${this.currentReplayDirection}`);
+                //console.log(`backwards has been preempted: ${numArrowPresses},${this.numArrowPresses},${this.currentReplayDirection}`);
                 return;
             }
 
@@ -567,18 +567,18 @@ class UndoCapableDirector extends NonDecreasingDirector{
     async delay(waitTime){
         this.undoStack.push(new DelayUndoItem(waitTime));
         this.undoStackIndex++;
-        console.log(this.undoStackIndex);
+        //console.log(this.undoStackIndex);
         await this._sleep(waitTime);
-        console.log(this.undoStackIndex);
+        //console.log(this.undoStackIndex);
         if(!this.isCaughtUpWithNothingToRedo()){
             //This is a perilous situation. While we were delaying, the user pressed undo, and now we're in the past.
             //we SHOULDN't yield back after this, because the presentation code might start running more transformations after this which conflict with the undoing animations. So we need to wait until we reach the right slide again
-            console.log("Egads! This is a perilous situation! Todo: wait until we're fully caught up to release");
+            //console.log("Egads! This is a perilous situation! Todo: wait until we're fully caught up to release");
             let self = this;
             //promise is resolved by calling this.nextSlideResolveFunction() when the time comes
             return new Promise(function(resolve, reject){
                 self.nextSlideResolveFunction = function(){ 
-                    console.log("Release!");
+                    //console.log("Release!");
                     resolve();
                 }
             });

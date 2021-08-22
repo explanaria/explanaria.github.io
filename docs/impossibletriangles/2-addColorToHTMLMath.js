@@ -3,7 +3,7 @@ import katex from './dist/katex-v0.13.13/katex.mjs';
 
 import {Dynamic3DText} from "./katex-labels.js";
 
-function getAppropriateColor(string){
+function getAppropriateColor(string, customColorDict={}){
         if(string == "N"){
             return twoNColor.getStyle();
         }
@@ -31,20 +31,26 @@ function getAppropriateColor(string){
         if(string == "irrational"){
             return invalidIntegerColor;
         }
+   
+        if(string in customColorDict){
+            return customColorDict[string].getStyle();
+        }
+
         return "";
 }
 
 
-function walkAndAddColor(elem){
+function walkAndAddColor(elem, customColorDict){
     if(elem.children.length == 0){
         //no children, add color
-        if(getAppropriateColor(elem.innerHTML) != ""){
-            if(elem.style)elem.style.color = getAppropriateColor(elem.innerHTML);
+        let color = getAppropriateColor(elem.innerHTML, customColorDict);
+        if(color != ""){
+            if(elem.style)elem.style.color = color;
         }
         return;
     }
     for(let i=0;i<elem.children.length;i++){
-        walkAndAddColor(elem.children[i])
+        walkAndAddColor(elem.children[i], customColorDict)
     }  
 }
 
@@ -70,11 +76,18 @@ export function addColorToHTML(){
 
 
 export class AutoColoring3DText extends Dynamic3DText{
+    constructor(options){
+        super(options);
+         //a dict of {"x": redColor}. will color all instances of X with the color redColor.
+        //note that you can specify numbers like "2" or "3", but it'll also color the 2 in x^2
+        this.customColorDict = options.customColors || {};
+        
+    }
     renderDisplayedText(){
         katex.render(this._text, this.htmlElem, {
             throwOnError: false
         });
-        walkAndAddColor(this.htmlElem);
+        walkAndAddColor(this.htmlElem, this.customColorDict);
     }
 }
 

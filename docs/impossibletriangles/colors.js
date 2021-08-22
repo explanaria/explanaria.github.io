@@ -1,6 +1,6 @@
 
-export const validIntegerColor = "green";
-export const invalidIntegerColor = "maroon";
+export const validIntegerColor = new THREE.Color("green");
+export const invalidIntegerColor = new THREE.Color("maroon");
 
 export const hintArrowColor = new THREE.Color("hsl(0, 80%, 50%)");
 
@@ -37,5 +37,6 @@ export {rColor, sColor, tColor, twoNColor, yColor, xColor, gridColor, white, bla
 export let pColor = twoNColor; //new THREE.Color("hsl(180, 50%, 50%)");
 export let qColor = new THREE.Color("hsl(300, 50%, 50%)");
 
+export const triangleVisArrowColor = black;
 
 

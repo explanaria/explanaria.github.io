@@ -53,14 +53,6 @@ async function setup(){
             }));
     allFirstLabels.forEach(object => {object.opacity = 0;})
 
-	//two points to add on the curve
-	window.points = [[-4.5,curveY(-4.5)],
-					[-1.5,curveY(-1.5)]]
-
-	window.ellipticpts = new EXP.Array({data: points});
-	window.ellipticPtsoutput = new EXP.PointOutput({width:0.2,color:pointColor, opacity: 0});
-	ellipticpts.add(mainCurveProjection.makeLink()).add(ellipticPtsoutput);
-
     /* 3-4-5 triangle */
 
     //the 3-4-5- triangle which corresponds to a point on the curve
@@ -84,7 +76,7 @@ async function setup(){
 	threeFourFivePoint.add(mainCurveProjection.makeLink()).add(threeFourFiveOutput);
 
     //the point on the elliptic curve
-    let trianglePointLabel = EXP.Math.vectorAdd(mainCurveProjection.expr(0,0,...threeFourFiveCurvePoint), [0.5,0])
+    let trianglePointLabel = EXP.Math.vectorAdd(mainCurveProjection.expr(0,0,...threeFourFiveCurvePoint), [0,0])
     window.threeFourFiveLabel = new AutoColoring3DText({ 
         text: "(\\frac{25}{4}, \\frac{35}{8})",
         position3D: trianglePointLabel,
@@ -158,15 +150,65 @@ async function setup(){
 
     ///////////////////////
 
-	//perform elliptic curve addition
-	let p3 = elliptic_curve_add(points[0],points[1], [-2,1]);
-    let lineLength = 10;
-	window.additionLine = new LongLineThrough(points[0],points[1],additionLineColor, 2, lineLength);
 
-	window.addedPoint = new EXP.Array({data: [[...p3,0]]});
-    window.thirdPointControl = new EXP.Transformation({expr: (i,t,x,y) => EXP.Math.vectorAdd([x,y], mainCurveCenterPos)})
+	//two points to add on the curve
+	window.points = [
+                    [-5.9,curveY(-5.9)],
+					[-0.5,curveY(-0.5)],
+                    ]
+    
+    let worldPoints = points.map(pt => mainCurveProjection.expr(0,0,...pt))
+
+
+    window.additionPtLabel1 = new AutoColoring3DText({
+        text: "P_1",
+        position3D: worldPoints[0],
+        opacity: 0,
+        align: 'top',
+        frostedBG: true,
+    })
+    window.additionPtLabel2 = new AutoColoring3DText({
+        text: "P_2",
+        position3D: worldPoints[1],
+        opacity: 0,
+        align: 'top',
+        frostedBG: true,
+    })
+
+	window.ellipticpts = new EXP.Array({data: points});
+	window.ellipticPtsoutput = new EXP.PointOutput({width:0.2,color:pointColor, opacity: 0});
+	ellipticpts//.add(new EXP.Transformation({'expr': (i,t,x) => [x, curveY(x)]}))
+	.add(mainCurveProjection.makeLink()).add(ellipticPtsoutput);
+
+	//perform elliptic curve addition
+
+    //P1+P2 on the elliptic curve
+	let p3 = elliptic_curve_add(points[0],points[1], [p,q]);
+    let p3Negative = [p3[0], -p3[1]];
+
+    let lineLength = 10;
+    //note: points[0] and points[1] aren't copies for some reason :( but I use that to animate the line later
+	window.additionLine = new LongLineThrough(points[0],points[1],additionLineColor, 2, lineLength);
+    additionLine.transform2.expr = mainCurveProjection.expr; //todo: use mainCurveProjection.makeLink()
+
+
+
+	window.reflectionLine = new LongLineThrough(p3,p3Negative,additionLineColor, 2, lineLength);
+    reflectionLine.transform2.expr = mainCurveProjection.expr; //todo: use mainCurveProjection.makeLink()
+
+
+    window.additionPtLabel3 = new AutoColoring3DText({
+        text: "P_1 + P_2",
+        position3D: mainCurveProjection.expr(0,0,...p3),
+        opacity: 0,
+        align: 'bottom',
+        frostedBG: true,
+    })
+
+	window.addedPoint = new EXP.Array({data: [[...p3Negative]]});
+    window.thirdPointControl = new EXP.Transformation({expr: (i,t,x,y) => [x,y]})
 	window.pt3output = new EXP.PointOutput({width:0.0,color:pointColor});
-	addedPoint.add(thirdPointControl).add(pt3output);
+	addedPoint.add(mainCurveProjection.makeLink()).add(thirdPointControl).add(pt3output);
 
 
 
@@ -182,7 +224,11 @@ async function setup(){
 
     sceneObjects = sceneObjects.concat([threeFourFiveLabel, threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive, threeFourFiveLabelThree, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3]);
     sceneObjects = sceneObjects.concat(threeFourFiveTriangleAreaLabels);
-    staticObjects = staticObjects.concat([threeFourFivePoint, threeFourFiveTriangle, ])
+    staticObjects = staticObjects.concat([threeFourFivePoint, threeFourFiveTriangle])
+
+    sceneObjects = sceneObjects.concat([reflectionLine, additionPtLabel1, additionPtLabel2, additionPtLabel3]);
+    
+
 	three.on("update",function(time){
 		sceneObjects.forEach(i => i.activate(time.t));
 	});
@@ -236,11 +282,10 @@ async function animate(){
     await presentation.nextSlide();
 
     //show arrow
-	await presentation.delay(400);
     threefourFiveArrow1.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output, {'opacity':1}, 500));
 
     //show s = 5/2 label and arrow
-    await presentation.delay(500);
+    await presentation.delay(250);
     presentation.TransitionTo(threeFourFiveLabelTwo,{opacity:1},500);
     presentation.TransitionTo(threeFourFiveLabelTwoPointFive,{opacity:1},500);
 	
@@ -250,7 +295,7 @@ async function animate(){
 
     //show arrow
     threefourFiveArrow2.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output, {'opacity':1}, 500));
-    await presentation.delay(500);
+    await presentation.delay(250);
 
     //show x = s^2 label
     presentation.TransitionTo(threeFourFiveLabelThree,{opacity:1},500);
@@ -260,7 +305,7 @@ async function animate(){
 
     //show arrow to curve point
     threefourFiveArrow3.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output, {'opacity':1}, 500));
-    await presentation.delay(500);
+    await presentation.delay(250);
 
     //show point corresponding to 3-4-5 triangle
 	presentation.TransitionTo(threeFourFiveOutput,{opacity:1, width:pointSize*3},400);
@@ -283,17 +328,27 @@ async function animate(){
     
     await presentation.nextSlide();
     await presentation.nextSlide();
+    await presentation.nextSlide();
     //hide all the explanatory stuff
     [threeFourFiveTriangle, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3].forEach(curveObject => curveObject.getDeepestChildren().forEach((output) => {
                 presentation.TransitionTo(output, {'opacity':0}, 1000);
             }));
     [threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive,  threeFourFiveLabelThree].concat(threeFourFiveTriangleAreaLabels).forEach( (output) => presentation.TransitionTo(output, {'opacity':0}, 1000));
+    //also hide the 3-4-5 point
+
+	presentation.TransitionTo(threeFourFiveLabel,{opacity:0},500);
+	presentation.TransitionTo(threeFourFiveOutput,{opacity:0},500);
     //flip arrows
 
-    /*
+    
     await presentation.nextSlide();
 
     //show points to add    
+
+    [additionPtLabel1, additionPtLabel2].forEach(text => 
+	presentation.TransitionTo(text,{opacity:1},500))
+    
+
 	presentation.TransitionTo(ellipticPtsoutput,{opacity:1, width:pointSize*3},400);
 	await presentation.delay(400);
 	presentation.TransitionTo(ellipticPtsoutput,{width:pointSize},400);
@@ -301,7 +356,7 @@ async function animate(){
     await presentation.nextSlide();
 
     
-	additionLine.revealSelf();
+	additionLine.revealSelf(presentation);
 
 	await EXP.delay(1000);
 
@@ -312,8 +367,21 @@ async function animate(){
 	presentation.TransitionTo(pt3output,{opacity:1, width:pointSize},400);
 	await presentation.delay(500);
     //reflect
-	EXP.TransitionTo(thirdPointControl,{'expr':(i,t,a,b) => [a,-b]});
-    */
+
+    //flip the line and the point
+
+    reflectionLine.revealSelf(presentation);
+	await presentation.delay(1000);
+	presentation.TransitionTo(addedPoint.data[0],{1: -addedPoint.data[0][1]});
+	await presentation.delay(400);
+	presentation.TransitionTo(additionPtLabel3,{opacity:1},400);
+
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    
+    
 
 }
 window.addEventListener("load",function(){

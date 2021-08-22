@@ -68,6 +68,7 @@ class Dynamic3DText{
         this.position2D = [0,0]
         this.text = options.text;
         this.frostedBG = options.frostedBG || false;
+        this.align = options.align || "center"; //where should the text go in relation to the position3D?
         this.htmlElem = makeLabel(this.frostedBG);
         this.color = options.color || "black";
         this.opacity = options.opacity === undefined ? 1 : options.opacity; //setter changes HTML
@@ -82,7 +83,6 @@ class Dynamic3DText{
         this._prevPosition = [0,0];
 
         window.addEventListener("resize", () => this.updatePosition(this._prevT), false);
-
     }
     updateHTMLColor(t){
         let htmlColor = "black";
@@ -130,6 +130,19 @@ class Dynamic3DText{
 
         this._prevT =t;
     }
+
+    computealignText(){
+        if(this.align == "center"){
+            return "translate(-50%, -50%)";
+        }
+        if(this.align == "right"){
+            return "translate(0%, -50%)";
+        }
+        if(this.align == "left"){
+            return "translate(-100%, -50%)";
+        }
+    }
+
     updatePosition(t){
         if(this.position3D.constructor == Function){
             this._position3D = this.position3D(t);
@@ -142,7 +155,7 @@ class Dynamic3DText{
         if(this.position2D[0] != this._prevPosition[0] || this.position2D[1] != this._prevPosition[1]){
 
             //Assumes we're at top: 0px, left 0px, the 50% 50% ensures the element is centered
-            this.htmlElem.style.transform = "translate(-50%, -50%) translate("+this.position2D[0]+"px, "+this.position2D[1]+"px)";
+            this.htmlElem.style.transform = this.computealignText() + " translate("+this.position2D[0]+"px, "+this.position2D[1]+"px)";
             this._prevPosition[0] = this.position2D[0];
             this._prevPosition[1] = this.position2D[1];
         }

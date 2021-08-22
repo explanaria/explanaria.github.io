@@ -3,7 +3,7 @@ import {elliptic_curve_add, LongLineThrough} from "./3-congruentutilities.js";
 import {gridColor, xColor, yColor, triangleVisArrowColor, validIntegerColor, rColor, sColor, tColor} from "./colors.js";
 
 import {Dynamic3DText} from "./katex-labels.js";
-import {addColorToHTML, AutoColoring3DText} from './2-addColorToHTMLMath.js';
+import {addColorToHTML, AutoColoring3DText, ColorSuccessiveNumbers3DText} from './2-addColorToHTMLMath.js';
 addColorToHTML();
 
 import {makeLabeledCurve, makeTriangle} from "./3-makethings.js"
@@ -99,51 +99,37 @@ async function setup(){
         }
     })
 
-    let labelTwoPos = EXP.Math.vectorAdd(mainCurveProjection.expr(0,0,...threeFourFiveCurvePoint), [-5,-4])
+    let labelTwoPos = EXP.Math.vectorAdd(mainCurveProjection.expr(0,0,...threeFourFiveCurvePoint), [-5,-5])
     window.threeFourFiveLabelTwo = new AutoColoring3DText({ //todo: color according to x and y colors
-        text: "r^2 = \\frac{1}{4}",
-        position3D: EXP.Math.vectorAdd(labelTwoPos, [0,0.5]),
+        text: "(r^2, s^2, t^2)",
+        position3D: EXP.Math.vectorAdd(labelTwoPos, [2,1.5]),
         opacity: 0,
-        align: 'center',
+        align: 'left',
         frostedBG: true,
         customColors: {
             "1": rColor,
             "4": rColor,
         }
     })
-    window.threeFourFiveLabelTwoPointFive = new AutoColoring3DText({ //todo: color according to x and y colors
-        text: "s^2 = \\frac{25}{4}",
-        position3D: EXP.Math.vectorAdd(labelTwoPos, [0,-0.5]),
+    window.threeFourFiveLabelTwoPointFive = new ColorSuccessiveNumbers3DText({ //todo: color according to x and y colors
+        text: "= (\\frac{1}{4}, \\frac{25}{4}, \\frac{49}{4})",
+        position3D: EXP.Math.vectorAdd(labelTwoPos, [2,0]),
         opacity: 0,
-        align: 'center',
+        align: 'left',
         frostedBG: true,
-        customColors: {
-            "25": sColor,
-            "4":  sColor,
-        }
-    })
-    window.threeFourFiveLabelTwoPointSevenFive = new AutoColoring3DText({ //todo: color according to x and y colors
-        text: "t^2 = \\frac{49}{4}",
-        position3D: EXP.Math.vectorAdd(labelTwoPos, [0,-1.5]),
-        opacity: 0,
-        align: 'center',
-        frostedBG: true,
-        customColors: {
-            "49": tColor,
-            "4":  tColor,
-        }
+        customColors: [rColor, sColor, tColor],
     })
 
     //arrow from triangle to s text
     window.threefourFiveArrow1 = new EXP.Array({data: [
         [labelTwoPos[0], triangleDisplayPos[1]-0.5],
-        EXP.Math.vectorAdd(labelTwoPos, [0,1])
+        EXP.Math.vectorAdd(labelTwoPos, [0,2])
     ]});
     threefourFiveArrow1.add(new EXP.VectorOutput({color: triangleVisArrowColor, opacity: 0, width: 5}));
 
     //arrows between the things
 
-    let labelThreePos = EXP.Math.vectorAdd(mainCurveProjection.expr(0,0,...threeFourFiveCurvePoint), [0,-4])
+    let labelThreePos = EXP.Math.vectorAdd(mainCurveProjection.expr(0,0,...threeFourFiveCurvePoint), [0,-5])
     window.threeFourFiveLabelThree = new AutoColoring3DText({ //todo: color according to x and y colors
         text: "x = s^2 = \\frac{25}{4}",
         position3D: labelThreePos,
@@ -194,9 +180,9 @@ async function setup(){
     sceneObjects = sceneObjects.concat(allFirstLabels);
     sceneObjects = sceneObjects.concat([additionLine, addedPoint]);
 
-    sceneObjects = sceneObjects.concat([threeFourFiveLabel, threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive, threeFourFiveLabelTwoPointSevenFive, threeFourFiveLabelThree]);
+    sceneObjects = sceneObjects.concat([threeFourFiveLabel, threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive, threeFourFiveLabelThree, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3]);
     sceneObjects = sceneObjects.concat(threeFourFiveTriangleAreaLabels);
-    staticObjects = staticObjects.concat([threeFourFivePoint, threeFourFiveTriangle, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3])
+    staticObjects = staticObjects.concat([threeFourFivePoint, threeFourFiveTriangle, ])
 	three.on("update",function(time){
 		sceneObjects.forEach(i => i.activate(time.t));
 	});
@@ -239,12 +225,15 @@ async function animate(){
     allFirstLabels.forEach(text => presentation.TransitionTo(text, {'opacity':0}, 1000))
 
     await presentation.nextSlide();
+    await presentation.nextSlide();
 
     //big slide: show how we get from triangle to elliptic curve!
 
     //show triangle
     threeFourFiveTriangleAreaLabels.forEach(item => presentation.TransitionTo(item,{opacity:1},500));
     threeFourFiveTriangle.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output, {'opacity':1}, 500));
+
+    await presentation.nextSlide();
 
     //show arrow
 	await presentation.delay(400);
@@ -254,15 +243,20 @@ async function animate(){
     await presentation.delay(500);
     presentation.TransitionTo(threeFourFiveLabelTwo,{opacity:1},500);
     presentation.TransitionTo(threeFourFiveLabelTwoPointFive,{opacity:1},500);
-    presentation.TransitionTo(threeFourFiveLabelTwoPointSevenFive,{opacity:1},500);
-	await presentation.delay(400);
+	
+    
+    await presentation.nextSlide();
+
+
     //show arrow
     threefourFiveArrow2.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output, {'opacity':1}, 500));
     await presentation.delay(500);
 
     //show x = s^2 label
     presentation.TransitionTo(threeFourFiveLabelThree,{opacity:1},500);
-	await presentation.delay(400);
+	
+    
+    await presentation.nextSlide();
 
     //show arrow to curve point
     threefourFiveArrow3.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output, {'opacity':1}, 500));
@@ -273,14 +267,30 @@ async function animate(){
 	presentation.TransitionTo(threeFourFiveLabel,{opacity:1},500);
 	await presentation.delay(400);
 	presentation.TransitionTo(threeFourFiveOutput,{width:pointSize},400);
+
+    await presentation.nextSlide();
+
+    function flipArrow(array, presentation){
+        let arrowPts = [array.data[0], array.data[1]]
+        presentation.TransitionTo(array.data[0], {0: arrowPts[1][0], 1: arrowPts[1][1]})
+        presentation.TransitionTo(array.data[1], {0: arrowPts[0][0], 1: arrowPts[0][1]})
+    }
+
+    flipArrow(threefourFiveArrow1, presentation)
+    flipArrow(threefourFiveArrow2, presentation)
+    flipArrow(threefourFiveArrow3, presentation)
+
     
     await presentation.nextSlide();
+    await presentation.nextSlide();
+    //hide all the explanatory stuff
     [threeFourFiveTriangle, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3].forEach(curveObject => curveObject.getDeepestChildren().forEach((output) => {
                 presentation.TransitionTo(output, {'opacity':0}, 1000);
             }));
-    [threeFourFiveLabelTwo, threeFourFiveLabelThree].concat(threeFourFiveTriangleAreaLabels).forEach( (output) => presentation.TransitionTo(output, {'opacity':0}, 1000));
+    [threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive,  threeFourFiveLabelThree].concat(threeFourFiveTriangleAreaLabels).forEach( (output) => presentation.TransitionTo(output, {'opacity':0}, 1000));
+    //flip arrows
 
-    await presentation.nextSlide();
+    /*
     await presentation.nextSlide();
 
     //show points to add    
@@ -303,6 +313,7 @@ async function animate(){
 	await presentation.delay(500);
     //reflect
 	EXP.TransitionTo(thirdPointControl,{'expr':(i,t,a,b) => [a,-b]});
+    */
 
 }
 window.addEventListener("load",function(){

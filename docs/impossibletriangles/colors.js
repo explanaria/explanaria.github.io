@@ -31,7 +31,11 @@ let tTextColor = new THREE.Color(tColor); tTextColor.offsetHSL(0,0,0.4);
 let twoNTextColor = new THREE.Color(twoNColor); //twoNTextColor.offsetHSL(0,0,0.2);
 rTextColor = sTextColor = tTextColor = white;
 
-
-
 export {rColor, sColor, tColor, twoNColor, yColor, xColor, gridColor, white, black, rTextColor, sTextColor, tTextColor, twoNTextColor};
+
+//3 colors
+export let pColor = twoNColor; //new THREE.Color("hsl(180, 50%, 50%)");
+export let qColor = new THREE.Color("hsl(300, 50%, 50%)");
+
+
 

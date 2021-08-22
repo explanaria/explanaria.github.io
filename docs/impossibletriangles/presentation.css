@@ -1,5 +1,9 @@
 /* text */
 
+.slideTextItem{
+	transition: opacity 0.5s ease-in-out;
+}
+
 .katexlabel{
     position: absolute;
     top: 0px;
@@ -7,6 +11,12 @@
     transform: translate(-50%, -50%);
     font-size: 22px;
     pointer-events: none;
+}
+
+.overlappingItemContainer{
+  display: grid;
+  grid-template-columns: 1fr;
+ width:100%;
 }
 
 .textContainer{
@@ -67,6 +77,7 @@ html{
     /*background-color: green;*/
     min-height: 2;
     position:relative;
+    overflow: hidden; /* I'm not sure about this. disabling it does get rid of a scrollbar, but that scrollbar shouldn't be there in the first place.*/
 }
 
 .non3DFooterPart{
@@ -92,18 +103,6 @@ html{
     bottom:0%;
 }   
 
-
-/* used in 3 circle */
-.overlappingItemContainer{
-  display: grid;
-  grid-template-columns: 1fr;
- width:100%;
-}
-.overlappingItem{
- grid-row-start: 1;
- grid-column-start: 1;
- width:100%;
-}
 
 #textArea h1{
     text-align: center;
@@ -148,12 +147,6 @@ html{
     font-size: 70%;
 }
 
-/* used in 6 tofourdimensions */
-
-.coord4Reveal{
-    transition: all 1s ease-in-out;
-}
-
 .willFadeInFromJS{
     opacity:0; 
     transition: opacity 0.75s ease-in-out;
@@ -195,15 +188,10 @@ ul {
         font-size: 12px;
     }
 
-    #coords{
-        font-size: 1.5em;
-    }
-
     .threeDPart{
         width: 60%;
         height:100%;
         float:left;
-        overflow-y: hidden; /* I'm not sure about this. disabling it does get rid of a scrollbar, but that scrollbar shouldn't be there in the first place.*/
     }
 
     .non3DFooterPart{
@@ -215,28 +203,7 @@ ul {
         border-left: 1px solid #ccc;
     }
 
-    .factors canvas{ /* shrink canvases a bit */
-        width: 4em;
-        height: 4em;
-    }
-
-    .factors .column{
-        padding: 0;
-    }
-    .factors{
-        margin: 0;
-    }
-
-    .timesSign{
-        font-size: 3em;
-    }
-
     /* used in 3 */
-
-    .chartCanvasContainer canvas{
-        height:100%;
-        max-height: 10em;
-    }
 
     .fullscreenText{
         font-size: 1.3em;
@@ -246,18 +213,6 @@ ul {
         font-size: 3em;
     }
    
-    /* used in 4*/
-    #chartCanvases{
-        grid-template-columns: repeat(auto-fill, 100px);
-        grid-template-rows: repeat(auto-fill, 100px);
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-     .chart canvas{
-        width: 100px;
-        height: 100px;
-    }
     .threeDPartHeader{
         padding: 0.25em;
         font-size: 1em;

@@ -162,14 +162,14 @@ function setup(){
     let sideLengthColor = black; //"green"
 
     window.side1Text = new AutoColoring3DText({ //horizontal
-        text: "r+t", 
+        text: "t+r", 
         color: sideLengthColor,
         position3D: (t) => [(0+c)/2,a],
         opacity: 0,
         frostedBG: true,
     })
     window.side2Text = new AutoColoring3DText({ //vertical
-        text: "r-t", 
+        text: "t-r", 
         color: sideLengthColor,
         position3D: (t) => [c+a,(a+c)/2],
         opacity: 0,

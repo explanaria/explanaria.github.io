@@ -142,7 +142,7 @@ class Dynamic3DText{
         if(this.position2D[0] != this._prevPosition[0] || this.position2D[1] != this._prevPosition[1]){
 
             //Assumes we're at top: 0px, left 0px, the 50% 50% ensures the element is centered
-            this.htmlElem.style.transform = "translate(-50%, -50%) translate("+this.position2D[0]+"0px, "+this.position2D[1]+"px)";
+            this.htmlElem.style.transform = "translate(-50%, -50%) translate("+this.position2D[0]+"px, "+this.position2D[1]+"px)";
             this._prevPosition[0] = this.position2D[0];
             this._prevPosition[1] = this.position2D[1];
         }

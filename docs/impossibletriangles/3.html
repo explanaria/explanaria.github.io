@@ -5,16 +5,76 @@
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Impossible Triangles #3: Elliptic Curves</title>
   <script src="../resources/build/explanaria-bundle.js"></script>
+  <script type="module" src="./3-ellipticpresentation.js"></script>
 
-  <script src="./congruent_utilities.js"></script>
+  <script src="../resources/build/explanaria-bundle.js"></script>
 
-  <link type="text/css" href="../resources/oldstyle.css" rel="stylesheet" />
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
 
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <link type="text/css" href="../resources/style.css" rel="stylesheet" />
+  <link type="text/css" href="./dist/katex-v0.13.13/katex.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
 </head>
 <body>
-  <script type="module" src="3-ellipticpresentation.js">
-    
-  </script>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart"> 
+        <canvas id="threeDcanvas">
+
+        </canvas>
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-1" style="pointer-events: none;">
+            <h1>Elliptic Curves</h1>
+            <ul>
+                <li><kmath>y^2 = x^3 - N^2 x</kmath></li>
+                <li>This equation is an example of an elliptic curve! </li>
+            </ul>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-2" style="pointer-events: none;">
+            <h1>Elliptic Curves</h1>
+                <p>Curves of the form <kmath>y^2 = x^3 + px + q</kmath> for some <kmath>p</kmath> and <kmath>q</kmath></p>
+        </div>
+        
+        
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+        <div class="overlappingItemContainer"> 
+            <div class="exp-slide slideTextItem">
+                The equation <kmath>y^2 = x^3 - N^2 x</kmath>, which we got from the three successive squares problem, is an elliptic curve!
+                <br>Elliptic curves are different from ellipses. (They were first named "elliptic" because similar equations appear when trying to find the perimeter of an ellipse.)
+            </div>
+            <div class="exp-slide slideTextItem">
+                An elliptic curve is the set of solutions to the equation <kmath>y^2 = x^3 px + q</kmath>, for some <kmath>p</kmath> and <kmath>q</kmath>. Depending on the exact values of <kmath>p</kmath> and <kmath>q</kmath>, the graph of an elliptic curve might look like one smooth curve, or two distinct parts.
+
+                <br>(Technical note: For our purposes <kmath>x, y, p, </kmath> and <kmath>q</kmath> are all real numbers.)
+            </div>
+            <div class="exp-slide slideTextItem">
+                In our case, we get a different curve for each value of <kmath>N</kmath>. When <kmath color="N">N=6</kmath>, for example, we get the curve <kmath>y^2 = x^3 - 36 x</kmath>, which I've graphed here.
+
+            </div>
+            <div class="exp-slide slideTextItem">
+                Here's the key idea: every point <kmath>(x,y)</kmath> on this curve corresponds to a triangle with area <kmath color="N">6</kmath>.
+
+                <br>Remember, we substituted <kmath>x = s^2</kmath> during our earlier algebra. If we find an <kmath>x</kmath>, we can work backwards to make <kmath>r^2, s^2, t^2</kmath>, which can be turned into a triangle with area <kmath>N</kmath>.  
+
+                <br>If we can find a point <kmath>(x,y)</kmath> where both <kmath>x</kmath> and <kmath>y</kmath> are <u>rational</u>, we can construct a <u>rational</u> triangle with area <kmath>6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
+            </div>
+            <div class="exp-slide slideTextItem">
+                Therefore, we've turned the problem of "is <kmath>N</kmath> a congruent number?" into "Does the equation<kmath>y^2 = x^3 - N^2 x</kmath> have any pairs of rational numbers <kmath>(x,y)</kmath> which solve the equation?
+            </div>
+            <div class="exp-slide slideTextItem">
+                There's one fun thing you can do with elliptic curves: generate new triangles from old ones!
+            </div>
+            <div class="exp-slide slideTextItem">
+                5 <kmath>N</kmath>?
+            </div>
+            <div class="exp-slide slideTextItem">
+                5 <kmath>N</kmath>?
+            </div>
+            
+        </div>        
+      </div>
+  </div>
 </body>
 </html>

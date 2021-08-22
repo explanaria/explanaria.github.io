@@ -29,8 +29,7 @@ export function makeLabeledCurve(p,q, position=[0,0], textOffset = [0, -3], scal
     let customColors = {};
     customColors[String(Math.abs(p))] = pColor,
     customColors[String(Math.abs(q))] = qColor;
-    customColors["−"] = pColor; 
-    console.log(p)
+    customColors["−"] = pColor;
 
     let label = new AutoColoring3DText({
         text: ellipticCurveEquationText(p,q),

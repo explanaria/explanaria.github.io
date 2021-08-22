@@ -49,6 +49,11 @@ function walkAndAddColor(elem, customColorDict){
         }
         return;
     }
+
+    if(elem.className == "mord"){
+
+    }
+
     for(let i=0;i<elem.children.length;i++){
         walkAndAddColor(elem.children[i], customColorDict)
     }  
@@ -81,6 +86,8 @@ export class AutoColoring3DText extends Dynamic3DText{
          //a dict of {"x": redColor}. will color all instances of X with the color redColor.
         //note that you can specify numbers like "2" or "3", but it'll also color the 2 in x^2
         this.customColorDict = options.customColors || {};
+
+        this.numberColors = {};
         
     }
     renderDisplayedText(){
@@ -88,6 +95,38 @@ export class AutoColoring3DText extends Dynamic3DText{
             throwOnError: false
         });
         walkAndAddColor(this.htmlElem, this.customColorDict);
+
+        this.htmlElem.children[this.htmlElem.children.length]
+    }
+}
+
+export class ColorSuccessiveNumbers3DText extends Dynamic3DText{
+    constructor(options){
+        super(options);
+         //[color1, color2, color3]. used for (a/2,b/2,c/2) to color the entire fraction
+        this.customColors = options.customColors || [];
+        
+    }
+    renderDisplayedText(){
+        katex.render(this._text, this.htmlElem, {
+            throwOnError: false
+        });
+        walkAndAddColor(this.htmlElem, {});
+
+        let katexHtmlRoot = this.htmlElem.children[0].children[1]
+
+        let colorsUsed = 0;
+        for(let j=0;j<katexHtmlRoot.children.length;j++){
+            let base = katexHtmlRoot.children[j];
+            console.log(base);
+            for(let i=0;i<base.children.length;i++){
+                let elem = base.children[i];
+                if(elem.className == "mord" && colorsUsed < this.customColors.length){
+                    if(elem.style)elem.style.color = this.customColors[colorsUsed].getStyle();
+                    colorsUsed+= 1;
+                }
+            }
+        }
     }
 }
 

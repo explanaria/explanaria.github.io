@@ -25,8 +25,11 @@ export class Line{
 
 		return EXP.Math.lerpVectors(x, p1, p2)
 	}
-	revealSelf(){
-		EXP.TransitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
+	revealSelf(presentation=null){
+        if(presentation == null){
+            presentation = EXP;
+        }
+		presentation.TransitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
 	}
 }
 
@@ -57,7 +60,9 @@ export function elliptic_curve_add(p1,p2, curveparams){
 	}
 
 	let x3 = slope*slope - p1[0] - p2[0];
-	let y3 = slope*(x3 - p1[0]) + p1[1]
+	let y3 = slope*(x3 - p1[0]) + p1[1];
+
+    y3 = -y3;
 
 	return [x3,y3];
 }

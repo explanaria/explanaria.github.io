@@ -35,6 +35,11 @@
             <h1>Elliptic Curves</h1>
                 <p>Curves of the form <kmath>y^2 = x^3 + px + q</kmath> for some <kmath>p</kmath> and <kmath>q</kmath></p>
         </div>
+
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-12" style="pointer-events: none;">
+            <h1>New Points from Old</h1>
+                <p>The Group Law</p>
+        </div>
         
         
       </div>
@@ -86,8 +91,29 @@
                 <br>For us, this means once we find one rational triangle with area <kmath>N</kmath>, we can use the elliptic curve to generate more rational triangles with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">
-                5 <kmath>N</kmath>?
+                Let's say we found two rational points on this curve. Elliptic curves allow you to define a way to "add" the points together and get another rational point!
             </div>
+            <div class="exp-slide slideTextItem">
+                To add these two points, draw a line through them. Then, this line will intersect the curve in a third point. Finally, reflect that point over the y-axis, and you're done!
+            </div>
+            <div class="exp-slide slideTextItem">
+                Just like normal addition, you can also add the same point to itself! Instead of drawing a line between two points, when adding the same point to itself you use the tangent line to the curve. But everything still works out: you get another rational point.
+            </div>
+            <div class="exp-slide slideTextItem">      
+                As it turns out, this "addition" obeys all the same rules as normal addition:
+                <ul>
+                    <li>(P + Q) + R = P + (Q + R)</li>
+                    <li>Each point has a "negative"</li>
+                    <li>If you add two rational <s>numbers</s>points, you get another rational <s>number</s>point</li>
+                </ul>
+                <br>This is incredibly weird. Why would drawing lines on elliptic curves obey all the same rules as normal addition? 
+            </div>
+            <div class="exp-slide slideTextItem">
+                Remember how I said your computer uses elliptic curves to encrypt its connection to the internet? Modern encryption is built around adding points on elliptic curves!
+
+                <br>In a nutshell, elliptic curve encryption weaponizes the fact that adding points on elliptic curves is really hard to undo. If someone adds a point to itself repeatedly and hands you the finished product, it's almost impossible to find the point they started with. Elliptic curve encryption turns "undoing addition is hard" into "decrypting this message is hard"!
+            </div>
+            
             <div class="exp-slide slideTextItem">
                 5 <kmath>N</kmath>?
             </div>

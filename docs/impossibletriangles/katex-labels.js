@@ -135,11 +135,17 @@ class Dynamic3DText{
         if(this.align == "center"){
             return "translate(-50%, -50%)";
         }
-        if(this.align == "right"){
-            return "translate(0%, -50%)";
+        if(this.align == "right"){ //0%, 50% plus a 10% buffer
+            return "translate(10%, -50%)";
         }
         if(this.align == "left"){
-            return "translate(-100%, -50%)";
+            return "translate(-110%, -50%)";
+        }
+        if(this.align == "top"){
+            return "translate(-50%, -110%)";
+        }
+        if(this.align == "bottom"){
+            return "translate(-50%, 10%)";
         }
     }
 

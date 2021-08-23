@@ -141,7 +141,7 @@
             </div>
             <div class="exp-slide slideTextItem">We can work backwards, too: if we find an <kmath>x</kmath>, we can compute <kmath>r^2, s^2, t^2</kmath>, which can be turned into a triangle with area <kmath>N</kmath>.  
 
-                <br><aside>(Technical note: we can't work backwards using <kmath>s^2 = x</kmath> if <kmath>x</kmath> isn't a square number. There's a different formula without that problem, but it's more complicated and doesn't have a nice geometric interpretation.)</aside>
+                <br><aside>(Technical note: if <kmath>x</kmath> isn't a square number, we need to use a different equation than <kmath>s^2 = x</kmath>; we can always turn rational points into rational triangles and vice versa, but other equations don't have the same nice geometric interpretations.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 But more importantly: if we can find a point <kmath>(x,y)</kmath> where both <kmath>x</kmath> and <kmath>y</kmath> are <u>rational</u>, we can construct a <u>rational</u> triangle with area <kmath color="N">6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
@@ -159,7 +159,7 @@
                 <br>For us, this means once we find one rational triangle with area <kmath>N</kmath>, we can use the elliptic curve to generate more rational triangles with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">
-                Here's the recipe for computing a new point <kmath>P_1 + P_2</kmath>. The definition is a bit technical, but this recipe is defined the way it is so that adding points works similarly to adding numbers.
+                Here's the recipe for computing a new point <kmath>P_1 + P_2</kmath>. The definition of elliptic curve addition is a bit technical, but this recipe is defined the way it is so that adding points works similarly to adding numbers.
                 <ul>
                     <li>- First, draw a line through <kmath>P_1</kmath> and <kmath>P_2</kmath>. Because of how elliptic curves are defined, This line will always* intersect the curve in a third point.</li>
                     <li>- Then, reflect that point vertically over the <kmath>x</kmath>-axis.</li>

@@ -83,13 +83,13 @@ function setup(){
         .add(new EXP.ClosedPolygonOutput({color: tColor, opacity: 0}));
         
 
-    var bigBorder1 = new EXP.Array({data: [[0,c],[0,a],[a,a],[a,0], [c,0],[c,c], [0,c]]});
+    var bigBorder1 = new EXP.Array({data: [[0,c],[0,a],[a,a],[a,0], [c,0],[c,c], [0,c],[0,a]]});
     window.firstBorderLine = new EXP.LineOutput({color: twoNColor, opacity:0, width:15})
     bigBorder1
         .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y,0.01]}))
         .add(firstBorderLine);
 
-    var bigBorder2 = new EXP.Array({data: [[0,a], [0,c],[c+a,c], [c+a,a], [0,a]]});
+    var bigBorder2 = new EXP.Array({data: [[0,a], [0,c],[c+a,c], [c+a,a], [0,a], [0,c]]});
     window.secondBorderLine = new EXP.LineOutput({color: twoNColor, opacity:0, width:15})
     bigBorder2
         .add(new EXP.Transformation({'expr':(i,t,x,y) => [x,y,0.01]}))

@@ -92,9 +92,13 @@ class Dynamic3DText{
             htmlColor = this._color;
         }else if(this._color.constructor == Function){
             htmlColor = this._color(t);
+            if(htmlColor.constructor == THREE.Color){
+                htmlColor = htmlColor.getStyle();
+            }
         }else if(this._color.constructor == THREE.Color){
             htmlColor = this._color.getStyle();
         }
+
         if(htmlColor != this._prevColor){
             this.htmlElem.style.color = htmlColor;
             this._prevColor = htmlColor;

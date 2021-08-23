@@ -1,7 +1,7 @@
 import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mouseinteraction.js";
 import {areAllSideLengthsIntegers, computeTriangleArea, colorHighlightingIrrationals, renderLengthHighlightingIrrationals} from "./1-computedTriangleProperties.js";
 import {Dynamic3DText} from "./katex-labels.js";
-import {gridColor, twoNColor, hintArrowColor, triangleLineColor} from "./colors.js";
+import {gridColor, twoNColor, black, hintArrowColor, triangleLineColor, triangleGrabbableCornerColor, triangleNonGrabbableCornerColor} from "./colors.js";
 
 import {addColorToHTML} from './2-addColorToHTMLMath.js';
 addColorToHTML();
@@ -40,11 +40,11 @@ function setup(){
     let grabbablePointSize = 0.5;
 
     window.grabbablePoints = new EXP.Array({data: [draggablePoint]});
-    window.trianglePointsOutput = new EXP.PointOutput({color: 0xff0000, width: grabbablePointSize, opacity:0});
+    window.trianglePointsOutput = new EXP.PointOutput({color: triangleGrabbableCornerColor, width: grabbablePointSize, opacity:0});
     grabbablePoints.add(trianglePointsOutput);
 
     window.fixedPointDisplay = new EXP.Array({data: [fixedPoint, slidingHorizontalPoint]});
-    fixedPointDisplay.add(new EXP.PointOutput({color: 0x444444, width: grabbablePointSize-0.1, opacity:0}));
+    fixedPointDisplay.add(new EXP.PointOutput({color: triangleNonGrabbableCornerColor, width: grabbablePointSize-0.1, opacity:0}));
 
 
 
@@ -116,7 +116,14 @@ function setup(){
     window.side2Text = new Dynamic3DText({
         text: (t) => renderLengthHighlightingIrrationals(trianglePoints[1], trianglePoints[2]), 
         color: (t) => colorHighlightingIrrationals(trianglePoints[1], trianglePoints[2]),
-        position3D: (t) => vecAdd(vecScale(vecAdd(trianglePoints[1], trianglePoints[2]),0.5), vecScale(trianglePoints[0], -0.0)),
+        position3D: (t) => {
+            //move to the side if the triangle is small
+            let sideMidpoint = vecScale(vecAdd(trianglePoints[1], trianglePoints[2]),0.5);
+            if(Math.abs(sideMidpoint[0] - trianglePoints[0][0]) < 4){
+                sideMidpoint[0] +=  1 * Math.sign(sideMidpoint[0] - trianglePoints[0][0])
+            }
+            return sideMidpoint;   
+        },
         opacity: 0,
         frostedBG: true,
     })
@@ -124,14 +131,32 @@ function setup(){
     window.side3Text = new Dynamic3DText({
         text: (t) => renderLengthHighlightingIrrationals(trianglePoints[0], trianglePoints[2]), 
         color: (t) => colorHighlightingIrrationals(trianglePoints[0], trianglePoints[2]),
-        position3D: (t) => vecAdd(vecScale(vecAdd(trianglePoints[0], trianglePoints[2]),0.5), vecScale(trianglePoints[1], -0.0)),
+        position3D: (t) => {
+
+            //move to the side if the triangle is small
+            let sideMidpoint = vecScale(vecAdd(trianglePoints[0], trianglePoints[2]),0.5);
+            if(Math.abs(sideMidpoint[0] - trianglePoints[0][0]) < 4){
+                sideMidpoint[0] -=  1 * Math.sign(sideMidpoint[0] - trianglePoints[0][0])
+                sideMidpoint[1] +=  1 * Math.sign(sideMidpoint[1] - trianglePoints[0][1])
+            }
+            return sideMidpoint;
+        },
         opacity: 0,
+        frostedBG: true,
+    })
+
+    window.dragMeText = new Dynamic3DText({
+        text: (t) => "\\text{Drag me!}", 
+        color: triangleGrabbableCornerColor,
+        position3D: (t) => trianglePoints[2],
+        opacity: 0,
+        align: "top",
         frostedBG: true,
     })
 
     
     let staticSceneObjects = [integerGrid];
-    sceneObjects = [triangleLine, areaText, side1Text, side2Text, side3Text, grabbablePoints, fixedPointDisplay, twentyFourHint]; 
+    sceneObjects = [triangleLine, areaText, side1Text, side2Text, side3Text, grabbablePoints, fixedPointDisplay, twentyFourHint, dragMeText]; 
 
     window.introObjects = makeIntroObjects();
     window.introSettings = {"introObjectsActive":true};
@@ -157,7 +182,7 @@ async function animate(){
     introObjects.forEach(object => object.getDeepestChildren().forEach( async (output) => {
         introCount += 1;
         await EXP.delay(500*introCount/5); //these are going to be running concurrently, which is a bit weird and messes with undoing
-        presentation.TransitionTo(output, {'opacity':0}, 500);
+        if(output.opacity)presentation.TransitionTo(output, {'opacity':0}, 500);
     }))
 
     await presentation.delay(1000);
@@ -189,8 +214,14 @@ async function animate(){
 	//EXP.TransitionTo(pt3output,{opacity:1, width:0.6},400);
     twentyFourHint.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':0}, 500));
     await presentation.nextSlide();
+
+    presentation.TransitionTo(dragMeText, {'opacity':1}, 500);
+    
     await presentation.nextSlide();
 
+
+
+    presentation.TransitionTo(dragMeText, {'opacity':0}, 500);
     twentyFourHint.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':0}, 500));
     let target1 = [8+fixedPoint[0],6+fixedPoint[0]];
     presentation.TransitionTo(draggablePoint, {"0": target1[0], "1":target1[1]});
@@ -200,10 +231,16 @@ async function animate(){
 
     //to 6
     let target2 = [4+fixedPoint[0],3+fixedPoint[0]];
+
+
     presentation.TransitionTo(draggablePoint, {"0": target2[0], "1":target2[1]});
     presentation.TransitionTo(slidingHorizontalPoint, {"0":target2[0]});
     await presentation.nextSlide();
+
+
+    presentation.TransitionTo(dragMeText, {'opacity':1}, 500);
     await presentation.nextSlide();
+    presentation.TransitionTo(dragMeText, {'opacity':0}, 500);
 
     
     let target3 = [35/12+fixedPoint[0],24/5+fixedPoint[0]];
@@ -215,7 +252,9 @@ async function animate(){
     presentation.TransitionTo(draggablePoint, {"0": target4[0], "1":target4[1]});
     presentation.TransitionTo(slidingHorizontalPoint, {"0":target4[0]});
     await presentation.nextSlide();
+    presentation.TransitionTo(dragMeText, {'opacity':1}, 500);
     await presentation.nextSlide();
+    presentation.TransitionTo(dragMeText, {'opacity':0}, 500);
 
 }
 window.addEventListener("load",function(){

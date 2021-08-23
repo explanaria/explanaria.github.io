@@ -133,6 +133,17 @@ async function setup(){
             "4":  xColor,
         }
     })
+    window.threeFourFiveLabelThreePointFive = new AutoColoring3DText({ //todo: color according to x and y colors
+        text: "y = \\sqrt{r^2 \\cdot s^2 \\cdot t^2} = \\frac{35}{8}",
+        position3D: EXP.Math.vectorAdd(labelThreePos, [0,1.5]),
+        opacity: 0,
+        align: 'right',
+        frostedBG: true,
+        customColors: {
+            "35": yColor,
+            "8":  yColor,
+        }
+    })
 
     window.threefourFiveArrow2 = new EXP.Array({data: [
         EXP.Math.vectorAdd(labelTwoPos, [2,0]),
@@ -142,7 +153,7 @@ async function setup(){
 
     //arrows between the things
     window.threefourFiveArrow3 = new EXP.Array({data: [
-        EXP.Math.vectorAdd(labelThreePos, [2,1]),
+        EXP.Math.vectorAdd(labelThreePos, [2,2.5]),
         EXP.Math.vectorAdd(trianglePointLabel, [0.5,-1])
     ]});
     threefourFiveArrow3.add(new EXP.VectorOutput({color: triangleVisArrowColor, opacity: 0, width: 5}));
@@ -217,7 +228,7 @@ async function setup(){
     sceneObjects = sceneObjects.concat(allFirstLabels);
     sceneObjects = sceneObjects.concat([additionLine, addedPoint]);
 
-    sceneObjects = sceneObjects.concat([threeFourFiveLabel, threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive, threeFourFiveLabelThree, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3]);
+    sceneObjects = sceneObjects.concat([threeFourFiveLabel, threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive, threeFourFiveLabelThree, threeFourFiveLabelThreePointFive, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3]);
     sceneObjects = sceneObjects.concat(threeFourFiveTriangleAreaLabels);
     staticObjects = staticObjects.concat([threeFourFivePoint, threeFourFiveTriangle])
 
@@ -295,6 +306,7 @@ async function animate(){
 
     //show x = s^2 label
     presentation.TransitionTo(threeFourFiveLabelThree,{opacity:1},500);
+    presentation.TransitionTo(threeFourFiveLabelThreePointFive,{opacity:1},500);
 	
     
     await presentation.nextSlide();
@@ -329,7 +341,7 @@ async function animate(){
     [threeFourFiveTriangle, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3].forEach(curveObject => curveObject.getDeepestChildren().forEach((output) => {
                 presentation.TransitionTo(output, {'opacity':0}, 1000);
             }));
-    [threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive,  threeFourFiveLabelThree].concat(threeFourFiveTriangleAreaLabels).forEach( (output) => presentation.TransitionTo(output, {'opacity':0}, 1000));
+    [threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive,  threeFourFiveLabelThree, threeFourFiveLabelThreePointFive].concat(threeFourFiveTriangleAreaLabels).forEach( (output) => presentation.TransitionTo(output, {'opacity':0}, 1000));
     //also hide the 3-4-5 point
 
 	presentation.TransitionTo(threeFourFiveLabel,{opacity:0},500);

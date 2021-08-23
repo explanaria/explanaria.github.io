@@ -1,7 +1,7 @@
 import {constructEXPEllipticCurve} from "./3-makeellipticcurve.js";
 import {AutoColoring3DText} from './2-addColorToHTMLMath.js';
 import {Dynamic3DText} from "./katex-labels.js";
-import {gridColor, pColor, qColor, triangleLineColor, triangleGrabbableCornerColor, validIntegerColor, twoNColor} from "./colors.js";
+import {gridColor, pColor, qColor, triangleLineColor, triangleNonGrabbableCornerColor, validIntegerColor, twoNColor} from "./colors.js";
 
 function average(p1,p2){
     return [(p1[0]+p2[0])/2,(p1[1]+p2[1])/2];
@@ -68,7 +68,7 @@ export function makeTriangle(w,h, centerPos){
     let shinyTriangle = new EXP.Array({data: [0,1,2,0]});
     let getTrianglePoints = shinyTriangle.add(new EXP.Transformation({'expr':(i,t,index) => points[index]}))
     getTrianglePoints.add(new EXP.LineOutput({opacity:1, color: triangleLineColor})); //line between the triangles
-    getTrianglePoints.add(new EXP.PointOutput({opacity:1, color: triangleGrabbableCornerColor, width:0.4})); //line between the
+    getTrianglePoints.add(new EXP.PointOutput({opacity:1, color: triangleNonGrabbableCornerColor, width:0.4})); //line between the
 
     let areaLabel = new Dynamic3DText({
         text: w*h/2, 

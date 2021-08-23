@@ -26,7 +26,7 @@
         </canvas>
 
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-1" >
-            <h1>Elliptic Curves</h1>
+            <h1>Chapter 3: Elliptic Curves</h1>
             <ul>
                 <li><kmath>y^2 = x^3 - N^2 x</kmath></li>
                 <li>This equation is an example of an elliptic curve! </li>
@@ -108,7 +108,9 @@
         <div class="overlappingItemContainer"> 
             <div class="exp-slide slideTextItem">
                 The equation <kmath>y^2 = x^3 - N^2 x</kmath>, which we got from the three successive squares problem, is an elliptic curve!
-                <br>Elliptic curves are different from ellipses. (They were first named "elliptic" because similar equations appear when trying to find the perimeter of an ellipse.)
+                <br>(Elliptic curves are different from ellipses. They were first named "elliptic" because similar equations appear when trying to find the perimeter of an ellipse.)
+
+                <br><a style="position:absolute;bottom:0.5em;left:0.5em;font-weight:bold;text-decoration:underline;" href="2.html">Previous Chapter</a>
             </div>
             <div class="exp-slide slideTextItem">
                 An elliptic curve is the set of solutions to the equation <kmath>y^2 = x^3 + px + q</kmath>, for some <kmath>p</kmath> and <kmath>q</kmath>. Depending on the exact values of <kmath>p</kmath> and <kmath>q</kmath>, the graph of an elliptic curve might look like one smooth curve, or two distinct parts.
@@ -139,7 +141,7 @@
             </div>
             <div class="exp-slide slideTextItem">We can work backwards, too: if we find an <kmath>x</kmath>, we can compute <kmath>r^2, s^2, t^2</kmath>, which can be turned into a triangle with area <kmath>N</kmath>.  
 
-                <aside>Working backwards uses a different, slightly more complicated formula if <kmath>x</kmath> isn't a square number.</aside>
+                <br><aside>(Technical note: we can't work backwards using <kmath>s^2 = x</kmath> if <kmath>x</kmath> isn't a square number. There's a different formula without that problem, but it's more complicated and doesn't have a nice geometric interpretation.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 But more importantly: if we can find a point <kmath>(x,y)</kmath> where both <kmath>x</kmath> and <kmath>y</kmath> are <u>rational</u>, we can construct a <u>rational</u> triangle with area <kmath color="N">6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
@@ -163,7 +165,7 @@
                     <li>- Then, reflect that point vertically over the <kmath>x</kmath>-axis.</li>
                     <li>- The resulting point is called <kmath>P_1 + P_2</kmath>, and it's guaranteed to be a point on the elliptic curve.</li>
                 <ul>
-                <aside>* Technically, vertical lines don't intersect the curve in three points, but mathematicians use a tool called the "projective plane" to take care of those cases.</aside>
+                <aside>(* Technically, vertical lines don't intersect the curve in three points, but mathematicians use a tool called the "projective plane" to take care of those cases.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 What if <kmath>P_1</kmath> and <kmath>P_2</kmath> are the same point? Just like normal addition, adding the same point to itself is possible! Instead of drawing a line between two points, when adding <kmath>P_1 + P_1</kmath> you draw a tangent line to the curve. But everything still works out - we get a new point on the curve.
@@ -185,12 +187,12 @@
             </div>
 
             <div class="exp-slide slideTextItem">
-                Finally, let me tell you about the solution to the congruent number problem! In 1983, a mathematician named J.B.Tunnell used deep properties of the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> to solve the congruent number problem.
+                Finally, let me tell you about the solution to the congruent number problem! In 1983, a mathematician named J. B. Tunnell used deep properties of the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> to solve the congruent number problem. His answer was a bit technical, so don't panic.
             </div>
     
 
             <div class="exp-slide slideTextItem">
-                Here's Tunnell's answer: To figure out if N is a congruent number, count the number of integer solutions to these two equations and compare them.
+                Here's Tunnell's answer: To figure out if <kmath color="N">N</kmath> is a congruent number, count the number of integer solutions to these two equations and compare them.
                 <br>
                 <aside>Counting these solutions is simpler than it sounds - a computer can just try every single possible combination of <kmath>x,y,z \leq \sqrt{N}</kmath>. There's not a lot of possibilities!</aside>
             </div>
@@ -202,13 +204,15 @@
 
 
             <div class="exp-slide slideTextItem">
-                Here's why it works: Tunnell showed that if his criterion is invalid, it means the elliptic curve<kmath>y^2 = x^3 - N^2 x</kmath> has no rational solutions. And as we've seen, no rational solutions on the elliptic curve means no rational triangles with area <kmath>N</kmath>.
+                Here's why it works: Tunnell showed that if his criterion is invalid, it means the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> has no rational solutions. And as we've seen, no rational solutions on the elliptic curve means no rational triangles with area <kmath>N</kmath>.
+
+                <br>By the way, we started with a geometry question about triangles, and now we're answering it using number theory. Isn't that interesting? Mathematicians love elliptic curves because they connect to so many different areas of math.
             </div>
 
 
 
             <div class="exp-slide slideTextItem">
-                For example, let's figure out whether <kmath color="N">N=5</kmath> is a congruent number.
+                For example, let's do the math and figure out whether <kmath color="N">N=5</kmath> is a congruent number.
                 <br>Looking at the second equation, <kmath>x^2+4y^2+32z^2=2.5</kmath>, we can see there's no solutions: <kmath>x^2, 4y^2</kmath> and <kmath>32z^2</kmath> are all integers, so there's no way they can add up to a non-integer like <kmath>2.5</kmath>.
 
                 <br>Similarly, for the first equation, it turns out <kmath>x,y,</kmath> and <kmath>z</kmath> can't be bigger than 2, or else <kmath>x^2 + 2y^2 + 8z^2 \gt</kmath><kmath color="N">5</kmath>. So we can check every single possibility by hand and find none of them solve the equation.

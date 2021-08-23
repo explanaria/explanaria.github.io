@@ -5,7 +5,8 @@ export const invalidIntegerColor = new THREE.Color("maroon");
 export const hintArrowColor = new THREE.Color("hsl(0, 80%, 50%)");
 
 export const triangleLineColor = new THREE.Color("hsl(240, 50%, 50%)");
-export const triangleGrabbableCornerColor = 0xff0000;
+export const triangleGrabbableCornerColor = new THREE.Color(0xff0000);
+export const triangleNonGrabbableCornerColor =  new THREE.Color(0x444444);
 
 
 //2 colors

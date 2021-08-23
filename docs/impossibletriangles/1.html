@@ -4,7 +4,11 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Impossible Triangles #1: The Congruent Number Problem</title>
-  <script src="../resources/build/explanaria-bundle.js"></script>
+  <meta content="Explanaria - The Case Of the Impossible Triangles" property="og:title" />
+  <meta content="An interactive presentation on the congruent number problem and elliptic curves" property="og:description" />
+  <meta content="https://explanaria.github.io/impossibletriangles/" property="og:url" />
+  
+<script src="../resources/build/explanaria-bundle.js"></script>
 
   <script type="module" src="1-integertriangles.js"></script>
 
@@ -32,7 +36,7 @@
             <p>The Congruent Number Problem and Elliptic Curves</p>
         </div>
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-2" style="pointer-events: none;">
-            <h1>The Congruent Number Problem</h1>
+            <h1>Chapter 1: The Congruent Number Problem</h1>
             <p>Choose an integer <kmath color="N">N</kmath>. Can you find a right triangle with area <kmath color="N">N</kmath> whose sides are <u>all rational numbers</u>?</p>
             <p>If so, <kmath color="N">N</kmath> is called a "congruent number."</p>
         </div>
@@ -79,7 +83,7 @@
 
             <div class="exp-slide slideTextItem">
                 First, let's take a look at the congruent number problem. Can you find a right triangle with area <kmath color="N">30</kmath> whose side lengths are all rational numbers?
-                <br>As a reminder, a rational number is a number like <kmath>\frac{1}{2}, \frac{5}{8}, \frac{6}{1}</kmath> (also known as 6), or any number of the form <kmath>\frac{x}{y}</kmath> where <kmath>x</kmath> and <kmath>y</kmath> are integers.
+                <br>As a reminder, a rational number is a number like <kmath color="rational">\frac{1}{2}, \frac{5}{8}, \frac{6}{1}</kmath> (also known as 6), or any number of the form <kmath>\frac{x}{y}</kmath> where <kmath>x</kmath> and <kmath>y</kmath> are integers.
             </div>
             <div class="exp-slide slideTextItem">
                 We're looking for triangles where all the sides are rational numbers. This triangle does have area <kmath color="N">30</kmath>, but it doesn't mean that <kmath color="N">30</kmath> is a congruent number, because the side with length <kmath color="irrational">\sqrt{136}</kmath> isn't rational.
@@ -102,11 +106,9 @@
             </div>
 
             <div class="exp-slide slideTextItem">
-                We can construct new congruent numbrers out of old ones by scaling the sides up and down. For example, if we start with one of the triangles we already found and multiply each side by two, we get another right triangle with all-rational sides.
+                We can construct new congruent numbers out of old ones by scaling the sides up and down. For example, if we start with the 6-8-10 triangle with area <kmath color="N">24</kmath> we already found, and divide each side by two, we get another right triangle with all-rational sides. Since we scale the both the width and height by a factor of <kmath>1/2</kmath>, the area goes down by a factor of <kmath>(\frac{1}{2})^2 = \frac{1}{4}</kmath>, giving us a triangle with area <kmath>\frac{24}{2^2} =</kmath><kmath>6</kmath>. This triangle means 6 is a congruent number.
 
-                Similarly, since <kmath color="N">24</kmath><kmath>=6\cdot2^2</kmath>, we can take the triangle we found with area <kmath color="N">24</kmath> and divide each side by <kmath>2</kmath> to get a triangle wth area <kmath>\frac{24}{2^2} =</kmath><kmath>6</kmath>. This means 6 is a congruent number.
-
-                <br> (Technical note: our scaling strategy means if we know <kmath>x</kmath> is a congruent number, we can scale each side of a triangle by <kmath>2</kmath> to see <kmath>4x</kmath> is a congruent number, we can scale by <kmath>3</kmath> to see <kmath>9x</kmath> is a congruent number, and so on. In general, if we know <kmath>x</kmath> is a congruent number, we also know <kmath>x, 4x, 9x, \ldots n^2x</kmath> are all congruent numbers. )
+                <br> (This scaling technique means if we know <kmath>x</kmath> is a congruent number, we can scale each side of a triangle by <kmath>2</kmath> to prove <kmath>4x</kmath> is a congruent number, or scale by <kmath>3</kmath> to prove <kmath>9x</kmath> is a congruent number, and so on. In general, if we know <kmath>x</kmath> is a congruent number, we also know <kmath>x, 4x, 9x, \ldots n^2x</kmath> are all congruent numbers. )
             </div>
 
             <div class="exp-slide slideTextItem">
@@ -116,25 +118,25 @@
             </div>
 
             <div class="exp-slide slideTextItem">
-                Turns out <kmath color="N">7</kmath> is a congruent number, but even for really small numbers it can become really hard to find right triangles. The simplest right triangle with area <kmath color="N">7</kmath> has sides <kmath>\frac{35}{12}, \frac{24}{5}, </kmath> and <kmath>\frac{337}{60}</kmath>. <kmath color="N">N=7</kmath> hasn't even reached double-digits, and these triangles are already involving fractions with numbers over a hundred!
+                Turns out <kmath color="N">7</kmath> is a congruent number, but even for really small numbers it can become really hard to find right triangles. The simplest right triangle with area <kmath color="N">7</kmath> has sides <kmath color="rational">\frac{35}{12}, \frac{24}{5}, </kmath> and <kmath color="rational">\frac{337}{60}</kmath>. <kmath color="N">N=7</kmath> hasn't even reached double-digits, and these triangles are already involving fractions with numbers over a hundred!
             </div>
 
             <div class="exp-slide slideTextItem">
-                Things get even more hairy for <kmath color="N">N=13</kmath> - it's not that much bigger than <kmath color="N">7</kmath>, but the simplest triangle with area <kmath color="N">13</kmath> has sides <kmath>\frac{780}{323}, \frac{323}{30}, </kmath> and - wait for it - <kmath>\frac{106921}{9690}</kmath>. Those may be huge numbers in the numerator and denominator, but they're still rational.
+                Things get even more hairy for the next congruent number<kmath color="N">N=13</kmath> - it's not that much bigger than <kmath color="N">7</kmath>, but the simplest triangle with area <kmath color="N">13</kmath> has sides <kmath color="rational">\frac{780}{323}, \frac{323}{30}, </kmath> and - wait for it - <kmath color="rational">\frac{106921}{9690}</kmath>. Those may be huge numbers in the numerator and denominator, but they're still rational.
             </div>
 
             <div class="exp-slide slideTextItem">
-                And what about <kmath color="N">8</kmath>? Is <kmath color="N">8</kmath> is a congruent number? Try for yourself - can you find a triangle with area 8 and rational sides?
+                And what about <kmath color="N">16</kmath>? Is <kmath color="N">16</kmath> is a congruent number? Try for yourself - can you find a triangle with area <kmath color="N">16</kmath> and rational sides?
             </div>
 
             <div class="exp-slide slideTextItem">
-                Turns out: For n=<kmath color="N">8</kmath>, it's <b>impossible!</b> There are no right triangles whatsoever with rational sides with area 8.
+                Turns out: For n=<kmath color="N">16</kmath>, it's <b>impossible!</b> There are no right triangles whatsoever with rational sides with area 16.
 
-                <br>But... how would you prove that it's impossible? Right triangles, rational sides, and area 8 are all straightforward conditions. Don't take my word for it - how do you know there isn't some triangle whose sides are ridiculously complicated fractions out there with area 8? Hunting for triangles manually clearly won't be enough. Is there a systematic way to figure out whether or not <kmath>N</kmath> is a congruent number?
+                <br>But... how would you prove that it's impossible? Right triangles, rational sides, and area 16 are all straightforward conditions. Don't take my word for it - how do you know there isn't some triangle whose sides are ridiculously complicated fractions out there with area 16? Hunting for triangles manually clearly won't be enough. Is there a systematic way to figure out whether or not <kmath>N</kmath> is a congruent number?
 
                 <br> To find out, we'll need to reframe the question and take a look at some geometry.
 
-                <a style="position:absolute;bottom:0.5em;right:0.5em;font-weight:bold;text-decoration:underline;" href="2.html">Next</a>
+                <a style="position:absolute;bottom:0.5em;right:0.5em;font-weight:bold;text-decoration:underline;" href="2.html">Next Chapter</a>
             </div>
       </div>
   </div>

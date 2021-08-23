@@ -285,7 +285,7 @@ async function animate(){
     [side1Text,side2Text,side3Text, triangleNText].forEach(item => presentation.TransitionTo(item, {'opacity':0}));
 
     
-    [rSquare, sSquareTop, sSquareBottom, tSquareTop, tSquareBottom, thirdTriangleOutline].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':0.2}, 500)));
+    [rSquare, sSquareTop, sSquareBottom, tSquareTop, tSquareBottom, thirdTriangleOutline].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':0.1}, 500)));
     await presentation.nextSlide();
     await presentation.nextSlide();
     await presentation.nextSlide();

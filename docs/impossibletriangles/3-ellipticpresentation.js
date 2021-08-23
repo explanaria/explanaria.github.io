@@ -470,9 +470,9 @@ async function animate(){
     await presentation.nextSlide();
 
     //hide everything
-    [additionPtLabel1, additionPtLabel3, pt3output, threeFourFiveLabel, additionLine.output, mainCurveText].forEach(item => presentation.TransitionTo(item,{opacity:0},500))
+    [additionPtLabel1, additionPtLabel3, pt3output, threeFourFiveLabel, additionLine.output, mainCurveText].forEach(item => presentation.TransitionTo(item,{opacity:0},1000))
     mainCurveObjects.concat([graphAxes, threeFourFiveOutput]).forEach(object => object.getDeepestChildren().forEach( async (output) => {
-        presentation.TransitionTo(output, {'opacity':0}, 500);
+        presentation.TransitionTo(output, {'opacity':0}, 1000);
     }))
 
     await presentation.nextSlide();

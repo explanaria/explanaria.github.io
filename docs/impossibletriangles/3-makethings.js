@@ -37,6 +37,7 @@ export function makeLabeledCurve(p,q, position=[0,0], textOffset = [0, -3], scal
         opacity: 1,
         frostedBG: true,
         customColors: customColors,
+        textSize: 0.8,
     })
     curveProjection.expr = (i,t,x,y) => [x/scaleFactor+position[0], y/scaleFactor+position[1]]
 

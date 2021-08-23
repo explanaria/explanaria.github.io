@@ -4,7 +4,7 @@ function cssDropShadowOutline(blurRadius="0.05rem", color='#0005', moveRadius="0
     return "drop-shadow("+moveRadius+" 0 "+blurRadius+" "+color+") drop-shadow(0 "+moveRadius+" "+blurRadius+" "+color+") drop-shadow(-"+moveRadius+" 0 "+blurRadius+" "+color+") drop-shadow(0 -"+moveRadius+" "+blurRadius+" "+color+")"
 }
 
-function makeLabel(frostedBG=false){
+function makeLabel(frostedBG=false, fontSize=undefined){
     /*
     Need this CSS:
     .katexlabel{
@@ -25,8 +25,9 @@ function makeLabel(frostedBG=false){
         //positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#000f', "0.05rem"); //harder black shadow
         positioningElem.style.filter=cssDropShadowOutline("0.05rem",'#fff', "0.05rem");  //white border
     }
-    //positioningElem.style.fontSize="24px"; //might need changing
-
+    if(fontSize){
+        positioningElem.style.fontSize= fontSize+"em";
+    }
     //changing a CSS transform doesn't cause a repaint according to https://csstriggers.com/, so it's much faster
     positioningElem.style.transform = "translate(-50%, -50%) translate(0px, 0px)";
     positioningElem.className = "katexlabel";
@@ -68,7 +69,8 @@ class Dynamic3DText{
         this.position2D = [0,0]
         this.text = options.text;
         this.frostedBG = options.frostedBG || false;
-        this.htmlElem = makeLabel(this.frostedBG);
+        this.textSize = options.textSize || null; //todo: allow changing after creation
+        this.htmlElem = makeLabel(this.frostedBG, this.textSize);
         this.align = options.align || "center"; //where should the text go in relation to the position3D?
         this.color = options.color || "black";
         this.opacity = options.opacity === undefined ? 1 : options.opacity; //setter changes HTML

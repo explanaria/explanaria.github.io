@@ -174,6 +174,7 @@ function setup(){
         position3D: (t) => [c+a,(a+c)/2],
         opacity: 0,
         frostedBG: true,
+        align: "left",
     })
     window.side3Text = new AutoColoring3DText({ //hypotenuse
         text: "2s", 

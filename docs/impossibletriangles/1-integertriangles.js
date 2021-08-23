@@ -135,7 +135,7 @@ function setup(){
 
             //move to the side if the triangle is small
             let sideMidpoint = vecScale(vecAdd(trianglePoints[0], trianglePoints[2]),0.5);
-            if(Math.abs(sideMidpoint[0] - trianglePoints[0][0]) < 4){
+            if(Math.abs(sideMidpoint[0] - trianglePoints[0][0]) < 4 || Math.abs(sideMidpoint[1] - trianglePoints[0][1]) < 4 ){
                 sideMidpoint[0] -=  1 * Math.sign(sideMidpoint[0] - trianglePoints[0][0])
                 sideMidpoint[1] +=  1 * Math.sign(sideMidpoint[1] - trianglePoints[0][1])
             }
@@ -248,7 +248,7 @@ async function animate(){
     presentation.TransitionTo(slidingHorizontalPoint, {"0":target3[0]});
     await presentation.nextSlide();
     
-    let target4 = [780/323+fixedPoint[0],323/30+fixedPoint[0]];
+    let target4 = [323/30+fixedPoint[0],780/323+fixedPoint[0]];
     presentation.TransitionTo(draggablePoint, {"0": target4[0], "1":target4[1]});
     presentation.TransitionTo(slidingHorizontalPoint, {"0":target4[0]});
     await presentation.nextSlide();

@@ -24,21 +24,82 @@
         <canvas id="threeDcanvas">
 
         </canvas>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-1" style="pointer-events: none;">
+
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-1" >
             <h1>Elliptic Curves</h1>
             <ul>
                 <li><kmath>y^2 = x^3 - N^2 x</kmath></li>
                 <li>This equation is an example of an elliptic curve! </li>
             </ul>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-2" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-2" >
             <h1>Elliptic Curves</h1>
                 <p>Curves of the form <kmath>y^2 = x^3 + px + q</kmath> for some <kmath>p</kmath> and <kmath>q</kmath></p>
         </div>
 
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-12" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-12 exp-slide-13 exp-slide-14 exp-slide-15 exp-slide-16 exp-slide-17 exp-slide-18 exp-slide-19" >
             <h1>New Points from Old</h1>
                 <p>The Group Law</p>
+        </div>
+        
+
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-20">
+            <h1>Tunnell's Theorem (1983)</h1>
+                <br>
+                Solves the congruent number problem using deep properties of <kmath>y^2 = x^3 - N^2 x</kmath>!
+                <br><kmath>N </kmath> is a congruent number if...
+        </div>
+            
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-21" >
+            <h1>Tunnell's Theorem (1983)</h1>
+                <br>
+                <div class="columns tunnell-container">
+                    <div class="column tunnell-column">
+                        <p class="tunnell-linebelow">If <kmath>N</kmath> is odd:</p>
+                        Does <kmath>x^2+2y^2+8z^2=N</kmath> have exactly twice as many integer solutions as <kmath>x^2 + 4y^2 + 8z^2 = \frac{N}{2}</kmath>?
+                    </div>
+                    <div class="column tunnell-column">
+                        <p class="tunnell-linebelow">If <kmath>N</kmath> is even:</p>
+                        Does <kmath>x^2+2y^2+32z^2=N</kmath> have exactly twice as many integer solutions as <kmath>x^2 + 4y^2 + 32z^2 = \frac{N}{2}</kmath>?
+                    </div>
+                </div>
+                <p> If so, <kmath>N</kmath> is a congruent number!</p>
+        </div>
+
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-22" >
+            <h1>But why does that mean <kmath>N</kmath> is a congruent number?</h1>
+        </div>
+
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-23" >
+            <h1>But why does that mean <kmath>N</kmath> is a congruent number?</h1>
+            <p>If Tunnel's criterion is false, <kmath>y^2 = x^3 - N^2 x</kmath> has no rational solutions.
+            <p>No rational solutions means no triangles with area <kmath>N</kmath>.
+        </div>
+
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-24" >
+            <h1>Applying Tunnell's Theorem to <kmath color="N">N=5</kmath></h1>
+                <br>
+                <div class="columns tunnell-container">
+                    <div class="column tunnell-column">
+                        <p class="tunnell-linebelow"><kmath color="N">5</kmath> is odd:</p>
+                        Does <kmath>x^2+2y^2+8z^2=5</kmath> have exactly twice as many integer solutions as <br><kmath>x^2 + 4y^2 + 8z^2 = \frac{5}{2}</kmath>?
+                    </div>
+                </div>
+                <p> If so, <kmath color="N">5</kmath> is a congruent number!</p>
+        </div>
+
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-25" >
+            <h1>Applying Tunnell's Theorem to <kmath color="N">N=5</kmath></h1>
+                <br>
+                <div class="columns tunnell-container">
+                    <div class="column tunnell-column">
+                        <p class="tunnell-linebelow"><kmath color="N">5</kmath> is odd:</p>
+                        <kmath>x^2+2y^2+8z^2=5</kmath> has <kmath color="r">0</kmath> integer solutions.
+                        <br><kmath>x^2 + 4y^2 + 8z^2 = \frac{5}{2}</kmath> has <kmath color="s">0</kmath> integer solutions.
+                        <br> <kmath color="r">0</kmath> is twice <kmath color="s">0</kmath>!
+                    </div>
+                </div>
+                <p> <kmath color="N">5</kmath> is a congruent number!</p>
         </div>
         
         
@@ -77,6 +138,8 @@
                 <br>As long as the triangle has area <kmath>6</kmath>, we're guaranteed to get a point on this elliptic curve.
             </div>
             <div class="exp-slide slideTextItem">We can work backwards, too: if we find an <kmath>x</kmath>, we can compute <kmath>r^2, s^2, t^2</kmath>, which can be turned into a triangle with area <kmath>N</kmath>.  
+
+                <aside>Working backwards uses a different, slightly more complicated formula if <kmath>x</kmath> isn't a square number.</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 But more importantly: if we can find a point <kmath>(x,y)</kmath> where both <kmath>x</kmath> and <kmath>y</kmath> are <u>rational</u>, we can construct a <u>rational</u> triangle with area <kmath color="N">6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
@@ -87,37 +150,86 @@
             </div>
             <div class="exp-slide slideTextItem">
                 Another reason elliptic curves are useful is they have a special property: you can generate new solutions <kmath>(x,y)</kmath> from old ones!
+            </div>
+            <div class="exp-slide slideTextItem">
+                Let's say we found two rational points on this curve. Elliptic curves allow you to define a way to "add" two rational points on the curve, and get another, different rational point on the curve!
 
                 <br>For us, this means once we find one rational triangle with area <kmath>N</kmath>, we can use the elliptic curve to generate more rational triangles with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">
-                Let's say we found two rational points on this curve. Elliptic curves allow you to define a way to "add" the points together and get another rational point!
+                Here's the recipe for computing a new point <kmath>P_1 + P_2</kmath>. The definition is a bit technical, but this recipe is defined the way it is so that adding points works similarly to adding numbers.
+                <ul>
+                    <li>- First, draw a line through <kmath>P_1</kmath> and <kmath>P_2</kmath>. Because of how elliptic curves are defined, This line will always* intersect the curve in a third point.</li>
+                    <li>- Then, reflect that point vertically over the <kmath>x</kmath>-axis.</li>
+                    <li>- The resulting point is called <kmath>P_1 + P_2</kmath>, and it's guaranteed to be a point on the elliptic curve.</li>
+                <ul>
+                <aside>* Technically, vertical lines don't intersect the curve in three points, but mathematicians use a tool called the "projective plane" to take care of those cases.</aside>
             </div>
             <div class="exp-slide slideTextItem">
-                To add these two points, draw a line through them. Then, this line will intersect the curve in a third point. Finally, reflect that point over the y-axis, and you're done!
-            </div>
-            <div class="exp-slide slideTextItem">
-                Just like normal addition, you can also add the same point to itself! Instead of drawing a line between two points, when adding the same point to itself you use the tangent line to the curve. But everything still works out: you get another rational point.
+                What if <kmath>P_1</kmath> and <kmath>P_2</kmath> are the same point? Just like normal addition, adding the same point to itself is possible! Instead of drawing a line between two points, when adding <kmath>P_1 + P_1</kmath> you draw a tangent line to the curve. But everything still works out - we get a new point on the curve.
             </div>
             <div class="exp-slide slideTextItem">      
-                As it turns out, this "addition" obeys all the same rules as normal addition:
-                <ul>
-                    <li>(P + Q) + R = P + (Q + R)</li>
-                    <li>Each point has a "negative"</li>
-                    <li>If you add two rational <s>numbers</s>points, you get another rational <s>number</s>point</li>
-                </ul>
-                <br>This is incredibly weird. Why would drawing lines on elliptic curves obey all the same rules as normal addition? 
+                As it turns out, this "addition" obeys many of the same rules as normal addition. In particular, if you add two rational <s>numbers</s> points, you get another rational <s>number</s> point.
+                <br>That's good for us - remember, each rational point on this elliptic curve corresponds to a rational-sided triangle with area <kmath>N</kmath>!
+            </div>
+            <div class="exp-slide slideTextItem">      
+                In other words, by using elliptic curve addition, once we find one rational triangle with area <kmath color="N">6</kmath>, we can construct a point on the elliptic curve, add it to itself, and generate new triangles with area <kmath color="N">6</kmath>!
+            </div>
+            <div class="exp-slide slideTextItem">      
+                We might need to zoom out to see <kmath>P_1 + P_1</kmath>, but the math still checks out - <kmath>P_1 + P_1</kmath> is a rational point, which correspond to a valid rational triangle with area <kmath color="N">6</kmath>. And we can keep going - if we wanted to, now we could compute <kmath>(P_1 + P_1) + P_1</kmath> and find another rational triangle with area  <kmath color="N">6</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
-                Remember how I said your computer uses elliptic curves to encrypt its connection to the internet? Modern encryption is built around adding points on elliptic curves!
+                By the way, modern encryption is built around adding points on elliptic curves!
 
-                <br>In a nutshell, elliptic curve encryption weaponizes the fact that adding points on elliptic curves is really hard to undo. If someone adds a point to itself repeatedly and hands you the finished product, it's almost impossible to find the point they started with. Elliptic curve encryption turns "undoing addition is hard" into "decrypting this message is hard"!
+                <br>Remember how I said your computer uses elliptic curves to encrypt its connection to the internet? In a nutshell, elliptic curve encryption weaponizes the fact that adding points on elliptic curves is really hard to undo. If someone adds a point <kmath>P</kmath> to itself repeatedly and hands you <kmath>P + P + \ldots + P</kmath>, it's almost impossible to find <kmath>P</kmath>, the point they started with. Elliptic curve encryption turns "undoing addition is hard" into "decrypting a message is hard"!
             </div>
-            
+
             <div class="exp-slide slideTextItem">
-                5 <kmath>N</kmath>?
+                Finally, let me tell you about the solution to the congruent number problem! In 1983, a mathematician named J.B.Tunnell used deep properties of the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> to solve the congruent number problem.
             </div>
-            
+    
+
+            <div class="exp-slide slideTextItem">
+                Here's Tunnell's answer: To figure out if N is a congruent number, count the number of integer solutions to these two equations and compare them.
+                <br>
+                <aside>Counting these solutions is simpler than it sounds - a computer can just try every single possible combination of <kmath>x,y,z \leq \sqrt{N}</kmath>. There's not a lot of possibilities!</aside>
+            </div>
+
+
+            <div class="exp-slide slideTextItem">
+                What a complicated criterion. What do solutions of these equations have to do with whether or not N is a congruent number?
+            </div>
+
+
+            <div class="exp-slide slideTextItem">
+                Here's why it works: Tunnell showed that if his criterion is invalid, it means the elliptic curve<kmath>y^2 = x^3 - N^2 x</kmath> has no rational solutions. And as we've seen, no rational solutions on the elliptic curve means no rational triangles with area <kmath>N</kmath>.
+            </div>
+
+
+
+            <div class="exp-slide slideTextItem">
+                For example, let's figure out whether <kmath color="N">N=5</kmath> is a congruent number.
+                <br>Looking at the second equation, <kmath>x^2+4y^2+32z^2=2.5</kmath>, we can see there's no solutions: <kmath>x^2, 4y^2</kmath> and <kmath>32z^2</kmath> are all integers, so there's no way they can add up to a non-integer like <kmath>2.5</kmath>.
+
+                <br>Similarly, for the first equation, it turns out <kmath>x,y,</kmath> and <kmath>z</kmath> can't be bigger than 2, or else <kmath>x^2 + 2y^2 + 8z^2 \gt</kmath><kmath color="N">5</kmath>. So we can check every single possibility by hand and find none of them solve the equation.
+            </div>
+            <div class="exp-slide slideTextItem">
+                So there are <kmath color="r">0</kmath> triplets of integers <kmath>(x,y,z)</kmath> which solve <kmath>x^2+2y^2+8z^2=5</kmath>,<br> and <kmath color="s">0</kmath> triplets of integers <kmath>(x,y,z)</kmath> which solve <kmath>x^2+2y^2+32z^2=\frac{5}{2}</kmath>.
+    
+                <br> Since <kmath color="r">0</kmath> <kmath>= 2 \cdot</kmath><kmath color="s">0</kmath>, Tunnell's criterion says <kmath color="N">5</kmath> <b>is</b> a congruent number!
+            </div>
+
+
+            <div class="exp-slide slideTextItem">
+                That's it! I hope this gave you a taste of why mathematicians care about elliptic curves. Thanks so much for reading!
+
+                <br>
+                    <br>The Case of the Impossible Triangles
+                    <br>August 2021
+                    <br><a href="https://explanaria.github.io/">More Math</a>
+            </div>
+
+
         </div>        
       </div>
   </div>

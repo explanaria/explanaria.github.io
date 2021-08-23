@@ -4,6 +4,22 @@
 	transition: opacity 0.5s ease-in-out;
 }
 
+.tunnell-container{
+  grid-template-columns: 1fr 1fr;
+}
+
+.tunnell-column{
+    padding-left: 5% !important;
+    padding-right: 5% !important;
+}
+
+.tunnell-linebelow{
+    border-bottom: 1px solid gray;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 1em;
+}
+
 .katexlabel{
     position: absolute;
     top: 0px;

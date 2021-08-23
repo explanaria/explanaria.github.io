@@ -68,11 +68,13 @@ class Dynamic3DText{
         this.position2D = [0,0]
         this.text = options.text;
         this.frostedBG = options.frostedBG || false;
-        this.align = options.align || "center"; //where should the text go in relation to the position3D?
         this.htmlElem = makeLabel(this.frostedBG);
+        this.align = options.align || "center"; //where should the text go in relation to the position3D?
         this.color = options.color || "black";
         this.opacity = options.opacity === undefined ? 1 : options.opacity; //setter changes HTML
         this.roundingDecimals = 2;
+
+        if(options.maxWidth)this.htmlElem.style.maxWidth = options.maxWidth + "%";
 
         this._text = '';
         this._prevText = '';
@@ -82,7 +84,7 @@ class Dynamic3DText{
         this._prevText = null;
         this._prevPosition = [0,0];
 
-        window.addEventListener("resize", () => this.updatePosition(this._prevT), false);
+        window.addEventListener("resize", () => this.updatePositionIfNeeded(this._prevT), false);
     }
     updateHTMLColor(t){
         let htmlColor = "black";
@@ -120,7 +122,7 @@ class Dynamic3DText{
         //compute color
         this.updateHTMLColor(t);
 
-        this.updatePosition(t);
+        this.updatePositionIfNeeded(t);
 
         //if text has changed, re-render
         if(this._text != this._prevText){
@@ -132,24 +134,30 @@ class Dynamic3DText{
     }
 
     computealignText(){
-        if(this.align == "center"){
+        if(this._align == "center"){
             return "translate(-50%, -50%)";
         }
-        if(this.align == "right"){ //0%, 50% plus a 10% buffer
+        if(this._align == "right"){ //0%, 50% plus a 10% buffer
             return "translate(10%, -50%)";
         }
-        if(this.align == "left"){
+        if(this._align == "left"){
             return "translate(-110%, -50%)";
         }
-        if(this.align == "top"){
+        if(this._align == "top"){
             return "translate(-50%, -110%)";
         }
-        if(this.align == "bottom"){
+        if(this._align == "bottom"){
             return "translate(-50%, 10%)";
         }
     }
 
-    updatePosition(t){
+    updateHTMLPosition(){
+        //Assumes we're at top: 0px, left 0px, the 50% 50% ensures the element is centered
+        this.htmlElem.style.transform = this.computealignText() + " translate("+this.position2D[0]+"px, "+this.position2D[1]+"px)";
+
+    }
+
+    updatePositionIfNeeded(t){
         if(this.position3D.constructor == Function){
             this._position3D = this.position3D(t);
         }else{
@@ -159,9 +167,7 @@ class Dynamic3DText{
         this.position2D = screenSpaceCoordsOf3DPoint(this._position3D);
 
         if(this.position2D[0] != this._prevPosition[0] || this.position2D[1] != this._prevPosition[1]){
-
-            //Assumes we're at top: 0px, left 0px, the 50% 50% ensures the element is centered
-            this.htmlElem.style.transform = this.computealignText() + " translate("+this.position2D[0]+"px, "+this.position2D[1]+"px)";
+            this.updateHTMLPosition();
             this._prevPosition[0] = this.position2D[0];
             this._prevPosition[1] = this.position2D[1];
         }
@@ -183,6 +189,13 @@ class Dynamic3DText{
     set opacity(val){
         this.htmlElem.style.opacity = val;
         this._opacity = val;
+    }
+    get align(){
+        return this._align;
+    }
+    set align(val){
+        this._align = val;
+        this.updateHTMLPosition();
     }
     get opacity(){
         return this._opacity;

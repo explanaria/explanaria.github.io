@@ -34,7 +34,7 @@ body{
 /*commonly used in presentations*/
 
 .exp-toptext{
-
+    pointer-events: none;
 	position:absolute; bottom:10%; 
 	text-align:center;
 	width: 99%;

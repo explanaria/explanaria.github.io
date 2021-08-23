@@ -3,6 +3,16 @@
 .slideTextItem{
     opacity: 0;
 	transition: opacity 0.5s ease-in-out;
+
+    grid-row-start: 1;
+    grid-column-start: 1;
+
+    width:100%;
+    max-width: 800px;
+    line-height: 1.1; /* give room for equations */
+    margin: 0 auto;
+    font-family: "Computer Modern Sans";
+    margin-bottom: 2.5em; /*dodge the next/back arrows */
 }
 
 .tunnell-container{
@@ -39,15 +49,6 @@
 .textContainer{
   display: grid;
   grid-template-columns: 1fr;
-}
-.slideTextItem{
-
- grid-row-start: 1;
- grid-column-start: 1;
-  width:100%;
-  margin: 0;
-  font-family: "Computer Modern Sans";
-  margin-bottom: 2.5em; /*dodge the next/back arrows */
 }
 
 .nextbtn{

@@ -41,8 +41,8 @@ async function setup(){
 
     /* The two example elliptic curves */
 
-    let [firstCurve1, label1, _] = makeLabeledCurve(-4,1, [4+20,-1], [1,3])
-    let [firstCurve2, label2, __] = makeLabeledCurve(4,5, [-4+20,-1], [-1,3])
+    let [firstCurve1, label1, _] = makeLabeledCurve(-4,1, [4+20,-1], [0,3])
+    let [firstCurve2, label2, __] = makeLabeledCurve(4,5, [-4+20,-1], [0,3])
 
     window.allFirstCurves = firstCurve1.concat(firstCurve2)//.concat(firstCurve3).concat(firstCurve4);
     window.allFirstLabels = [label1, label2];
@@ -530,7 +530,7 @@ async function animate(){
 
     //dramatically zoom in
 
-	presentation.TransitionTo(three.camera.position,{z: 100, y: 2},2000);
+	presentation.TransitionTo(three.camera.position,{z: 100},2000);
 	//presentation.TransitionTo(ellipticAdditionResultOutput,{width: pointSize},2000);
 	presentation.TransitionTo(threeFourFiveOutput,{width:pointSize},2000);
     await presentation.delay(2000);

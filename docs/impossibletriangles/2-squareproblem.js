@@ -2,9 +2,14 @@ import {Dynamic3DText} from "./katex-labels.js";
 import {rColor, sColor, tColor, twoNColor, white, black, twoNTextColor} from "./colors.js";
 import {addColorToHTML, AutoColoring3DText} from './2-addColorToHTMLMath.js';
 
+/*
 let a=1;
 let b=5;
 let c=7;
+*/
+let a=1;
+let b=4;
+let c=6;
 
 addColorToHTML();
 
@@ -214,7 +219,6 @@ async function animate(){
     [firstNText1, firstNText2].forEach(item => 
     presentation.TransitionTo(item, {'opacity': 1}))
 
-
     await presentation.nextSlide();
 
     await presentation.nextSlide();
@@ -229,6 +233,8 @@ async function animate(){
     presentation.TransitionTo(aText, {'position3D':(t) => window.rSquarePos.expr(0,t,a/2,a/2)});
     presentation.TransitionTo(bText, {'position3D':(t) => [b/2,b/2]});
     presentation.TransitionTo(cText, {'position3D':(t) => [(b+c)/2,(b+c)/2]});
+
+    EXP.TransitionTo(three.camera.position, {'y':c/2 + 1.5});
 
     
 

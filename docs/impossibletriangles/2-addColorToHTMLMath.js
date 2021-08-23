@@ -1,4 +1,4 @@
-import {rColor, sColor, tColor, yColor, xColor, pColor, qColor, twoNColor, white, black, twoNTextColor, invalidIntegerColor} from "./colors.js";
+import {rColor, sColor, tColor, yColor, xColor, zColor, pColor, qColor, twoNColor, white, black, twoNTextColor, invalidIntegerColor} from "./colors.js";
 import katex from './dist/katex-v0.13.13/katex.mjs';
 
 import {Dynamic3DText} from "./katex-labels.js";
@@ -21,6 +21,9 @@ function getAppropriateColor(string, customColorDict={}){
         }
         if(string == "x"){
             return xColor.getStyle();
+        }
+        if(string == "z"){
+            return zColor.getStyle();
         }
         if(string == "p"){
             return pColor.getStyle();

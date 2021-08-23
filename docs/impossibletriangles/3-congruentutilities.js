@@ -23,7 +23,7 @@ export class Line{
 		let p1 = EXP.Math.clone(this.p1);
 		let p2 = EXP.Math.clone(this.p2);
 
-		return EXP.Math.lerpVectors(x, p1, p2)
+		return EXP.Math.lerpVectors(x, p1, p2);
 	}
 	revealSelf(presentation=null){
         if(presentation == null){
@@ -31,12 +31,28 @@ export class Line{
         }
 		presentation.TransitionTo(this.revealTransform, {'expr': (i,t,x) => [x]}, 500);
 	}
+	hideSelf(presentation=null){
+        if(presentation == null){
+            presentation = EXP;
+        }
+		presentation.TransitionTo(this.revealTransform, {'expr': (i,t,x) => [0]}, 500);
+	}
 }
 
 export class LongLineThrough extends Line{
 	constructor(p1,p2, color, numSamples, howLong=5){
 		super(p1,p2,color,numSamples);
+        this.length = howLong;
 		this.interval.bounds = [[-howLong, howLong]];
+	}
+	expr(i, t,x){
+		//this.transform's expr
+		let p1 = EXP.Math.clone(this.p1);
+		let p2 = EXP.Math.clone(this.p2);
+
+        let directionTarget = EXP.Math.vectorAdd(p1, EXP.Math.multiplyScalar(this.length/2, EXP.Math.normalize(EXP.Math.vectorSub(p2,p1))));
+
+		return EXP.Math.lerpVectors(x, p1, directionTarget);
 	}
 }
 

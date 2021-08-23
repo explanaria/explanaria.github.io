@@ -1,8 +1,22 @@
 function multiplyScalar(c, array){
+    //modifies input
 	for(var i=0;i<array.length;i++){
 		array[i] *= c;
 	}
 	return array
+}
+function normalize(array){
+
+    let lengthSquared = 0;
+	for(var i=0;i<array.length;i++){
+		lengthSquared += array[i]*array[i];
+	}
+    let length = Math.sqrt(lengthSquared)
+    let vec = clone(array);
+	for(var i=0;i<array.length;i++){
+		vec[i] /= length;
+	}
+	return vec
 }
 function vectorAdd(v1,v2){
     let vec = clone(v1);
@@ -14,7 +28,7 @@ function vectorAdd(v1,v2){
 function vectorSub(v1,v2){
     let vec = clone(v1);
 	for(var i=0;i<v1.length;i++){
-		vec[i] += v2[i];
+		vec[i] -= v2[i];
 	}
 	return vec
 }
@@ -46,6 +60,6 @@ function multiplyMatrix(vec, matrix){
 }
 
 //hack
-let Math = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, vectorSub: vectorSub, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix};
+let EXPMath = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, vectorSub: vectorSub, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix, normalize: normalize};
 
-export {vectorAdd, vectorSub, lerpVectors, clone, multiplyScalar, multiplyMatrix, Math};
+export {vectorAdd, vectorSub, lerpVectors, clone, multiplyScalar, multiplyMatrix, EXPMath as Math};

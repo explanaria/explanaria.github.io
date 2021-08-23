@@ -1,6 +1,6 @@
 
 import {elliptic_curve_add, LongLineThrough} from "./3-congruentutilities.js";
-import {gridColor, xColor, yColor, triangleVisArrowColor, validIntegerColor, rColor, sColor, tColor} from "./colors.js";
+import {gridColor, xColor, yColor, triangleVisArrowColor, reflectionLineColor, validIntegerColor, rColor, sColor, tColor} from "./colors.js";
 
 import {Dynamic3DText} from "./katex-labels.js";
 import {addColorToHTML, AutoColoring3DText, ColorSuccessiveNumbers3DText} from './2-addColorToHTMLMath.js';
@@ -70,7 +70,7 @@ async function setup(){
     //then x = s^2 = 2.5^2 = 6.25
     //(6.25, 4.375) = (, 35/8)
     let threeFourFivePointX = 6.25;
-    let threeFourFiveCurvePoint = [threeFourFivePointX, curveY(threeFourFivePointX)]
+    window.threeFourFiveCurvePoint = [threeFourFivePointX, curveY(threeFourFivePointX)]
 	window.threeFourFivePoint = new EXP.Array({data: [threeFourFiveCurvePoint]});
 	window.threeFourFiveOutput = new EXP.PointOutput({width:pointSize,color:pointColor, opacity: 0});
 	threeFourFivePoint.add(mainCurveProjection.makeLink()).add(threeFourFiveOutput);
@@ -204,7 +204,7 @@ async function setup(){
 
 
 
-	window.reflectionLine = new LongLineThrough(p3,p3Negative,additionLineColor, 2, lineLength);
+	window.reflectionLine = new LongLineThrough(p3,p3Negative,reflectionLineColor, 2, lineLength);
     reflectionLine.transform2.expr = mainCurveProjection.expr; //todo: use mainCurveProjection.makeLink()
 
 
@@ -216,17 +216,50 @@ async function setup(){
         frostedBG: true,
     })
 
-	window.addedPoint = new EXP.Array({data: [[...p3Negative]]});
+	window.ellipticAdditionResult = new EXP.Array({data: [[...p3Negative]]});
     window.thirdPointControl = new EXP.Transformation({expr: (i,t,x,y) => [x,y]})
-	window.pt3output = new EXP.PointOutput({width:0.0,color:pointColor});
-	addedPoint.add(mainCurveProjection.makeLink()).add(thirdPointControl).add(pt3output);
+	window.ellipticAdditionResultOutput = new EXP.PointOutput({width:0.0,color:pointColor});
+	ellipticAdditionResult.add(mainCurveProjection.makeLink()).add(thirdPointControl).add(ellipticAdditionResultOutput);
+
+
+
+    window.threeFourFiveX = 25/4;
+	window.PplusP = elliptic_curve_add([threeFourFiveX, curveY(threeFourFiveX)],[threeFourFiveX, curveY(threeFourFiveX)], [p,q]);
+    window.PplusPNegative = [PplusP[0], -PplusP[1]];
+
+    let twoPX = PplusP[0];
+	window.PplusPplusP = elliptic_curve_add(PplusP,[threeFourFiveX, curveY(threeFourFiveX)], [p,q]);
+    window.PplusPplusPNegative = [PplusPplusP[0], -PplusPplusP[1]];
+    window.PplusPplusPLabel = new AutoColoring3DText({
+        text: "P_1 + P_1 + P_1",
+        position3D: mainCurveProjection.expr(0,0,...PplusPplusP),
+        opacity: 0,
+        align: 'left',
+        frostedBG: true,
+    })
+	window.PplusPplusPPoint = new EXP.Array({data: [[...PplusPplusPNegative]]});
+	window.PplusPplusPOutput = new EXP.PointOutput({width:0.3,color:pointColor, opacity: 0});
+    PplusPplusPPoint.add(mainCurveProjection.makeLink()).add(PplusPplusPOutput)
+
+    /*
+    let threePX = PplusPplusP[0];
+	window.PplusPplusPplusP = elliptic_curve_add([threePX, curveY(threePX)],[threeFourFiveX, curveY(threeFourFiveX)], [p,q]);
+    window.PplusPplusPplusPNegative = [PplusPplusPplusP[0], -PplusPplusPplusP[1]];
+    window.pointTimes4 = new AutoColoring3DText({
+        text: "P_1 + P_1 + P_1 + P_1",
+        position3D: mainCurveProjection.expr(0,0,...PplusPplusPplusP),
+        opacity: 1,
+        align: 'bottom',
+        frostedBG: true,
+    })*/
+
 
     let staticObjects = [graphAxes].concat(mainCurveObjects);
 	let sceneObjects = ([ellipticpts, mainCurveText]); 
 
     staticObjects = staticObjects.concat(allFirstCurves);
     sceneObjects = sceneObjects.concat(allFirstLabels);
-    sceneObjects = sceneObjects.concat([additionLine, addedPoint]);
+    sceneObjects = sceneObjects.concat([additionLine, ellipticAdditionResult]);
 
     sceneObjects = sceneObjects.concat([threeFourFiveLabel, threeFourFiveLabelTwo, threeFourFiveLabelTwoPointFive, threeFourFiveLabelThree, threeFourFiveLabelThreePointFive, threefourFiveArrow1, threefourFiveArrow2, threefourFiveArrow3]);
     sceneObjects = sceneObjects.concat(threeFourFiveTriangleAreaLabels);
@@ -234,7 +267,8 @@ async function setup(){
 
     sceneObjects = sceneObjects.concat([reflectionLine, additionPtLabel1, additionPtLabel2, additionPtLabel3]);
     
-    //sceneObjects = sceneObjects.concat([TunnelTheorem1,TunnelTheorem2,TunnelTheorem3,TunnelTheorem4]);
+    sceneObjects = sceneObjects.concat([PplusPplusPLabel,PplusPplusPPoint]);
+    
 
 	three.on("update",function(time){
 		sceneObjects.forEach(i => i.activate(time.t));
@@ -372,9 +406,9 @@ async function animate(){
 
 	//draw 3rd point
 	//animate a fancy point appear animation
-	presentation.TransitionTo(pt3output,{opacity:1, width:pointSize*3},400);
+	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width:pointSize*3},400);
 	await presentation.delay(400);
-	presentation.TransitionTo(pt3output,{opacity:1, width:pointSize},400);
+	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width:pointSize},400);
 	await presentation.delay(500);
     //reflect
 
@@ -382,7 +416,7 @@ async function animate(){
 
     reflectionLine.revealSelf(presentation);
 	await presentation.delay(1000);
-	presentation.TransitionTo(addedPoint.data[0],{1: -addedPoint.data[0][1]});
+	presentation.TransitionTo(ellipticAdditionResult.data[0],{1: -ellipticAdditionResult.data[0][1]});
 	await presentation.delay(400);
 	presentation.TransitionTo(additionPtLabel3,{opacity:1},400);
 
@@ -399,9 +433,9 @@ async function animate(){
     let p3Negative = [newP3[0], -newP3[1]];
 
     //hide P1+P2
-	presentation.TransitionTo(pt3output,{opacity:0, width: 0},250);
+	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:0, width: 0},250);
 	presentation.TransitionTo(additionPtLabel3,{opacity:0},250);
-	presentation.TransitionTo(addedPoint.data[0],{0: p3Negative[0], 1: p3Negative[1]});
+	presentation.TransitionTo(ellipticAdditionResult.data[0],{0: p3Negative[0], 1: p3Negative[1]});
 
     await presentation.delay(500);
 	presentation.TransitionTo(additionPtLabel3,{text:"P_1 + P_1"},0);
@@ -409,24 +443,24 @@ async function animate(){
 
     //show P1+P1
     await presentation.delay(500);
-	presentation.TransitionTo(pt3output,{opacity:1, width: pointSize*3},400);
+	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width: pointSize*3},400);
     await presentation.delay(400);
-	presentation.TransitionTo(pt3output,{opacity:1, width: pointSize},400);
+	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width: pointSize},400);
     //reflect
     await presentation.delay(500);
-	presentation.TransitionTo(reflectionLine,{p1:newP3, p2: p3Negative},250);
+	presentation.TransitionTo(reflectionLine,{p1:newP3, p2: p3Negative},1);
 	presentation.TransitionTo(reflectionLine.output,{opacity:1},250);
     reflectionLine.revealSelf(presentation);
     await presentation.delay(500);
 
-	presentation.TransitionTo(addedPoint.data[0],{0: newP3[0], 1: newP3[1]});
+	presentation.TransitionTo(ellipticAdditionResult.data[0],{0: newP3[0], 1: newP3[1]});
 	presentation.TransitionTo(additionPtLabel3,{opacity:1},500);
         
     await presentation.nextSlide();
 
     //hide elliptic curve addition stuff
 	[additionPtLabel1,additionPtLabel2, additionPtLabel3, reflectionLine.output, additionLine.output].forEach(item => presentation.TransitionTo(item,{opacity:0},500));
-	presentation.TransitionTo(pt3output,{opacity:0, width: 0},500);
+	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:0, width: 0},500);
 	presentation.TransitionTo(ellipticPtsoutput,{opacity:0},400);
     additionLine.hideSelf(presentation);
 
@@ -437,44 +471,106 @@ async function animate(){
 
     //elliptic add the 3-4-5 point
 
-    let threeFourFiveX = 25/4;
-	let thirdP3 = elliptic_curve_add([threeFourFiveX, curveY(threeFourFiveX)],[threeFourFiveX, curveY(threeFourFiveX)], [p,q]);
-    let thirdP3Negative = [thirdP3[0], -thirdP3[1]];
-
 	presentation.TransitionTo(pointXes,{0:threeFourFiveX-0.000001, 1: threeFourFiveX},1);
-	presentation.TransitionTo(addedPoint.data[0],{0: p3Negative[0], 1: p3Negative[1]},1);
+	presentation.TransitionTo(ellipticAdditionResult.data[0],{0: p3Negative[0], 1: p3Negative[1]},1);
     presentation.TransitionTo(additionLine.output,{opacity:1},500);
 	presentation.TransitionTo(additionPtLabel1,{align: "left"},1);
 	presentation.TransitionTo(additionPtLabel1,{opacity:1},500);
     additionLine.revealSelf(presentation);
 
-
-	presentation.TransitionTo(addedPoint.data[0],{0: thirdP3Negative[0], 1: thirdP3Negative[1]},1);
+    //set the result
+	presentation.TransitionTo(ellipticAdditionResult.data[0],{0: PplusPNegative[0], 1: PplusPNegative[1]},1);
 
     //make points big so you can see them
-	presentation.TransitionTo(pt3output,{opacity:1, width: 10},250);
+	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width: 10},250);
 
     await presentation.nextSlide();
+
+    //dramatic zoom out to see P1 + P1
 	presentation.TransitionTo(additionLine,{length: 200},2000);
 	presentation.TransitionTo(mainCurveText,{position3D: (t) => [0, 100]},2000);
 	presentation.TransitionTo(three.camera.position,{z: 3000},2000);
 	presentation.TransitionTo(threeFourFiveOutput,{width:10},2000);
 
     await presentation.delay(2000);
-	presentation.TransitionTo(addedPoint.data[0],{0: thirdP3[0], 1: thirdP3[1]},1000);
-	presentation.TransitionTo(additionPtLabel3,{opacity:1, position3D: (t) => mainCurveProjection.expr(0,0,...thirdP3)},1000);
-    let worldPos = mainCurveProjection.expr(0,0,...thirdP3);
+
+
+    //bwomp
+	presentation.TransitionTo(ellipticAdditionResultOutput,{width:10*3},500);
+    await presentation.delay(500);
+	presentation.TransitionTo(ellipticAdditionResultOutput,{width:10},500);
+    await presentation.delay(500);
+
+
+	presentation.TransitionTo(reflectionLine,{length: 200},500);
+	presentation.TransitionTo(reflectionLine,{p1:PplusP, p2: PplusPNegative},1);
+	presentation.TransitionTo(reflectionLine.output,{opacity:1},250);
+    reflectionLine.revealSelf(presentation);
+
+    //slide down the line
+	presentation.TransitionTo(ellipticAdditionResult.data[0],{0: PplusP[0], 1: PplusP[1]},1000);
+	presentation.TransitionTo(additionPtLabel3,{opacity:1},1000); //P1 + P1 label
+    let worldPos = mainCurveProjection.expr(0,0,...PplusP);
 	presentation.TransitionTo(additionPtLabel3.position3D,{0: worldPos[0], 1: worldPos[1]},1000);
+
+    await presentation.nextSlide();
+
+    //hide lines
+    presentation.TransitionTo(additionLine.output,{opacity:0},500);
+    
+    reflectionLine.hideSelf(presentation);
+    additionLine.hideSelf(presentation);
+    await presentation.delay(500);
+    //show addition line in their new spots
+    presentation.TransitionTo(additionLine.output,{opacity:1},1);
+	presentation.TransitionTo(additionLine,{p1:PplusP, p2: threeFourFiveCurvePoint},1);
+    additionLine.revealSelf(presentation);
+
+    await presentation.delay(500);
+
+    //dramatically zoom in
+
+	presentation.TransitionTo(three.camera.position,{z: 100, y: 2},2000);
+	//presentation.TransitionTo(ellipticAdditionResultOutput,{width: pointSize},2000);
+	presentation.TransitionTo(threeFourFiveOutput,{width:pointSize},2000);
+    await presentation.delay(2000);
+
+    //bwomp
+
+	presentation.TransitionTo(PplusPplusPOutput,{opacity:1, width: pointSize*3},400);
+    await presentation.delay(400);
+	presentation.TransitionTo(PplusPplusPOutput,{width: pointSize},400);
+    await presentation.delay(400);
+
+    //flip negative
+	presentation.TransitionTo(reflectionLine,{length: 10},1);
+	presentation.TransitionTo(reflectionLine,{p1:PplusPplusP, p2: PplusPplusPNegative},1);
+	presentation.TransitionTo(reflectionLine.output,{opacity:1},250);
+    reflectionLine.revealSelf(presentation);
+
+    await presentation.delay(500);
+	presentation.TransitionTo(PplusPplusPPoint.data[0],{0: PplusPplusP[0], 1: PplusPplusP[1]},500);
+	presentation.TransitionTo(PplusPplusPLabel,{opacity: 1},500);
+    
+
 
     await presentation.nextSlide();
     await presentation.nextSlide();
 
     //hide everything
-    [additionPtLabel1, additionPtLabel3, pt3output, threeFourFiveLabel, additionLine.output, mainCurveText].forEach(item => presentation.TransitionTo(item,{opacity:0},1000))
+    [additionPtLabel1, additionPtLabel3, ellipticAdditionResultOutput, threeFourFiveLabel, PplusPplusPLabel, additionLine.output, reflectionLine.output, mainCurveText, PplusPplusPOutput].forEach(item => presentation.TransitionTo(item,{opacity:0},1000))
     mainCurveObjects.concat([graphAxes, threeFourFiveOutput]).forEach(object => object.getDeepestChildren().forEach( async (output) => {
-        presentation.TransitionTo(output, {'opacity':0}, 1000);
+        presentation.TransitionTo(output, {'opacity':0.2}, 1000);
     }))
 
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
+    await presentation.nextSlide();
     await presentation.nextSlide();
     await presentation.nextSlide();
     await presentation.nextSlide();

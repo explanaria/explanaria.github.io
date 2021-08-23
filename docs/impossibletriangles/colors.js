@@ -39,6 +39,8 @@ export {rColor, sColor, tColor, twoNColor, yColor, xColor, zColor, gridColor, wh
 export let pColor = twoNColor; //new THREE.Color("hsl(180, 50%, 50%)");
 export let qColor = new THREE.Color("hsl(300, 50%, 50%)");
 
+export const reflectionLineColor = gridColor;
+
 export const triangleVisArrowColor = black;
 
 

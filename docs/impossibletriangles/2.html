@@ -35,10 +35,10 @@
         <canvas id="threeDcanvas">
 
         </canvas>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-1" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-1">
             <h1>Chapter 2: The Three Successive Squares Problem</h1>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-2" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-2">
             <h1>The Three Successive Squares Problem</h1>
             <span>Choose a number <kmath>N</kmath>, such as <kmath color="N">10</kmath>. Can you find three numbers <kmath>r^2, s^2, t^2</kmath> such that:
             <ul>
@@ -46,30 +46,38 @@
                 <li><kmath>r^2 + N = s^2</kmath>, <kmath>s^2+N = t^2</kmath>?
             </ul>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-3" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-3">
             <p>Three Successive Squares w/difference <kmath>N</kmath> <kmath>\implies</kmath> <kmath>N</kmath> is a Congruent Number</p>
 
             <p>Here's a Geometric Proof</p>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-4 exp-slide-5 exp-slide-6 exp-slide-7 exp-slide-8" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-4 exp-slide-5 exp-slide-6 exp-slide-7 exp-slide-8">
             <p>Three Successive Squares w/difference <kmath>N</kmath> <kmath>\implies</kmath> <kmath>N</kmath> is a Congruent Number</p>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-9" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-9">
             <h1>A bit of Algebra...</h1>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-10" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-10">
             <h1>A bit of Algebra...</h1>
             <p>Multiplying together square numbers gives us another square number.</p>
             <p>Hey, <kmath>r^2, s^2, t^2</kmath> are all square numbers!</p>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-11" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-11">
             <h1>A bit of Algebra...</h1>
             <span>Multiplying together <kmath>r^2, s^2,</kmath> and <kmath>t^2</kmath> gives us another square number <kmath>y^2</kmath>.</span>
             <ul>
                 <li><kmath>y^2 = r^2 \cdot s^2 \cdot t^2</kmath></li>
             </ul>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-12" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-12">
+            <h1>A bit of Algebra...</h1>
+            <span>Multiplying together <kmath>r^2, s^2,</kmath> and <kmath>t^2</kmath> gives us another square number <kmath>y^2</kmath>.</span>
+            <ul>
+                <li><kmath>y^2 = r^2 \cdot s^2 \cdot t^2</kmath></li>
+                <li><kmath>y^2 = (s^2-N) \cdot s^2 \cdot (s^2+N)</kmath></li>
+            </ul>
+        </div>
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-13">
             <h1>A bit of Algebra...</h1>
             <span>Multiplying together <kmath>r^2, s^2,</kmath> and <kmath>t^2</kmath> gives us another square number <kmath>y^2</kmath>.</span>
             <ul>
@@ -78,7 +86,7 @@
                 <li><kmath>y^2 = s^6 - N^2 s^2</kmath></li>
             </ul>
         </div>
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-13" style="pointer-events: none;">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-14">
             <h1>A bit of Algebra...</h1>
             <span>Renaming <kmath>s^2</kmath> to <kmath>x</kmath>, we finally get:</h1>
             <h1><kmath>y^2 = x^3 - N^2 x</kmath></h1>
@@ -138,6 +146,8 @@
 
                 <br> To reduce the number of variables, let's get rid of <kmath>r^2</kmath> and <kmath>t^2</kmath> by writing them in terms of <kmath>s^2</kmath>: since all three square numbers are <kmath>N</kmath> away, we can substitute in <kmath>r^2 = s^2-N</kmath> and <kmath>t^2 = s^2+N</kmath>.
 
+            </div>
+            <div class="exp-slide slideTextItem">
                 <br>Once we substitute into the equation and simplify, we get the equation <kmath>y^2 = s^6 - N^2 s^2</kmath>. Great - now we've reduced our problem to studying solutions of one equation!
 
             </div>

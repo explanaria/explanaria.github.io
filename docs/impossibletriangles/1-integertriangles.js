@@ -1,7 +1,7 @@
 import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mouseinteraction.js";
 import {areAllSideLengthsIntegers, computeTriangleArea, colorHighlightingIrrationals, renderLengthHighlightingIrrationals} from "./1-computedTriangleProperties.js";
 import {Dynamic3DText} from "./katex-labels.js";
-import {gridColor, twoNColor, black, hintArrowColor, triangleLineColor, triangleGrabbableCornerColor, triangleNonGrabbableCornerColor} from "./colors.js";
+import {gridColor, twoNColor, black, hintArrowColor, triangleLineColor, triangleGrabbableCornerColor, triangleNonGrabbableCornerColor, invalidIntegerColor} from "./colors.js";
 
 import {addColorToHTML} from './2-addColorToHTMLMath.js';
 addColorToHTML();
@@ -11,7 +11,8 @@ import {vecScale, vecAdd, dist, distSquared, isInteger, roundPointIfCloseToInteg
 import {makeIntroObjects} from "./1-introShinies.js"
 
 window.fixedPoint = [-1,-1];
-window.draggablePoint = EXP.Math.vectorAdd([10,6], fixedPoint);
+window.startingTriangleDimensions = [10,6];
+window.draggablePoint = EXP.Math.vectorAdd(startingTriangleDimensions, fixedPoint);
 window.slidingHorizontalPoint = [draggablePoint[0],fixedPoint[1]];
 window.trianglePoints = [fixedPoint, slidingHorizontalPoint, draggablePoint]
 
@@ -147,8 +148,8 @@ function setup(){
 
     window.dragMeText = new Dynamic3DText({
         text: (t) => "\\text{Drag me!}", 
-        color: triangleGrabbableCornerColor,
-        position3D: (t) => trianglePoints[2],
+        color: invalidIntegerColor,
+        position3D: (t) => EXP.Math.vectorAdd(trianglePoints[2], [0,0.5]),
         opacity: 0,
         align: "top",
         frostedBG: true,
@@ -200,6 +201,11 @@ async function animate(){
     presentation.TransitionTo(introSettings, {introObjectsActive: false}, 1);
 
     await presentation.nextSlide();
+
+    //Start with a 10-6-sqrt(136) triangle with area 30, but an irrational side
+    presentation.TransitionTo(draggablePoint, {"0":10+fixedPoint[0], "1":6+fixedPoint[1]});
+    presentation.TransitionTo(slidingHorizontalPoint, {"0":10+fixedPoint[0]});
+
     presentation.TransitionTo(side1Text, {opacity: 1});
     presentation.TransitionTo(side2Text, {opacity: 1});
     presentation.TransitionTo(side3Text, {opacity: 1});

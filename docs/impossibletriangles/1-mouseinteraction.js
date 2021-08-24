@@ -4,10 +4,20 @@ const raycaster = new THREE.Raycaster();
 let planeWidth = 50;
 let perpendicularRectangle = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth,planeWidth), new THREE.MeshBasicMaterial({color: 0x00ff00})); //A plane at z=0, perpendicular to the default camera. The Raycaster will try to intersect this plane. This also means if the camera pans beyond the plane, there will be no intersections and mouse movement will silently fail :(
 
+const spareVec2 = new THREE.Vector2();
 function raycastMouseTo2D(three, callback, canvasX, canvasY){
         //do the heavy lifting to find where on a 2D plane user clicked
-        let twodX = ( canvasX * window.devicePixelRatio / three.renderer.domElement.width ) * 2 - 1; //-1 to 1
-        let twodY = 1 - ( canvasY * window.devicePixelRatio / three.renderer.domElement.height ) * 2; //-1 to 1 but reversed
+
+        //computing the canvas width and height is hard.
+        //we can use three.renderer.domElement.clientWidth, but that hits the DOM multiple times every frame and causes a slow repaint
+        three.renderer.getSize(spareVec2);
+        let canvasWidth = spareVec2.x; 
+        let canvasHeight = spareVec2.y;
+        
+        //todo: account for devicePixelRatio changing
+
+        let twodX = ( canvasX * window.devicePixelRatio / canvasHeight) * 2 - 1; //-1 to 1
+        let twodY = 1 - ( canvasY * window.devicePixelRatio / canvasHeight) * 2; //-1 to 1 but reversed
 
         raycaster.setFromCamera( new THREE.Vector2(twodX, twodY), three.camera );
         let intersections = raycaster.intersectObject( perpendicularRectangle );

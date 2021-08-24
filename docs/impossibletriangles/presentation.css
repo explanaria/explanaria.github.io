@@ -3,6 +3,7 @@
 .slideTextItem{
     opacity: 0;
 	transition: opacity 0.5s ease-in-out;
+    will-change: opacity;
 
     grid-row-start: 1;
     grid-column-start: 1;
@@ -15,6 +16,9 @@
     margin-bottom: 2.5em; /*dodge the next/back arrows */
 }
 
+.exp-toptext{
+    will-change: opacity; /* hint to chrome that this should be composited in its own layer */
+}
 
 @font-face {
     font-family: "Poppins";
@@ -58,6 +62,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
+    will-change: transform; /* hint to chrome that this should be composited in its own layer */
     transform: translate(-50%, -50%);
     font-size: 22px;
     pointer-events: none;
@@ -128,7 +133,8 @@ html{
     padding: 0.5em;
     border-top: 1px solid #ccc;
     line-height: 1.0;
-
+    will-change: transform; /* recommended by chrome to ensure scrolling is smooth */
+ 
     font-size: 18px;
 }
 

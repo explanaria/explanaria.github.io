@@ -530,7 +530,7 @@ async function animate(){
 
     //dramatically zoom in
 
-	presentation.TransitionTo(three.camera.position,{z: 100},2000);
+	presentation.TransitionTo(three.camera.position,{z: 100, y: 1},2000);
 	//presentation.TransitionTo(ellipticAdditionResultOutput,{width: pointSize},2000);
 	presentation.TransitionTo(threeFourFiveOutput,{width:pointSize},2000);
     await presentation.delay(2000);

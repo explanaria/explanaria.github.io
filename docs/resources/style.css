@@ -41,7 +41,7 @@ body{
 }
 
 .exp-label, .exp-text, .exp-toptext{
-	font-family: 'Computer Modern Sans', "sans-serif";
+	font-family: "Computer Modern Sans", sans-serif;
 	text-underline-position: under;
     -webkit-text-decoration-skip: auto;
 	text-decoration-skip-ink: auto;

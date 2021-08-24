@@ -296,6 +296,7 @@ async function animate(){
     await presentation.nextSlide();
     await presentation.nextSlide();
     await presentation.nextSlide();
+    await presentation.nextSlide();
 }
 
 

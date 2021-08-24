@@ -85,16 +85,18 @@
                 <br>As a reminder, a rational number is a number like <kmath color="rational">\frac{1}{2}, \frac{5}{8}, \frac{6}{1}</kmath> (also known as 6), or any number of the form <kmath>\frac{x}{y}</kmath> where <kmath>x</kmath> and <kmath>y</kmath> are integers.
             </div>
             <div class="exp-slide slideTextItem">
-                We're looking for triangles where all the sides are rational numbers. This triangle does have area <kmath color="N">30</kmath>, but it doesn't mean that <kmath color="N">30</kmath> is a congruent number, because the side with length <kmath color="irrational">\sqrt{136}</kmath> isn't rational.
+                Let's draw the lengths of the triangle's three sides. We're looking for triangles where all the sides are rational numbers. This triangle does have area <kmath color="N">30</kmath>, but it doesn't mean that <kmath color="N">30</kmath> is a congruent number, because one side side has length <kmath color="irrational">\sqrt{136}</kmath>, and <kmath color="irrational">\sqrt{136}</kmath> isn't a rational number.
             </div>
 
             <div class="exp-slide slideTextItem">
-                In this other triangle, however, all three sides are rational numbers. We did it! Because all three sides of this triangle are rational, and it has area <kmath color="N">30</kmath>, we've shown <kmath color="N">30</kmath> is a congruent number.
+                In this other triangle, however, all three sides' lengths are rational numbers. We did it! Because all three sides of this triangle are rational, and it has area <kmath color="N">30</kmath>, we've shown <kmath color="N">30</kmath> is a congruent number.
             </div>
             <div class="exp-slide slideTextItem">
                 What about other numbers? For example, is <kmath color="N">24</kmath> a congruent number? Drag the red circle to explore triangles.
                 <br>
-                <button onclick="twentyFourHint.getDeepestChildren().forEach(output => EXP.TransitionTo(output, {'opacity':1}, 500));">Click for a hint</button>
+                    <div class="has-text-centered">
+                        <button onclick="twentyFourHint.getDeepestChildren().forEach(output => EXP.TransitionTo(output, {'opacity':1}, 500));" class="button">Click for a hint</button>
+                    </div>
             </div>
 
             <div class="exp-slide slideTextItem">
@@ -113,7 +115,7 @@
             <div class="exp-slide slideTextItem">
                 What about the number after six, 7? Can you find a right triangle with area <kmath color="N">7</kmath> and rational sides?
 
-                Click the right arrow when you want a hint.
+                <br>Click the right arrow when you want a hint.
             </div>
 
             <div class="exp-slide slideTextItem">
@@ -126,12 +128,14 @@
 
             <div class="exp-slide slideTextItem">
                 And what about <kmath color="N">16</kmath>? Is <kmath color="N">16</kmath> is a congruent number? Try for yourself - can you find a triangle with area <kmath color="N">16</kmath> and rational sides?
+
+                <br>Click the right arrow when you want a hint.
             </div>
 
             <div class="exp-slide slideTextItem">
                 Turns out: For n=<kmath color="N">16</kmath>, it's <b>impossible!</b> There are no right triangles whatsoever with rational sides with area 16.
 
-                <br>But... how would you prove that it's impossible? Right triangles, rational sides, and area 16 are all straightforward conditions. Don't take my word for it - how do you know there isn't some triangle whose sides are ridiculously complicated fractions out there with area 16? Hunting for triangles manually clearly won't be enough. Is there a systematic way to figure out whether or not <kmath>N</kmath> is a congruent number?
+                <br>But... how would you prove that it's impossible? Right triangles, rational sides, and area <kmath color="N">16</kmath> are all straightforward conditions. Don't take my word for it - how do you know there isn't some triangle out there with area <kmath color="N">16</kmath> whose sides are ridiculously complicated fractions? Hunting for triangles manually clearly won't be enough. Is there a systematic way to figure out whether or not <kmath>N</kmath> is a congruent number?
 
                 <br> To find out, we'll need to reframe the question and take a look at some geometry.
 

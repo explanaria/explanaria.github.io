@@ -196,8 +196,6 @@ class Dynamic3DText{
         return Number(x).toFixed(2);
     }
     renderDisplayedText(){
-        this.htmlElem.innerHTML = this._text;
-        
         katex.render(this._text, this.htmlElem, {
             throwOnError: false
         });

@@ -37,6 +37,7 @@ function makeLabel(frostedBG=false, fontSize=undefined){
 }
 
 const spareVec3 = new THREE.Vector3();
+const spareVec2 = new THREE.Vector3();
 function screenSpaceCoordsOf3DPoint(point){
     three.camera.matrixWorldNeedsUpdate = true;
 
@@ -46,8 +47,16 @@ function screenSpaceCoordsOf3DPoint(point){
 
     let vec = spareVec3.applyMatrix4(three.camera.matrixWorldInverse).applyMatrix4(three.camera.projectionMatrix);
     let arr = [vec.x, vec.y];
-    arr[0] = (arr[0]+1)/2 * three.renderer.domElement.clientWidth;
-    arr[1] = (-arr[1]+1)/2 * three.renderer.domElement.clientHeight;
+
+    //computing the canvas width and height is hard.
+    //we want these to be in pixels, ideally.
+    //we can use three.renderer.domElement.clientWidth, but that hits the DOM multiple times every frame and causes a slow repaint
+    three.renderer.getSize(spareVec2); //might not take into account CSS related transforms
+    let canvasWidth = spareVec2.x; 
+    let canvasHeight = spareVec2.y;
+
+    arr[0] = (arr[0]+1)/2 * canvasWidth;
+    arr[1] = (-arr[1]+1)/2 * canvasHeight;
     return arr;
 }
 
@@ -119,7 +128,7 @@ class Dynamic3DText{
         }else if(this.text.constructor == Function){
             this._text = this.text(t);
             if(this._text.constructor == Number){ //function which returns a number
-                this._text = this.format(this._text)
+                this._text = this.format(this._text);
             }
         }else if(this.text.constructor == Number){ //text IS a number
             this._text = this.format(this.text);
@@ -180,8 +189,9 @@ class Dynamic3DText{
     }
 
     format(x, precision=2){
-        if(x%1 == 0){ //if is integer
-            return String(x);            
+        let roundedX = Math.round(x)
+        if(Math.abs(x - roundedX) < 0.000001){ //if is integer
+            return String(roundedX);            
         }
         return Number(x).toFixed(2);
     }

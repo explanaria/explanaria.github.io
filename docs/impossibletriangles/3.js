@@ -230,7 +230,7 @@ async function setup(){
     //meaning r = 1151/140, s = 1201/140, t = 1249/140
     //meaing triangle = width 98/140, height 2400/140, hypotenuse 1201/140*2]
 
-    window.PplusPplusPExactCoords = new AutoColoring3DText({
+    window.PplusPExactCoords = new AutoColoring3DText({
         text: "(\\frac{1442401}{19600}, \\frac{-1726556399}{2744000})", //yup. jeez
         position3D: mainCurveProjection.expr(0,0,...PplusP),
         opacity: 0,
@@ -259,11 +259,6 @@ async function setup(){
 
 
     // adding three times!
-    //adding [25/4,35/8] to [1442401/19600,-1726556399/2744000] should give:
-    //[60473718955225/6968554599204,339760634079313268605/18395604368087917608]
-
-    //from this, s = sqrt(x) = 7776485/2639802, 
-    //so sides are width: 4653/851, height: 3404/1551 hypotenuse: 7776485/1319901
 
     let twoPX = PplusP[0];
 	window.PplusPplusP = elliptic_curve_add(PplusP,[threeFourFiveX, curveY(threeFourFiveX)], [p,q]);
@@ -272,9 +267,38 @@ async function setup(){
         text: "P_1 + P_1 + P_1",
         position3D: mainCurveProjection.expr(0,0,...PplusPplusP),
         opacity: 0,
-        align: 'left',
+        align: 'top',
         frostedBG: true,
     })
+
+    //adding [25/4,35/8] to [1442401/19600,-1726556399/2744000] should give:
+    //[60473718955225/6968554599204,339760634079313268605/18395604368087917608]
+
+    //from this, s = sqrt(x) = 7776485/2639802, 
+    //so sides are width: 4653/851, height: 3404/1551 hypotenuse: 7776485/1319901
+    window.PplusPplusPExactCoords = new AutoColoring3DText({
+        text: "(\\frac{60473...}{6968...}, \\frac{33976...}{1839...})", //yup. jeez
+        position3D: mainCurveProjection.expr(0,0,...PplusPplusP),
+        opacity: 0,
+        align: 'bottom',
+        frostedBG: true,
+        customColors: {
+            "60473...": xColor,
+            "6968...": xColor,
+            "33976...": yColor,
+            "1839...": yColor,
+        }
+    })
+    
+    //P1 + P1 + P1 triangle
+    //
+    let PplusPplusPTrianglePos = [-7,2];
+    let [PplusPplusPTriangle, PplusPplusPAreaLabels] = makeFractionallyLabeledTriangle({n:4653, d:851},{n:3404, d:1551},{n:7776485, d:1319901}, PplusPplusPTrianglePos, 0.75)
+    window.PplusPplusPAreaLabels = PplusPplusPAreaLabels;
+    window.PplusPplusPTriangle = PplusPplusPTriangle;
+    PplusPplusPTriangle.getDeepestChildren().forEach( (output) => {
+            output.opacity = 0;
+    });
 
 	window.PplusPplusPPoint = new EXP.Array({data: [[...PplusPplusPNegative]]});
 	window.PplusPplusPOutput = new EXP.PointOutput({width:0.3,color:pointColor, opacity: 0});
@@ -307,9 +331,10 @@ async function setup(){
     sceneObjects = sceneObjects.concat([reflectionLine, additionPtLabel1, additionPtLabel2, additionPtLabel3]);
     
     sceneObjects = sceneObjects.concat(PplusPAreaLabels);
-    staticObjects = staticObjects.concat([PplusPTriangle]);
+    sceneObjects = sceneObjects.concat(PplusPplusPAreaLabels);
+    staticObjects = staticObjects.concat([PplusPTriangle, PplusPplusPTriangle]);
 
-    sceneObjects = sceneObjects.concat([PplusPplusPLabel,PplusPplusPPoint, PplusPplusPExactCoords]);
+    sceneObjects = sceneObjects.concat([PplusPplusPLabel,PplusPplusPPoint, PplusPExactCoords, PplusPplusPExactCoords]);
     
 
 	three.on("update",function(time){
@@ -557,7 +582,7 @@ async function animate(){
 	presentation.TransitionTo(additionPtLabel3.position3D,{0: worldPos[0], 1: worldPos[1]},1000);
 
     await presentation.delay(1000);
-	presentation.TransitionTo(PplusPplusPExactCoords,{opacity:1},1000); //P1 + P1 exact coords label
+	presentation.TransitionTo(PplusPExactCoords,{opacity:1},1000); //P1 + P1 exact coords label
     
 
     await presentation.nextSlide();
@@ -582,10 +607,10 @@ async function animate(){
 
     //dramatically zoom in
 
-	presentation.TransitionTo(three.camera.position,{z: 100, y: 1},2000);
+	presentation.TransitionTo(three.camera.position,{z: 120, y: 1},2000);
 	//presentation.TransitionTo(ellipticAdditionResultOutput,{width: pointSize},2000);
 	presentation.TransitionTo(threeFourFiveOutput,{width:pointSize},2000);
-	presentation.TransitionTo(PplusPplusPExactCoords,{opacity:0},2000); //hide P1 + P1 exact coords label
+	presentation.TransitionTo(PplusPExactCoords,{opacity:0},2000); //hide P1 + P1 exact coords label
 
     //hide P + P triangle
 
@@ -610,15 +635,21 @@ async function animate(){
     await presentation.delay(500);
 	presentation.TransitionTo(PplusPplusPPoint.data[0],{0: PplusPplusP[0], 1: PplusPplusP[1]},500);
 	presentation.TransitionTo(PplusPplusPLabel,{opacity: 1},500);
+	presentation.TransitionTo(PplusPplusPExactCoords,{opacity: 1},500);
     
+    //show triangle
+
+    PplusPplusPTriangle.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output,{opacity:1},1000));
+    PplusPplusPAreaLabels.forEach(text => presentation.TransitionTo(text,{opacity:1},1000));
 
 
     await presentation.nextSlide();
     await presentation.nextSlide();
 
     //hide everything
-    [additionPtLabel1, additionPtLabel3, ellipticAdditionResultOutput, threeFourFiveLabel, PplusPplusPLabel, additionLine.output, reflectionLine.output, mainCurveText, PplusPplusPOutput].forEach(item => presentation.TransitionTo(item,{opacity:0},1000))
-    mainCurveObjects.concat([graphAxes, threeFourFiveOutput]).forEach(object => object.getDeepestChildren().forEach( async (output) => {
+    PplusPplusPAreaLabels.forEach(text => presentation.TransitionTo(text,{opacity:0},1000));
+    [additionPtLabel1, additionPtLabel3, ellipticAdditionResultOutput, threeFourFiveLabel, PplusPplusPLabel, additionLine.output, reflectionLine.output, mainCurveText, PplusPplusPOutput, PplusPplusPExactCoords].forEach(item => presentation.TransitionTo(item,{opacity:0},1000))
+    mainCurveObjects.concat([graphAxes, threeFourFiveOutput, PplusPplusPTriangle]).forEach(object => object.getDeepestChildren().forEach( async (output) => {
         presentation.TransitionTo(output, {'opacity':0.2}, 1000);
     }))
 

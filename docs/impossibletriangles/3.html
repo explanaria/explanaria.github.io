@@ -161,7 +161,7 @@
             <div class="exp-slide slideTextItem">
                 An elliptic curve is the set of solutions to the equation <kmath>y^2 = x^3 + px + q</kmath>, for some <kmath>p</kmath> and <kmath>q</kmath>. Depending on the exact values of <kmath>p</kmath> and <kmath>q</kmath>, the graph of an elliptic curve might look like one smooth curve, or two distinct parts.
 
-                <br>(Technical note: For our purposes <kmath>x, y, p, </kmath> and <kmath>q</kmath> are all real numbers.)
+                <br><aside>(Technical note: For our purposes <kmath>x, y, p, </kmath> and <kmath>q</kmath> are all real numbers.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 In our case, we get a different curve for each value of <kmath>N</kmath>. When <kmath color="N">N=6</kmath>, for example, we get the curve <kmath>y^2 = x^3 - 36 x</kmath>, which I've graphed here.
@@ -205,19 +205,25 @@
                 <br>For us, this means once we find one rational triangle with area <kmath>N</kmath>, we can use the elliptic curve to generate more rational triangles with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">
-                Here's the recipe for computing a new point <kmath>P_1 + P_2</kmath>. The definition of elliptic curve addition is a bit technical, but this recipe is defined the way it is so that adding points works similarly to adding numbers.
+                Here's the recipe for "adding" two points <kmath>P_1</kmath> and <kmath>P_2</kmath> on an elliptic curve:
+
                 <ul>
-                    <li>First, draw a line through <kmath>P_1</kmath> and <kmath>P_2</kmath>. Because of how elliptic curves are defined, This line will always* intersect the curve in a third point.</li>
-                    <li>Then, reflect that point vertically over the <kmath>x</kmath>-axis.</li>
-                    <li>The resulting point, usually written as <kmath>P_1 + P_2</kmath>, and is guaranteed to be a point on the elliptic curve.</li>
+                    <li>Step 1: First, draw a line through <kmath>P_1</kmath> and <kmath>P_2</kmath>. Because of how elliptic curves are defined, This line will always* intersect the curve in a third point.</li>
                 <ul>
                 <aside>(* Technically, vertical lines don't intersect the curve in three points, but mathematicians use a tool called the "projective plane" to take care of those cases.)</aside>
+            </div>
+            <div class="exp-slide slideTextItem">
+                <ul>
+                    <li>Step 2: reflect that point vertically over the <kmath>x</kmath>-axis.</li>
+                    <li>Step 3: You're done! This new point, obtained from "adding" <kmath>P_1</kmath> and <kmath>P_2</kmath>, is usually written as <kmath>P_1 + P_2</kmath>. Don't forget that the symbol <kmath>+</kmath> means elliptic curve addition, not your everyday addition.
+                <ul>
+                <br><aside>(Technical note: Why do we need the reflection in Step 2? As it turns out, adding points on elliptic curves shares many properties with adding numbers, including the associative law <kmath>(x + y) + z = x + (y + z)</kmath>. This law says we can ignore parentheses and evaluate terms in whatever order we like, which is very convenient. Without Step 2, we lose associativity.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 What if <kmath>P_1</kmath> and <kmath>P_2</kmath> are the same point? Just like normal addition, adding the same point to itself is possible! Instead of drawing a line between two points, when adding <kmath>P_1 + P_1</kmath> you draw a tangent line to the curve. But everything still works out - we get a new point on the curve.
             </div>
             <div class="exp-slide slideTextItem">      
-                As it turns out, this "addition" obeys many of the same rules as normal addition. In particular, if you add two rational <span style="text-decoration: line-through">numbers</span> points, you get another rational <span style="text-decoration: line-through">number</span> point.
+                This "addition" obeys many of the same rules as normal addition. In particular, if you add two rational <span style="text-decoration: line-through">numbers</span> points, you get another rational <span style="text-decoration: line-through">number</span> point.
                 <br>That's good for us - remember, each rational point on this elliptic curve corresponds to a rational-sided triangle with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      

@@ -225,6 +225,23 @@ async function setup(){
 
     window.threeFourFiveX = 25/4;
 	window.PplusP = elliptic_curve_add([threeFourFiveX, curveY(threeFourFiveX)],[threeFourFiveX, curveY(threeFourFiveX)], [p,q]);
+    //exact: x = 1442401/19600, y = 1726556399/2744000. wow. but, x = (1201/140)^2 !!!
+
+    window.PplusPplusPExactCoords = new AutoColoring3DText({ //todo: put this in
+        text: "(\\frac{1442401}{19600}, \\frac{-1726556399}{2744000})", //yup. jeez
+        position3D: mainCurveProjection.expr(0,0,...PplusP),
+        opacity: 0,
+        align: 'right',
+        frostedBG: true,
+        customColors: {
+            "1442401": xColor,
+            "19600": xColor,
+            "1726556399": yColor,
+            "2744000": yColor,
+            "-": yColor,
+        }
+    })
+
     window.PplusPNegative = [PplusP[0], -PplusP[1]];
 
     let twoPX = PplusP[0];
@@ -237,6 +254,7 @@ async function setup(){
         align: 'left',
         frostedBG: true,
     })
+
 	window.PplusPplusPPoint = new EXP.Array({data: [[...PplusPplusPNegative]]});
 	window.PplusPplusPOutput = new EXP.PointOutput({width:0.3,color:pointColor, opacity: 0});
     PplusPplusPPoint.add(mainCurveProjection.makeLink()).add(PplusPplusPOutput)
@@ -267,7 +285,7 @@ async function setup(){
 
     sceneObjects = sceneObjects.concat([reflectionLine, additionPtLabel1, additionPtLabel2, additionPtLabel3]);
     
-    sceneObjects = sceneObjects.concat([PplusPplusPLabel,PplusPplusPPoint]);
+    sceneObjects = sceneObjects.concat([PplusPplusPLabel,PplusPplusPPoint, PplusPplusPExactCoords]);
     
 
 	three.on("update",function(time){
@@ -409,7 +427,7 @@ async function animate(){
 	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width:pointSize*3},400);
 	await presentation.delay(400);
 	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width:pointSize},400);
-	await presentation.delay(500);
+	await presentation.nextSlide();
     //reflect
 
     //flip the line and the point
@@ -438,7 +456,7 @@ async function animate(){
 	presentation.TransitionTo(ellipticAdditionResult.data[0],{0: p3Negative[0], 1: p3Negative[1]});
 
     await presentation.delay(500);
-	presentation.TransitionTo(additionPtLabel3,{text:"P_1 + P_1"},0);
+	presentation.TransitionTo(additionPtLabel3,{text:"P_1 + P_1", align: "left"},0);
 	presentation.TransitionTo(additionPtLabel2,{opacity:0},500);
 
     //show P1+P1
@@ -513,6 +531,10 @@ async function animate(){
     let worldPos = mainCurveProjection.expr(0,0,...PplusP);
 	presentation.TransitionTo(additionPtLabel3.position3D,{0: worldPos[0], 1: worldPos[1]},1000);
 
+    await presentation.delay(1000);
+	presentation.TransitionTo(PplusPplusPExactCoords,{opacity:1},1000); //P1 + P1 exact coords label
+    
+
     await presentation.nextSlide();
 
     //hide lines
@@ -533,6 +555,7 @@ async function animate(){
 	presentation.TransitionTo(three.camera.position,{z: 100, y: 1},2000);
 	//presentation.TransitionTo(ellipticAdditionResultOutput,{width: pointSize},2000);
 	presentation.TransitionTo(threeFourFiveOutput,{width:pointSize},2000);
+	presentation.TransitionTo(PplusPplusPExactCoords,{opacity:0},2000); //hide P1 + P1 exact coords label
     await presentation.delay(2000);
 
     //bwomp

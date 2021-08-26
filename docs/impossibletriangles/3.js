@@ -6,7 +6,7 @@ import {Dynamic3DText} from "./katex-labels.js";
 import {addColorToHTML, AutoColoring3DText, ColorSuccessiveNumbers3DText} from './2-addColorToHTMLMath.js';
 addColorToHTML();
 
-import {makeLabeledCurve, makeTriangle} from "./3-makethings.js"
+import {makeLabeledCurve, makeTriangle, makeFractionallyLabeledTriangle} from "./3-makethings.js"
 
 const pointSize = 0.4;
 const pointColor = 0xff7070;
@@ -222,16 +222,19 @@ async function setup(){
 	ellipticAdditionResult.add(mainCurveProjection.makeLink()).add(thirdPointControl).add(ellipticAdditionResultOutput);
 
 
+    ///// add the point representing the 3-4-5 triangle to itself repeatedly
 
     window.threeFourFiveX = 25/4;
 	window.PplusP = elliptic_curve_add([threeFourFiveX, curveY(threeFourFiveX)],[threeFourFiveX, curveY(threeFourFiveX)], [p,q]);
-    //exact: x = 1442401/19600, y = 1726556399/2744000. wow. but, x = (1201/140)^2 !!!
+    //exact: x = 1442401/19600, y = 1726556399/2744000. x = (1201/140)^2
+    //meaning r = 1151/140, s = 1201/140, t = 1249/140
+    //meaing triangle = width 98/140, height 2400/140, hypotenuse 1201/140*2]
 
-    window.PplusPplusPExactCoords = new AutoColoring3DText({ //todo: put this in
+    window.PplusPplusPExactCoords = new AutoColoring3DText({
         text: "(\\frac{1442401}{19600}, \\frac{-1726556399}{2744000})", //yup. jeez
         position3D: mainCurveProjection.expr(0,0,...PplusP),
         opacity: 0,
-        align: 'right',
+        align: 'top',
         frostedBG: true,
         customColors: {
             "1442401": xColor,
@@ -242,7 +245,25 @@ async function setup(){
         }
     })
 
+    //{n:98, d:140},{n:2400, d:140},{n:2402, d:140}
+
+    let PplusPTrianglePos = mainCurveProjection.expr(0,0,...[-500,-400])// EXP.Math.vectorAdd(mainCurveProjection.expr(0,0,...PplusP), [2,0]));
+    let [PplusPTriangle, PplusPAreaLabels] = makeFractionallyLabeledTriangle({n:7, d:10},{n:120, d:7},{n:1201, d:70}, PplusPTrianglePos, 10)
+    window.PplusPAreaLabels = PplusPAreaLabels;
+    window.PplusPTriangle = PplusPTriangle;
+    PplusPTriangle.getDeepestChildren().forEach( (output) => {
+            output.opacity = 0;
+    });
+
     window.PplusPNegative = [PplusP[0], -PplusP[1]];
+
+
+    // adding three times!
+    //adding [25/4,35/8] to [1442401/19600,-1726556399/2744000] should give:
+    //[60473718955225/6968554599204,339760634079313268605/18395604368087917608]
+
+    //from this, s = sqrt(x) = 7776485/2639802, 
+    //so sides are width: 4653/851, height: 3404/1551 hypotenuse: 7776485/1319901
 
     let twoPX = PplusP[0];
 	window.PplusPplusP = elliptic_curve_add(PplusP,[threeFourFiveX, curveY(threeFourFiveX)], [p,q]);
@@ -285,6 +306,9 @@ async function setup(){
 
     sceneObjects = sceneObjects.concat([reflectionLine, additionPtLabel1, additionPtLabel2, additionPtLabel3]);
     
+    sceneObjects = sceneObjects.concat(PplusPAreaLabels);
+    staticObjects = staticObjects.concat([PplusPTriangle]);
+
     sceneObjects = sceneObjects.concat([PplusPplusPLabel,PplusPplusPPoint, PplusPplusPExactCoords]);
     
 
@@ -433,15 +457,16 @@ async function animate(){
     //flip the line and the point
 
     reflectionLine.revealSelf(presentation);
-	await presentation.delay(1000);
+	await presentation.delay(500);
 	presentation.TransitionTo(ellipticAdditionResult.data[0],{1: -ellipticAdditionResult.data[0][1]});
 	await presentation.delay(400);
 	presentation.TransitionTo(additionPtLabel3,{opacity:1},400);
 
     await presentation.nextSlide();
+
 	presentation.TransitionTo(reflectionLine.output,{opacity:0},250);
     reflectionLine.hideSelf(presentation);
-    await presentation.delay(500);
+    await presentation.delay(250);
 
     //move points together
     let sameX = -3;
@@ -456,7 +481,7 @@ async function animate(){
 	presentation.TransitionTo(ellipticAdditionResult.data[0],{0: p3Negative[0], 1: p3Negative[1]});
 
     await presentation.delay(500);
-	presentation.TransitionTo(additionPtLabel3,{text:"P_1 + P_1", align: "left"},0);
+	presentation.TransitionTo(additionPtLabel3,{text:"P_1 + P_1", align: "bottom"},0);
 	presentation.TransitionTo(additionPtLabel2,{opacity:0},500);
 
     //show P1+P1
@@ -537,6 +562,11 @@ async function animate(){
 
     await presentation.nextSlide();
 
+    PplusPTriangle.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output,{opacity:1},1000));
+    PplusPAreaLabels.forEach(text => presentation.TransitionTo(text,{opacity:1},1000));
+
+    await presentation.nextSlide();
+
     //hide lines
     presentation.TransitionTo(additionLine.output,{opacity:0},500);
     
@@ -556,6 +586,12 @@ async function animate(){
 	//presentation.TransitionTo(ellipticAdditionResultOutput,{width: pointSize},2000);
 	presentation.TransitionTo(threeFourFiveOutput,{width:pointSize},2000);
 	presentation.TransitionTo(PplusPplusPExactCoords,{opacity:0},2000); //hide P1 + P1 exact coords label
+
+    //hide P + P triangle
+
+    PplusPTriangle.getDeepestChildren().forEach( (output) => presentation.TransitionTo(output,{opacity:0},2000));
+    PplusPAreaLabels.forEach(text => presentation.TransitionTo(text,{opacity:0},2000));
+
     await presentation.delay(2000);
 
     //bwomp

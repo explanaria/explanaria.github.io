@@ -49,7 +49,69 @@ export function makeLabeledCurve(p,q, position=[0,0], textOffset = [0, -3], scal
     return [objects, label, curveProjection];
 }
 
+
+export function makeFractionallyLabeledTriangle(side1fraction, side2fraction, side3fraction, centerPos, scaleFactor = 1){
+    //w is {n: blah, denom: blah} in which case it'll be rendered as a fraction
+
+    let objects = [];
+
+    let w = side1fraction.n/side1fraction.d;
+    let h = side2fraction.n/side2fraction.d;
+    console.log([w,h])
+
+    let points = [[0,0],[w*scaleFactor,0],[w*scaleFactor,h*scaleFactor]];
+    let center = [0,0];
+    for(let i=0;i<3;i++){
+        points[i][0] += centerPos[0];
+        points[i][1] += centerPos[1];
+
+        center[0] += points[i][0];
+        center[1] += points[i][1];
+    
+    }
+    center[0] /= 3;
+    center[1] /= 3;
+
+    let shinyTriangle = new EXP.Array({data: [0,1,2,0]});
+    let getTrianglePoints = shinyTriangle.add(new EXP.Transformation({'expr':(i,t,index) => points[index]}))
+    getTrianglePoints.add(new EXP.LineOutput({opacity:1, color: triangleLineColor})); //line between the triangles
+    getTrianglePoints.add(new EXP.PointOutput({opacity:1, color: triangleNonGrabbableCornerColor, width:0.4*scaleFactor})); //line between the
+
+    let areaLabel = new Dynamic3DText({
+        text: w*h/2, 
+        color: twoNColor,
+        position3D: center,
+        opacity: 0,
+        frostedBG: true,
+    })
+
+    let rLabel = new Dynamic3DText({
+        text: "\\frac{"+side1fraction.n+"}{"+side1fraction.d+"}", 
+        color: validIntegerColor,
+        position3D: EXP.Math.vectorAdd(average(points[1], points[0]), [0, -3*scaleFactor]),
+        opacity: 0,
+        frostedBG: true,
+    })
+    let sLabel = new Dynamic3DText({
+        text: "\\frac{"+side2fraction.n+"}{"+side2fraction.d+"}",
+        color: validIntegerColor,
+        position3D: EXP.Math.vectorAdd(average(points[1], points[2]), [3*scaleFactor, 0]),
+        opacity: 0,
+        frostedBG: true,
+    })
+    let tLabel = new Dynamic3DText({
+        text: "\\frac{"+side3fraction.n+"}{"+side3fraction.d+"}",
+        color: validIntegerColor,
+        position3D: EXP.Math.vectorAdd(average(points[0], points[2]), [-3*scaleFactor, 0]),
+        opacity: 0,
+        frostedBG: true,
+    })
+
+    return [shinyTriangle, [areaLabel, rLabel, sLabel, tLabel]];
+}
+
 export function makeTriangle(w,h, centerPos){
+    //w can be a number or {n: blah, denom: blah} in which case it'll be rendered as a fraction
 
     let objects = [];
 
@@ -87,7 +149,7 @@ export function makeTriangle(w,h, centerPos){
         frostedBG: true,
     })
     let sLabel = new Dynamic3DText({
-        text: w*h/2, 
+        text: h, 
         color: validIntegerColor,
         position3D: average(points[1], points[2]),
         opacity: 0,

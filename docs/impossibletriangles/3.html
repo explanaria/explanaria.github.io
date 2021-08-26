@@ -172,7 +172,7 @@
 
             </div>
             <div class="exp-slide slideTextItem">
-                Here's how to convert from triangles to points on this curve. First, let's start with this rational triangle with area <kmath color="N">6</kmath>.
+                Here's how to convert triangles into points on this curve. First, let's start with this rational triangle with area <kmath color="N">6</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
                 From this triangle, we can compute <kmath>r^2, s^2</kmath> and <kmath>t^2</kmath>.
@@ -213,33 +213,33 @@
                 <aside>(* Technically, vertical lines don't intersect the curve in three points, but mathematicians use a tool called the "projective plane" to take care of those cases.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
-                Elliptic Curve Addition Recipe, Continued:
+                Here's the recipe for "adding" two points <kmath>P_1</kmath> and <kmath>P_2</kmath> on an elliptic curve, continued:
                 <br>
                 <ul>
-                    <li>Step 2: reflect that point vertically over the <kmath>x</kmath>-axis.</li>
-                    <li>Step 3: You're done! This new point, obtained from "adding" <kmath>P_1</kmath> and <kmath>P_2</kmath>, is usually written as <kmath>P_1 + P_2</kmath>. Don't forget that the symbol <kmath>+</kmath> means elliptic curve addition, not your everyday addition.
+                    <li>Step 2: Reflect the point from Step 1 vertically over the <kmath>x</kmath>-axis.</li>
+                    <li>Step 3: You're done! The result of this "addition" is usually written <kmath>P_1 + P_2</kmath>, where the symbol <kmath>+</kmath> means elliptic curve addition, not your everyday addition.
                 <ul>
-                <br><aside>(Technical note: Why do we need the reflection in Step 2? As it turns out, adding points on elliptic curves shares many properties with adding numbers, including the associative law <kmath>(x + y) + z = x + (y + z)</kmath>. This law says we can ignore parentheses and evaluate terms in whatever order we like, which is very convenient. Without Step 2, we lose associativity.)</aside>
+                <aside>(Technical note: Why do we need the reflection in Step 2? As it turns out, adding points on elliptic curves shares many properties with adding numbers, including the associative law <kmath>(x + y) + z = x + (y + z)</kmath>. This law says we can ignore parentheses and evaluate terms in whatever order we like, which is very convenient. Without Step 2, we lose associativity and more.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
-                What if <kmath>P_1</kmath> and <kmath>P_2</kmath> are the same point? Just like normal addition, adding the same point to itself is possible! Step 1 is slightly different when adding <kmath>P_1 + P_1</kmath>: the line you draw is the tangent line to the curve. But everything still works out - we get a new point on the curve.
+                What if <kmath>P_1</kmath> and <kmath>P_2</kmath> are the same point? No problem! Step 1 is slightly different when adding <kmath>P_1 + P_1</kmath>: the line you draw is the tangent line to the curve. But everything still works out - we get a new point on the curve.
             </div>
             <div class="exp-slide slideTextItem">      
-                This "addition" obeys many of the same rules as normal addition. In particular, if you add two rational <span style="text-decoration: line-through">numbers</span> points, you get another rational <span style="text-decoration: line-through">number</span> point.
+                Elliptic curve addition obeys many of the same rules as normal addition. In particular, if you add two rational <span style="text-decoration: line-through">numbers</span> points, you get another rational <span style="text-decoration: line-through">number</span> point.
                 <br>That's good for us - remember, each rational point on this elliptic curve corresponds to a rational-sided triangle with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
-                In other words, by using elliptic curve addition, once we find one rational triangle with area <kmath color="N">6</kmath>, we can construct a point <kmath>P_1</kmath> on the elliptic curve, use elliptic curve addition to make a new point <kmath>P_1 + P_1</kmath>, convert it back to a triangle, and generate new triangles with area <kmath color="N">6</kmath>!
+                In other words, by using elliptic curve addition, once we find one rational triangle with area <kmath color="N">6</kmath>, we can generate new triangles with area <kmath color="N">6</kmath>! Here's how: convert our triangle into a point <kmath>P_1</kmath> on an elliptic curve. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>. Finally, <kmath>P_1 + P_1</kmath> can be converted into a triangle with area 6!
             </div>
             <div class="exp-slide slideTextItem">      
                 Let's find <kmath>P_1 + P_1</kmath> by following the same elliptic curve addition recipe. The math guarantees <kmath>P_1 + P_1</kmath> is point on the elliptic curve, but we might need to zoom out a bit to see it.
             </div>
             <div class="exp-slide slideTextItem">     
-                Those are some big numbers. But what matters is that <kmath>P_1 + P_1</kmath> is a rational point, meaning we can convert it into a new valid rational triangle with area <kmath color="N">6</kmath>! 
+                Those are some big coordinates. But what matters is that <kmath>P_1 + P_1</kmath>'s coordinates are big <b>rational</b> numbers, meaning we can turn this point into a new valid rational triangle with area <kmath color="N">6</kmath>! 
                 <br>It would have taken a long time to find this skinny triangle by brute force. Elliptic curve addition is powerful.
             </div>
             <div class="exp-slide slideTextItem">      
-                We can keep going! We can compute <kmath>(P_1 + P_1) + P_1</kmath> by adding <kmath>P_1</kmath> to <kmath>(P_1 + P_1)</kmath>. Following the recipe, we draw the line between<kmath>(P_1 + P_1)</kmath> and <kmath>P_1</kmath>, flip the point over the y-axis, and find a point which gives us yet another rational triangle with area <kmath color="N">6</kmath>.
+                We can keep going! We can compute <kmath>P_1 + P_1 + P_1</kmath> by adding <kmath>P_1</kmath> to <kmath>(P_1 + P_1)</kmath>. Following the recipe, we draw the line between <kmath>(P_1 + P_1)</kmath> and <kmath>P_1</kmath>, flip the point over the y-axis, and find a third point. This point gives us yet another rational triangle with area <kmath color="N">6</kmath>!
             </div>
             <div class="exp-slide slideTextItem">
                 By the way, modern encryption is built around adding points on elliptic curves!
@@ -339,13 +339,21 @@
 
             <div class="exp-slide slideTextItem">
                 Thanks so much for reading!
-
                 <br>
                 <div class="columns">
                     <div class="column" style="text-align: center">
                         <br><a href="https://explanaria.github.io/">More Math</a>
                     </div>
                 </div>
+
+                Bibliography
+                <br>
+                <aside>
+                    Much of this presentation was adapted from <a href="https://kconrad.math.uconn.edu/articles/congruentnumber.pdf">this expository paper on the congruent number problem by Keith Conrad</a> .
+                    <br>Elliptic Tales by Ash and Gross is a great book about elliptic curves!
+                    <br>Geometric proof in Chapter 2 by me!
+                </aside>
+
             </div>
 
 

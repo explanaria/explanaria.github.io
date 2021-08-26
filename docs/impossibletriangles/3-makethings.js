@@ -57,7 +57,6 @@ export function makeFractionallyLabeledTriangle(side1fraction, side2fraction, si
 
     let w = side1fraction.n/side1fraction.d;
     let h = side2fraction.n/side2fraction.d;
-    console.log([w,h])
 
     let points = [[0,0],[w*scaleFactor,0],[w*scaleFactor,h*scaleFactor]];
     let center = [0,0];
@@ -77,6 +76,22 @@ export function makeFractionallyLabeledTriangle(side1fraction, side2fraction, si
     getTrianglePoints.add(new EXP.LineOutput({opacity:1, color: triangleLineColor})); //line between the triangles
     getTrianglePoints.add(new EXP.PointOutput({opacity:1, color: triangleNonGrabbableCornerColor, width:0.4*scaleFactor})); //line between the
 
+
+    let rPos = average(points[1], points[0])
+    let sPos = average(points[1], points[2])
+    let tPos = average(points[2], points[0])
+    if(w < 2){
+        //thin triangle, move labels away for better clarity
+        rPos = EXP.Math.vectorAdd(rPos, [0, -3*scaleFactor]);
+        sPos = EXP.Math.vectorAdd(sPos, [3*scaleFactor, 0]);
+        tPos = EXP.Math.vectorAdd(tPos, [-3*scaleFactor, 0]);
+    }
+
+    if(side3fraction.n + side3fraction.d > 10000){ //long hypotenuse label, move upwards
+        rPos = EXP.Math.vectorAdd(rPos, [0, -1*scaleFactor]);
+        tPos = EXP.Math.vectorAdd(tPos, [-1*scaleFactor, 1.5*scaleFactor]);
+    }
+
     let areaLabel = new Dynamic3DText({
         text: w*h/2, 
         color: twoNColor,
@@ -88,21 +103,21 @@ export function makeFractionallyLabeledTriangle(side1fraction, side2fraction, si
     let rLabel = new Dynamic3DText({
         text: "\\frac{"+side1fraction.n+"}{"+side1fraction.d+"}", 
         color: validIntegerColor,
-        position3D: EXP.Math.vectorAdd(average(points[1], points[0]), [0, -3*scaleFactor]),
+        position3D: rPos,
         opacity: 0,
         frostedBG: true,
     })
     let sLabel = new Dynamic3DText({
         text: "\\frac{"+side2fraction.n+"}{"+side2fraction.d+"}",
         color: validIntegerColor,
-        position3D: EXP.Math.vectorAdd(average(points[1], points[2]), [3*scaleFactor, 0]),
+        position3D: sPos,
         opacity: 0,
         frostedBG: true,
     })
     let tLabel = new Dynamic3DText({
         text: "\\frac{"+side3fraction.n+"}{"+side3fraction.d+"}",
         color: validIntegerColor,
-        position3D: EXP.Math.vectorAdd(average(points[0], points[2]), [-3*scaleFactor, 0]),
+        position3D: tPos,
         opacity: 0,
         frostedBG: true,
     })

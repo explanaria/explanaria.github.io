@@ -219,7 +219,7 @@
                     <li>Step 2: Reflect the point from Step 1 vertically over the <kmath>x</kmath>-axis.</li>
                     <li>Step 3: You're done! The result of this "addition" is usually written <kmath>P_1 + P_2</kmath>, where the symbol <kmath>+</kmath> means elliptic curve addition, not your everyday addition.
                 <ul>
-                <aside>(Technical note: Why do we need the reflection in Step 2? As it turns out, adding points on elliptic curves shares many properties with adding numbers, including the associative law <kmath>(x + y) + z = x + (y + z)</kmath>. This law says we can ignore parentheses and evaluate terms in whatever order we like, which is very convenient. Without Step 2, we lose associativity and more.)</aside>
+                <aside>(Technical note: Why do we need the reflection in Step 2? As it turns out, adding points on elliptic curves shares many properties with adding numbers, including the associative law, <kmath>(x + y) + z = x + (y + z)</kmath>. This law says we can ignore parentheses and evaluate terms in whatever order we like, which is very convenient. Without Step 2, we lose associativity and more.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 What if <kmath>P_1</kmath> and <kmath>P_2</kmath> are the same point? No problem! Step 1 is slightly different when adding <kmath>P_1 + P_1</kmath>: the line you draw is the tangent line to the curve. But everything still works out - we get a new point on the curve.
@@ -229,7 +229,7 @@
                 <br>That's good for us - remember, each rational point on this elliptic curve corresponds to a rational-sided triangle with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
-                In other words, by using elliptic curve addition, once we find one rational triangle with area <kmath color="N">6</kmath>, we can generate new triangles with area <kmath color="N">6</kmath>! Here's how: convert our triangle into a point <kmath>P_1</kmath> on an elliptic curve. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>. Finally, <kmath>P_1 + P_1</kmath> can be converted into a triangle with area 6!
+                In other words, by using elliptic curve addition, once we find one rational triangle with area <kmath color="N">6</kmath>, we can generate new triangles with area <kmath color="N">6</kmath>! Here's how: convert our triangle into a point <kmath>P_1</kmath> on an elliptic curve. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>. Finally, <kmath>P_1 + P_1</kmath> can be converted into a triangle with area <kmath color="N">6</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
                 Let's find <kmath>P_1 + P_1</kmath> by following the same elliptic curve addition recipe. The math guarantees <kmath>P_1 + P_1</kmath> is point on the elliptic curve, but we might need to zoom out a bit to see it.
@@ -342,7 +342,7 @@
                 <br>
                 <div class="columns">
                     <div class="column" style="text-align: center">
-                        <br><a href="https://explanaria.github.io/">More Math</a>
+                        <br><a href="https://explanaria.github.io/">More Explanaria</a>
                     </div>
                 </div>
 

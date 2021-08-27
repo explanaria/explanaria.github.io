@@ -83,11 +83,65 @@ export function elliptic_curve_add(p1,p2, curveparams){
 	return [x3,y3];
 }
 
+//unused
+export class Fraction{
+    constructor(numerator, denominator){
+        this.numer = numerator;
+        this.denom = denominator;
+    }
+    add(otherfraction){
+        //a/b + c/d   = ad/bd + cb/bd
+        let commonDenom = this.lcm(this.denom, otherfraction.denom);
+        this.numer = (this.numer * otherfraction.denom + otherfraction.numer * this.denom);
+        this.denom = commonDenom;
+        this.reduce();
+    }
+    sub(otherfraction){
+        let commonDenom = this.lcm(this.denom, otherfraction.denom);
+        this.numer = (this.numer * otherfraction.denom - otherfraction.numer * this.denom);
+        this.denom = commonDenom;
+        this.reduce();
+    }
+    mult(otherfraction){
+        this.numer *= otherfraction.numer;
+        this.denom *= otherfraction.denom;
+    }
+    div(otherfraction){
+        this.numer *= otherfraction.denom;
+        this.denom *= otherfraction.numer;
+        this.reduce();
+    }
+    reduce(){
+        let gcd = this.gcd(this.numer, this.denom);
+        this.numer /= gcd;
+        this.denom /= gcd;
+    }
+    equals(otherfraction){
+        return this.numer == otherfraction.numer && this.denom == otherfraction.denom;
+    }
+    lcm(a,b){
+        return a*b/gcd(a,b);
+    }
+    gcd(a,b){
+        if (a == 0){
+            return b;
+        }
+        while (b != 0) {
+            if (a > b)
+                a = a - b;
+            else
+                b = b - a;
+        }
+        return a;
+    }
+}
+
+
 export function elliptic_curve_add_fractions(p1,p2, curveparams){
 	//this one assumes all arguments are arrays of fractions
-	let slope=0;
+	let slope=new Fraction(0,1);
 	if(p1[0].equals(p2[0])){
-		slope = p2[1].sub(p1[1]).div(p2[0].sub(p1[0]))
+		slope = p2[1].clone().sub(p1[1]).div(p2[0].sub(p1[0]))
 	}else{
 		if(p1[1].equals(p2[1])){
 				//RESULT IS 0
@@ -95,12 +149,13 @@ export function elliptic_curve_add_fractions(p1,p2, curveparams){
 			return [p1[0], Infinity];
 		}else{
 			//p1 == p2
-			slope = (3*p1[0]*p1[0] + curveparams[0]) / (2*p1[1])
+			slope = new Fraction(3,1).mul(p1[0]).mul(p1[0]).add(new Fraction(curveparams[0],1));
+            slope.div(new Fraction(2,1).mul(p1[1]))
 		}
 	}
 
-	let x3 = slope.mul(slope).sub(p1[0]).sub(p2[0]);
-	let y3 = slope.mul(x3.sub(p1[0])).add(p1[1]);
+	let x3 = slope.clone().mul(slope).sub(p1[0]).sub(p2[0]);
+	let y3 = slope.clone().mul(x3.clone().sub(p1[0])).add(p1[1]);
 
 	return [x3,y3];
 }

@@ -75,7 +75,7 @@
             <div class="exp-slide slideTextItem">
                 Can you find a right triangle with area <kmath color="N">30</kmath> whose side lengths are all rational numbers? 
 
-                <br>This problem is called the "congruent number problem". It's very simple to state, but this problem has tons of interesting connections to number theory and these things called elliptic curves.
+                <br>This problem is called the "congruent number problem". It's very simple to state, but this problem is surprisingly complex, and has tons of interesting connections to number theory and these things called elliptic curves.
 
                 <br>Elliptic curves are one of applied math's biggest success stories. One of the most common questions people ask about math is "Does this have any real-world applications?". For elliptic curves, the answer is "absolutely". Every time you connect to the internet, your computer uses elliptic curves to encrypt your connection so hackers can't steal your credit card numbers when you shop online. Non-applied mathematicians also care a lot about elliptic curves because they connect many different subfields of math, such as number theory, geometry, and abstract algebra. In fact, they're so important that there's a million-dollar prize offered by the Clay Mathematics Institute for solving an unsolved problem about elliptic curves called the BSD conjecture. To mathematicians, elliptic curves are serious business.
 
@@ -84,18 +84,21 @@
 
 
             <div class="exp-slide slideTextItem">
-                First, let's take a look at the congruent number problem. Can you find a right triangle with area <kmath color="N">30</kmath> whose side lengths are all rational numbers?
-                <br>As a reminder, a rational number is a number like <kmath color="rational">\frac{1}{2}, \frac{5}{8}, \frac{6}{1}</kmath> (also known as 6), or any number of the form <kmath>\frac{x}{y}</kmath> where <kmath>x</kmath> and <kmath>y</kmath> are integers.
+                First, let's take a look at the congruent number problem: For a given number <kmath color="N">N</kmath>, can you find a right triangle with area <kmath color="N">N</kmath> whose side lengths are all rational numbers?
+
+                <br>Let's start with <kmath color="N">N=30</kmath>, which is a particularly easy example. Our goal: find a right triangle with area <kmath color="N">30</kmath> whose side lengths are all rational numbers.
+
+                <br><aside>(As a reminder, a rational number is a number like <kmath color="rational">\frac{1}{2}, \frac{5}{8}, \frac{6}{1}</kmath> (also known as 6), or any number of the form <kmath>\frac{x}{y}</kmath> where <kmath>x</kmath> and <kmath>y</kmath> are integers.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
-                Let's draw the lengths of the triangle's three sides. We're looking for triangles where all the sides are rational numbers. This triangle does have area <kmath color="N">30</kmath>, but it doesn't mean that <kmath color="N">30</kmath> is a congruent number, because one side side has length <kmath color="irrational">\sqrt{136}</kmath>, and <kmath color="irrational">\sqrt{136}</kmath> isn't a rational number.
+                For example, here's a random triangle with area <kmath color="N">30</kmath>, where we've drawn the lengths of the triangle's three sides. We're looking for triangles where all the sides are rational numbers, so even though this triangle has area <kmath color="N">30</kmath>, it doesn't mean that <kmath color="N">30</kmath> is a congruent number: one side has length <kmath color="irrational">\sqrt{136}</kmath>, and <kmath color="irrational">\sqrt{136}</kmath> isn't a rational number.
             </div>
 
             <div class="exp-slide slideTextItem">
-                In this other triangle, however, all three sides' lengths are rational numbers. We did it! Because all three sides of this triangle are rational, and it has area <kmath color="N">30</kmath>, we've shown <kmath color="N">30</kmath> is a congruent number.
+                In this other triangle, however, all three sides' lengths are rational numbers. We did it! Because all three sides of this triangle are rational, and it has area <kmath color="N">30</kmath>, this triangle proves <kmath color="N">30</kmath> is a congruent number.
             </div>
             <div class="exp-slide slideTextItem">
-                What about other numbers? For example, is <kmath color="N">24</kmath> a congruent number? Drag the red circle to explore triangles.
+                What about other numbers? For example, is <kmath color="N">24</kmath> a congruent number? Drag the red circle to explore triangles, and see if you can find a right triangle with area <kmath color="N">24</kmath> whose sides are all rational numbers.
                 <br>
                     <div class="has-text-centered">
                         <button onclick="twentyFourHint.getDeepestChildren().forEach(output => EXP.TransitionTo(output, {'opacity':1}, 500));" class="button">Click for a hint</button>
@@ -136,7 +139,7 @@
             </div>
 
             <div class="exp-slide slideTextItem">
-                Turns out: For n=<kmath color="N">16</kmath>, it's <b>impossible!</b> There are no right triangles whatsoever with rational sides with area 16.
+                Turns out: For n=<kmath color="N">16</kmath>, it's <b>impossible!</b> There are no right triangles whatsoever with rational sides with area <kmath color="N">16</kmath>.
 
                 <br>But... how would you prove that it's impossible? Right triangles, rational sides, and area <kmath color="N">16</kmath> are all straightforward conditions. Don't take my word for it - how do you know there isn't some triangle out there with area <kmath color="N">16</kmath> whose sides are ridiculously complicated fractions? Hunting for triangles manually clearly won't be enough. Is there a systematic way to figure out whether or not <kmath>N</kmath> is a congruent number?
 

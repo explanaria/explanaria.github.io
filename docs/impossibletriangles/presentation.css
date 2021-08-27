@@ -3,7 +3,6 @@
 .slideTextItem{
     opacity: 0;
 	transition: opacity 0.5s ease-in-out;
-    will-change: opacity;
 
     grid-row-start: 1;
     grid-column-start: 1;
@@ -14,6 +13,17 @@
     margin: 0 auto;
     font-family: "Poppins",Arial,Helvetica,sans-serif;
     margin-bottom: 2.5em; /*dodge the next/back arrows */
+    padding: 0.5em 1.5em;
+}
+
+.nextChapterLink{
+    position:absolute;
+    bottom:0.5em;
+    right:1em;
+    font-weight:bold;
+    text-decoration:underline;
+    background-color: rgba(255,255,255,0.5);
+    padding: 0.25em;
 }
 
 .exp-toptext{
@@ -130,11 +140,9 @@ html{
     height: 35%;
     width: 100%;
     overflow-y: auto;
-    padding: 0.5em;
     border-top: 1px solid #ccc;
     line-height: 1.0;
     will-change: transform; /* recommended by chrome to ensure scrolling is smooth */
- 
     font-size: 18px;
 }
 

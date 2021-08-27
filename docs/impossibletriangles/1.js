@@ -65,7 +65,6 @@ function setup(){
             grabbedPointType = "draggable";
         }
     })
-
     //move a dragged point
     onThreejsMousemove(three, function(worldPoint){
         if(grabbedPointType != null){

@@ -208,9 +208,26 @@ function setup(){
     staticObjects.forEach(i => i.activate(0));
 }
 
+function setupGoat(presentation){
+    //analytics
+    document.addEventListener('visibilitychange', function(e) {
+        if (window.goatcounter === undefined)return;
+        if (document.visibilityState !== 'hidden')
+            return
+        if (goatcounter.filter())
+            return
+        navigator.sendBeacon(goatcounter.url({
+            event: true,
+            title: location.pathname + location.search + " unloaded on slide " + presentation.currentSlideIndex,
+            path: function(p) { return 'unload-' + p + '-slide-'+presentation.currentSlideIndex },
+        }))
+    })
+}
+
 async function animate(){
     let presentation = new EXP.UndoCapableDirector();
     await presentation.begin();
+    setupGoat(presentation);
 
 
     [aText, bText, cText, firstNText1, firstNText2].forEach(label => presentation.TransitionTo(label, {'opacity':1}));

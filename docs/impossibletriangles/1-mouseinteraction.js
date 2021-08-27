@@ -16,8 +16,8 @@ function raycastMouseTo2D(three, callback, canvasX, canvasY){
         
         //todo: account for devicePixelRatio changing
 
-        let twodX = ( canvasX * window.devicePixelRatio / canvasHeight) * 2 - 1; //-1 to 1
-        let twodY = 1 - ( canvasY * window.devicePixelRatio / canvasHeight) * 2; //-1 to 1 but reversed
+        let twodX = ( canvasX / canvasWidth) * 2 - 1; //-1 to 1
+        let twodY = 1 - ( canvasY / canvasHeight) * 2; //-1 to 1 but reversed
 
         raycaster.setFromCamera( new THREE.Vector2(twodX, twodY), three.camera );
         let intersections = raycaster.intersectObject( perpendicularRectangle );

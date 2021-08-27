@@ -1,4 +1,4 @@
-import {triangleLineColor, triangleGrabbableCornerColor, rColor, sColor, tColor} from "./colors.js"
+import {triangleLineColor, triangleNonGrabbableCornerColor, rColor, sColor, tColor} from "./colors.js"
 
 import {constructEXPEllipticCurve} from "./3-makeellipticcurve.js";
 
@@ -15,7 +15,7 @@ export function makeIntroObjects(){
     window.shinyTriangle = new EXP.Array({data: [0,1,2,0]});
     let getTrianglePoints = shinyTriangle.add(new EXP.Transformation({'expr':(i,t,index) => points[index]}))
     getTrianglePoints.add(new EXP.LineOutput({opacity:1, color: triangleLineColor})); //line between the triangles
-    getTrianglePoints.add(new EXP.PointOutput({opacity:1, color: triangleGrabbableCornerColor, width:0.4})); //line between the triangles
+    getTrianglePoints.add(new EXP.PointOutput({opacity:1, color: triangleNonGrabbableCornerColor, width:0.4})); //line between the triangles
 
     //abuse of javascript: this transformation is doing nothing but setting points, so that it stops when shinyTriangle stops being updated
     //todo: not error

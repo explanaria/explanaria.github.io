@@ -469,13 +469,14 @@ async function animate(){
     
 	additionLine.revealSelf(presentation);
 
-	await EXP.delay(1000);
+	await EXP.delay(750);
 
 	//draw 3rd point
 	//animate a fancy point appear animation
 	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width:pointSize*3},400);
 	await presentation.delay(400);
 	presentation.TransitionTo(ellipticAdditionResultOutput,{opacity:1, width:pointSize},400);
+
 	await presentation.nextSlide();
     //reflect
 

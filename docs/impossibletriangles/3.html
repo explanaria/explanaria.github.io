@@ -3,9 +3,11 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
-  <title>Explanarian - Impossible Triangles, Chapter 3: Elliptic Curves</title>
-  <meta content="Explanaria - Impossible Triangles, Chapter 3: Elliptic Curves" property="og:title" />
-  <meta content="https://explanaria.github.io/impossibletriangles/" property="og:url" />
+  <title>Explanaria - Impossible Triangles, Chapter 3: Elliptic Curves</title>
+  <meta content="Explanaria - The Case Of the Impossible Triangles" property="og:title" />
+  <meta content="https://explanaria.github.io/impossibletriangles/3" property="og:url" />
+  <meta content="Chapter 3: Elliptic Curves" property="og:description" />
+  <meta content="chap3.png" property="og:image" />
 
   <script src="../resources/build/explanaria-bundle.js"></script>
   <script type="module" src="./3.js"></script>
@@ -159,23 +161,22 @@
                 <br><a style="position:absolute;bottom:0.5em;left:0.5em;font-weight:bold;text-decoration:underline;" href="2.html">Previous Chapter</a>
             </div>
             <div class="exp-slide slideTextItem">
-                An elliptic curve is the set of solutions to the equation <kmath>y^2 = x^3 + px + q</kmath>, for some <kmath>p</kmath> and <kmath>q</kmath>. Depending on the exact values of <kmath>p</kmath> and <kmath>q</kmath>, the graph of an elliptic curve might look like one smooth curve, or two distinct parts.
+                An elliptic curve is the set of solutions to the equation <kmath>y^2 = x^3 + px + q</kmath>, for some choice of <kmath>p</kmath> and <kmath>q</kmath>. Depending on the exact values of <kmath>p</kmath> and <kmath>q</kmath>, the graph of an elliptic curve might look like one smooth curve, or two distinct parts.
 
                 <br><aside>(Technical note: For our purposes <kmath>x, y, p, </kmath> and <kmath>q</kmath> are all real numbers.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
-                In our case, we get a different curve for each value of <kmath>N</kmath>. When <kmath color="N">N=6</kmath>, for example, we get the curve <kmath>y^2 = x^3 - 36 x</kmath>, which I've graphed here.
+                In our case, we're interested in the equation <kmath>y^2 = x^3 - N^2 x</kmath>, which gives us a different curve for each value of <kmath>N</kmath>. When <kmath color="N">N=6</kmath>, for example, we get the curve <kmath>y^2 = x^3 - 36 x</kmath>, which I've graphed here.
 
             </div>
             <div class="exp-slide slideTextItem">
                 Here's the key idea: every triangle with area <kmath color="N">6</kmath> corresponds to a point <kmath>(x,y)</kmath> on this curve.
-
             </div>
             <div class="exp-slide slideTextItem">
                 Here's how to convert triangles into points on this curve. First, let's start with this rational triangle with area <kmath color="N">6</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
-                From this triangle, we can compute <kmath>r^2, s^2</kmath> and <kmath>t^2</kmath>.
+                From this triangle, we can compute the areas of the three squares we saw in the previous chapter, <kmath>r^2, s^2</kmath> and <kmath>t^2</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
                 During our algebra, we renamed <kmath>s^2</kmath> to <kmath>x</kmath>.
@@ -183,7 +184,7 @@
             <div class="exp-slide slideTextItem">
                 And finally, we can use that <kmath>x</kmath> to plot a point on this elliptic curve.
 
-                <br>As long as the triangle has area <kmath>6</kmath>, we're guaranteed to get a point on this elliptic curve.
+                <br>As long as the triangle we started with has area <kmath color="N">6</kmath>, this process is guaranteed to result in a point on this elliptic curve.
             </div>
             <div class="exp-slide slideTextItem">We can work backwards, too: if we find an <kmath>x</kmath>, we can compute <kmath>r^2, s^2, t^2</kmath>, which can be turned into a triangle with area <kmath>N</kmath>.  
 
@@ -229,7 +230,7 @@
                 <br>That's good for us - remember, each rational point on this elliptic curve corresponds to a rational-sided triangle with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
-                In other words, by using elliptic curve addition, once we find one rational triangle with area <kmath color="N">6</kmath>, we can generate new triangles with area <kmath color="N">6</kmath>! Here's how: convert our triangle into a point <kmath>P_1</kmath> on an elliptic curve. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>. Finally, <kmath>P_1 + P_1</kmath> can be converted into a triangle with area <kmath color="N">6</kmath>!
+                In other words, by using elliptic curve addition, once we find one rational triangle with area <kmath color="N">6</kmath>, we can generate new triangles with area <kmath color="N">6</kmath>! Here's how: first, find the point <kmath>P_1</kmath> on an elliptic curve which corresponds to your triangle. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>, and that point's corresponding triangle will be a new rational triangle with area <kmath color="N">6</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
                 Let's find <kmath>P_1 + P_1</kmath> by following the same elliptic curve addition recipe. The math guarantees <kmath>P_1 + P_1</kmath> is point on the elliptic curve, but we might need to zoom out a bit to see it.

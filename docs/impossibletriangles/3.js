@@ -343,10 +343,27 @@ async function setup(){
 	staticObjects.forEach(i => i.activate(0));
 }
 
+function setupGoat(presentation){
+    //analytics
+    document.addEventListener('visibilitychange', function(e) {
+        if (window.goatcounter === undefined)return;
+        if (document.visibilityState !== 'hidden')
+            return
+        if (goatcounter.filter())
+            return
+        navigator.sendBeacon(goatcounter.url({
+            event: true,
+            title: location.pathname + location.search + " unloaded on slide " + presentation.currentSlideIndex,
+            path: function(p) { return 'unload-' + p + '-slide-'+presentation.currentSlideIndex },
+        }))
+    })
+}
+
 async function animate(){
 
     let presentation = new EXP.UndoCapableDirector();
     await presentation.begin();
+    setupGoat(presentation);
 
     //presentation.TransitionTo(mainCurveProjection, {'expr':(i,t,x,y) => [x+5,y+5]}, 1000);
     mainCurveObjects.forEach(object => object.getDeepestChildren().forEach( async (output) => {
@@ -668,9 +685,6 @@ async function animate(){
     await presentation.nextSlide();
     await presentation.nextSlide();
     await presentation.nextSlide();
-    
-    
-
 }
 window.addEventListener("load",function(){
     setup();

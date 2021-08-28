@@ -16,6 +16,15 @@
     padding: 0.5em 1.5em;
 }
 
+.slideTextItem br{
+    margin-bottom: 0.75em;
+}
+.slideTextItem aside{
+    display: inline;
+    font-size: 80%;
+    opacity: 0.8;
+}
+
 .nextChapterLink{
     position:absolute;
     bottom:0.5em;
@@ -99,16 +108,6 @@
 }
 
 
-.slideTextItem br{
-    margin-bottom: 0.75em;
-}
-.slideTextItem aside{
-    display: inline;
-    font-size: 80%;
-    opacity: 0.8;
-}
-
-
 html{
     overflow-y: hidden !important; /* hide weird second scrollbar on chrome */
 }
@@ -165,40 +164,16 @@ html{
     font-size: 1.5em;
 }
 
-/*these may seem the same, but they're responsive differently on mobile. FullscreenShortPopup doesn't shrink when the window gets small, but fullscreenText does. */
-.fullscreenShortPopup{
-    font-size: 2.5em;
-}
-.fullscreenText{
-    font-size: 2.5em;
-}
-
-.fullscreenText, .fullscreenShortPopup{
-    background-color: rgba(255,255,255,0.8);
-    pointer-events: none;
-    font-family: "Computer Modern Serif";
-    margin: 0;
-    padding: 1em;
-    width:100%;
-    top: 0%;
-    z-index: 1;
-}
-
 .coverBG{
     background-color: rgba(255,255,255,0.9);
     z-index: 1;
 }
 
-.fullscreenText h1, .fullscreenShortPopup h1, .threeDPartHeader h1
-{
+.threeDPartHeader h1{
     font-size: 150%;
     text-align: center;  
 }
-.fullscreenText .columns{
-    line-height: 1.2; 
-}
-
-.fullscreenText aside, .fullscreenShortPopup aside, .threeDPartHeader aside{
+.threeDPartHeader aside{
     font-size: 70%;
 }
 
@@ -210,16 +185,6 @@ html{
     opacity:1; 
     transition: opacity 0.75s ease-in-out;
 }
-/* used in 5 */
-
-.relativePos{
-    position: relative;
-}
-.absolutePos{
-  position: absolute;
-  top:0px;
-  width:100%;
-}
 
 
 .threeDPartHeader{
@@ -230,14 +195,13 @@ html{
     padding: 1em;
 }
 
-/* used in bonuses */
 ul {
     list-style: disc;
     padding-left: 1em;
 }
 
 
-@media screen and (max-height:600px){
+@media screen and (max-height:600px) and (min-width:600px){
 
     body{
         font-size: 12px;
@@ -257,16 +221,6 @@ ul {
         border-top: none;
         border-left: 1px solid #ccc;
     }
-
-    /* used in 3 */
-
-    .fullscreenText{
-        font-size: 1.3em;
-    }
-
-    .fullscreenShortPopup{
-        font-size: 3em;
-    }
    
     .threeDPartHeader{
         padding: 0.25em;
@@ -277,13 +231,6 @@ ul {
 
 
 @media screen and (max-width:600px){
-    .fullscreenText{
-        font-size: 1.3em;
-    }
-
-    .fullscreenShortPopup{
-        font-size: 3em;
-    }
     .threeDPartHeader{
         font-size: 1em;
     }

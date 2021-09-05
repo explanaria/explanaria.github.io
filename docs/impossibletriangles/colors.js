@@ -10,18 +10,18 @@ export const triangleNonGrabbableCornerColor =  new THREE.Color(0x444444);
 
 
 //2 colors
-let rColor = new THREE.Color("hsl(0, 80%, 50%)");0x00ff55;
-let sColor = new THREE.Color("hsl(120, 80%, 50%)");0x4488ff;
-let tColor = new THREE.Color("hsl(240, 80%, 50%)");0x55ff00;
+let rColor = new THREE.Color("hsl(0, 80%, 40%)");0x00ff55;
+let sColor = new THREE.Color("hsl(120, 80%, 40%)");0x4488ff;
+let tColor = new THREE.Color("hsl(240, 80%, 40%)");0x55ff00;
 let twoNColor = new THREE.Color("hsl(300, 50%, 50%)");0xff66ff;
 
 let white = new THREE.Color("white");
 let black = new THREE.Color("black");
 
 
-let yColor = new THREE.Color("hsl(180, 50%, 50%)");
-let xColor = new THREE.Color("hsl(60, 50%, 50%)");
-let zColor = new THREE.Color("hsl(240, 50%, 50%)");
+let yColor = new THREE.Color("hsl(180, 50%, 40%)");
+let xColor = new THREE.Color("hsl(40, 50%, 40%)");
+let zColor = new THREE.Color("hsl(240, 50%, 40%)");
 
 let gridColor = new THREE.Color(0xcccccc);
 

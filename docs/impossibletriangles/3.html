@@ -64,25 +64,31 @@
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-26">
             <h1>The BSD Conjecture</h1>
             <p>(Prize for proof: $1,000,000. Unsolved!)</p>
-            <br>"Algebraic Rank" of elliptic curve: Measures "how infinite" the number of rational points is.
-            <br>"Analytic Rank" of elliptic curve: Measures # of solutions using different types of numbers
+            <br><kmath color="s">\text{Algebraic Rank}</kmath> of elliptic curve: Measures "how infinite" the number of rational points is.
         </div>
 
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-27">
             <h1>The BSD Conjecture</h1>
             <p>(Prize for proof: $1,000,000. Unsolved!)</p>
-            <br>For any elliptic curve:
-            <br>"Algebraic rank" = "Analytic rank"
+            <br><kmath color="s">\text{Algebraic Rank}</kmath> of elliptic curve: Measures "how infinite" the number of rational points is.
+            <br><kmath color="r">\text{Analytic Rank}</kmath> of elliptic curve: Measures # of solutions using different types of numbers
         </div>
 
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-29">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-28">
+            <h1>The BSD Conjecture</h1>
+            <p>(Prize for proof: $1,000,000. Unsolved!)</p>
+            <br>For any elliptic curve:
+            <br><kmath color="s">\text{Algebraic Rank}</kmath> <b>=</b> <kmath color="r">\text{Analytic Rank}</kmath>
+        </div>
+
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-30">
             <h1>Tunnell's Theorem (1983)</h1>
                 <br>
                 Solves the congruent number problem using deep properties of <kmath>y^2 = x^3 - N^2 x</kmath>!
                 <br><kmath>N </kmath> is a congruent number if...
         </div>
             
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-30" >
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-31" >
             <h1>Tunnell's Theorem (1983)</h1>
                 <br>
                 <div class="columns tunnell-container">
@@ -98,27 +104,27 @@
                 <p> If so, <kmath>N</kmath> is a congruent number! Otherwise, <kmath>N</kmath> isn't!</p>
         </div>
 
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-31" >
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-32" >
             <h1>But why does that mean <kmath>N</kmath> is a congruent number?</h1>
         </div>
 
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-32" >
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-33" >
             <h1>But why does that mean <kmath>N</kmath> is a congruent number?</h1>
             <p>If Tunnel's criterion is false, <kmath>y^2 = x^3 - N^2 x</kmath> has no rational solutions.
             <p>No rational solutions means no triangles with area <kmath>N</kmath>.
         </div>
 
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-33">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-34">
             <h1>So the congruent number problem is solved!</h1>
         </div>
 
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-34">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-35">
             <h1>So the congruent number problem is solved!</h1>
             <br>Except...
             <br>Tunnell's proof assumes the BSD conjecture is true. The million-dollar, <b>unsolved</b> conjecture.
         </div>
 
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-37">
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-38">
 
                         <h1>The Case of the Impossible Triangles</h1>
                         <br>August 2021
@@ -201,7 +207,7 @@
                 Another reason elliptic curves are useful is they have a special property: you can generate new solutions <kmath>(x,y)</kmath> from old ones!
             </div>
             <div class="exp-slide slideTextItem">
-                Let's say we found two rational points on this curve. Elliptic curves allow you to define a way to "add" two rational points on the curve, and get another, different rational point on the curve!
+                Let's say we found two rational points <kmath>P_1</kmath> and <kmath>P_2</kmath> on this curve. Elliptic curves allow you to define a way to "add" two rational points on the curve, and get another, different rational point on the curve!
 
                 <br>For us, this means once we find one rational triangle with area <kmath>N</kmath>, we can use the elliptic curve to generate more rational triangles with area <kmath>N</kmath>!
             </div>
@@ -209,7 +215,7 @@
                 Here's the recipe for "adding" two points <kmath>P_1</kmath> and <kmath>P_2</kmath> on an elliptic curve:
                 <br>
                 <ul>
-                    <li>Step 1: First, draw a line through <kmath>P_1</kmath> and <kmath>P_2</kmath>. Because of how elliptic curves are defined, This line will always* intersect the curve in a third point.</li>
+                    <li>Step 1: First, draw a line through <kmath>P_1</kmath> and <kmath>P_2</kmath>. Because of how elliptic curves are defined, this line will always* intersect the curve in a third point.</li>
                 <ul>
                 <aside>(* Technically, vertical lines don't intersect the curve in three points, but mathematicians use a tool called the "projective plane" to take care of those cases.)</aside>
             </div>
@@ -266,14 +272,21 @@
             </div>
 
             <div class="exp-slide slideTextItem">
-                Here's a very quick summary of the BSD conjecture. The BSD conjecture connects many different ways to study elliptic curves in the form of two numbers. One approach is the one we took: studying rational points on the elliptic curve, and using elliptic curve addition to generate more. Using this point-adding approach, you can define a number called the "algebraic rank" of an elliptic curve which measures whether or not the number of rational points is infinite.
+                A quick summary of the BSD conjecture, part 1:
+                <br>One approach to studying elliptic curves is the one we took: studying rational points on the elliptic curve, and using elliptic curve addition to generate more points. Mathematicians answer the question "Are there infinitely many rational points?" using a number called the <kmath color="s">\text{algebraic rank}</kmath> of an elliptic curve, which measures whether or not the number of rational points is infinite.
+            </div>
 
-                <br>But it's also possible to study elliptic curves using other fields of math, such as complex analysis and studying infinite series. By using tools from those fields to study elliptic curves, you can define a second number called the "analytic rank" of an elliptic curve.
+            <div class="exp-slide slideTextItem">
+                A quick summary of the BSD conjecture, part 2:
+                <br>
+                But there's also a second popular approach for studying elliptic curves we haven't mentioned. It uses techniques from completely different areas of math than what we've seen - in a nutshell, it involves using mathematical tools from complex analysis and number theory and turning elliptic curves into functions with fancy names such as "L-functions".
+
+                <br>But what's important is that using these analytic techniques, we can define an important number called the <kmath color="r">\text{analytic rank}</kmath> of an elliptic curve.
             </div>
 
 
             <div class="exp-slide slideTextItem">
-                The BSD conjecture says that these two ways to measure the rank of a curve - one which comes from the elliptic curve addition we've been working with this entire time, and one which comes from completely different mathematical fields - are measuring the same thing. And that, I think, is pretty beautiful.
+                The BSD conjecture says that these two important numbers associated with an elliptic curve - <kmath color="s">\text{one}</kmath> which comes from the elliptic curve addition we've been working with this entire time, and <kmath color="r">\text{one}</kmath> which comes from completely different mathematical fields - are equal. These completely different mathematical techniques attack elliptic curves from two different angles, and somehow end up measuring the same thing. And that, I think, is pretty beautiful.
             </div>
 
             <div class="exp-slide slideTextItem">
@@ -310,7 +323,7 @@
             <div class="exp-slide slideTextItem">
                That's right - it's our friend the BSD conjecture. Tunnell's theorem solves the congruent number problem... assuming the BSD conjecture. The proof of Tunnell's theorem uses techniques which are only valid if the BSD conjecture is true. And nobody has proved the BSD conjecture yet.
 
-            <br>There's lots of evidence the BSD conjecture is true. But until someone proves the BSD conjecture and collects that million-dollar prize, there's always the possibility his proof will come crashing down.
+            <br>There's lots of evidence suggesting the BSD conjecture is true. But until someone proves the BSD conjecture and collects that million-dollar prize, there's always the possibility Tunnell's proof will come crashing down.
             </div>
 
             <div class="exp-slide slideTextItem">

@@ -685,6 +685,7 @@ async function animate(){
     await presentation.nextSlide();
     await presentation.nextSlide();
     await presentation.nextSlide();
+    await presentation.nextSlide();
 }
 window.addEventListener("load",function(){
     setup();

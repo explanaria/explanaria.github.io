@@ -91,8 +91,7 @@ ThreeasyEnvironment.prototype.onPageLoad = function() {
 	if(this.shouldCreateCanvas){
 		document.body.appendChild( this.container );
 	}
-
-	this.start();
+    window.setTimeout(this.start.bind(this), 1); //run start only after any async functions have been called
 }
 ThreeasyEnvironment.prototype.start = function(){
 	this.prev_timestep = performance.now();
@@ -244,7 +243,7 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 
 		this.capturer.start();
 		this.rendering = true;
-		this.render();
+		window.requestAnimationFrame(this.render.bind(this));
 	}
 	render(timestep){
         var realtimeDelta = 1/this.fps;//ignoring the true time, calculate the delta

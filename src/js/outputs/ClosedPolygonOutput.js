@@ -106,6 +106,16 @@ class ClosedPolygonOutput extends OutputNode{
         this.setAllVerticesToColor(this.color);
     }
 
+    computeBestFitPlane(){
+
+    //from https://www.ilikebigbits.com/2017_09_25_plane_from_points_2.html
+    }
+
+    projectTo2DPlane(x,y,z){
+        //throwing away z. todo: actually do a smart, dynamic projection. and not do that
+        return [x,y]
+    }
+
     triangulateAndGenerateFaces(){
 
         // this._vertices is an array where every 3 numbers represent an (x,y,z) triplet.
@@ -118,9 +128,11 @@ class ClosedPolygonOutput extends OutputNode{
         const numVerts = this.numCallsPerActivation;
         for(let i=0;i<numVerts;i++){
 
-            const projectedX = this._vertices[i*this._outputDimensions]; //vertex x
-            const projectedY = this._vertices[i*this._outputDimensions+1]; //vertex y, throwing away z. todo: actually do a smart, dynamic projection. and not do that
-            //const ignored = this._vertices[i*this._outputDimensions+2];
+            const x = this._vertices[i*this._outputDimensions];
+            const y = this._vertices[i*this._outputDimensions+1];
+            const z = this._vertices[i*this._outputDimensions+2];
+
+            const [projectedX, projectedY] = this.projectTo2DPlane(x,y,z);
     
             this._projected2DCoords[i*2] = projectedX;
             this._projected2DCoords[i*2+1] = projectedY;

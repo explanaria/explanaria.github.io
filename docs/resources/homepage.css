@@ -92,6 +92,8 @@
 } 
 .examplelink span{
     line-height: 0.5;
+    padding: 0px;
+    font-size: 80%;
 } 
 
 .examplepic{

@@ -9,7 +9,7 @@
 
     width:100%;
     max-width: 800px;
-    line-height: 1.1; /* give room for equations */
+    line-height: 1.2; /* give room for equations */
     margin: 0 auto;
     font-family: "Poppins",Arial,Helvetica,sans-serif;
     margin-bottom: 2.5em; /*dodge the next/back arrows */
@@ -156,7 +156,7 @@ html{
     width: 100%;
     overflow-y: auto;
     border-top: 1px solid #ccc;
-    line-height: 1.0;
+    line-height: 1.2;
     will-change: transform; /* recommended by chrome to ensure scrolling is smooth */
     font-size: 18px;
 }

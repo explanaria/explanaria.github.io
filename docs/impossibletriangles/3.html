@@ -77,7 +77,7 @@
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-28">
             <h1>The BSD Conjecture</h1>
             <p>(Prize for proof: $1,000,000. Unsolved!)</p>
-            <br>For any elliptic curve:
+            <br>For all elliptic curves:
             <br><kmath color="s">\text{Algebraic Rank}</kmath> <b>=</b> <kmath color="r">\text{Analytic Rank}</kmath>
         </div>
 
@@ -196,7 +196,7 @@
             </div>
             <div class="exp-slide slideTextItem">We can work backwards, too: if we find an <kmath>x</kmath> on the elliptic curve, we can compute <kmath>r^2, s^2, t^2</kmath>, which can be turned into a triangle with area <kmath>N</kmath>.  
 
-                <br><aside>(Technical note: if <kmath>x</kmath> isn't a square number, we need to use a different equation than <kmath>s^2 = x</kmath>; we can always turn <span class="rationalnumber">rational</span> points into <span class="rationalnumber">rational</span> triangles and vice versa, but other equations don't have the same nice geometric interpretations.)</aside>
+                <br><aside>(Technical note: if <kmath>x</kmath> isn't a square number, we need to use a different formula than <kmath>s^2 = x</kmath>. The other formula works for all <kmath>x</kmath>, but it's uglier and doesn't have a nice geometric interpretation, so I won't show it here.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 But more importantly: if we can find a point <kmath>(x,y)</kmath> on the elliptic curve where both <kmath>x</kmath> and <kmath>y</kmath> are <span class="rationalnumber">rational</span>, we can construct a <span class="rationalnumber">rational</span>-sided triangle with area <kmath color="N">6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
@@ -239,7 +239,7 @@
                 <br>That's good for us - remember, each <span class="rationalnumber">rational</span> point on this elliptic curve corresponds to a <span class="rationalnumber">rational</span>-sided triangle with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
-                In other words, by using elliptic curve addition, once we find one <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>, we can generate new <span class="rationalnumber">rational</span>triangles with area <kmath color="N">6</kmath>! Here's how: first, find the point <kmath>P_1</kmath> on an elliptic curve which corresponds to your triangle. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>, and that point's corresponding triangle will be a new <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>!
+                In other words, by using elliptic curve addition, once we find one <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>, we can generate new <span class="rationalnumber">rational</span> triangles with area <kmath color="N">6</kmath>! Here's how: first, find the point <kmath>P_1</kmath> on an elliptic curve which corresponds to your triangle. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>, and that point's corresponding triangle will be a new <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
                 Let's find <kmath>P_1 + P_1</kmath> by following the same elliptic curve addition recipe. The math guarantees <kmath>P_1 + P_1</kmath> is point on the elliptic curve, but we might need to zoom out a bit to see it.

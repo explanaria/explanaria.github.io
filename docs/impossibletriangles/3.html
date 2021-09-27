@@ -48,11 +48,11 @@
         </div>
 
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-23">
-            <h1>Will adding a rational point to itself, repeatedly, create infinitely many rational points?</h1>
+            <h1>Will adding a <span class="rationalnumber">rational</span> point to itself, repeatedly, create infinitely many <span class="rationalnumber">rational</span> points?</h1>
         </div>
 
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-24">
-            <h1>Will adding a rational point to itself, repeatedly, create infinitely many rational points?</h1>
+            <h1>Will adding a <span class="rationalnumber">rational</span> point to itself, repeatedly, create infinitely many <span class="rationalnumber">rational</span> points?</h1>
             <br>There's a million-dollar unsolved problem about this!
         </div>
 
@@ -64,13 +64,13 @@
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-26">
             <h1>The BSD Conjecture</h1>
             <p>(Prize for proof: $1,000,000. Unsolved!)</p>
-            <br><kmath color="s">\text{Algebraic Rank}</kmath> of elliptic curve: Measures "how infinite" the number of rational points is.
+            <br><kmath color="s">\text{Algebraic Rank}</kmath> of elliptic curve: Measures "how infinite" the number of <span class="rationalnumber">rational</span> points is.
         </div>
 
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-27">
             <h1>The BSD Conjecture</h1>
             <p>(Prize for proof: $1,000,000. Unsolved!)</p>
-            <br><kmath color="s">\text{Algebraic Rank}</kmath> of elliptic curve: Measures "how infinite" the number of rational points is.
+            <br><kmath color="s">\text{Algebraic Rank}</kmath> of elliptic curve: Measures "how infinite" the number of <span class="rationalnumber">rational</span> points is.
             <br><kmath color="r">\text{Analytic Rank}</kmath> of elliptic curve: Measures # of solutions using different types of numbers
         </div>
 
@@ -110,8 +110,8 @@
 
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-33" >
             <h1>But why does that mean <kmath>N</kmath> is a congruent number?</h1>
-            <p>If Tunnel's criterion is false, <kmath>y^2 = x^3 - N^2 x</kmath> has no rational solutions.
-            <p>No rational solutions means no triangles with area <kmath>N</kmath>.
+            <p>If Tunnel's criterion is false, <kmath>y^2 = x^3 - N^2 x</kmath> has no <span class="rationalnumber">rational</span> solutions.
+            <p>No <span class="rationalnumber">rational</span> solutions means no triangles with area <kmath>N</kmath>.
         </div>
 
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-34">
@@ -167,49 +167,51 @@
                 <br>(Elliptic curves are different from ellipses. They were first named "elliptic" because similar equations appear when trying to find the perimeter of an ellipse.)
             </div>
             <div class="exp-slide slideTextItem">
-                An elliptic curve is the set of solutions to the equation <kmath>y^2 = x^3 + px + q</kmath>, for some choice of <kmath>p</kmath> and <kmath>q</kmath>. Depending on the exact values of <kmath>p</kmath> and <kmath>q</kmath>, the graph of an elliptic curve might look like one smooth curve, or two distinct parts.
+                An elliptic curve is the curve drawn by all possible pairs of numbers <kmath>(x,y)</kmath> which solve the equation <kmath>y^2 = x^3 + px + q</kmath>, defined by some choice of numbers <kmath>p</kmath> and <kmath>q</kmath>. Depending on the exact values of <kmath>p</kmath> and <kmath>q</kmath>, the graph of an elliptic curve might look like one smooth curve, or two distinct parts.
 
                 <br><aside>(Technical note: For our purposes <kmath>x, y, p, </kmath> and <kmath>q</kmath> are all real numbers.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
-                In our case, we're interested in the equation <kmath>y^2 = x^3 - N^2 x</kmath>, which gives us a different curve for each value of <kmath>N</kmath>. When <kmath color="N">N=6</kmath>, for example, we get the curve <kmath>y^2 = x^3 - 36 x</kmath>, which I've graphed here.
+                In our case, we're interested in the equation <kmath>y^2 = x^3 - N^2 x</kmath>, which gives us a different curve for each value of <kmath>N</kmath>. When <kmath color="N">N=6</kmath>, for example, we get the curve <kmath>y^2 = x^3 - </kmath><kmath color="N">36 x</kmath>, which I've graphed here.
 
             </div>
             <div class="exp-slide slideTextItem">
                 Here's the key idea: every triangle with area <kmath color="N">6</kmath> corresponds to a point <kmath>(x,y)</kmath> on this curve.
             </div>
             <div class="exp-slide slideTextItem">
-                Here's how to convert triangles into points on this curve. First, let's start with this rational triangle with area <kmath color="N">6</kmath>.
+                Here's how to convert triangles into points on this curve. First, let's start with this <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
                 From this triangle, we can compute the areas of the three squares we saw in the previous chapter, <kmath>r^2, s^2</kmath> and <kmath>t^2</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
-                During our algebra, we renamed <kmath>s^2</kmath> to <kmath>x</kmath>.
+                During our algebra last chapter, we decided to take <kmath>s^2</kmath> and rename it to <kmath>x</kmath>.
+
+                <br><aside>Once we know <kmath>x</kmath>, we can also use the equation <kmath>y^2 = x^3 - </kmath><kmath color="N">36 x</kmath> to compute a number <kmath>y</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
                 And finally, we can use that <kmath>x</kmath> to plot a point on this elliptic curve.
 
                 <br>As long as the triangle we started with has area <kmath color="N">6</kmath>, this process is guaranteed to result in a point on this elliptic curve.
             </div>
-            <div class="exp-slide slideTextItem">We can work backwards, too: if we find an <kmath>x</kmath>, we can compute <kmath>r^2, s^2, t^2</kmath>, which can be turned into a triangle with area <kmath>N</kmath>.  
+            <div class="exp-slide slideTextItem">We can work backwards, too: if we find an <kmath>x</kmath> on the elliptic curve, we can compute <kmath>r^2, s^2, t^2</kmath>, which can be turned into a triangle with area <kmath>N</kmath>.  
 
-                <br><aside>(Technical note: if <kmath>x</kmath> isn't a square number, we need to use a different equation than <kmath>s^2 = x</kmath>; we can always turn rational points into rational triangles and vice versa, but other equations don't have the same nice geometric interpretations.)</aside>
+                <br><aside>(Technical note: if <kmath>x</kmath> isn't a square number, we need to use a different equation than <kmath>s^2 = x</kmath>; we can always turn <span class="rationalnumber">rational</span> points into <span class="rationalnumber">rational</span> triangles and vice versa, but other equations don't have the same nice geometric interpretations.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
-                But more importantly: if we can find a point <kmath>(x,y)</kmath> where both <kmath>x</kmath> and <kmath>y</kmath> are <u>rational</u>, we can construct a <u>rational</u> triangle with area <kmath color="N">6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
+                But more importantly: if we can find a point <kmath>(x,y)</kmath> on the elliptic curve where both <kmath>x</kmath> and <kmath>y</kmath> are <span class="rationalnumber">rational</span>, we can construct a <span class="rationalnumber">rational</span>-sided triangle with area <kmath color="N">6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
             </div>
             <div class="exp-slide slideTextItem">
-                Therefore, we've turned the problem of "is <kmath>N</kmath> a congruent number?" into "Does the equation <kmath>y^2 = x^3 - N^2 x</kmath> have any pairs of rational numbers <kmath>(x,y)</kmath> which solve the equation?"
-                <br>That's great for us - mathematicians have years of experience finding solutions to equations!
+                Therefore, we've turned the problem of "is <kmath>N</kmath> a congruent number?" into "Does the equation <kmath>y^2 = x^3 - N^2 x</kmath> have any pairs of <span class="rationalnumber">rational</span> numbers <kmath>(x,y)</kmath> which solve the equation?"
+                <br>That's great for us - mathematicians have years of experience finding solutions to equations! Now we can use their techniques.
             </div>
             <div class="exp-slide slideTextItem">
                 Another reason elliptic curves are useful is they have a special property: you can generate new solutions <kmath>(x,y)</kmath> from old ones!
             </div>
             <div class="exp-slide slideTextItem">
-                Let's say we found two rational points <kmath>P_1</kmath> and <kmath>P_2</kmath> on this curve. Elliptic curves allow you to define a way to "add" two rational points on the curve, and get another, different rational point on the curve!
+                Let's say we found two <span class="rationalnumber">rational</span> points <kmath>P_1</kmath> and <kmath>P_2</kmath> on this curve. Elliptic curves allow you to define a way to "add" two <span class="rationalnumber">rational</span> points on the curve, and get another, different <span class="rationalnumber">rational</span> point on the curve!
 
-                <br>For us, this means once we find one rational triangle with area <kmath>N</kmath>, we can use the elliptic curve to generate more rational triangles with area <kmath>N</kmath>!
+                <br>For us, this means once we find one <span class="rationalnumber">rational</span> triangle with area <kmath>N</kmath>, we can use the elliptic curve to generate more <span class="rationalnumber">rational</span> triangles with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">
                 Here's the recipe for "adding" two points <kmath>P_1</kmath> and <kmath>P_2</kmath> on an elliptic curve:
@@ -232,21 +234,22 @@
                 What if <kmath>P_1</kmath> and <kmath>P_2</kmath> are the same point? No problem! Step 1 is slightly different when adding <kmath>P_1 + P_1</kmath>: the line you draw is the tangent line to the curve. But everything still works out - we get a new point on the curve.
             </div>
             <div class="exp-slide slideTextItem">      
-                Elliptic curve addition obeys many of the same rules as normal addition. In particular, if you add two rational <span style="text-decoration: line-through">numbers</span> points, you get another rational <span style="text-decoration: line-through">number</span> point.
-                <br>That's good for us - remember, each rational point on this elliptic curve corresponds to a rational-sided triangle with area <kmath>N</kmath>!
+                Elliptic curve addition obeys many of the same rules as normal addition: Add two <span class="crossedout">numbers</span> points, and you'll get another <span class="crossedout">number</span> point. 
+                <br>Interestingly, just like normal addition, if you add two <span class="rationalnumber">rational</span> <span class="crossedout">numbers</span> points, you're guaranteed to get another <span class="rationalnumber">rational</span> <span class="crossedout">number</span> point.
+                <br>That's good for us - remember, each <span class="rationalnumber">rational</span> point on this elliptic curve corresponds to a <span class="rationalnumber">rational</span>-sided triangle with area <kmath>N</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
-                In other words, by using elliptic curve addition, once we find one rational triangle with area <kmath color="N">6</kmath>, we can generate new triangles with area <kmath color="N">6</kmath>! Here's how: first, find the point <kmath>P_1</kmath> on an elliptic curve which corresponds to your triangle. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>, and that point's corresponding triangle will be a new rational triangle with area <kmath color="N">6</kmath>!
+                In other words, by using elliptic curve addition, once we find one <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>, we can generate new <span class="rationalnumber">rational</span>triangles with area <kmath color="N">6</kmath>! Here's how: first, find the point <kmath>P_1</kmath> on an elliptic curve which corresponds to your triangle. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>, and that point's corresponding triangle will be a new <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
                 Let's find <kmath>P_1 + P_1</kmath> by following the same elliptic curve addition recipe. The math guarantees <kmath>P_1 + P_1</kmath> is point on the elliptic curve, but we might need to zoom out a bit to see it.
             </div>
             <div class="exp-slide slideTextItem">     
-                Those are some big coordinates. But what matters is that <kmath>P_1 + P_1</kmath>'s coordinates are big <b>rational</b> numbers, meaning we can turn this point into a new valid rational triangle with area <kmath color="N">6</kmath>! 
+                Those are some big numbers. But what matters is that <kmath>P_1 + P_1</kmath>'s coordinates are big <span class="rationalnumber">rational</span> numbers, meaning we can turn this point into a new valid <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>! 
                 <br>It would have taken a long time to find this skinny triangle by brute force. Elliptic curve addition is powerful.
             </div>
             <div class="exp-slide slideTextItem">      
-                We can keep going! We can compute <kmath>P_1 + P_1 + P_1</kmath> by adding <kmath>P_1</kmath> to <kmath>(P_1 + P_1)</kmath>. Following the recipe, we draw the line between <kmath>(P_1 + P_1)</kmath> and <kmath>P_1</kmath>, flip the point over the y-axis, and find a third point. This point gives us yet another rational triangle with area <kmath color="N">6</kmath>!
+                We can keep going! We can compute <kmath>P_1 + P_1 + P_1</kmath> by adding <kmath>P_1</kmath> to <kmath>(P_1 + P_1)</kmath>. Following the recipe, we draw the line between <kmath>(P_1 + P_1)</kmath> and <kmath>P_1</kmath>, flip the point over the y-axis, and find a third point. This point gives us yet another <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>!
             </div>
             <div class="exp-slide slideTextItem">
                 By the way, modern encryption is built around adding points on elliptic curves!
@@ -255,15 +258,15 @@
             </div>
 
             <div class="exp-slide slideTextItem">
-                We've now seen <kmath>P_1</kmath>, <kmath>(P_1 + P_1)</kmath>, and <kmath>(P_1 + P_1 + P_1)</kmath>, and they're all different rational points. It seems like each time we add <kmath>P_1</kmath> to itself some number of times, we get a new point. 
+                We've now seen <kmath>P_1</kmath>, <kmath>(P_1 + P_1)</kmath>, and <kmath>(P_1 + P_1 + P_1)</kmath>, and they're all different <span class="rationalnumber">rational</span> points. It seems like each time we add <kmath>P_1</kmath> to itself some number of times, we get a new point. 
 
-                <br>If we keep adding <kmath>P_1</kmath> to itself forever, will we create infinitely many rational points? Or will we eventually run out of new points and start visiting points we've already been to?
+                <br>If we keep adding <kmath>P_1</kmath> to itself forever, will we create infinitely many <span class="rationalnumber">rational</span> points? Or will we eventually run out of new points and start visiting points we've already been to?
 
-                <br>It's an interesting question. If the answer is "yes" and we generate infinitely many rational points, it'll prove there are infinitely many triangles with area <kmath>N</kmath>.
+                <br>It's an interesting question. If the answer is "yes" and we generate infinitely many <span class="rationalnumber">rational</span> points, it'll prove there are infinitely many triangles with area <kmath>N</kmath>.
             </div>
 
             <div class="exp-slide slideTextItem">
-                As it turns out, "Are there infinitely many rational points?" is a very interesting question. In fact, there's an unsolved problem about elliptic curves, called the BSD Conjecture, which is related to this exact question - and there's a million-dollar prize for the first person to prove it.
+                As it turns out, "Are there infinitely many <span class="rationalnumber">rational</span> points?" is a very interesting question. In fact, there's an unsolved problem about elliptic curves, called the BSD Conjecture, which is related to this exact question - and there's a million-dollar prize for the first person to prove it.
             </div>
             <div class="exp-slide slideTextItem">
                 The Birch and Swinnerton-Dyer Conjecture, or BSD Conjecture, is a deep unsolved conjecture about elliptic curves. If it's true (which seems very likely), it would create an incredibly deep connection between abstract algebra, number theory, complex analysis, and other branches of math.
@@ -273,7 +276,7 @@
 
             <div class="exp-slide slideTextItem">
                 A quick summary of the BSD conjecture, part 1:
-                <br>One approach to studying elliptic curves is the one we took: studying rational points on the elliptic curve, and using elliptic curve addition to generate more points. Mathematicians answer the question "Are there infinitely many rational points?" using a number called the <kmath color="s">\text{algebraic rank}</kmath> of an elliptic curve, which measures whether or not the number of rational points is infinite.
+                <br>One approach to studying elliptic curves is the one we took: studying <span class="rationalnumber">rational</span> points on the elliptic curve, and using elliptic curve addition to generate more points. Mathematicians answer the question "Are there infinitely many <span class="rationalnumber">rational</span> points?" using a number called the <kmath color="s">\text{algebraic rank}</kmath> of an elliptic curve, which measures whether or not the number of <span class="rationalnumber">rational</span> points is infinite.
             </div>
 
             <div class="exp-slide slideTextItem">
@@ -311,7 +314,7 @@
 
 
             <div class="exp-slide slideTextItem">
-                Here's why it works: Tunnell showed that if his criterion is invalid, it means the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> has no rational solutions. And as we've seen, no rational solutions on the elliptic curve means no rational triangles with area <kmath>N</kmath>.
+                Here's why it works: Tunnell showed that if his criterion is invalid, it means the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> has no <span class="rationalnumber">rational</span> solutions. And as we've seen, no <span class="rationalnumber">rational</span> solutions on the elliptic curve means no <span class="rationalnumber">rational</span> triangles with area <kmath>N</kmath>.
 
                 <br>By the way, we started with a geometry question about triangles, and now we're answering it using number theory. Isn't that interesting? Mathematicians love elliptic curves because they connect to so many different areas of math.
             </div>
@@ -327,7 +330,7 @@
             </div>
 
             <div class="exp-slide slideTextItem">
-               What a journey. We started with such a simple question: are there any triangles with rational sides and area <kmath color="N">30</kmath>? It took us to the three successive squares problem, and then to elliptic curves. There, we found out how a weird way to "add" points on elliptic curves lets us create new triangles with area <kmath color="N">30</kmath> out of old ones, and discovered at the heart of our problem lay a million-dollar unsolved conjecture called the BSD conjecture.
+               What a journey. We started with such a simple question: are there any triangles with <span class="rationalnumber">rational</span> sides and area <kmath color="N">30</kmath>? It took us to the three successive squares problem, and then to elliptic curves. There, we found out how a weird way to "add" points on elliptic curves lets us create new triangles with area <kmath color="N">30</kmath> out of old ones, and discovered at the heart of our problem lay a million-dollar unsolved conjecture called the BSD conjecture.
             </div>
 
             <div class="exp-slide slideTextItem">

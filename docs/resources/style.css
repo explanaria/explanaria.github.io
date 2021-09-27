@@ -75,9 +75,9 @@ body{
 		 1px -2px 1px rgb(255, 255, 255),
 		 2px -1px 1px rgb(255, 255, 255);
     */
-    --move-radius: 0.08rem;
-    --negative-move-radius: -0.08rem;
-    --blur-radius: 0.015rem;
+    --move-radius: max(0.08rem,1px);
+    --negative-move-radius: min(-0.08rem,-1px);
+    --blur-radius: max(0.015rem,1px);
     --outline-color: #fff;
     filter: drop-shadow(var(--move-radius) 0 var(--blur-radius) var(--outline-color))
             drop-shadow(0 var(--move-radius) var(--blur-radius) var(--outline-color)) 

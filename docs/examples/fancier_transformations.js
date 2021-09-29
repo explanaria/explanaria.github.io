@@ -66,7 +66,7 @@
 		await EXP.delay(3000);
 
 		//to the THIRD DIMENSION
-		EXP.TransitionTo(three.camera.position, {z: 2, x: 12.3});
+		EXP.TransitionTo(three.camera.position, {z: 2, x: 10.3});
 		await EXP.delay(5000);
 
 		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,(x*x+y*y*(y+Math.sin(t)/3))/5,y+Math.sin(t)]},1500, 0.1);

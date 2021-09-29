@@ -1,21 +1,26 @@
     //setup variable 'three' beforehand using EXP.setupThree() please
 
-    var controls, area, id, output;
+    var controls, area, grid, id, output;
     function init(){
+
 	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
+        controls.enableZoom = false;
 	    console.log("Loaded.");
 
-	    area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
+	    area = new EXP.Area({bounds: [[-5,6],[-5,5]], numItems: [11+1,20]});
 	    id = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
 	    output = new EXP.PointOutput({width:0.2});
 
-	    area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
+
+	    grid = new EXP.Area({bounds: [[-8,8],[-5,5]], numItems: [16+1,20]});
+	    grid.add(new EXP.PointOutput({width: 0.2, color:0xdddddd})); // grid
 
 	    area.add(id); //transformation -> output
 	    id.add(output);
 
 	    three.on("update",function(time){
 		    area.activate(time.t);
+            grid.activate(time.t);
 		    controls.update();
 	    });
     	animate();
@@ -43,7 +48,7 @@
 		await EXP.delay(5000);*/
 
 
-		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x*x/6 + y,0]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x*x/6 + y,0]},1000);
 		await EXP.delay(1000);
 
 		// bouncy circle
@@ -57,14 +62,14 @@
 		await EXP.delay(5000);
 
 		//folds up into something 3D
-		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),Math.abs(x)*3-9]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t)/1.5,(y+Math.sin(t*6))*Math.sin(x/4 + t),Math.abs(x)*2-4.5]});
 		await EXP.delay(3000);
 
 		//to the THIRD DIMENSION
-		EXP.TransitionTo(three.camera.position, {z: 2, x: 9.3});
+		EXP.TransitionTo(three.camera.position, {z: 2, x: 12.3});
 		await EXP.delay(5000);
 
-		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,(x*x+y*y*(y+Math.sin(t)/3))/5,y+Math.sin(t)]});
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,(x*x+y*y*(y+Math.sin(t)/3))/5,y+Math.sin(t)]},1500, 0.1);
 		await EXP.delay(5000);
 
 		//TransitionTo(three.camera.rotation, {y: Math.PI});
@@ -81,7 +86,7 @@
 		await EXP.delay(4000);
 
 
-		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(x+t),-(y*y/3)+Math.cos(x+t)+4]})
+		EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(x+t),(-(y*y/3)+Math.cos(x+t)+4)]})
 		await EXP.delay(4000);
 
 

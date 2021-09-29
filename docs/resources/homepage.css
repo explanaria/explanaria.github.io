@@ -7,19 +7,22 @@ margin: 0;
 .container{
 }
 #mainiframecontainer{
+    display: grid;
+    justify-content: center;
     max-height:800px;
-    height:60%;
-    width:80%;
+    max-width:800px;
+    height: min(50vw,60vh);
+    width: 60vw;
     margin: auto;
 }
 #mainiframe{
-    width:100%;
-    height:60vh; /* 60% of height */
+    width:60vw;
+    height:100%;
     border: none;
     margin: 0;
     overflow: hidden;
     border-bottom: 1px solid #ddd;
-
+    border-top: 1px solid #ddd;
 }
 .mainheader{
     background-color: #222;
@@ -167,4 +170,6 @@ margin: 0;
     .mainheader aside{
         font-size: 1.2em;
     }  
+    #mainiframecontainer{
+    }
 }

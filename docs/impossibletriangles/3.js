@@ -6,7 +6,9 @@ import {Dynamic3DText} from "./katex-labels.js";
 import {addColorToHTML, AutoColoring3DText, ColorSuccessiveNumbers3DText} from './2-addColorToHTMLMath.js';
 addColorToHTML();
 
-import {makeLabeledCurve, makeTriangle, makeFractionallyLabeledTriangle} from "./3-makethings.js"
+import {makeLabeledCurve, makeTriangle, makeFractionallyLabeledTriangle} from "./3-makethings.js";
+
+import "./presentationmode.js";
 
 const pointSize = 0.4;
 const pointColor = 0xff7070;

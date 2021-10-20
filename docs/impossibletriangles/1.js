@@ -8,7 +8,9 @@ addColorToHTML();
 
 import {vecScale, vecAdd, dist, distSquared, isInteger, roundPointIfCloseToInteger, roundToIntegerIfClose, roundPoint, roundCoord} from "./1-trianglemath.js"
 
-import {makeIntroObjects} from "./1-introShinies.js"
+import {makeIntroObjects} from "./1-introShinies.js";
+
+import "./presentationmode.js";
 
 window.fixedPoint = [-1,-1];
 window.startingTriangleDimensions = [10,6];

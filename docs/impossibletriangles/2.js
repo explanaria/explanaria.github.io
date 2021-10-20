@@ -1,6 +1,7 @@
 import {Dynamic3DText} from "./katex-labels.js";
 import {rColor, sColor, tColor, twoNColor, white, black, twoNTextColor} from "./colors.js";
 import {addColorToHTML, AutoColoring3DText} from './2-addColorToHTMLMath.js';
+import "./presentationmode.js";
 
 /*
 let a=1;

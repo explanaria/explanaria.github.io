@@ -18,6 +18,7 @@ export * from './js/outputs/PointOutput.js';
 export * from './js/outputs/VectorOutput.js';
 export * from './js/outputs/SurfaceOutput.js';
 export * from './js/outputs/FlatArrayOutput.js';
+export * from './js/outputs/ArrayofArraysOutput.js';
 export * from './js/outputs/ClosedPolygonOutput.js';
 
 export * from './js/Director.js';

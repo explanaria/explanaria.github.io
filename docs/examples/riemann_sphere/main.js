@@ -13,8 +13,12 @@ var embeddingTranslation = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y,z
 var embedding = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y,z]});
 
 
-var area = new EXP.Area({bounds: [[0.0001,10],[0,2*Math.PI]], numItems: 32});
+//green lines
+var area = new EXP.Area({bounds: [[0.0001,5],[0,2*Math.PI]], numItems: [41, 64]});
 var applyCylindricalCoords = new EXP.Transformation({'expr': (i,t,r,theta,z) => [r*Math.cos(theta),r*Math.sin(theta),z]});
+area.add(applyCylindricalCoords);
+var output2 = new EXP.LineOutput({width: 3, opacity: 0.4});
+applyCylindricalCoords.add(embeddingTranslation.makeLink()).add(embedding.makeLink()).add(output2);
 
 
 var unitcircle = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 40});
@@ -32,29 +36,25 @@ var axis2 = new EXP.Area({bounds: [[0,5]], numItems: 20})
 axis2.add(new EXP.Transformation({expr: (i,t,y) => [0,y,0]})).add(embeddingTranslation.makeLink()).add(embedding.makeLink()).add(new EXP.LineOutput({width:5, color: 0x000000}));
 axis2.add(new EXP.Transformation({expr: (i,t,y) => [0,-y,0]})).add(embeddingTranslation.makeLink()).add(embedding.makeLink()).add(new EXP.LineOutput({width:5, color: 0x000000}));
 
-area.add(applyCylindricalCoords);
-var output2 = new EXP.LineOutput({width: 3, opacity: 0.4});
-applyCylindricalCoords.add(embeddingTranslation.makeLink()).add(embedding.makeLink()).add(output2);
-
 
 
 var redcircle = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 40});
 redcircle
 	.add(new EXP.Transformation({'expr': (i,t,theta) => [0+1*Math.cos(theta),-1.5+1*Math.sin(theta),0]}))
     .add(embeddingTranslation.makeLink()).add(embedding.makeLink())
-	.add(new EXP.LineOutput({width:5, color: 0xff5555}));
+	.add(new EXP.LineOutput({width:5, color: 0xff5555, opacity: 0}));
 
 var bluecircle = new EXP.Area({bounds: [[0,3]], numItems: 30});
 bluecircle
     .add(new EXP.Transformation({'expr': (i,t, k) => [k*k*k]})) //concentrate points close to 0
 	.add(new EXP.Transformation({'expr': (i,t, k) => [k, -k,0]})) //top left half of line
     .add(embeddingTranslation.makeLink()).add(embedding.makeLink())
-	.add(new EXP.LineOutput({width:5, color: 0x5555ff}));
+	.add(new EXP.LineOutput({width:5, color: 0x5555ff, opacity: 0}));
 bluecircle
     .add(new EXP.Transformation({'expr': (i,t, k) => [k*k*k]})) //concentrate points close to 0
 	.add(new EXP.Transformation({'expr': (i,t, k) => [-k, k,0]})) //bottom right half of line
     .add(embeddingTranslation.makeLink()).add(embedding.makeLink())
-	.add(new EXP.LineOutput({width:5, color: 0x5555ff}));
+	.add(new EXP.LineOutput({width:5, color: 0x5555ff, opacity: 0}));
 
 //add some text labels
 let knownPoints = [[0,0], [0,1], [1,0],[-1,0],[0,-1], [999,0], [-999,0]]
@@ -101,7 +101,7 @@ async function animate(){
 	await presentation.nextSlide();
 
 	//to THE THIRD DIMENSION
-	presentation.TransitionTo(three.camera.position, {'x':0,'y':-8,'z':2})
+	presentation.TransitionTo(three.camera.position, {'x':0,'y':-6,'z':2})
 	presentation.TransitionTo(three.camera.rotation, {'x':1.325,'y':0,'z':0})
 
 	await presentation.delay(1500);
@@ -122,7 +122,14 @@ async function animate(){
 
     
 	await presentation.nextSlide();
+    redcircle.getDeepestChildren().forEach(async (output) =>
+        await presentation.TransitionTo(output, {"opacity":1})
+    );
+    bluecircle.getDeepestChildren().forEach(async (output) =>
+        await presentation.TransitionTo(output, {"opacity":1})
+    );
 
+	await presentation.nextSlide();
 	await presentation.nextSlide();
 	presentation.TransitionTo(embedding, {'expr': (i,t,x,y,z) =>  {
         let r = Math.sqrt(x*x+y*y);
@@ -154,7 +161,7 @@ async function animate(){
 
     
     presentation.TransitionTo(labels[0], {opacity: 1},250);
-	presentation.TransitionTo(three.camera.position, {'x':0,'y':-8,'z':2})
+	presentation.TransitionTo(three.camera.position, {'x':0,'y':-4,'z':1})
 	presentation.TransitionTo(three.camera.rotation, {'x':1.325,'y':0,'z':0})
 	//to the Riemann sphere!
 	presentation.TransitionTo(embedding, {'expr': (i,t,x,y,z) =>  {
@@ -179,6 +186,13 @@ async function animate(){
         let theta = Math.atan2(y,x)
             return [Math.cos(theta)/r, Math.sin(theta)/r, 0];
         }}, 2000)
+
+    await presentation.delay(3000);
+
+
+	presentation.TransitionTo(three.camera.position, {'x':0,'y':0,'z':3}, 1500)
+	presentation.TransitionTo(three.camera.rotation, {'x':0,'y':0,'z':0}, 1500)
+
 
 }
 animate();

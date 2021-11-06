@@ -38,9 +38,9 @@ axis2.add(new EXP.Transformation({expr: (i,t,y) => [0,-y,0]})).add(embeddingTran
 
 
 
-var redcircle = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 40});
+var redcircle = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 60});
 redcircle
-	.add(new EXP.Transformation({'expr': (i,t,theta) => [0+1*Math.cos(theta),-1.5+1*Math.sin(theta),0]}))
+	.add(new EXP.Transformation({'expr': (i,t,theta) => [-1.25+1*Math.cos(theta),-1.75+1*Math.sin(theta),0]}))
     .add(embeddingTranslation.makeLink()).add(embedding.makeLink())
 	.add(new EXP.LineOutput({width:5, color: 0xff5555, opacity: 0}));
 

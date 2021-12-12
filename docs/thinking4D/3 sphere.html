@@ -112,7 +112,7 @@
                     Imagine we're using this coordinate system to fly an airplane around the earth's surface. If you're the plane's pilot, you probably want to know the plane's speed (so you don't crash) and direction (so you fly the right way).
  <br />
  But when we fly over the north pole, our <span class="coord2">east/west coordinate</span> suddenly teleports! 
-                <br /> Teleporting's pretty bad. Teleporting means changing position in zero time - or in other words, moving infinitely fast. But you can see that the plane's moving pretty slowly, so a coordinate system shouldn't suddenly break down and give us ugly infinities. Something's gone horribly wrong!
+                <br /> Teleporting is pretty bad because it means we can't measure speeds and directions. Teleporting means changing position in zero time - or in other words, moving infinitely fast. The plane is moving slowly over the sphere's surface, but somehow our coordinate system can't measure its speed without ugly infinities appearing. Something's gone horribly wrong!
                 </div>
             </div>
 
@@ -157,9 +157,9 @@
         
             
                 <div class="exp-slide slideTextItem">
-                    The real problem here is that our line was never a line at all - it was a line segment which ends at the north pole, and we've hit the edge of the line segment. There's infinitely many sets of coordinates that give you the same point on the sphere. 
+                    One reason we ran into infinities is that in this coordinate system, more than one pair of coordinates represent the same point on the sphere. For example, every single pair of coordinates whose <span class="coord1">first coordinate</span> is fully up, no matter the <span class="coord2">east/west coordinate</span>, corresponds to the north pole.
                     <br>
-                    When multiple different coordinates secretly represent the same point, that's usually not good. For example, if we used this coordinate system to draw a map, it would look super distorted around the poles. Personally, I don't like being lied to - if we draw two different points on a coordinate system, they should always represent two different points on the surface. I guess we can't make a sphere out of pairs of points on simpler shapes.
+                    When multiple different coordinates secretly represent the same point, that's usually not good. For example, if we used this coordinate system to draw a map, it would look super distorted around the poles. Personally, I don't like being lied to - if we draw two different points on a coordinate system, they should always represent two different points on the surface. I guess we can't make a sphere out of pairs of points on simpler shapes without running into ugly infinities.
                     <br> <aside>(You can see this distortion on most real maps by looking at Antarctica!)</aside>
                 </div>
 
@@ -190,6 +190,9 @@
                 <br />
 
                 <div class="exp-slide slideTextItem">
+                    We saw one coordinate system can't cover the entire sphere unless some points are represented by more than one pair of coordinates. But a coordinate system doesn't have to cover the <u>entire</u> sphere. If one coordinate system can't cover a certain area without representing a point twice, we could create a second coordinate system, which only represents that point once, to cover that area!
+                    <br>
+
                     Let's add two more overlapping coordinate systems centered at the <span class="coord3">north pole</span> and <span class="coord4">south pole</span> to our <span class="coord2">our original coordinate system</span> (we'll move <span class="coord2">it</span> away from the poles, too).
                     <br>
                     Now we can describe everywhere on the sphere using at least one coordinate system. And if we want to reach somewhere that isn't covered by <span class="coord4">one coordinate system</span>, we can use the overlapping areas to switch to <span class="coord2">another</span> coordinate system and keep going.

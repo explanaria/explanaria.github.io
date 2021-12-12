@@ -384,15 +384,21 @@ async function animateTo4DPerspective(){
 
     presentation.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding}, 1000);
     await EXP.delay(250);
-    presentation.TransitionTo(inwardsLineControl,{expr: (i,t,x,y,z) => [x,y,z]}, 750);
+    presentation.TransitionTo(inwardsLineControl,{'expr': (i,t,x,y,z) => [x,y,z]}, 750);
 
 }
 async function animateTo4DOrtho(){
     //change the R4 embedding to perspective and hide the 3D icon for perspective
     presentation.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
-    presentation.TransitionTo(inwardsLineControl,{expr: (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z]});
+    presentation.TransitionTo(inwardsLineControl,{'expr': (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z]});
 }
 
+async function animateTo4DIgnoreLastCoordinate(){
+    //change the R4 embedding to ignore the fourth coordinate at all, [x,y,z,w] => [x,y,z]
+    //used in standalone hypercube viewer
+    presentation.TransitionTo(R4Embedding, {'expr': (i,t,x,y,z,w) => [x,y,z]});
+    presentation.TransitionTo(inwardsLineControl,{'expr': (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z]}, 750);
+}
 
 let hypercubeControl = new EXP.Transformation({'expr':(i,t,x,y,z,w) => [0,0,0,0]});
 
@@ -566,23 +572,7 @@ async function animateFiveCell(){
 
     let hypercube = polychora[0];
 
-
-    let sq5 = Math.sqrt(5), sq29 = Math.sqrt(2/9), sq23 = Math.sqrt(2/3);
-    let fivecell = new Polychoron(
-        [//points
-            //[0,0,0,0], [0,0,0,1], [0,0,1,0], [0,1,0,0], [1,0,0,0],
-
-            //[1,1,1,-1/sq5], [1,-1,-1,-1/sq5], [-1,1,-1,-1/sq5], [-1,-1,1,-1/sq5], [0,0,0,sq5-1/sq5]
-            [sq5*Math.sqrt(8/9),-sq5/3,0,0], [-sq5*sq29,-sq5/3,-sq5*sq23,0], [-sq5*sq29,-sq5/3,sq5*sq23,0], [0,sq5,0,0], [0,0,0,1] //has base on XZ plane, almost all w=0
-
-        ],
-        [ //lines
-            [0,1], [0,2], [0,3], [0,4],
-            [1,2],[1,3],[1,4],
-            [2,3],[2,4],
-            [3,4],
-        ],
-    R4Embedding,R4Rotation);
+    let fivecell = makeHypertetrahedron(R4Embedding, R4Rotation);
 
     //fivecell.objectParent.scale.set(0.5,0.5,0.5);
     fivecell.objectParent.scale.set(0,0,0);

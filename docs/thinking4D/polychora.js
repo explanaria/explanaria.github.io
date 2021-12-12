@@ -112,6 +112,28 @@ function makeHypercube(R4Embedding, R4Rotation){
     return new Polychoron(points, lines, R4Embedding, R4Rotation);
 }
 
+function makeHypertetrahedron(R4Embedding, R4Rotation){ //Also known as a 5-cell
+    let sq5 = Math.sqrt(5), sq29 = Math.sqrt(2/9), sq23 = Math.sqrt(2/3);
+    let fivecell = new Polychoron(
+        [//points
+            //[0,0,0,0], [0,0,0,1], [0,0,1,0], [0,1,0,0], [1,0,0,0],
+
+            //[1,1,1,-1/sq5], [1,-1,-1,-1/sq5], [-1,1,-1,-1/sq5], [-1,-1,1,-1/sq5], [0,0,0,sq5-1/sq5]
+            [sq5*Math.sqrt(8/9),-sq5/3,0,0], [-sq5*sq29,-sq5/3,-sq5*sq23,0], [-sq5*sq29,-sq5/3,sq5*sq23,0], [0,sq5,0,0], [0,0,0,1] //has base on XZ plane, almost all w=0
+
+        ],
+        [ //lines
+            [0,1], [0,2], [0,3], [0,4],
+            [1,2],[1,3],[1,4],
+            [2,3],[2,4],
+            [3,4],
+        ],
+    R4Embedding,R4Rotation);
+
+    return fivecell;
+
+}
+
 
 
 function torus3Parametrization(theta1,theta2,theta3){

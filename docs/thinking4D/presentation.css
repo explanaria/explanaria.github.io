@@ -4,7 +4,6 @@
   grid-template-columns: 1fr;
 }
 .slideTextItem{
-
  grid-row-start: 1;
  grid-column-start: 1;
   width:100%;
@@ -233,6 +232,9 @@ html{
 
 .fullscreenText, .fullscreenShortPopup{
     background-color: rgba(255,255,255,0.8);
+}
+
+.fullscreenText, .fullscreenShortPopup, .threeDPartHeader{
     pointer-events: none;
     font-family: "Computer Modern Serif";
     margin: 0;
@@ -240,6 +242,11 @@ html{
     width:100%;
     top: 0%;
     z-index: 1;
+}
+
+.threeDPartHeader{
+    font-size: 1.3em;
+    text-align: center;
 }
 
 .coverBG{
@@ -337,18 +344,28 @@ html{
     max-height: 1em;
 }
 
-.threeDPartHeader{
-    font-size: 1.3em;
-    pointer-events: none;
-    font-family: "Computer Modern Serif";
-    margin: 0;
-    padding: 1em;
-}
-
 /* used in bonuses */
 ul {
     list-style: disc;
     padding-left: 1em;
+}
+@media screen and (max-width:600px){
+    .fourDVizOptions{
+        font-size: 1em;
+    }
+}
+.fourDVizOptions{
+    display: grid;
+    justify-content: center;
+    text-align: center;
+    padding: 0.1em;
+}
+.fourDVizdescription{
+    margin-top: 0.7em;
+}
+.fourDVizOptiondescription{
+    font-size: 80%;
+    margin: 0.5em;
 }
 
 
@@ -425,6 +442,15 @@ ul {
         padding: 0.25em;
     }
     
+    /* used in 5 */
+    .disappearingQuestionMarks{
+        font-size: 3em;
+    }
+
+    /* used in bonuses */
+    .fourDVizOptions{
+        font-size: 1em;
+    }
 }
 
 

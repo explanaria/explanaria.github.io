@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../favicon.ico"/>
-  <title>Explanarian - So what is the fourth dimension?</title>
+  <title>Explanaria - So what is the fourth dimension?</title>
 
   <script src="../src/lib/three.min.js"></script>
   
@@ -208,27 +208,30 @@
                     </div>
 	                <div class="exp-slide slideTextItem">We already know that in an <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system, we can think of each point as a combination of points on three different number lines. Can we do the same thing for four dimensions?</div>
 	                <!-- <div class="exp-slide slideTextItem">We may not know how to visualize it...</div> -->
-	                <div class="exp-slide slideTextItem">Yup - to make a four-dimensional coordinate system, we can use four numbers instead of three. That's it! <br /></div>
+	                <div class="exp-slide slideTextItem">Yup - to make a four-dimensional coordinate system, we can use four numbers instead of three. That's it! That's how mathematicians think about four dimensions.<br /></div>
                     <div class="exp-slide slideTextItem"> </div>
                     <div class="exp-slide slideTextItem"> </div>
                     <div class="exp-slide slideTextItem"> </div>
                     <div class="exp-slide slideTextItem"> </div>
 
-                    <div class="exp-slide slideTextItem">Let's visualize some 4D shapes! Because our universe is only 3D, to visualize a 4D shape in our 3D universe we'll need a rule which tells us where each 4D point should be placed in our 3D space. There's infinitely many ways to choose these rules, which are called "projections", but I'll focus on two very useful ones.</div>
+                    <div class="exp-slide slideTextItem">Let's visualize some 4D shapes!
+                        <br>However, because our universe is only 3D, to visualize a 4D shape in our 3D universe, we'll need to place 4D points into a 3D space.
+                        <br>We'll need to choose <span class="directionVecColor">a rule</span> to tell us where each 4D point should be placed in our 3D space. There's infinitely many ways to choose these rules, which are called "<span class="directionVecColor">projections</span>", but I'll focus on two very useful ones.</div>
                     <div class="exp-slide slideTextItem">
-                        So let's start by visualizing this 4D coordinate system. In an <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system, increasing a point's <span class="coord1">x</span> coordinate will move that point in the direction of the <span class="coord1">x</span> axis. Can we add a <span class="coord4">fourth</span> direction to an <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system to represent a <span class="coord4">fourth</span> coordinate?
+                        One type of <span class="directionVecColor">projection</span> is inspired by how we visualize 3D coordinates. In an <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system, increasing a point's <span class="coord1">x</span> coordinate will move that point in the direction of the <span class="coord1">x</span> axis. 
+                        <br>Can we add a <span class="coord4">fourth</span> direction to an <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system to represent a <span class="coord4">fourth</span> coordinate?
                     </div>
                     <div class="exp-slide slideTextItem">
-                        Let's try choosing a <span class="directionVecColor">random direction</span> to represent our <span class="coord4">new coordinate axis</span>. Following the theme of "letters at the end of the alphabet", let's call this fourth coordinate "<span class="coord4">W</span>".
+                        Let's try choosing a <span class="directionVecColor">random direction</span> to represent our <span class="coord4">new coordinate axis</span>. Following <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span>'s theme of "letters at the end of the alphabet", let's call this fourth coordinate "<span class="coord4">W</span>".
                     </div>
                     <div class="exp-slide slideTextItem">
                         Now we can add our "<span class="coord4">w</span> axis" to our <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinate system, making an "<span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span><span class="coord4">W</span> coordinate system". 
                         <br />
                         <aside>
-                            Don't forget that you aren't seeing a real 4-dimensional XYZW coordinate system - just a 3D projection of it. In four dimensions, all four axes should make a right angle with every other axis, but that's impossible in our lame 3D universe. For us, this imperfection means that changing a point's <span class="coord4">W</span> coordinate will make it seem like the point's <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinates are changing too, unfortunately.)
+                            Don't forget that you aren't seeing a real 4-dimensional XYZW coordinate system - just a 3D <span class="directionVecColor">projection</span> of it. In four dimensions, all four axes should make a right angle with every other axis, but that's impossible in our lame 3D universe. For us, this imperfection means that changing a point's <span class="coord4">W</span> coordinate will make it seem like the point's <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinates are changing too, unfortunately.)
                         </aside>
                     </div>
-                    <div class="exp-slide slideTextItem">Here's how this visualization works: if a point's <span class="coord4">fourth coordinate</span> goes up, we'll move that point in the direction of our "<span class="coord4">w axis</span>".</div>
+                    <div class="exp-slide slideTextItem">Here's how this visualization works: if a point's <span class="coord4">fourth coordinate</span> gets bigger, we'll move that point in the <span class="directionVecColor">direction</span> of our "<span class="coord4">w axis</span>".</div>
                     <div class="exp-slide slideTextItem">Points with negative <span class="coord4">W</span> coordinates will be moved in the opposite direction.</div>
                     <div class="exp-slide slideTextItem">If you halve the fourth coordinate, you'll move only half the distance along the <span class="coord4">w axis</span>, and so on.</div>
                 </div>
@@ -257,12 +260,12 @@
                     This type of 4D visualization, where we move points a distance along <span class="directionVecColor">some direction</span> depending on their <span class="coord4">fourth coordinate</span>, is called an <b> orthographic projection</b>.
                 </div>
                 <div class="exp-slide slideTextItem">
-                    Of course, there was nothing special about the <span class="directionVecColor">random direction</span> we chose to represent the fourth dimension. If we change the <span class="directionVecColor">direction</span> we chose, we get a different orthographic projection. The hypercube <u>isn't moving</u> - we're only changing the the way we're visualizing four dimensions.
+                    Of course, there was nothing special about the <span class="directionVecColor">random direction</span> we chose to represent the fourth dimension. If we change the <span class="directionVecColor">direction</span> we chose, we get a different orthographic projection. The hypercube <u>isn't moving</u> in 4D space - we're only changing the the way we're <span class="directionVecColor">projecting</span> four dimensions to three dimensions.
                 </div>
                 <div class="exp-slide slideTextItem">
-                    The second common type of 4D visualization is <b>perspective projection</b>. In our 3D world, if something is moving away from us, that thing looks like it's shrinking. Perspective projection tries to do the same thing in 4D: if a shape's <span class="coord4">fourth coordinate</span> increases, the shape shrinks. Here's one way make this work using math: we divide the first three <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinates by the <span class="coord4">fourth coordinate</span>. 
+                    The second common type of  <span class="directionVecColor">4D ➔ 3D rule</span> is called <b>perspective projection</b>. In our 3D world, if something is moving away from us, that thing looks like it's shrinking. Perspective projection tries to do the same thing in 4D: if a shape's <span class="coord4">fourth coordinate</span> increases, the shape shrinks. Here's one way make this work using math: we divide the first three <span class="coord1">X</span><span class="coord2">Y</span><span class="coord3">Z</span> coordinates by the <span class="coord4">fourth coordinate</span>. 
 
-                    <br />Perspective projection is super popular for drawing pictures of 4D shapes. If you look up the word "hypercube", you'll probably see pictures that look like this: two connected cubes, one inside another. Don't forget that the "inner cube" and outer cube are the same size in 4D - the inner cube just has a bigger <span class="coord4">fourth coordinate</span>, so when we visualize the hypercube with perspective projection, it shrinks.
+                    <br />Perspective projection is super popular for drawing pictures of 4D shapes. If you look up the word "hypercube", you'll probably see pictures that look like what you're seeing now: two connected cubes, one inside another. Don't forget that the "inner cube" and outer cube are the same size in 4D - the inner cube just has a bigger <span class="coord4">fourth coordinate</span>, so when we visualize the hypercube with perspective projection, it shrinks.
 
                     <br /><aside>There's many different types of perspective projections; you can make other perspective projections by transforming the coordinates before and after dividing, but I won't talk about that here.</aside>
                 </div>
@@ -276,7 +279,9 @@
                     One way to describe a rotation in 3D is by choosing <span class="planeOfRotationGraphicColor">a 2D plane</span> and rotating something in that plane. For example, if we rotate around, say, the <span class="coord1">X</span><span class="coord2">Y</span> plane, a rotation would move the X axis to where Y axis is and back again.
                 </div>
                 <div class="exp-slide slideTextItem">
-                    Let's take the same rotations we did on the cube, and rotate a hypercube in the same way, around the same <span class="planeOfRotationGraphicColor">planes of rotation</span>. It looks mostly similar to the 3D case. That's because every plane we can rotate around in 3D only involves the <span class="coord1">X</span>,<span class="coord2">Y</span>, and <span class="coord3">Z</span> coordinates, not the <span class="coord4">W</span> coordinate. This means that none of these rotations change the <span class="coord4">W</span> coordinate of points in this hypercube. The points in the hypercube with a nonzero <span class="coord4">fourth coordinate</span> form a 3D cube which rotates in the same way as the original 3D cube does, but moved in the direction of the <span class="coord4">w axis</span>.. 
+                    Let's take the same rotations we did on the cube, and rotate a hypercube in the same way, around the same <span class="planeOfRotationGraphicColor">planes of rotation</span>. It looks mostly similar to the 3D case, but now the two cubes which are attached to form a hypercube look like they're intersecting one another as they rotate.
+
+                    <br>That's because every plane we can rotate around in 3D only involves the <span class="coord1">X</span>,<span class="coord2">Y</span>, and <span class="coord3">Z</span> coordinates, not the <span class="coord4">W</span> coordinate. This means that none of these rotations change the <span class="coord4">W</span> coordinate of points in this hypercube. The points in the hypercube with a nonzero <span class="coord4">fourth coordinate</span> form a 3D cube which rotates in the same way as the original 3D cube does, but moved in the direction of the <span class="coord4">w axis</span>.. 
 
                     <br>...so what happens if we rotate along a <span class="planeOfRotationGraphicColor">rotation plane</span> involving the <span class="coord4">W</span> axis?
                 </div>
@@ -294,7 +299,7 @@
                     <aside>If you look at <a href="https://en.wikipedia.org/wiki/Tesseract">the wikipedia page for "tesseract"</a> and scroll down, you'll see <a href="https://en.wikipedia.org/wiki/File:8-cell.gif">this picture of a rotating hypercube</a>. Now you know exactly how to describe what you're looking at in this picture: It's a hypercube, being rotated along a <span class="planeOfRotationGraphicColor">rotation plane</span> involving the <span class="coord4">w axis</span>, visualized with perspective projection.</aside>
                 </div>
                 <div class="exp-slide slideTextItem">
-                    There are many other 4D shapes out there beyond hypercubes. One way to build 4D shapes is to take 2D and 3D shapes we're familiar with, and find a pattern which we can continue into 4D. For example, we took the pattern Line-Square-Cube, and invented a 4D hypercube by continuing the pattern. We can do this with other shapes, too!
+                    There are many other 4D shapes out there beyond hypercubes. One way to build 4D shapes is to take 2D and 3D shapes we're familiar with, and find a pattern which we can continue into 4D. For example, we took the pattern Line➔Square➔Cube, and invented a 4D hypercube by continuing the pattern. We can do this with other shapes, too!
 
                     <br> For example, one of the simplest 2D shapes is a triangle. In 2D, an (equilateral) <span class="coord2">triangle</span> has 3 points, each the same distance apart from all the others. In 3D, a <span class="coord3">tetrahedron</span> has 4 points, each the same distance apart from all the others. Can we extend this pattern to 4D?
                 </div>
@@ -314,7 +319,7 @@
                 </div>
                 <div class="exp-slide slideTextItem">
                     Here's what a 3-torus looks like in perspective projection. You can see multiple copies of the normal 2-torus we're used to inside it. It's a big tangle.
-                    <br /><br />This, to me, shows why studying manifolds is so interesting - you don't need to work with this ugly mess. Every point on the surface of that 3-torus corresponds exactly to a point inthat cube coordinate system we saw earlier. Instead of imperfect 4D visualizations, manifolds let us use more familiar Cartesian coordinate systems to study spaces we can't imagine. 
+                    <br /><br />This, to me, shows why studying manifolds is so interesting - you don't need to work with this ugly mess. Every point on the surface of that 3-torus corresponds exactly to a point in that cube-shaped 3D coordinate system we saw earlier. Instead of imperfect 4D visualizations, manifolds let us use more familiar Cartesian coordinate systems to study spaces we can't imagine. 
                 </div>
 
                 <div class="exp-slide slideTextItem">

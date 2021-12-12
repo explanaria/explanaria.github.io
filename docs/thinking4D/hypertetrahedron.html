@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <title>Explanaria - 4D Hypertetrahedron</title>
+
+  <script src="../src/lib/three.min.js"></script>
+  
+  
+  <script src="../resources/build/explanaria-bundle.js"></script>
+
+
+  <script src="colors.js"></script>
+  <script src="sliders.js"></script>
+  <script src="RotateAboutCenterControls.js"></script>
+  <script src="polychora.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+
+  <link type="text/css" href="../resources/style.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+  <script>
+    let three, controls, controlsToRotateAboutOrigin, objects=[], presentation;
+
+    let axisRotation = null;
+
+    let xAxis, yAxis,zAxis = null;
+
+
+    function setupThree(){
+	    three = EXP.setupThree(60,15,document.getElementById("canvas"));
+	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
+
+        controlsToRotateAboutOrigin = new RotateAboutCenterControls([],three.renderer.domElement);
+        
+
+	    three.camera.position.z = 6;
+	    three.camera.position.y = 0.5;
+        //controls.autoRotate = true;
+        
+	    three.on("update",function(time){
+		    for(var x of objects){
+			    x.activate(time.t);
+		    }
+		    controls.update();
+            controlsToRotateAboutOrigin.update(time.delta);
+	    });
+
+        
+	    presentation = new EXP.UndoCapableDirector();
+        console.log("Loaded.");
+
+    }
+
+    function setup3DAxes(){
+        let axisSize = 1.5;
+        xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+        xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
+        xAxis
+        .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0]}))
+        .add(xAxisControl)
+        .add(R4Rotation.makeLink())
+        .add(R4Embedding.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
+        
+        xAxis
+        .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0]}))
+        .add(xAxisControl.makeLink())
+        .add(R4Rotation.makeLink())
+        .add(R4Embedding.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
+
+        yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+        yAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
+        yAxis
+        .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0]}))
+        .add(yAxisControl)
+        .add(R4Rotation.makeLink())
+        .add(R4Embedding.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
+        yAxis
+        .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0]}))
+        .add(yAxisControl.makeLink())
+        .add(R4Rotation.makeLink())
+        .add(R4Embedding.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
+
+        zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+        zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
+        zAxis
+        .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))
+        .add(zAxisControl)
+        .add(R4Rotation.makeLink())
+        .add(R4Embedding.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
+        zAxis
+        .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x]}))
+        .add(zAxisControl.makeLink())
+        .add(R4Rotation.makeLink())
+        .add(R4Embedding.makeLink())
+        .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
+    }
+
+    function setupAxes(){
+        setup4DAxes();
+
+        [xAxis, yAxis, zAxis, wAxis].forEach((x) => objects.push(x));
+
+    }
+
+
+    function setup4DPolychora(){
+
+        polychora = [];
+        let hypertetrahedron = makeHypertetrahedron(R4Embedding, [R4Rotation]);
+        hypertetrahedron.objectParent.position.x = 0;
+
+        objects.push(hypertetrahedron);
+        polychora.push(hypertetrahedron);
+    }
+
+    async function animate(){
+
+        axesParent.position.set(-3,-1,0);
+        axesParent.scale.set(1/2,1/2,1/2);
+        projectionVisualizerParent.position.set(-3,1,0);
+        projectionVisualizerParent.scale.set(1/2,1/2,1/2);
+        grayProjectionVisualizingAxes.getDeepestChildren().forEach( (output) => {
+            output.opacity=1;
+        });
+
+        changeCameraToRotateAllObjectsSimultaneously();
+    }
+
+    function setup(){
+        setupThree();
+        setup4DEmbedding();
+        setup4DPolychora();
+        setupAxes();
+
+
+        //some planes under the objects
+        shadowPlane = new EXP.Area({bounds: [[-2,2],[-2,2]], numItems: 2});
+        shadowPlane.add(new EXP.SurfaceOutput({color: kindalightgray, showSolid: false, gridSquares: 8, opacity: 0.5}));
+        shadowPlane.add(new EXP.SurfaceOutput({color: verylightgray, showGrid: false, gridSquares: 8, opacity: 0.5}));
+
+        let flatPlaneMesh = shadowPlane.children[0].mesh;
+        flatPlaneMesh.position.y = -1;
+        flatPlaneMesh.rotation.x = Math.PI/2;
+
+        let flatPlaneMesh2 = shadowPlane.children[1].mesh;
+        flatPlaneMesh2.position.y = -1;
+        flatPlaneMesh2.rotation.x = Math.PI/2;
+        
+        shadowPlane.activate(0);
+        shadowAxesParent.add(flatPlaneMesh);
+        shadowAxesParent.add(flatPlaneMesh2);
+
+        three.scene.add(shadowAxesParent);
+
+    }
+
+    window.addEventListener("load",function(){
+        setup();
+        animate();
+    });
+
+
+  </script>
+  <script src="7 visualizing 4d.js"></script>
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart"> 
+        <canvas id="canvas">
+
+        </canvas>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+        <div class="fourDVizOptions">
+            <div>It's a hypertetrahedron! Mathematicians call this a 5-cell because it has 5 points, but I think "hypertetrahedron" sounds cooler.</div>
+        </div>
+        <br>
+        <div class="fourDVizOptions">
+            <p class="fourDVizdescription">Visualization options</p>
+            <p class="fourDVizOptiondescription">4D ➔ 3D Projection:</p>
+            <div>
+                <button onclick="animateTo4DOrtho()" class="button"> Stereographic </button>
+                <button onclick="animateTo4DPerspective()" class="button"> Perspective </button>
+                <button onclick="animateTo4DIgnoreLastCoordinate()" class="button"> Forget Fourth Coordinate </button>
+            </div>
+            <p class="fourDVizOptiondescription">Rotation:</p>
+            <div>
+                <button onclick="
+                presentation.TransitionTo(R4Rotation, {'expr': (i,t,x,y,z,w)=>[x,y,z,w]});" class="button"> No rotation </button>
+                <button onclick="
+                presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});" class="button"> 4D rotation: zw plane</button>
+            </div>
+        </div>
+        <br>
+
+        More 4D shapes: <a href="hypercube.html">Hypercube</a>, <a href="threetorus.html">3-torus</a>
+        <br>
+        <br>
+
+        Part of <a href="https://explanaria.github.io/thinking4D">How Mathematicians Think about Four Dimensions</a>, an interactive presentation by <a href="https://explanaria.github.io">Explanaria</a>.
+      </div>
+  </div>
+</body>
+</html>

@@ -6,7 +6,7 @@
   <title>Explanarian - Sine waves with triangle</title>
   <script src="../../src/lib/three.js"></script>
   <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../build/explanaria-bundle.js"></script>
+  <script src="../../resources/build/explanaria-bundle.js"></script>
   <script src="./commonClasses.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
@@ -16,7 +16,7 @@
 <body>
   <script>
 	var three = EXP.setupThree(60,15);
-	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
 	three.camera.lookAt(new THREE.Vector3(0,0,0));

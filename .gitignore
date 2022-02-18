@@ -2,3 +2,5 @@ output_images/
 node_modules/
 devlogs/
 docs/examples/do_not_upload/
+*/package-lock.json
+package-lock.json

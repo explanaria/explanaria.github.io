@@ -53,13 +53,12 @@ $: shouldShowArrows = hasAValue;
 	}
 
     .tooltip{
-        position:relative;
-        margin-bottom: -50%;
+        position:absolute;
+        background-color: red;
     }
 </style>
 
 <span>
-
     <span class="tooltip">{coords[0]} * {coords[1]} = {numbers[0]} </span>
 
     <span class="numbergrid">

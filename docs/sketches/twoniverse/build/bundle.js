@@ -161,6 +161,19 @@ var app = (function () {
     }
     const outroing = new Set();
     let outros;
+    function group_outros() {
+        outros = {
+            r: 0,
+            c: [],
+            p: outros // parent group
+        };
+    }
+    function check_outros() {
+        if (!outros.r) {
+            run_all(outros.c);
+        }
+        outros = outros.p;
+    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
@@ -400,7 +413,7 @@ var app = (function () {
 
     const file$2 = "src/GridSquare.svelte";
 
-    // (74:6) {:else}
+    // (73:6) {:else}
     function create_else_block_1(ctx) {
     	let t_value = "-" + "";
     	let t;
@@ -422,14 +435,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(74:6) {:else}",
+    		source: "(73:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (67:7) {#if hasAValue}
+    // (66:7) {#if hasAValue}
     function create_if_block_5(ctx) {
     	let if_block_anchor;
 
@@ -473,14 +486,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(67:7) {#if hasAValue}",
+    		source: "(66:7) {#if hasAValue}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (70:7) {:else}
+    // (69:7) {:else}
     function create_else_block(ctx) {
     	let span;
     	let t_value = /*numbers*/ ctx[0].join(" = ") + "";
@@ -490,8 +503,8 @@ var app = (function () {
     		c: function create() {
     			span = element("span");
     			t = text(t_value);
-    			attr_dev(span, "class", "multiplenums svelte-135yhi0");
-    			add_location(span, file$2, 70, 8, 1264);
+    			attr_dev(span, "class", "multiplenums svelte-s71663");
+    			add_location(span, file$2, 69, 8, 1265);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -509,14 +522,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(70:7) {:else}",
+    		source: "(69:7) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (68:7) {#if numbers.length == 1}
+    // (67:7) {#if numbers.length == 1}
     function create_if_block_6(ctx) {
     	let t;
 
@@ -539,14 +552,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(68:7) {#if numbers.length == 1}",
+    		source: "(67:7) {#if numbers.length == 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (78:5) {#if shouldShowArrows}
+    // (77:5) {#if shouldShowArrows}
     function create_if_block(ctx) {
     	let t0;
     	let t1;
@@ -647,14 +660,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(78:5) {#if shouldShowArrows}",
+    		source: "(77:5) {#if shouldShowArrows}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (80:9) {#if coords[0] > 1 && coords[1] > 1}
+    // (79:9) {#if coords[0] > 1 && coords[1] > 1}
     function create_if_block_4(ctx) {
     	let button;
     	let t0;
@@ -668,8 +681,8 @@ var app = (function () {
     			button = element("button");
     			t0 = text("< -");
     			t1 = text(t1_value);
-    			attr_dev(button, "class", "leftarrow svelte-135yhi0");
-    			add_location(button, file$2, 80, 13, 1480);
+    			attr_dev(button, "class", "leftarrow svelte-s71663");
+    			add_location(button, file$2, 79, 13, 1481);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -706,14 +719,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(80:9) {#if coords[0] > 1 && coords[1] > 1}",
+    		source: "(79:9) {#if coords[0] > 1 && coords[1] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:9) {#if coords[0] < gridSize[0] && coords[1] > 1}
+    // (85:9) {#if coords[0] < gridSize[0] && coords[1] > 1}
     function create_if_block_3(ctx) {
     	let button;
     	let t0;
@@ -727,8 +740,8 @@ var app = (function () {
     			button = element("button");
     			t0 = text("> +");
     			t1 = text(t1_value);
-    			attr_dev(button, "class", "rightarrow svelte-135yhi0");
-    			add_location(button, file$2, 86, 13, 1691);
+    			attr_dev(button, "class", "rightarrow svelte-s71663");
+    			add_location(button, file$2, 85, 13, 1692);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -765,14 +778,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(86:9) {#if coords[0] < gridSize[0] && coords[1] > 1}",
+    		source: "(85:9) {#if coords[0] < gridSize[0] && coords[1] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (93:9) {#if coords[1] > 1 && coords[0] > 1}
+    // (92:9) {#if coords[1] > 1 && coords[0] > 1}
     function create_if_block_2(ctx) {
     	let button;
     	let t0;
@@ -786,8 +799,8 @@ var app = (function () {
     			button = element("button");
     			t0 = text("^ -");
     			t1 = text(t1_value);
-    			attr_dev(button, "class", "uparrow svelte-135yhi0");
-    			add_location(button, file$2, 93, 13, 1893);
+    			attr_dev(button, "class", "uparrow svelte-s71663");
+    			add_location(button, file$2, 92, 13, 1894);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -824,14 +837,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(93:9) {#if coords[1] > 1 && coords[0] > 1}",
+    		source: "(92:9) {#if coords[1] > 1 && coords[0] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (99:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}
+    // (98:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}
     function create_if_block_1(ctx) {
     	let button;
     	let t0;
@@ -845,8 +858,8 @@ var app = (function () {
     			button = element("button");
     			t0 = text("V +");
     			t1 = text(t1_value);
-    			attr_dev(button, "class", "downarrow svelte-135yhi0");
-    			add_location(button, file$2, 99, 13, 2100);
+    			attr_dev(button, "class", "downarrow svelte-s71663");
+    			add_location(button, file$2, 98, 13, 2101);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -883,7 +896,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(99:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}",
+    		source: "(98:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}",
     		ctx
     	});
 
@@ -930,13 +943,13 @@ var app = (function () {
     			if_block0.c();
     			t6 = space();
     			if (if_block1) if_block1.c();
-    			attr_dev(span0, "class", "tooltip svelte-135yhi0");
-    			add_location(span0, file$2, 62, 4, 1034);
-    			attr_dev(span1, "class", "centerpart svelte-135yhi0");
-    			add_location(span1, file$2, 65, 5, 1141);
-    			attr_dev(span2, "class", "numbergrid svelte-135yhi0");
-    			add_location(span2, file$2, 64, 4, 1110);
-    			add_location(span3, file$2, 60, 0, 1022);
+    			attr_dev(span0, "class", "tooltip svelte-s71663");
+    			add_location(span0, file$2, 61, 4, 1035);
+    			attr_dev(span1, "class", "centerpart svelte-s71663");
+    			add_location(span1, file$2, 64, 5, 1142);
+    			attr_dev(span2, "class", "numbergrid svelte-s71663");
+    			add_location(span2, file$2, 63, 4, 1111);
+    			add_location(span3, file$2, 60, 0, 1024);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1129,103 +1142,250 @@ var app = (function () {
     const file$1 = "src/Intro.svelte";
 
     function create_fragment$1(ctx) {
-    	let div;
     	let h1;
+    	let t0;
     	let t1;
-    	let p0;
+    	let t2;
     	let t3;
-    	let p1;
+    	let t4;
     	let t5;
-    	let p2;
+    	let t6;
     	let t7;
-    	let p3;
+    	let p0;
     	let t8;
-    	let b;
+    	let t9;
     	let t10;
     	let t11;
-    	let p4;
     	let t12;
-    	let u;
+    	let t13;
     	let t14;
     	let t15;
+    	let p1;
+    	let t16;
+    	let t17;
+    	let t18;
+    	let t19;
+    	let t20;
+    	let t21_value = /*a*/ ctx[2] * /*b*/ ctx[1] + "";
+    	let t21;
+    	let t22;
+    	let t23_value = /*a*/ ctx[2] * /*b*/ ctx[1] + "";
+    	let t23;
+    	let t24;
+    	let t25;
+    	let p2;
+    	let t26;
+    	let t27;
+    	let t28;
+    	let t29;
+    	let t30;
+    	let t31;
+    	let t32;
+    	let t33_value = /*a*/ ctx[2] * /*b*/ ctx[1] + "";
+    	let t33;
+    	let t34;
+    	let t35;
+    	let p3;
+    	let t36;
+    	let b_1;
+    	let t38;
+    	let t39;
+    	let t40;
+    	let t41;
+    	let t42;
+    	let t43;
+    	let t44;
+    	let t45_value = /*a*/ ctx[2] * /*b*/ ctx[1] + "";
+    	let t45;
+    	let t46;
+    	let t47;
+    	let p4;
+    	let t48;
+    	let u;
+    	let t50;
+    	let t51;
     	let p5;
 
     	const block = {
     		c: function create() {
-    			div = element("div");
     			h1 = element("h1");
-    			h1.textContent = "Spider-Math: Into the 2*3=8iverse";
-    			t1 = space();
-    			p0 = element("p");
-    			p0.textContent = "Welcome to the 2*3=8niverse.";
-    			t3 = space();
-    			p1 = element("p");
-    			p1.textContent = "In our universe, multiplication only works in one way. 2*3 is always 6. But why 6 in particular? It's easy to write down other equations like 2+2=5 - they're just not true in the universe we normally work with.";
-    			t5 = space();
-    			p2 = element("p");
-    			p2.textContent = "...but what about other universes? What if there was an 🌌alternate universe🌌 which followed all the same math rules, but where 2*3 was, say, 8 instead of 6? Will everything implode into a puff of contradictions? Or will it somehow stay internally consistent? Let's find out.";
+    			t0 = text("Spider-Math: Into the ");
+    			t1 = text(/*a*/ ctx[2]);
+    			t2 = text("*");
+    			t3 = text(/*b*/ ctx[1]);
+    			t4 = text("=");
+    			t5 = text(/*AUProduct*/ ctx[0]);
+    			t6 = text("iverse");
     			t7 = space();
+    			p0 = element("p");
+    			t8 = text("Welcome to the ");
+    			t9 = text(/*a*/ ctx[2]);
+    			t10 = text("*");
+    			t11 = text(/*b*/ ctx[1]);
+    			t12 = text("=");
+    			t13 = text(/*AUProduct*/ ctx[0]);
+    			t14 = text("niverse.");
+    			t15 = space();
+    			p1 = element("p");
+    			t16 = text("In our universe, multiplication only works in one way. ");
+    			t17 = text(/*a*/ ctx[2]);
+    			t18 = text("*");
+    			t19 = text(/*b*/ ctx[1]);
+    			t20 = text(" is always ");
+    			t21 = text(t21_value);
+    			t22 = text(". But why ");
+    			t23 = text(t23_value);
+    			t24 = text(" in particular? It's easy to write down other equations like 2+2=5 - they're just not true in the universe we normally work with.");
+    			t25 = space();
+    			p2 = element("p");
+    			t26 = text("...but what about other universes? What if there was an 🌌alternate universe🌌 which followed all the same math rules, but where ");
+    			t27 = text(/*a*/ ctx[2]);
+    			t28 = text("*");
+    			t29 = text(/*b*/ ctx[1]);
+    			t30 = text(" was, say, ");
+    			t31 = text(/*AUProduct*/ ctx[0]);
+    			t32 = text(" instead of ");
+    			t33 = text(t33_value);
+    			t34 = text("? Will everything implode into a puff of contradictions? Or will it somehow stay internally consistent? Let's find out.");
+    			t35 = space();
     			p3 = element("p");
-    			t8 = text("Below is an ");
-    			b = element("b");
-    			b.textContent = "alternate-universe multiplication table";
-    			t10 = text(", from an alternate universe where the rules of addition and multiplication work the same but 2*3 is 8 instead of 6.");
-    			t11 = space();
+    			t36 = text("Below is an ");
+    			b_1 = element("b");
+    			b_1.textContent = "alternate-universe multiplication table";
+    			t38 = text(", from an alternate universe where the rules of addition and multiplication work the same but ");
+    			t39 = text(/*a*/ ctx[2]);
+    			t40 = text("*");
+    			t41 = text(/*b*/ ctx[1]);
+    			t42 = text(" is ");
+    			t43 = text(/*AUProduct*/ ctx[0]);
+    			t44 = text(" instead of ");
+    			t45 = text(t45_value);
+    			t46 = text(".");
+    			t47 = space();
     			p4 = element("p");
-    			t12 = text("In our universe, if you move sideways along a row of a multiplication table, you add the same number repeatedly. That's true because of the ");
+    			t48 = text("In our universe, if you move sideways along a row of a multiplication table, you add the same number repeatedly. That's true because of the ");
     			u = element("u");
     			u.textContent = "distributive property";
-    			t14 = text(" in our universe - so if the rules of this alternate universe are the same, we can still use the distributive property to move sideways across rows and up/down across columns.");
-    			t15 = space();
+    			t50 = text(" in our universe - so if the rules of this alternate universe are the same, we can still use the distributive property to move sideways across rows and up/down across columns.");
+    			t51 = space();
     			p5 = element("p");
     			p5.textContent = "Click the arrows to fill in the multiplication table, and you might find some interesting alternate-universe equations along the way.";
-    			add_location(h1, file$1, 11, 4, 102);
+    			add_location(h1, file$1, 14, 0, 233);
     			attr_dev(p0, "class", "svelte-f7jo2g");
-    			add_location(p0, file$1, 13, 4, 150);
+    			add_location(p0, file$1, 16, 0, 291);
     			attr_dev(p1, "class", "svelte-f7jo2g");
-    			add_location(p1, file$1, 15, 4, 191);
+    			add_location(p1, file$1, 18, 0, 342);
     			attr_dev(p2, "class", "svelte-f7jo2g");
-    			add_location(p2, file$1, 18, 4, 419);
-    			add_location(b, file$1, 20, 19, 723);
+    			add_location(p2, file$1, 21, 0, 574);
+    			add_location(b_1, file$1, 23, 15, 892);
     			attr_dev(p3, "class", "svelte-f7jo2g");
-    			add_location(p3, file$1, 20, 4, 708);
-    			add_location(u, file$1, 22, 147, 1039);
+    			add_location(p3, file$1, 23, 0, 877);
+    			add_location(u, file$1, 25, 143, 1222);
     			attr_dev(p4, "class", "svelte-f7jo2g");
-    			add_location(p4, file$1, 22, 4, 896);
+    			add_location(p4, file$1, 25, 0, 1079);
     			attr_dev(p5, "class", "svelte-f7jo2g");
-    			add_location(p5, file$1, 24, 4, 1252);
-    			add_location(div, file$1, 10, 0, 92);
+    			add_location(p5, file$1, 27, 0, 1431);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, h1);
-    			append_dev(div, t1);
-    			append_dev(div, p0);
-    			append_dev(div, t3);
-    			append_dev(div, p1);
-    			append_dev(div, t5);
-    			append_dev(div, p2);
-    			append_dev(div, t7);
-    			append_dev(div, p3);
-    			append_dev(p3, t8);
-    			append_dev(p3, b);
-    			append_dev(p3, t10);
-    			append_dev(div, t11);
-    			append_dev(div, p4);
-    			append_dev(p4, t12);
+    			insert_dev(target, h1, anchor);
+    			append_dev(h1, t0);
+    			append_dev(h1, t1);
+    			append_dev(h1, t2);
+    			append_dev(h1, t3);
+    			append_dev(h1, t4);
+    			append_dev(h1, t5);
+    			append_dev(h1, t6);
+    			insert_dev(target, t7, anchor);
+    			insert_dev(target, p0, anchor);
+    			append_dev(p0, t8);
+    			append_dev(p0, t9);
+    			append_dev(p0, t10);
+    			append_dev(p0, t11);
+    			append_dev(p0, t12);
+    			append_dev(p0, t13);
+    			append_dev(p0, t14);
+    			insert_dev(target, t15, anchor);
+    			insert_dev(target, p1, anchor);
+    			append_dev(p1, t16);
+    			append_dev(p1, t17);
+    			append_dev(p1, t18);
+    			append_dev(p1, t19);
+    			append_dev(p1, t20);
+    			append_dev(p1, t21);
+    			append_dev(p1, t22);
+    			append_dev(p1, t23);
+    			append_dev(p1, t24);
+    			insert_dev(target, t25, anchor);
+    			insert_dev(target, p2, anchor);
+    			append_dev(p2, t26);
+    			append_dev(p2, t27);
+    			append_dev(p2, t28);
+    			append_dev(p2, t29);
+    			append_dev(p2, t30);
+    			append_dev(p2, t31);
+    			append_dev(p2, t32);
+    			append_dev(p2, t33);
+    			append_dev(p2, t34);
+    			insert_dev(target, t35, anchor);
+    			insert_dev(target, p3, anchor);
+    			append_dev(p3, t36);
+    			append_dev(p3, b_1);
+    			append_dev(p3, t38);
+    			append_dev(p3, t39);
+    			append_dev(p3, t40);
+    			append_dev(p3, t41);
+    			append_dev(p3, t42);
+    			append_dev(p3, t43);
+    			append_dev(p3, t44);
+    			append_dev(p3, t45);
+    			append_dev(p3, t46);
+    			insert_dev(target, t47, anchor);
+    			insert_dev(target, p4, anchor);
+    			append_dev(p4, t48);
     			append_dev(p4, u);
-    			append_dev(p4, t14);
-    			append_dev(div, t15);
-    			append_dev(div, p5);
+    			append_dev(p4, t50);
+    			insert_dev(target, t51, anchor);
+    			insert_dev(target, p5, anchor);
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*a*/ 4) set_data_dev(t1, /*a*/ ctx[2]);
+    			if (dirty & /*b*/ 2) set_data_dev(t3, /*b*/ ctx[1]);
+    			if (dirty & /*AUProduct*/ 1) set_data_dev(t5, /*AUProduct*/ ctx[0]);
+    			if (dirty & /*a*/ 4) set_data_dev(t9, /*a*/ ctx[2]);
+    			if (dirty & /*b*/ 2) set_data_dev(t11, /*b*/ ctx[1]);
+    			if (dirty & /*AUProduct*/ 1) set_data_dev(t13, /*AUProduct*/ ctx[0]);
+    			if (dirty & /*a*/ 4) set_data_dev(t17, /*a*/ ctx[2]);
+    			if (dirty & /*b*/ 2) set_data_dev(t19, /*b*/ ctx[1]);
+    			if (dirty & /*a, b*/ 6 && t21_value !== (t21_value = /*a*/ ctx[2] * /*b*/ ctx[1] + "")) set_data_dev(t21, t21_value);
+    			if (dirty & /*a, b*/ 6 && t23_value !== (t23_value = /*a*/ ctx[2] * /*b*/ ctx[1] + "")) set_data_dev(t23, t23_value);
+    			if (dirty & /*a*/ 4) set_data_dev(t27, /*a*/ ctx[2]);
+    			if (dirty & /*b*/ 2) set_data_dev(t29, /*b*/ ctx[1]);
+    			if (dirty & /*AUProduct*/ 1) set_data_dev(t31, /*AUProduct*/ ctx[0]);
+    			if (dirty & /*a, b*/ 6 && t33_value !== (t33_value = /*a*/ ctx[2] * /*b*/ ctx[1] + "")) set_data_dev(t33, t33_value);
+    			if (dirty & /*a*/ 4) set_data_dev(t39, /*a*/ ctx[2]);
+    			if (dirty & /*b*/ 2) set_data_dev(t41, /*b*/ ctx[1]);
+    			if (dirty & /*AUProduct*/ 1) set_data_dev(t43, /*AUProduct*/ ctx[0]);
+    			if (dirty & /*a, b*/ 6 && t45_value !== (t45_value = /*a*/ ctx[2] * /*b*/ ctx[1] + "")) set_data_dev(t45, t45_value);
+    		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(h1);
+    			if (detaching) detach_dev(t7);
+    			if (detaching) detach_dev(p0);
+    			if (detaching) detach_dev(t15);
+    			if (detaching) detach_dev(p1);
+    			if (detaching) detach_dev(t25);
+    			if (detaching) detach_dev(p2);
+    			if (detaching) detach_dev(t35);
+    			if (detaching) detach_dev(p3);
+    			if (detaching) detach_dev(t47);
+    			if (detaching) detach_dev(p4);
+    			if (detaching) detach_dev(t51);
+    			if (detaching) detach_dev(p5);
     		}
     	};
 
@@ -1240,22 +1400,57 @@ var app = (function () {
     	return block;
     }
 
-    function instance$1($$self, $$props) {
+    function instance$1($$self, $$props, $$invalidate) {
+    	let a;
+    	let b;
+    	let AUProduct;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Intro', slots, []);
-    	const writable_props = [];
+    	let { startEquation = [2, 3, 8] } = $$props;
+    	const writable_props = ['startEquation'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Intro> was created with unknown prop '${key}'`);
     	});
 
-    	return [];
+    	$$self.$$set = $$props => {
+    		if ('startEquation' in $$props) $$invalidate(3, startEquation = $$props.startEquation);
+    	};
+
+    	$$self.$capture_state = () => ({ startEquation, AUProduct, b, a });
+
+    	$$self.$inject_state = $$props => {
+    		if ('startEquation' in $$props) $$invalidate(3, startEquation = $$props.startEquation);
+    		if ('AUProduct' in $$props) $$invalidate(0, AUProduct = $$props.AUProduct);
+    		if ('b' in $$props) $$invalidate(1, b = $$props.b);
+    		if ('a' in $$props) $$invalidate(2, a = $$props.a);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*startEquation*/ 8) {
+    			$$invalidate(2, a = startEquation[0]);
+    		}
+
+    		if ($$self.$$.dirty & /*startEquation*/ 8) {
+    			$$invalidate(1, b = startEquation[1]);
+    		}
+
+    		if ($$self.$$.dirty & /*startEquation*/ 8) {
+    			$$invalidate(0, AUProduct = startEquation[2]);
+    		}
+    	};
+
+    	return [AUProduct, b, a, startEquation];
     }
 
     class Intro extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { startEquation: 3 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1264,29 +1459,14 @@ var app = (function () {
     			id: create_fragment$1.name
     		});
     	}
-    }
 
-    function makeGrid(gridSize){
-    	for(let i=0;i<gridSize[0];i++){ //might be gridSize[1] here
-    		let column = [];
-    		for(let i=0;i<gridSize[1];i++){
-    			column.push([]);
-    		}
-    		numbers.push(column);
+    	get startEquation() {
+    		throw new Error("<Intro>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
-    	
-        //first row
-    	for(let i=0;i<gridSize[0];i++){
-    		numbers[i][0] = [i+1];
-        }
-        //first column
-    	for(let i=0;i<gridSize[1];i++){
-    		numbers[0][i] = [i+1];
+
+    	set startEquation(value) {
+    		throw new Error("<Intro>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
-    	
-    }
-    function setMultiplicationEntry(numbers, a,b, product){
-    	numbers[a-1][b-1]=[product];
     }
 
     /* src/App.svelte generated by Svelte v3.46.4 */
@@ -1296,42 +1476,57 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[3] = list[i];
-    	child_ctx[5] = i;
+    	child_ctx[7] = list[i];
+    	child_ctx[9] = i;
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[6] = list[i];
-    	child_ctx[8] = i;
+    	child_ctx[10] = list[i];
+    	child_ctx[12] = i;
     	return child_ctx;
     }
 
-    // (53:3) {#each column as values, i}
+    // (85:3) {#each column as values, i}
     function create_each_block_1(ctx) {
-    	let gridSquare;
-    	let gridSquare_numbers_value;
+    	let gridsquare;
+    	let current;
+
+    	gridsquare = new GridSquare({
+    			props: {
+    				numbers: /*values*/ ctx[10],
+    				coords: [/*i*/ ctx[12] + 1, /*j*/ ctx[9] + 1],
+    				buttonCallback: /*buttonClick*/ ctx[2],
+    				gridSize: /*gridSize*/ ctx[1]
+    			},
+    			$$inline: true
+    		});
 
     	const block = {
     		c: function create() {
-    			gridSquare = element("gridSquare");
-    			attr_dev(gridSquare, "numbers", gridSquare_numbers_value = /*values*/ ctx[6]);
-    			attr_dev(gridSquare, "coords", [/*i*/ ctx[8] + 1, /*j*/ ctx[5] + 1]);
-    			attr_dev(gridSquare, "buttoncallback", /*buttonClick*/ ctx[2]);
-    			attr_dev(gridSquare, "gridsize", /*gridSize*/ ctx[1]);
-    			add_location(gridSquare, file, 53, 3, 1587);
+    			create_component(gridsquare.$$.fragment);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, gridSquare, anchor);
+    			mount_component(gridsquare, target, anchor);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*numbers*/ 1 && gridSquare_numbers_value !== (gridSquare_numbers_value = /*values*/ ctx[6])) {
-    				attr_dev(gridSquare, "numbers", gridSquare_numbers_value);
-    			}
+    			const gridsquare_changes = {};
+    			if (dirty & /*numbers*/ 1) gridsquare_changes.numbers = /*values*/ ctx[10];
+    			gridsquare.$set(gridsquare_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(gridsquare.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(gridsquare.$$.fragment, local);
+    			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(gridSquare);
+    			destroy_component(gridsquare, detaching);
     		}
     	};
 
@@ -1339,23 +1534,28 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(53:3) {#each column as values, i}",
+    		source: "(85:3) {#each column as values, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (52:1) {#each numbers as column, j}
+    // (84:1) {#each numbers as column, j}
     function create_each_block(ctx) {
     	let each_1_anchor;
-    	let each_value_1 = /*column*/ ctx[3];
+    	let current;
+    	let each_value_1 = /*column*/ ctx[7];
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
     		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
     	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
 
     	const block = {
     		c: function create() {
@@ -1371,10 +1571,11 @@ var app = (function () {
     			}
 
     			insert_dev(target, each_1_anchor, anchor);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
     			if (dirty & /*numbers, buttonClick, gridSize*/ 7) {
-    				each_value_1 = /*column*/ ctx[3];
+    				each_value_1 = /*column*/ ctx[7];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -1383,19 +1584,41 @@ var app = (function () {
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
     					} else {
     						each_blocks[i] = create_each_block_1(child_ctx);
     						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
     						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
     					}
     				}
 
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
+    				group_outros();
+
+    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+    					out(i);
     				}
 
-    				each_blocks.length = each_value_1.length;
+    				check_outros();
     			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value_1.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
     		},
     		d: function destroy(detaching) {
     			destroy_each(each_blocks, detaching);
@@ -1407,7 +1630,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(52:1) {#each numbers as column, j}",
+    		source: "(84:1) {#each numbers as column, j}",
     		ctx
     	});
 
@@ -1415,11 +1638,18 @@ var app = (function () {
     }
 
     function create_fragment(ctx) {
+    	let h1;
+    	let t1;
     	let intro;
-    	let t;
+    	let t2;
     	let div;
     	let current;
-    	intro = new Intro({ $$inline: true });
+
+    	intro = new Intro({
+    			props: { startEquation: [2, 3, 2] },
+    			$$inline: true
+    		});
+
     	let each_value = /*numbers*/ ctx[0];
     	validate_each_argument(each_value);
     	let each_blocks = [];
@@ -1428,25 +1658,35 @@ var app = (function () {
     		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
     	}
 
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
     	const block = {
     		c: function create() {
+    			h1 = element("h1");
+    			h1.textContent = "yeah";
+    			t1 = space();
     			create_component(intro.$$.fragment);
-    			t = space();
+    			t2 = space();
     			div = element("div");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
+    			add_location(h1, file, 78, 0, 2139);
     			attr_dev(div, "class", "biggrid svelte-eb2fm3");
-    			add_location(div, file, 50, 0, 1501);
+    			add_location(div, file, 82, 0, 2188);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
+    			insert_dev(target, h1, anchor);
+    			insert_dev(target, t1, anchor);
     			mount_component(intro, target, anchor);
-    			insert_dev(target, t, anchor);
+    			insert_dev(target, t2, anchor);
     			insert_dev(target, div, anchor);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -1466,32 +1706,49 @@ var app = (function () {
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
     					} else {
     						each_blocks[i] = create_each_block(child_ctx);
     						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
     						each_blocks[i].m(div, null);
     					}
     				}
 
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
+    				group_outros();
+
+    				for (i = each_value.length; i < each_blocks.length; i += 1) {
+    					out(i);
     				}
 
-    				each_blocks.length = each_value.length;
+    				check_outros();
     			}
     		},
     		i: function intro$1(local) {
     			if (current) return;
     			transition_in(intro.$$.fragment, local);
+
+    			for (let i = 0; i < each_value.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(intro.$$.fragment, local);
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(h1);
+    			if (detaching) detach_dev(t1);
     			destroy_component(intro, detaching);
-    			if (detaching) detach_dev(t);
+    			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(div);
     			destroy_each(each_blocks, detaching);
     		}
@@ -1512,8 +1769,47 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
     	let gridSize = [5, 5];
-    	let numbers = makeGrid(gridSize);
-    	setMultiplicationEntry(numbers, 2, 3, 2); //2*3 = 2
+    	let startEquation = [3, 2, 2]; //2*3 = 2
+    	let numbers = [];
+
+    	for (let i = 0; i < gridSize[0]; i++) {
+    		//might be gridSize[1] here
+    		let column = [];
+
+    		for (let i = 0; i < gridSize[1]; i++) {
+    			column.push([]);
+    		}
+
+    		numbers.push(column);
+    	}
+
+    	//first row
+    	for (let i = 0; i < gridSize[0]; i++) {
+    		numbers[i][0] = [i + 1];
+    	}
+
+    	//first column
+    	for (let i = 0; i < gridSize[1]; i++) {
+    		numbers[0][i] = [i + 1];
+    	}
+
+    	function addMultiplicationEntry(x, y, newProduct) {
+    		if (!numbers[y - 1][x - 1].includes(newProduct)) {
+    			numbers[y - 1][x - 1].push(newProduct);
+    		}
+
+    		notifySvelteOfChange();
+    	}
+
+    	function getMultiplicationEntry(x, y, product) {
+    		return numbers[y - 1][x - 1];
+    	}
+
+    	function notifySvelteOfChange(x, y) {
+    		$$invalidate(0, numbers);
+    	}
+
+    	addMultiplicationEntry(...startEquation); //2*3 = 2
 
     	function buttonClick(sourceCoords, arrowDirection) {
     		//todo: check if sourceCoords[0] and sourceCoords[1] are in bounds
@@ -1539,7 +1835,7 @@ var app = (function () {
     			}
     		}
 
-    		$$invalidate(0, numbers);
+    		notifySvelteOfChange();
     	}
 
     	const writable_props = [];
@@ -1551,15 +1847,18 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		GridSquare,
     		Intro,
-    		makeGrid,
-    		setMultiplicationEntry,
     		gridSize,
+    		startEquation,
     		numbers,
+    		addMultiplicationEntry,
+    		getMultiplicationEntry,
+    		notifySvelteOfChange,
     		buttonClick
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('gridSize' in $$props) $$invalidate(1, gridSize = $$props.gridSize);
+    		if ('startEquation' in $$props) startEquation = $$props.startEquation;
     		if ('numbers' in $$props) $$invalidate(0, numbers = $$props.numbers);
     	};
 

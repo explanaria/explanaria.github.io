@@ -22,6 +22,7 @@ $: shouldShowArrows = hasAValue;
         display:grid;
         grid: 0.2fr 1fr 0.2fr / 0.2fr 1fr 0.2fr;
         margin:0.5em;
+        border: 1px solid black;
 	}
 	.centerpart{
 		grid-column-start: 2;
@@ -53,15 +54,21 @@ $: shouldShowArrows = hasAValue;
 	}
 
     .tooltip{
-        position:absolute;
+
+		grid-column: 1 / 4;
+        grid-row-start: 1;
+        position: relative;
         background-color: red;
+        transform: translate(0px, -2em);
+        font-size: 1.3em;
     }
 </style>
 
 <span>
-    <span class="tooltip">{coords[0]} * {coords[1]} = {numbers[0]} </span>
 
     <span class="numbergrid">
+        <span class="tooltip">{coords[0]} * {coords[1]} = {numbers[0]} </span>
+
 	    <span class="centerpart">
 	      {#if hasAValue}
 			    {#if numbers.length == 1}

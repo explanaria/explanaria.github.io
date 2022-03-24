@@ -413,7 +413,7 @@ var app = (function () {
 
     const file$2 = "src/GridSquare.svelte";
 
-    // (73:6) {:else}
+    // (80:6) {:else}
     function create_else_block_1(ctx) {
     	let t_value = "-" + "";
     	let t;
@@ -435,14 +435,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(73:6) {:else}",
+    		source: "(80:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (66:7) {#if hasAValue}
+    // (73:7) {#if hasAValue}
     function create_if_block_5(ctx) {
     	let if_block_anchor;
 
@@ -486,14 +486,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(66:7) {#if hasAValue}",
+    		source: "(73:7) {#if hasAValue}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (69:7) {:else}
+    // (76:7) {:else}
     function create_else_block(ctx) {
     	let span;
     	let t_value = /*numbers*/ ctx[0].join(" = ") + "";
@@ -503,8 +503,8 @@ var app = (function () {
     		c: function create() {
     			span = element("span");
     			t = text(t_value);
-    			attr_dev(span, "class", "multiplenums svelte-s71663");
-    			add_location(span, file$2, 69, 8, 1265);
+    			attr_dev(span, "class", "multiplenums svelte-1d5aasr");
+    			add_location(span, file$2, 76, 8, 1421);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -522,14 +522,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(69:7) {:else}",
+    		source: "(76:7) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (67:7) {#if numbers.length == 1}
+    // (74:7) {#if numbers.length == 1}
     function create_if_block_6(ctx) {
     	let t;
 
@@ -552,14 +552,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(67:7) {#if numbers.length == 1}",
+    		source: "(74:7) {#if numbers.length == 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:5) {#if shouldShowArrows}
+    // (84:5) {#if shouldShowArrows}
     function create_if_block(ctx) {
     	let t0;
     	let t1;
@@ -660,14 +660,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(77:5) {#if shouldShowArrows}",
+    		source: "(84:5) {#if shouldShowArrows}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (79:9) {#if coords[0] > 1 && coords[1] > 1}
+    // (86:9) {#if coords[0] > 1 && coords[1] > 1}
     function create_if_block_4(ctx) {
     	let button;
     	let t0;
@@ -681,8 +681,8 @@ var app = (function () {
     			button = element("button");
     			t0 = text("< -");
     			t1 = text(t1_value);
-    			attr_dev(button, "class", "leftarrow svelte-s71663");
-    			add_location(button, file$2, 79, 13, 1481);
+    			attr_dev(button, "class", "leftarrow svelte-1d5aasr");
+    			add_location(button, file$2, 86, 13, 1637);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -719,14 +719,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(79:9) {#if coords[0] > 1 && coords[1] > 1}",
+    		source: "(86:9) {#if coords[0] > 1 && coords[1] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (85:9) {#if coords[0] < gridSize[0] && coords[1] > 1}
+    // (92:9) {#if coords[0] < gridSize[0] && coords[1] > 1}
     function create_if_block_3(ctx) {
     	let button;
     	let t0;
@@ -740,8 +740,8 @@ var app = (function () {
     			button = element("button");
     			t0 = text("> +");
     			t1 = text(t1_value);
-    			attr_dev(button, "class", "rightarrow svelte-s71663");
-    			add_location(button, file$2, 85, 13, 1692);
+    			attr_dev(button, "class", "rightarrow svelte-1d5aasr");
+    			add_location(button, file$2, 92, 13, 1848);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -778,14 +778,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(85:9) {#if coords[0] < gridSize[0] && coords[1] > 1}",
+    		source: "(92:9) {#if coords[0] < gridSize[0] && coords[1] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (92:9) {#if coords[1] > 1 && coords[0] > 1}
+    // (99:9) {#if coords[1] > 1 && coords[0] > 1}
     function create_if_block_2(ctx) {
     	let button;
     	let t0;
@@ -799,8 +799,8 @@ var app = (function () {
     			button = element("button");
     			t0 = text("^ -");
     			t1 = text(t1_value);
-    			attr_dev(button, "class", "uparrow svelte-s71663");
-    			add_location(button, file$2, 92, 13, 1894);
+    			attr_dev(button, "class", "uparrow svelte-1d5aasr");
+    			add_location(button, file$2, 99, 13, 2050);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -837,14 +837,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(92:9) {#if coords[1] > 1 && coords[0] > 1}",
+    		source: "(99:9) {#if coords[1] > 1 && coords[0] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (98:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}
+    // (105:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}
     function create_if_block_1(ctx) {
     	let button;
     	let t0;
@@ -858,8 +858,8 @@ var app = (function () {
     			button = element("button");
     			t0 = text("V +");
     			t1 = text(t1_value);
-    			attr_dev(button, "class", "downarrow svelte-s71663");
-    			add_location(button, file$2, 98, 13, 2101);
+    			attr_dev(button, "class", "downarrow svelte-1d5aasr");
+    			add_location(button, file$2, 105, 13, 2257);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -896,7 +896,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(98:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}",
+    		source: "(105:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}",
     		ctx
     	});
 
@@ -905,6 +905,7 @@ var app = (function () {
 
     function create_fragment$2(ctx) {
     	let span3;
+    	let span2;
     	let span0;
     	let t0_value = /*coords*/ ctx[1][0] + "";
     	let t0;
@@ -915,7 +916,6 @@ var app = (function () {
     	let t4_value = /*numbers*/ ctx[0][0] + "";
     	let t4;
     	let t5;
-    	let span2;
     	let span1;
     	let t6;
 
@@ -931,6 +931,7 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			span3 = element("span");
+    			span2 = element("span");
     			span0 = element("span");
     			t0 = text(t0_value);
     			t1 = text(" * ");
@@ -938,32 +939,31 @@ var app = (function () {
     			t3 = text(" = ");
     			t4 = text(t4_value);
     			t5 = space();
-    			span2 = element("span");
     			span1 = element("span");
     			if_block0.c();
     			t6 = space();
     			if (if_block1) if_block1.c();
-    			attr_dev(span0, "class", "tooltip svelte-s71663");
-    			add_location(span0, file$2, 61, 4, 1035);
-    			attr_dev(span1, "class", "centerpart svelte-s71663");
-    			add_location(span1, file$2, 64, 5, 1142);
-    			attr_dev(span2, "class", "numbergrid svelte-s71663");
-    			add_location(span2, file$2, 63, 4, 1111);
-    			add_location(span3, file$2, 60, 0, 1024);
+    			attr_dev(span0, "class", "tooltip svelte-1d5aasr");
+    			add_location(span0, file$2, 69, 8, 1221);
+    			attr_dev(span1, "class", "centerpart svelte-1d5aasr");
+    			add_location(span1, file$2, 71, 5, 1298);
+    			attr_dev(span2, "class", "numbergrid svelte-1d5aasr");
+    			add_location(span2, file$2, 68, 4, 1187);
+    			add_location(span3, file$2, 66, 0, 1175);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span3, anchor);
-    			append_dev(span3, span0);
+    			append_dev(span3, span2);
+    			append_dev(span2, span0);
     			append_dev(span0, t0);
     			append_dev(span0, t1);
     			append_dev(span0, t2);
     			append_dev(span0, t3);
     			append_dev(span0, t4);
-    			append_dev(span3, t5);
-    			append_dev(span3, span2);
+    			append_dev(span2, t5);
     			append_dev(span2, span1);
     			if_block0.m(span1, null);
     			append_dev(span2, t6);

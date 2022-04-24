@@ -243,9 +243,19 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 
 		this.capturer.start();
 		this.rendering = true;
-		window.requestAnimationFrame(this.render.bind(this));
+
+        if(document.readyState == "loading"){
+	        window.addEventListener('load', this.render.bind(this), false);  
+        }else{
+            this.render(0);
+        }
 	}
 	render(timestep){
+
+        if(!this.rendering){ //then stop
+            return;
+        }
+
         var realtimeDelta = 1/this.fps;//ignoring the true time, calculate the delta
 		var delta = realtimeDelta*this.timeScale; 
 		this.elapsedTime += delta;
@@ -273,20 +283,23 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 
 		this.capturer.capture( document.querySelector('canvas') );
 
-		this.frameCounter.innerHTML = this.frames_rendered + " / " + this.frameCount; //update timer
+		this.frameCounter.innerHTML = this.frames_rendered + " / " + this.frameCount + "of a " + this.frameCount/this.fps + "second, " + this.fps + "fps video..."; //update timer
 
 		this.frames_rendered++;
 
 
 		if(this.frames_rendered>this.frameCount){
-			this.render = null; //hacky way of stopping the rendering
 			this.recording_icon.style.display = "none";
 			//this.frameCounter.style.display = "none";
 
 			this.rendering = false;
+            this.frameCounter.innerHTML = this.frames_rendered + "frames recorded; Download created!"
+
 			this.capturer.stop();
 			// default save, will download automatically a file called {name}.extension (webm/gif/tar)
 			this.capturer.save();
+
+            
 		}
 	}
 	resizeCanvasIfNecessary() {

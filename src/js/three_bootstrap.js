@@ -274,33 +274,32 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 
 
 		this.record_frame();
-		this.recording_icon.style.borderRadius = '10px';
 
 		window.requestAnimationFrame(this.render.bind(this));
 	}
 	record_frame(){
-	//	let current_frame = document.querySelector('canvas').toDataURL();
 
-		this.capturer.capture( document.querySelector('canvas') );
+		if(this.frames_rendered < this.frameCount){
 
-		this.frameCounter.innerHTML = this.frames_rendered + " / " + this.frameCount + "of a " + this.frameCount/this.fps + "second, " + this.fps + "fps video..."; //update timer
+	        //	let current_frame = document.querySelector('canvas').toDataURL();
+            this.capturer.capture( document.querySelector('canvas') );
 
-		this.frames_rendered++;
+            this.frames_rendered++;
 
+            this.frameCounter.innerHTML = this.frames_rendered + " / " + this.frameCount +
+                " of a " + this.frameCount/this.fps + " second, " + this.fps + "fps video..."; //update timer
 
-		if(this.frames_rendered>this.frameCount){
+		}else{
 			this.recording_icon.style.display = "none";
 			//this.frameCounter.style.display = "none";
 
 			this.rendering = false;
-            this.frameCounter.innerHTML = this.frames_rendered + "frames recorded; Download created!"
+            this.frameCounter.innerHTML = this.frames_rendered + " frames recorded; Download created!"
 
 			this.capturer.stop();
 			// default save, will download automatically a file called {name}.extension (webm/gif/tar)
 			this.capturer.save();
-
-            
-		}
+        }
 	}
 	resizeCanvasIfNecessary() {
 		//stop recording if window size changes

@@ -35,6 +35,7 @@
     .twocolgrid{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
+        column-gap: 5px;
     }
     .twofirstcolumns{
         grid-column: 1 / 3;
@@ -149,14 +150,14 @@ made to keep them all straight in my head
 
 
 
-    <div style="grid-column: 1 / 2; grid-row: 3 / 4;">x*y = y*x?</div>
+    <div style="grid-column: 1 / 2; grid-row: 3 / 4;"><!-- x*y = y*x? --></div>
 
 
-        <div class="legend">-</div>
-        <div class="legend">No</div>
-        <div class="legend">Yes</div>
-        <div class="legend">No</div>
-        <div class="legend">Yes</div>
+        <div class="legend"></div>
+        <div class="legend notcommon">Maybe x*y ≠ y*x</div>
+        <div class="legend">x*y = y*x</div>
+        <div class="legend notcommon">Maybe x*y ≠ y*x</div>
+        <div class="legend">x*y = y*x</div>
 
 
         <div class="legend">
@@ -174,18 +175,19 @@ made to keep them all straight in my head
             
             </div>
             <div>
-                <p>Examples: lattices, strings in python</p> 
+                <p>Examples: lattices, combining strings in programming languages</p> 
             </div>
         </div>
 
         <div class="importantthing twocolgrid secondcolslot">
             <div class="twofirstcolumns"><h2>Groups</h2></div>
             <div>
+                <p>Non-Abelian Groups</p>     
                 <p>Examples: symmetries of a cube, permutations</p>
             </div>
             <div>
                 <p>Abelian Groups</p>     
-                <p>Examples: Integers mod 12</p> 
+                <p>Examples: Adding integers (mod 12), Points on Elliptic Curves</p> 
             </div>
         </div>
 
@@ -194,7 +196,10 @@ made to keep them all straight in my head
         </div>
 
         <div class="legend">
-            <div class="notcommon">Also abelian groups, if you feel like writing +- instead of * and /</div>
+            <div class="notcommon">
+                <p>Also Abelian Groups, if you feel like writing +- instead of * and /</p>
+                <p>Examples: Adding integers (mod 12)</p>
+            </div>
         </div>
 
 
@@ -218,8 +223,8 @@ made to keep them all straight in my head
         </div>
             <div class="importantthing">
                 <h2>Fields</h2>
-                <div>+-*/ to your heart's content.</div>
-                <div>(Examples: <b>rationals ℚ, reals ℝ, complex numbers ℂ</b>, invertible matrices)</div>
+                <div>+-*/ to your heart's content</div>
+                <div>Examples: <b>rationals ℚ, reals ℝ, complex numbers ℂ</b>, invertible matrices</div>
         </div>
 
 
@@ -230,7 +235,7 @@ made to keep them all straight in my head
         <div class="importantthing">
             <div><h2>Vector Spaces</h2> (over ℝ)</div>
             <div>
-                <p>Examples: 3D vectors, electromagnetic waves, ingredients</p>
+                <p>Examples: 3D vectors, electromagnetic waves</p>
             </div>
         </div>
 

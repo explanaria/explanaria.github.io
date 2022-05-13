@@ -1,7 +1,9 @@
 /* index.html specific CSS */
 
 body{
-margin: 0;
+    margin: 0;
+    --darkbgcolor: hsl(240, 10%, 20%);
+    color: var(--darkbgcolor);
 }
 
 .container{
@@ -25,7 +27,7 @@ margin: 0;
     border-top: 1px solid #ddd;
 }
 .mainheader{
-    background-color: #222;
+    background-color: var(--darkbgcolor);
     color: #eee;
     padding: 0.25em 0 1em 0;
 	font-family: "Computer Modern Sans", serif;
@@ -37,15 +39,35 @@ margin: 0;
 .mainheader h1{
     font-size: 3em;
     margin: 0em;
-    font-family: "Computer Modern Serif", serif;
+    font-family: "Lora", serif;
+
+
+    transform: scale(100%);
+    --shadowsize: 2px;
+    --shadowcolor: #333; /*fff*/
+
+    text-shadow: 5px 5px var(--shadowcolor);
+    font-weight: 600; /*semibold */
+    
+    color: #eee;
+    margin: 0.2em;
 }  
+
+
+.ex{
+    width:0.4em;
+    filter: drop-shadow(5px 5px var(--shadowcolor));
+}
+
 .mainheader aside{
     font-size: 1em;
     margin: 0.025em;
 }  
 
+
+
 .footer{
-    background-color: #222;
+    background-color: var(--darkbgcolor);
     color: #eee;
     padding: 0.25em 0 0.25em 0;
 	font-family: "Computer Modern Sans", serif;
@@ -82,7 +104,7 @@ margin: 0;
     padding:0em 1em;
     text-decoration: none;
 
-    color: black;
+    color: var(--darkbgcolor);
 }
 
 .examplelink article{
@@ -165,7 +187,6 @@ margin: 0;
   }
     .mainheader h1{
         font-size: 6em;
-        margin: 0em;
     }  
     .mainheader aside{
         font-size: 1.2em;

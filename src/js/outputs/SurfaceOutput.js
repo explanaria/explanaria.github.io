@@ -21,7 +21,7 @@ class SurfaceOutput extends OutputNode{
 		*/
 		this._opacity = options.opacity !== undefined ? options.opacity : 1;
 
-		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
+		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color("hsl(240, 90%, 70%)");
 
 		this._gridColor = options.gridColor;
         this._useCustomGridColor = options.gridColor !== undefined;

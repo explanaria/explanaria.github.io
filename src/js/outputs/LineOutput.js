@@ -28,7 +28,7 @@ class LineOutput extends OutputNode{
             this._hasCustomColorFunction = true;
             this._color = options.color;
         }else{
-            this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
+            this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color("hsl(240, 90%, 70%)");
         }
 
         this.lineJoinType = options.lineJoinType !== undefined ? options.lineJoinType.toUpperCase() : "BEVEL";

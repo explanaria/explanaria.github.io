@@ -50,7 +50,7 @@ body{
     font-weight: 600; /*semibold */
     
     color: #eee;
-    margin: 0.2em;
+    margin: 0em 0em 0.15em;
 }  
 
 
@@ -59,10 +59,21 @@ body{
     filter: drop-shadow(5px 5px var(--shadowcolor));
 }
 
-.mainheader aside{
+.mainheader aside, .mainheader a{
     font-size: 1em;
     margin: 0.025em;
+    color: #eee;
+    text-decoration: none;
+    display: inline-block;
 }  
+
+.mainheader a:hover{
+    transform: scale(1.05);
+    color: #6e6ef7;
+}
+.linkcollection{
+    margin-top: 0.5em;
+}
 
 
 
@@ -116,6 +127,10 @@ body{
     width:100%;
 
     position: relative;
+}
+.examplelink:hover{
+    transform: scale(1.05);
+    transition: transform 0.05s;
 }
 
 .exampledesc{

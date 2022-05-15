@@ -16,6 +16,33 @@
         text-align: center;
         font-size: 16px;
         overflow-x: scroll;
+
+        --bordercolor:  hsla(240, 90%, 70%); /* #ddd */
+    }
+
+    button{
+        background-color: unset;
+        font-family: Lora, serif;
+    
+        border: 1px solid var(--bordercolor);
+        border-radius: 25px;
+        padding: 0.3em;
+    }
+    button:hover{
+        background-color: #ddd;
+    }
+
+    #explanation{
+        max-width:800px;
+        margin: 0 auto;
+    }
+
+    #back{
+        display: flex;
+        align-items:center;
+        margin-right:1em;
+        position:absolute;
+        left:0px;
     }
 
 
@@ -36,6 +63,7 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         column-gap: 5px;
+        margin: 0 auto;
     }
     .twofirstcolumns{
         grid-column: 1 / 3;
@@ -58,8 +86,9 @@
     }
 
     .importantthing{
-        background-color: #ddd;
-        border-radius: 5px;
+        --bordercolor:  hsla(240, 90%, 70%); /* #ddd */
+        border: 5px solid var(--bordercolor);
+        border-radius: 25px;
         padding: 0.25em;
     }
 
@@ -69,7 +98,7 @@
 
 
     .notcommon{
-        color: #888;
+        color: #444;
         text-decoration-color: #aaa;
     }
 
@@ -87,10 +116,6 @@
         font-size: 1.2em;
     }
 
-    #back{
-        
-    }
-
     @media (max-width: 900px){
         body{
             font-size: 12px;
@@ -102,23 +127,65 @@
             margin: 0;
             margin: 0.25em;
         }
+        #back{
+            position:relative;
+        }
     }
 
   </style>
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 
   <script>
-    screen.orientation.lock("landscape");
+
+    let hidden = true;
+    function toggleDescription(){
+        hidden = !hidden;
+        if(hidden){
+            document.getElementById("explanation").style.display = "none";
+        }
+        if(!hidden){
+            document.getElementById("explanation").style.display = "";
+        }
+
+    }
+
+    window.setTimeout( () => screen.orientation.lock("landscape"), 1);
   </script>
 
 </head>
 <body>
 
-<a href="https://explanaria.github.io" id="back">Back to Explanaria Homepage</a>
+<a href="https://explanaria.github.io" id="back"><img src="../../examples/BackButton.svg" style="height:3em; padding:0em 1em;"></img><span>More Explanaria</span></a>
 
 <h1>Algebraic Structures Chart</h1>
 
-made to keep them all straight in my head
+Here's a chart of abstract structures mathematicians study!
+
+<button onclick="toggleDescription()">What is this?</button>
+<br>
+    <div id="explanation" style="display:none">
+        <p>These are important mathematical ideas from the field of abstract algebra.</p>
+
+       <p>In school, we all learn two ways to combine numbers: addition, multiplication, subtraction, and division. But there are many things which combine sort of like numbers, but not exactly. If you multiply two polynomials like x² and 5x+3.8, you'll always get another polynomial. But you can't always divide two polynomials and get another polynomial. Same with integers: if you multiply or add or subtract two integers and get another one, but you can't divide two integers and get another integer. So these polynomials combine in the same ways as integers.</p>
+        
+        <p>Mathematicians have found many things in math which combine in similar ways. To help understand them, mathematicians gave names to different rules for combining. Then mathematicians can study one category to prove things about many different mathematical objects at the same time. Part of the reason these categories have such annoyingly generic names is that they're so important, showing up in so many places. </p>
+        <p>This chart shows you when one category is another category with more rules. For example, every field can be turned into a ring (by forgetting how to divide, moving left) or into an abelian group (by forgetting how to add and subtract, moving up). You can always move leftwards and upwards in this chart by disallowing certain operations.</p>
+
+        <p>This chart isn't perfect. I had to simplify many things to fit into a neat grid. I couldn't find a good place for modules, for example. Division algebras take up too much space compared to their importance; there aren't many things which combine almost exactly like real numbers besides... real numbers. An expert might say describing groups as multiplication is misleading because mathematicians think about groups more in terms of symmetry. These categories are missing categories - sorry, category theorists. But for seeing structures in context? I like it.</p>
+
+    <br>
+     Key:
+    <br>
+    <div class="twocolgrid" style="max-width: 20em;">
+        <div class="importantthing">Important and common</div>
+        <div class="notcommon">Uncommon, more specialized</div>
+    </div>
+   
+    <br>
+    <br>
+    <button onclick="toggleDescription()">Hide explanation</button>
+
+</div>
 
 <br><br><br><br>
 
@@ -172,10 +239,11 @@ made to keep them all straight in my head
         <div class="notcommon twocolgrid firstcolslot">
             <div class="twofirstcolumns"><h3>Semigroups, monoids</h3></div>
             <div>
+                <p>Examples: concatenating strings in python or javascript</p> 
             
             </div>
             <div>
-                <p>Examples: lattices, combining strings in programming languages</p> 
+                <p>Examples: lattices</p> 
             </div>
         </div>
 
@@ -211,7 +279,7 @@ made to keep them all straight in my head
             </div>
             <div>
                 <p>Commutative Rings</p>     
-                <p>Examples: <b>Integers ℤ</b>, rational polynomials ℚ[x]</p> 
+                <p>Examples: <b>Integers ℤ</b>, rational polynomials ℚ[x], <b>integer polynomials ℤ[x]</b></p> 
             </div>
         </div>
 
@@ -224,7 +292,7 @@ made to keep them all straight in my head
             <div class="importantthing">
                 <h2>Fields</h2>
                 <div>+-*/ to your heart's content!</div>
-                <div>Examples: <b>rationals ℚ, reals ℝ, complex numbers ℂ</b>, invertible matrices</div>
+                <div>Examples: <b>rationals ℚ, reals ℝ, complex numbers ℂ</b>, invertible matrices, p-adic numbers</div>
         </div>
 
 
@@ -235,7 +303,7 @@ made to keep them all straight in my head
         <div class="importantthing">
             <div><h2>Vector Spaces</h2> (over ℝ)</div>
             <div>
-                <p>Examples: <b>3D vectors ℝ³</b>, <b>polynomials ℝ[x]</b>,  electromagnetic waves, velocity</p>
+                <p>Examples: <b>3D vectors ℝ³</b>, polynomials ℝ[x] without multiplication, <b>electromagnetic waves</b>, velocity and acceleration</p>
             </div>
         </div>
 
@@ -248,6 +316,7 @@ made to keep them all straight in my head
             <div>
                 <p>Commutative Algebras</p> 
                 <p>Also called "algebras" by lazy mathematicians</p>
+                <p>Examples: <b>polynomials ℝ[x], real-valued functions f(x)</b></p>
             </div>
         </div>
 

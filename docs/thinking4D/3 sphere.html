@@ -73,7 +73,7 @@
 
                 <div class="overlappingItemContainer hideWhenPresenting">
 	                <div class="exp-slide slideTextItem" style="opacity: 0">
-                        A sphere is a super common type of surface. Can we make a sphere out of a pair of coordinates, like before? <aside>(By "sphere", we mean only the surface of a sphere.)</aside>
+                        A sphere is a super common type of surface. Can we make a sphere out of a list of two coordinates, like before? <aside>(By "sphere", we mean only the surface of a sphere.)</aside>
                         <br>
                         Here's a coordinate system people use on this weird planet called "earth", made of a line-circle pair. <span class="coord1">The first coordinate, "latitude"</span>, controls how <span class="coord1">north/south</span> the point is, and <span class="coord2">the second coordinate, "longitude"</span>, controls how <span class="coord2">east/west</span> the point is. There we go - we've got a coordinate system, right?
                         <br>            
@@ -113,7 +113,7 @@
                     Imagine we're using this coordinate system to fly an airplane around the earth's surface. If you're the plane's pilot, you probably want to know the plane's speed (so you don't crash) and direction (so you fly the right way).
  <br />
  But when we fly over the north pole, our <span class="coord2">east/west coordinate</span> suddenly teleports! 
-                <br /> Teleporting is pretty bad because it means we can't measure speeds and directions. Teleporting means changing position in zero time - or in other words, moving infinitely fast. The plane is moving slowly over the sphere's surface, but somehow our coordinate system can't measure its speed without ugly infinities appearing. Something's gone horribly wrong!
+                <br /> Teleporting is pretty bad because it means we can't measure speeds and directions. Teleporting means changing position in zero time - or in other words, moving infinitely fast. But the plane clearly isn't moving infinitely fast; it's moving slowly and smoothly. Somehow our coordinate system can't measure this plane's speed without ugly infinities appearing. Something's gone horribly wrong!
                 </div>
             </div>
 
@@ -158,9 +158,9 @@
         
             
                 <div class="exp-slide slideTextItem">
-                    One reason we ran into infinities is that in this coordinate system, more than one pair of coordinates represent the same point on the sphere. For example, every single pair of coordinates whose <span class="coord1">first coordinate</span> is fully up, no matter the <span class="coord2">east/west coordinate</span>, corresponds to the north pole.
+                    One reason we ran into infinities is that in this coordinate system, more than one list of coordinates represent the same point on the sphere. For example, every single list of coordinates whose <span class="coord1">first coordinate</span> is fully up, no matter the <span class="coord2">east/west coordinate</span>, corresponds to the north pole.
                     <br>
-                    When multiple different coordinates secretly represent the same point, that's usually not good. For example, if we used this coordinate system to draw a map, it would look super distorted around the poles. Personally, I don't like being lied to - if we draw two different points on a coordinate system, they should always represent two different points on the surface. I guess we can't make a sphere out of pairs of points on simpler shapes without running into ugly infinities.
+                    When multiple different coordinates secretly represent the same point, that's usually not good. For example, if we used this coordinate system to draw a map, it would look super distorted around the north and south poles. Personally, I don't like being lied to - if we draw two different points on a coordinate system, they should always represent two different points on the surface. I guess we can't make a sphere out of pairs of points on simpler shapes without running into ugly infinities.
                     <br> <aside>(You can see this distortion on most real maps by looking at Antarctica!)</aside>
                 </div>
 

@@ -7,7 +7,7 @@ import { threeEnvironment } from './ThreeEnvironment.js';
 
 let EPS = Number.EPSILON;
 
-const Easing = {EaseInOut:1,EaseIn:2,EaseOut:3};
+const Easing = {EaseInOut:1,EaseIn:2,EaseOut:3, Linear: 4};
 
 class Interpolator{
     constructor(fromValue, toValue, interpolationFunction){
@@ -173,6 +173,8 @@ class Animation{
             this.interpolationFunction = Animation.cosineEaseInInterpolation;
         }else if(this.easing == Easing.EaseOut){
             this.interpolationFunction = Animation.cosineEaseOutInterpolation;
+        }else if(this.easing == Easing.Linear){
+            this.interpolationFunction = Animation.linearInterpolation;
         }
 
         //setup values needed for staggered animation

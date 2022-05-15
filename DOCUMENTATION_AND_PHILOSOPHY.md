@@ -280,7 +280,7 @@ For each `{key: newValue}` pair in the supplied `toValues` object, TransitionTo 
 	* durationMS: number; the duration, in milliseconds (1000 = 1 second) of transition time before the new properties are fully recognized.
     * optionalArguments: an object which allows one to specify:
         * staggerFraction: number representing the fraction of time to wait before the last element begins to animate. Default: 0.0. 0 = all points move simulaneously, 1 = everything instantly teleports from beginning to end. Low values tend to make better-looking animations.
-        * easing: one of the values in EXP.Easing. By default, EXP.Easing.EaseInOut.
+        * easing: one of the values in EXP.Easing. By default, EXP.Easing.EaseInOut. Can also be EXP.Easing.EaseIn, EXP.Easing.EaseOut, or EXP.Easing.Linear.
 
     Example usage:
 

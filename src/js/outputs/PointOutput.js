@@ -15,7 +15,7 @@ class PointOutput extends OutputNode{
         if(this._width == 0){
             this._width = 0.00000001;
         }
-		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color(0x55aa55);
+		this._color = options.color !== undefined ? new THREE.Color(options.color) : new THREE.Color("hsl(240, 90%, 70%)");
 		this._opacity = options.opacity !== undefined ? options.opacity : 1;
 
 		this.points = [];

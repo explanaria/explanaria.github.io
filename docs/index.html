@@ -10,19 +10,6 @@
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
   <style>
-	.bigcontainer{
-
-		type: flex
-		divisions: 5
-	}
-	/*
-	.infopart: 0-2
-	.demopart: 3-5
-	.textcontainer{
-		border: 1px solid #ccc;
-		border-radius: 20px;
-		background-color: rgba(255,255,255, 0.5);
-	}*/
 
     .emailPart2{
         height:0.8em;
@@ -40,16 +27,20 @@
 		<header class="mainheader">
             <h1 id="logotext">E<img src="resources/logo_x.png" class="ex" alt="x"></img>planaria</h1>
             <br />
-		    <aside>Interactive, animated math explanations</aside>
+		    <aside>
+                Interactive, animated math explanations
+                <div class="linkcollection"><a href="#about">About</a> - <a href="https://patreon.com/explanaria">Patreon</a> - <a href="#contact">Contact</a> - <a href="#explanarians">Learn!</a></div>
+                </aside>
        </header>
 
         <div id="mainiframecontainer">
             <iframe id="mainiframe" src="examples/fancier_transformations.html" scrolling='no' title="Explanaria example, showing animated interactive points swirling about"></iframe>
         </div>
 
+
         <div id="examplecontainer">
 
-            <h2>Full-Length Explanations of Math Concepts</h2>
+            <a id="explanarians"><h2>Full-Length Explanations of Math Concepts</h2></a>
 
 	        <div class="row">
 
@@ -198,20 +189,23 @@
                             </div>
                         </article>
                     </a>
-	        </div>
+	        </div>  
+            
+            <a id="about">
 
-            <h2>About</h2>
-            <br>
-            <summary>
-                Explanaria is a series of explorable explanations designed to help people understand beautiful mathematical ideas. The code for these animations uses an open source library developed over the course of the last few years, <a href="https://github.com/explanaria/explanaria.github.io">available on Github</a>.
-            </summary>
+                <h2>About</h2>
+                <br>
+                <summary>
+                    Explanaria is a series of explorable explanations designed to help people understand beautiful mathematical ideas. The code for these animations uses an open source library developed over the course of the last few years, <a href="https://github.com/explanaria/explanaria.github.io">available on Github</a>.
+                </summary>
+            </a>
         </div>
 
         <footer class="footer">
-            <h1> Contact: 
+            <a id="contact"><h1> Contact: 
                 <script>window.setTimeout(function(){document.getElementById("emailPart1").innerHTML+="gm"},1)</script>
                 explan<span id="emailPart1"> at </span>ail dot com
-            </h1>
+            </h1></a>
         </footer>
     </div>
 

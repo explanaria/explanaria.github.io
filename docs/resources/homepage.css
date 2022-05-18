@@ -2,8 +2,10 @@
 
 body{
     margin: 0;
+    --darktextcolor: hsl(240, 10%, 20%);
+    --headertextcolor: #eee;
     --darkbgcolor: hsl(240, 10%, 20%);
-    color: var(--darkbgcolor);
+    color: var(--darktextcolor);
 }
 
 .container{
@@ -26,11 +28,13 @@ body{
     border-bottom: 1px solid #ddd;
     border-top: 1px solid #ddd;
 }
+
 .mainheader{
     background-color: var(--darkbgcolor);
-    color: #eee;
+    color: var(--headertextcolor);
+
     padding: 0.25em 0 1em 0;
-	font-family: "Computer Modern Sans", serif;
+	font-family: "Lora", serif;
 	text-align:center;
     line-height:0.9;
 }  
@@ -40,29 +44,28 @@ body{
     font-size: 3em;
     margin: 0em;
     font-family: "Lora", serif;
-
+    margin: 0em 0em 0.15em;
 
     transform: scale(100%);
-    --shadowsize: 2px;
-    --shadowcolor: #333; /*fff*/
-
-    text-shadow: 5px 5px var(--shadowcolor);
+    --shadowcolor: hsla(240, 90%, 70%,/*40% on white background*/ 30%);
+    text-shadow: 0.03em 0.03em var(--shadowcolor);
     font-weight: 600; /*semibold */
-    
-    color: #eee;
-    margin: 0em 0em 0.15em;
-}  
+}
+.logotext{
+
+}
 
 
 .ex{
+    margin: 0 0 -0.03em -0.03em; /*adjusted for on black background */
     width:0.4em;
-    filter: drop-shadow(5px 5px var(--shadowcolor));
+    filter: drop-shadow(0.03em 0.03em var(--shadowcolor));
 }
 
 .mainheader aside, .mainheader a{
     font-size: 1em;
     margin: 0.025em;
-    color: #eee;
+    color: var(--headertextcolor);
     text-decoration: none;
     display: inline-block;
 }  
@@ -80,12 +83,38 @@ body{
 .footer{
     background-color: var(--darkbgcolor);
     color: #eee;
-    padding: 0.25em 0 0.25em 0;
-	font-family: "Computer Modern Sans", serif;
+    padding: 0.25em 0 1em 0;
+	font-family: "Computer Modern Sans", sans-serif;
 	text-align:center;
-    font-size: 70%;
     margin-top: 5em;
 }  
+
+.emailbox, .emailbtn{
+    padding: 0.5em 0em;
+    color: #333;
+	text-align:center;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 300px;
+}
+
+.emailbox{
+    color: #333;
+    background-color: #fff;
+    /* like a .examplelink*/
+}
+
+.emailbtn{
+    background-color: unset;
+    border: 1px solid #bbb;
+    color: #eee;
+    font-weight: bold;
+}
+.emailbtn:hover{
+    background-color: #6e6ef8;
+}
 
 #examplecontainer{
     margin: auto;

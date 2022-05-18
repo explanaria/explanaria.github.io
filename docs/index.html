@@ -25,7 +25,7 @@
 <body>
 	<div class="container">
 		<header class="mainheader">
-            <h1 id="logotext">E<img src="resources/logo_x.png" class="ex" alt="x"></img>planaria</h1>
+            <h1 id="logotext">E<img src="resources/logo_x.svg" class="ex" alt="x"></img>planaria</h1>
             <br />
 		    <aside>
                 Interactive, animated math explanations
@@ -202,10 +202,28 @@
         </div>
 
         <footer class="footer">
-            <a id="contact"><h1> Contact: 
+
+
+            <div>
+
+                <form action="https://tinyletter.com/explanaria" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/explanaria', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
+                <p><label for="tlemail">
+                Get notified about new interactive math explanations as soon as they release!</label></p>
+                
+                <p><input type="text" class="emailbox" name="email" id="tlemail" placeholder="Your email address" /></p><input type="hidden" value="1" name="embed"/>
+                <input type="submit" class="emailbtn" value="Subscribe" />
+                </form>
+            </div>
+
+        <br>
+
+        <div>
+            <a id="contact">
                 <script>window.setTimeout(function(){document.getElementById("emailPart1").innerHTML+="gm"},1)</script>
-                explan<span id="emailPart1"> at </span>ail dot com
-            </h1></a>
+                <b>Contact:</b> <br>explan<span id="emailPart1"> at </span>ail dot com
+            </a>
+        </div>
+    
         </footer>
     </div>
 

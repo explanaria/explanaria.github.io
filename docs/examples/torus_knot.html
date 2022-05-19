@@ -19,7 +19,7 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
 	var three = EXP.setupThree(60,15);
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
@@ -59,16 +59,14 @@
 		//controls.update();
 	});
 
-	async function animate(){
 
-        await EXP.delay(2000);
-        EXP.TransitionTo(knotParams,{'a':3,'b':2});
 
-        await EXP.delay(5000);
-        EXP.TransitionTo(knotParams,{'a':5});
+    await EXP.delay(2000);
+    EXP.TransitionTo(knotParams,{'a':3,'b':2});
 
-	}
-	animate();
+    await EXP.delay(5000);
+    EXP.TransitionTo(knotParams,{'a':5});
+
   </script>
 	<div id="label" class="exp-label 
 exp-slide">

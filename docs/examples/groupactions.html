@@ -18,7 +18,7 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
 	var three = EXP.setupThree(60,15);
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
@@ -116,43 +116,35 @@
 		controls.update();
 	});
 
-	async function animate(){
 
-		
+	var arrow = new RightArrow([0,0], 1, 0x444444);
+	arrow.addTo(sceneElements);
+	arrow.reveal(0,0);
+	await EXP.delay(1000);
 
-		var arrow = new RightArrow([0,0], 1, 0x444444);
-		arrow.addTo(sceneElements);
-		arrow.reveal(0,0);
-		await EXP.delay(1000);
+	EXP.TransitionTo(g, {'expr': (i,t,x,y) => [-x,y]}, 1000);
 
-		EXP.TransitionTo(g, {'expr': (i,t,x,y) => [-x,y]}, 1000);
+	await EXP.delay(2000);
 
-		await EXP.delay(2000);
+	EXP.TransitionTo(g, {'expr': (i,t,x,y) => [-x,-y]}, 1000);
 
-		EXP.TransitionTo(g, {'expr': (i,t,x,y) => [-x,-y]}, 1000);
+	await EXP.delay(2000);
 
-		await EXP.delay(2000);
+	EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, Math.PI/3)}, 1000, 0.0);
 
-		EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, Math.PI/3)}, 1000, 0.0);
+	await EXP.delay(2000);
 
-		await EXP.delay(2000);
+	EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, 4*Math.PI/3)}, 1000);
 
-		EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, 4*Math.PI/3)}, 1000);
+	await EXP.delay(2000);
 
-		await EXP.delay(2000);
+	EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, Math.PI)}, 1000, 0.0);
 
-		EXP.TransitionTo(g, {'expr': (i,t,x,y) => rotate(x, y, Math.PI)}, 1000, 0.0);
+	await EXP.delay(2000);
 
-		await EXP.delay(2000);
+	EXP.TransitionTo(g, {'expr': (i,t,x,y) => [x,y]}, 1000);
 
-		EXP.TransitionTo(g, {'expr': (i,t,x,y) => [x,y]}, 1000);
-
-		await EXP.delay(1000);
-
-
-	}
-
-	window.onload = animate;
+	await EXP.delay(1000);
 
   </script>
     <a href="#" onclick="history.back(-1)" role="button"><img src="BackButton.svg" class="exp-backbtn" alt="Back"></img></a>

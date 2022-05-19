@@ -18,7 +18,7 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
 	var three = EXP.setupThree(60,15);
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
@@ -73,20 +73,16 @@
         axes.activate(time.t);
 	});
 
-let presentation = new EXP.UndoCapableDirector();
+    let presentation = new EXP.UndoCapableDirector();
 
-	async function animate(){
-        await presentation.begin();
-		await presentation.nextSlide();
+    await presentation.begin();
+	await presentation.nextSlide();
 
-        presentation.TransitionTo(transformation, {'expr': (i,t,x,y) => [Math.exp(x), y]}, 1000);
+    presentation.TransitionTo(transformation, {'expr': (i,t,x,y) => [Math.exp(x), y]}, 1000);
 
-		await presentation.nextSlide();
+	await presentation.nextSlide();
 
-        presentation.TransitionTo(transformation, {'expr': (i,t,x,y) => [Math.exp(x)*Math.cos(y), Math.exp(x)*Math.sin(y)]}, 2000);
-
-	}
-	animate();
+    presentation.TransitionTo(transformation, {'expr': (i,t,x,y) => [Math.exp(x)*Math.cos(y), Math.exp(x)*Math.sin(y)]}, 2000);
   </script>
 	<div id="label" class="exp-label exp-slide-1">
 		f(z) = e<sup>z</sup>

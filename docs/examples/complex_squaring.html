@@ -18,7 +18,7 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
 	var three = EXP.setupThree(60,15);
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
@@ -64,67 +64,62 @@
 		//three.camera.lookAt(new THREE.Vector3())
 	});
 
-let includeZCut = 1;
-let presentation = new EXP.UndoCapableDirector();
+    let includeZCut = 1;
+    let presentation = new EXP.UndoCapableDirector();
 
-	async function animate(){
-        await presentation.begin();
-		await presentation.nextSlide();
-		await presentation.nextSlide();
-        presentation.TransitionTo(three.camera.position, {x:-2.75, z:2.75}, 1000);
-        presentation.TransitionTo(three.camera.rotation, {y: -0.8}, 1000);
+    await presentation.begin();
+	await presentation.nextSlide();
+	await presentation.nextSlide();
+    presentation.TransitionTo(three.camera.position, {x:-2.75, z:2.75}, 1000);
+    presentation.TransitionTo(three.camera.rotation, {y: -0.8}, 1000);
 
-		await presentation.delay(1000);
-        //cut along negative x axis
-        presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r, theta, includeZCut*theta/2/Math.PI]}, 1000);
+	await presentation.delay(1000);
+    //cut along negative x axis
+    presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r, theta, includeZCut*theta/2/Math.PI]}, 1000);
 
-		await presentation.nextSlide();
+	await presentation.nextSlide();
 
-        //show transformation
+    //show transformation
 presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r*r, 2*theta, 2*includeZCut*theta/2/Math.PI]}, 3000);
-		await presentation.nextSlide();
+	await presentation.nextSlide();
 
-        //show r*r
+    //show r*r
 
-        presentation.TransitionTo(three.camera.position, {x:-4, z:0}, 1000);
-        presentation.TransitionTo(three.camera.rotation, {y: -Math.PI/2}, 1000);
+    presentation.TransitionTo(three.camera.position, {x:-4, z:0}, 1000);
+    presentation.TransitionTo(three.camera.rotation, {y: -Math.PI/2}, 1000);
 
-		await presentation.nextSlide();
-        //then compress back to a flat shape
-        presentation.TransitionTo(three.camera.position, {x:-2.75, z:2.75}, 1000);
-        presentation.TransitionTo(three.camera.rotation, {y: -0.8, z:0, x:0}, 1000);
-
-
-		await presentation.delay(2000);
-
-        presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r*r, 2*theta, theta/10000]}, 2000);
+	await presentation.nextSlide();
+    //then compress back to a flat shape
+    presentation.TransitionTo(three.camera.position, {x:-2.75, z:2.75}, 1000);
+    presentation.TransitionTo(three.camera.rotation, {y: -0.8, z:0, x:0}, 1000);
 
 
-		await presentation.delay(2000);
-		presentation.TransitionTo(three.camera.position, {'x':0,'y':0,'z':4})
-		presentation.TransitionTo(three.camera.rotation, {'x':0,'y':0,'z':0})
+	await presentation.delay(2000);
+
+    presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r*r, 2*theta, theta/10000]}, 2000);
 
 
-		await presentation.nextSlide();
-        //show it again from the front
-		presentation.TransitionTo(output2, {'opacity':0}, 500);
-        await presentation.delay(1000);
-        presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r, theta, 0]}, 1);
-		presentation.TransitionTo(output2, {'opacity':1}, 500);
-
-        await presentation.delay(1000);
-        
-        //the z coordinate should be 0. instead, i'm using theta/10000.
-        //why? because if a SurfaceOutput is transparent, it tries to sort the faces.
-        //this small adjustment makes a lot of lag.
-        //so guaranteeing a sort order means we don't have to do a lot of work every frame.
-        presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r*r, 2*theta, 2*includeZCut*theta/2/Math.PI]}, 3000)
-        await presentation.delay(3000);
-        presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r*r, 2*theta, 0]}, 2000)
+	await presentation.delay(2000);
+	presentation.TransitionTo(three.camera.position, {'x':0,'y':0,'z':4})
+	presentation.TransitionTo(three.camera.rotation, {'x':0,'y':0,'z':0})
 
 
-	}
-	animate();
+	await presentation.nextSlide();
+    //show it again from the front
+	presentation.TransitionTo(output2, {'opacity':0}, 500);
+    await presentation.delay(1000);
+    presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r, theta, 0]}, 1);
+	presentation.TransitionTo(output2, {'opacity':1}, 500);
+
+    await presentation.delay(1000);
+    
+    //the z coordinate should be 0. instead, i'm using theta/10000.
+    //why? because if a SurfaceOutput is transparent, it tries to sort the faces.
+    //this small adjustment makes a lot of lag.
+    //so guaranteeing a sort order means we don't have to do a lot of work every frame.
+    presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r*r, 2*theta, 2*includeZCut*theta/2/Math.PI]}, 3000)
+    await presentation.delay(3000);
+    presentation.TransitionTo(transformation, {'expr': (i,t,r,theta) => [r*r, 2*theta, 0]}, 2000)
   </script>
 	<div id="label" class="exp-label exp-slide-2">
 		The Complex Plane

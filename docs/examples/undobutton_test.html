@@ -19,82 +19,75 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
     var three = EXP.setupThree(60,15);
 
-    var controls, area, id, output;
-    function init(){
-	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
-	    console.log("Loaded.");
+    await EXP.pageLoad();
 
-	    area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
-	    id = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
-	    output = new EXP.PointOutput({width:0.2});
+    let controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
+    console.log("Loaded.");
 
-	    area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
+    let area = new EXP.Area({bounds: [[-5,5],[-5,5]]});
+    let id = new EXP.Transformation({'expr': (i,t,x,y) => [x,y,0]});
+    let output = new EXP.PointOutput({width:0.2});
 
-	    area.add(id); //transformation -> output
-	    id.add(output);
+    area.add(new EXP.PointOutput({width: 0.2, color:0xcccccc})); // grid
 
-	    three.on("update",function(time){
-		    area.activate(time.t);
-		    controls.update();
-	    });
-    	animate();
-    }
+    area.add(id); //transformation -> output
+    id.add(output);
+
+    three.on("update",function(time){
+	    area.activate(time.t);
+	    controls.update();
+    });
 
 
 	var presentation = new EXP.UndoCapableDirector();
 
-	async function animate(){
+    await presentation.begin();
 
-        await presentation.begin();
+	await presentation.nextSlide();
 
-		await presentation.nextSlide();
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x*x/6 + y,0]});
+	await presentation.nextSlide();
 
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x*x/6 + y,0]});
-		await presentation.nextSlide();
+	// bouncy circle
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4),y*Math.sin(x/4),0]});
+	await presentation.delay(1000);
 
-		// bouncy circle
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4),y*Math.sin(x/4),0]});
-		await presentation.delay(1000);
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4 + t),y*Math.sin(x/4 + t),0]});
+	await presentation.nextSlide();
 
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [y*Math.cos(x/4 + t),y*Math.sin(x/4 + t),0]});
-		await presentation.nextSlide();
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),0]});
+	await presentation.nextSlide();
 
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),0]});
-		await presentation.nextSlide();
+	//folds up into something 3D
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),Math.abs(x)*3-9]});
+	await presentation.nextSlide();
 
-		//folds up into something 3D
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [(y+Math.sin(t*6))*Math.cos(x/4 + t),(y+Math.sin(t*6))*Math.sin(x/4 + t),Math.abs(x)*3-9]});
-		await presentation.nextSlide();
+	//to the THIRD DIMENSION
+	presentation.TransitionTo(three.camera.position, {z: 2, x: 9.3});
+	await presentation.nextSlide();
 
-		//to the THIRD DIMENSION
-		presentation.TransitionTo(three.camera.position, {z: 2, x: 9.3});
-		await presentation.nextSlide();
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,(x*x+y*y*(y+Math.sin(t)/3))/5,y+Math.sin(t)]});
+	await presentation.nextSlide();
 
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,(x*x+y*y*(y+Math.sin(t)/3))/5,y+Math.sin(t)]});
-		await presentation.nextSlide();
+	//TransitionTo(three.camera.rotation, {y: Math.PI});
 
-		//TransitionTo(three.camera.rotation, {y: Math.PI});
+	//var anim = new Animation(output, {'color': 0xffffff}); // works (albeit not on THREE.Color()s)
 
-		//var anim = new Animation(output, {'color': 0xffffff}); // works (albeit not on THREE.Color()s)
+	presentation.TransitionTo(three.camera.position, {z: 10, x: 0});
+	await presentation.delay(1000);
 
-		presentation.TransitionTo(three.camera.position, {z: 10, x: 0});
-		await presentation.delay(1000);
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),0]})
+	await presentation.nextSlide();
 
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),0]})
-		await presentation.nextSlide();
-
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),Math.cos(x+t)]})
-		await presentation.delay(1000);
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,Math.sin(x+t),Math.cos(x+t)]})
+	await presentation.delay(1000);
 
 
-		presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(x+t),-(y*y/3)+Math.cos(x+t)+4]})
+	presentation.TransitionTo(id, {'expr': (i,t,x,y) => [x,y+Math.sin(x+t),-(y*y/3)+Math.cos(x+t)+4]})
 
-	}
-
-	init();
   </script>	
 
     <section id="label1" class="exp-label exp-slide">

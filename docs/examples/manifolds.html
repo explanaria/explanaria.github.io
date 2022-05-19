@@ -33,17 +33,14 @@
 	var torus = new EXP.Area({bounds: [[0,2*Math.PI],[0,2*Math.PI]], numItems: [17,17]});
 	var a=1;
 	var b=2;
-	var timeChange = new EXP.Transformation({'expr': (i,t,theta1,theta2) => [theta1, theta2]});
 	var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => 
 		[(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
 	});
-	var output = new EXP.SurfaceOutput({opacity:0.9, color: 0x0070f0, showGrid: true, gridLineWidth: 0.05, showSolid:true});
+	var output = new EXP.SurfaceOutput({opacity:0.9, color: "hsl(240, 90%, 70%)", showGrid: true, gridLineWidth: 0.05, showSolid:true});
 
-	torus.add(timeChange).add(manifoldParametrization).add(output);
+	torus.add(manifoldParametrization).add(output);
 
 	function calc_torus_tangent_space(theta1, theta2){
-
-
 		// the parametrization is a map U ( M --> R^2
 		//This is a manually entered map df: T_x M -> R^2 from R^2 => R^2
 
@@ -59,44 +56,36 @@
 	}
 
 
-	
-	class ParameterTracker{
-		constructor(){}
-		activate(t){
-			this.tangentSpaceChart = calc_torus_tangent_space(...this.tangentPoint);
-		}
-	}
-	var params = new ParameterTracker();
-	params.tangentPoint = manifoldParametrization.expr(0,0,0,0);
-	params.activate(0);
+	let tangentPt = new EXP.Array({data: [[0]]});
+    let tangentPtPath = new EXP.Transformation({expr: (i,t) => [Math.cos(t/3), Math.cos(t/5)]});
+    let pointParametrization = manifoldParametrization.clone();
+		tangentPt.add(tangentPtPath)
+        .add(pointParametrization)
+		.add(new EXP.PointOutput({width:0.3, color: 0x0000f0}));
+
+    let localCoords = [0,0];
+    let embeddedCoords = [0,0,0];
+    
+    tangentPtPath.add(new EXP.FlatArrayOutput({array: localCoords})); //saves tangent point coordinates pre-embedding
+    pointParametrization.add(new EXP.FlatArrayOutput({array: embeddedCoords})); //saves tangent point coordinates pre-embedding
+
+    let tangentSpaceChart = calc_torus_tangent_space(localCoords); //will be updated each frame
 
 	var tangentspace = new EXP.Area({bounds: [[-1,1],[-2/5,2/5]]});
 	tangentspace
-		.add(new EXP.Transformation({expr: (i,t,theta1,theta2) => EXP.Math.vectorAdd(manifoldParametrization.expr(i,t,...params.tangentPoint), params.tangentSpaceChart(i,t,theta1,theta2))}))
+		.add(new EXP.Transformation({expr: (i,t,theta1,theta2) => EXP.Math.vectorAdd(embeddedCoords, tangentSpaceChart(i,t,theta1,theta2))}))
 		.add(new EXP.SurfaceOutput({color: green, opacity:0.8, showGrid: true, gridSquares: 8, showSolid:false}));
 
-	
-	var tangentPt = new EXP.Array({data: [[0]]});
-	tangentPt
-		.add(new EXP.Transformation({expr: (i,t) => [Math.cos(t/3), Math.cos(t/5)]}))
-		.add(new EXP.Transformation({expr: (i,t,...x) => { params.tangentPoint = x; return x }}))
-		.add(manifoldParametrization.clone())
-		.add(new EXP.PointOutput({width:0.3, color: 0x0000f0}));
 
-
-	let objects = [tangentPt, params, torus, tangentspace];
+	let objects = [tangentPt, torus, tangentspace];
 
 	three.on("update",function(time){
+        tangentSpaceChart = calc_torus_tangent_space(...localCoords);
 		for(var x of objects){
 			x.activate(time.t);
 		}
 		//controls.update();
 	});
-
-	async function animate(){
-
-	}
-	animate();
   </script>
     <a href="#" onclick="history.back(-1)" role="button"><img src="BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
 	<div id="label" class="exp-label 

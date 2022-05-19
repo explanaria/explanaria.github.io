@@ -15,14 +15,18 @@
 
 
   <link type="text/css" rel="stylesheet" href="../resources/oldstyle.css" />
+  <style>
+    #maincanvas{
+        width: 100%;
+        height: 100%;
+    }
+
+  </style>
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script src="fancier_transformations.js"></script>
-  <script>
-    var three = EXP.setupThree(60,15);
-	init();
-  </script>
+  <script type="module" src="fancier_transformations.js"></script>
+  <canvas id="maincanvas"></canvas>
 </body>
 </html>

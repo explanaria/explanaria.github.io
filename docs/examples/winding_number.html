@@ -19,7 +19,7 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
 	var three = EXP.setupThree(60,15);
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
@@ -76,42 +76,39 @@
 		return Math.sin(theta/3) + Math.sin(theta) + 3.1;
 	}
 
-	async function animate(){
 
-		await EXP.delay(10);
+	await EXP.delay(10);
 
-		EXP.TransitionTo(t2, {'expr': (i,t,x,y) => [Math.cos(x*3+t*3)*radius(x*3+t*3),Math.sin(x*3+t*3)*radius(x*3+t*3),0]});
-		EXP.TransitionTo(windingLine, {'opacity':1});
-		await EXP.delay(5000);
+	EXP.TransitionTo(t2, {'expr': (i,t,x,y) => [Math.cos(x*3+t*3)*radius(x*3+t*3),Math.sin(x*3+t*3)*radius(x*3+t*3),0]});
+	EXP.TransitionTo(windingLine, {'opacity':1});
+	await EXP.delay(5000);
 
-        EXP.TransitionTo(output, {'opacity':0});
-		await EXP.delay(2000);
+    EXP.TransitionTo(output, {'opacity':0});
+	await EXP.delay(2000);
 
-		//show line
-		EXP.TransitionTo(line, {'expr': (i,t,x,y) => [x,0.3]});
-		EXP.TransitionTo(intersectionOutput, {'opacity': 1});
-		await EXP.delay(3000);		
+	//show line
+	EXP.TransitionTo(line, {'expr': (i,t,x,y) => [x,0.3]});
+	EXP.TransitionTo(intersectionOutput, {'opacity': 1});
+	await EXP.delay(3000);		
 
-		EXP.TransitionTo(params, {'angleOffset': -1});
-		await EXP.delay(2000);		
+	EXP.TransitionTo(params, {'angleOffset': -1});
+	await EXP.delay(2000);		
 
-		EXP.TransitionTo(params, {'angleOffset': 1});
-		await EXP.delay(2000);		
+	EXP.TransitionTo(params, {'angleOffset': 1});
+	await EXP.delay(2000);		
 
-		EXP.TransitionTo(params, {'angleOffset': -Math.PI*2+0.3});
-		await EXP.delay(3000);		
+	EXP.TransitionTo(params, {'angleOffset': -Math.PI*2+0.3});
+	await EXP.delay(3000);		
 
-		//move the 6 points
-		EXP.TransitionTo(goToIntersection, {expr: (i,t,x,y)=> [i-3, -3]});
-		await EXP.delay(2000);
+	//move the 6 points
+	EXP.TransitionTo(goToIntersection, {expr: (i,t,x,y)=> [i-3, -3]});
+	await EXP.delay(2000);
 
-		//show text
-		let element = document.getElementById("label");
-		element.style.opacity = 1;
-		//TransitionTo(element.style, {opacity: 1}, 1000); //doesn't work
+	//show text
+	let element = document.getElementById("label");
+	element.style.opacity = 1;
+	//TransitionTo(element.style, {opacity: 1}, 1000); //doesn't work
 
-	}
-	animate();
   </script>
     <a href="#" onclick="history.back(-1)" role="button"><img src="BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
 	<div id="label" class="exp-label exp-math" style="opacity: 0">

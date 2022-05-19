@@ -18,7 +18,7 @@
 </head>
 <body>
 
-  <script>
+  <script type="module">
 	var three = EXP.setupThree(60,25);
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 	controls.enableRotate = false;
@@ -28,7 +28,7 @@
 
 	console.log("Loaded.");
 
-	let lightblue = 0x0070f0;
+	let lightblue = "hsl(240, 90%, 70%)";
 	let orangered = 0xff7070;
 
 
@@ -80,45 +80,42 @@
 
 	var presentation = new EXP.UndoCapableDirector();
 
-	async function animate(){
-		controls.enablePan = false;
-		await presentation.begin();
+	controls.enablePan = false;
+	await presentation.begin();
 
-		await presentation.nextSlide();
+	await presentation.nextSlide();
 
-		await presentation.nextSlide();
+	await presentation.nextSlide();
 
-		//Start with a rotating circle.
-		await presentation.nextSlide();
+	//Start with a rotating circle.
+	await presentation.nextSlide();
 
-		//turn sideways
-		presentation.TransitionTo(transformCircle, {'expr': (i,t,a,b,c) => [c,b,a/10]},500); // rotate
+	//turn sideways
+	presentation.TransitionTo(transformCircle, {'expr': (i,t,a,b,c) => [c,b,a/10]},500); // rotate
 
-		await presentation.nextSlide();
+	await presentation.nextSlide();
 
-		//Move to the left in preparation to create the graph
-		presentation.TransitionTo(transformCircle, {'expr': (i,t,a,b,c) => [c-6,b,a/10]},500);
-		await presentation.delay(750);
+	//Move to the left in preparation to create the graph
+	presentation.TransitionTo(transformCircle, {'expr': (i,t,a,b,c) => [c-6,b,a/10]},500);
+	await presentation.delay(750);
 
-		let trailShowTime = 10000;
-		//move to the right while showing the trail
-		presentation.TransitionTo(transformCircle, {'expr': (i,t,a,b,c) => [c+6,b,0]},trailShowTime);
+	let trailShowTime = 10000;
+	//move to the right while showing the trail
+	presentation.TransitionTo(transformCircle, {'expr': (i,t,a,b,c) => [c+6,b,0]},trailShowTime);
 
-		presentation.TransitionTo(lineDefinition, {'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]},trailShowTime); //make the sine wave flat so that the lines show up properly on mobile
+	presentation.TransitionTo(lineDefinition, {'expr': (i,t,x) => [x,params.radius*Math.sin(params.freq*t + x),0]},trailShowTime); //make the sine wave flat so that the lines show up properly on mobile
 
-		presentation.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},trailShowTime)
-		presentation.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},trailShowTime);
+	presentation.TransitionTo(revealTransform,{'expr': (i,t,x) => [x]},trailShowTime)
+	presentation.TransitionTo(linePostTransform,{'expr': (i,t,x,y,z) => [x+6,y,z]},trailShowTime);
 
-		await presentation.delay(trailShowTime);
-		//fade away everything to get the sine wave
-		[output1,output2,output3].forEach(i => presentation.TransitionTo(i, {'opacity': 0}));
+	await presentation.delay(trailShowTime);
+	//fade away everything to get the sine wave
+	[output1,output2,output3].forEach(i => presentation.TransitionTo(i, {'opacity': 0}));
 
-		await presentation.nextSlide();
-		//now it's a proper-freq wave, nyeheheheh
-		presentation.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(3*(t + x)),0]},1000);
+	await presentation.nextSlide();
+	//now it's a proper-freq wave, nyeheheheh
+	presentation.TransitionTo(lineDefinition,{'expr': (i,t,x) => [x,params.radius*Math.sin(3*(t + x)),0]},1000);
 
-	}
-	window.onload = animate;
   </script>
         <a href="#" onclick="history.back(-1)" role="button"><img src="BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
 

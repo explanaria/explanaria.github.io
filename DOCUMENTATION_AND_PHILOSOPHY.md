@@ -353,6 +353,20 @@ Example usage:
 
 Technical note: The result of a EXP.setupThree() call is also available at EXP.threeEnvironment. This is used internally to create three.js entities. As a result, the three.js environment is a 'singleton': after the first call, calling EXP.setupThree() multiple times will return the same object each time.
 
+* async EXP.pageLoad()
+
+An async function that finishes running once the page has finished loading, using DOMContentLoaded internally. If you try to use document.getElementById() in a script before the page has finished loading, it won't work and you'll get a mysterious error. `await` this function, and it'll pause until the page has finished loading, then resume. If the page is already loaded, it will return immediately. 
+
+If you run scripts in a `<script type="module">`, you can use await at the top level, meaning you can write code without surrounding it in any immediately invoked functions!
+
+Example usage:
+```
+await EXP.pageLoad();
+EXP.setupThree(60, 15, document.getElementById("mycoolcanvas"))
+// more explanaria code...
+
+```
+
 ## Recording with Explanaria
 
 Explanaria will record the output of the canvas whenever `?record=true` is present in the URL. If `EXP.setupThree(fps, seconds)` will record `fps * seconds` frames. If you want to record for longer, change the `seconds` number in the `EXP.setupThree()` call.

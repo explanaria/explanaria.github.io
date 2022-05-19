@@ -80,7 +80,7 @@ function ThreeasyEnvironment(canvasElem = null){
 
     //If the canvasElement is already loaded, then the 'load' event has already fired. We need to trigger it ourselves.
     if(document.readyState == "loading"){
-	    window.addEventListener('load', this.onPageLoad.bind(this), false);  
+	    window.addEventListener('DOMContentLoaded', this.onPageLoad.bind(this), false);  
     }else{
         this.onPageLoad();
     }
@@ -344,4 +344,15 @@ function setupThree(fps=30, length = 5, canvasElem = null){
     return threeEnvironment;
 }
 
-export {setupThree, ThreeasyEnvironment, ThreeasyRecorder}
+async function pageLoad(){ //so you can await pageLoad(); and know the DOM is loaded
+  return new Promise(resolve => {
+    if(document.readyState == "loading"){
+	    window.addEventListener('DOMContentLoaded', resolve, false);  
+    }else{
+        resolve();
+    }
+  })
+}
+
+
+export {setupThree, ThreeasyEnvironment, ThreeasyRecorder, pageLoad}

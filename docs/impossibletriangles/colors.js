@@ -8,7 +8,6 @@ export const triangleLineColor = new THREE.Color("hsl(240, 50%, 50%)");
 export const triangleGrabbableCornerColor = new THREE.Color(0xff0000);
 export const triangleNonGrabbableCornerColor =  new THREE.Color(0x444444);
 
-
 //2 colors
 let rColor = new THREE.Color("hsl(0, 80%, 40%)");0x00ff55;
 let sColor = new THREE.Color("hsl(120, 80%, 40%)");0x4488ff;
@@ -38,6 +37,9 @@ export {rColor, sColor, tColor, twoNColor, yColor, xColor, zColor, gridColor, wh
 //3 colors
 export let pColor = twoNColor; //new THREE.Color("hsl(180, 50%, 50%)");
 export let qColor = new THREE.Color("hsl(300, 50%, 50%)");
+
+export const ellipticCurveColor = tColor;//formerly 0x0070f0
+
 
 export const reflectionLineColor = gridColor;
 

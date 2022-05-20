@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="../../resources/favicon.ico" sizes="any">
+  <link rel="icon" href="../../resources/favicon.svg" type="image/svg+xml">
+  <title>Patreon Banner</title>
+  
+  
+  <script src="../../resources/build/explanaria-bundle.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+
+  <link type="text/css" rel="stylesheet" href="../../resources/oldstyle.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+  <style>
+    body{
+        overflow: scroll;
+    }
+    canvas{
+
+        grid-column-start: 1;
+        grid-row-start: 1;
+        /* normally 1600 by 400 */
+        width: 100%;
+        height: 100%;
+        border: 1px solid red;
+    }
+    #container{
+        display: grid;
+        width: 1600px;
+        height: 400px;
+        atransform: translate(-9%, 0%) scale(0.8)
+    }
+    #logotext{
+        grid-column-start: 1;
+        grid-row-start: 1;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        text-align: center;
+        display: grid;
+        --darkcolor: hsla(240, 90%, 70%,40%); /*40% opacity shadow*/
+        --lightcolor: hsl(240, 80%, 77%);
+        --reallylightcolor: hsl(240, 80%, 80%);
+        --color: var(--darkcolor);
+    }
+    #logotext p{
+        font-size: 140px;
+        margin: 0;
+        font-family: Lora;
+
+
+        atext-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, 4px 4px 0 var(--color), 5px 5px 0 var(--color), 6px 6px 0 var(--color), 3px 3px 0 var(--color);
+
+    }
+
+    .toptext{
+        transform: scale(100%);
+        --shadowsize: 2px;
+        --shadowcolor: #333; /*fff*/
+        /*
+        text-shadow: calc(-1.0 * var(--shadowsize)) calc(-1.0 * var(--shadowsize)) 0 #fff, var(--shadowsize) calc(-1.0 * var(--shadowsize)) 0 #fff, calc(-1.0 * var(--shadowsize)) var(--shadowsize) 0 #fff, var(--shadowsize) var(--shadowsize) 0 #fff;
+        */
+    
+        text-shadow: 5px 5px var(--color);
+        font-weight: bold;
+        
+        color: hsl(240, 10%, 20%);
+    }
+    /*
+    .smol1{
+        transform: scale(99%) translate(0%, -0.5%);
+        color: var(--color);
+    }
+    .smol2{
+        transform: scale(98%) translate(0%, -1%);
+        color: var(--color);
+    }
+    .smol3{
+        transform: scale(97%) translate(0%, -1.5%);
+        color: var(--color);
+    }
+    .smol4{
+        transform: scale(96%) translate(0%, -2%);
+        color: var(--color);
+    }*/
+
+    /*
+    .smol1{
+        transform: scale(99.5%) translate(0%, 0.5%);
+        color: var(--reallylightcolor);
+    }
+    .smol2{
+        transform: scale(99%) translate(0%, -1%);
+        color: var(--darkcolor);
+    }
+    .smol3{
+        transform: scale(98.5%) translate(0%, -1.25%);
+        color: var(--color);
+    }
+    .smol4{
+        transform: scale(98%) translate(0%, -2%);
+        color: var(--color);
+    }
+    */
+    .ex{
+        width:0.4em;
+        filter: drop-shadow(5px 5px var(--color));
+    }
+   </style>
+</head>
+<body>
+  <div id="container">
+    <canvas id="maincanvas"> </canvas>
+
+
+    <div id="logotext"><p class="toptext">E<img src="x5.png" class="ex" alt="x"></img>planaria</p></div>
+
+  </div>
+
+  <script>
+	var three = EXP.setupThree(1,1, document.getElementById("maincanvas"), );
+	//var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
+
+    three.camera.position.z = 100;
+    three.camera.fov = 30;
+    three.camera.zoom = 5;
+
+    three.camera.updateProjectionMatrix();
+
+	console.log("Loaded.");
+
+    let objects = [];
+
+    let bgcolor = "hsl(220, 80%, 77%)";
+    let darkerbgcolor = "hsl(240, 90%, 70%)";
+    //darkerbgcolor = "#ffe28b";
+
+    let bigPointColor = darkerbgcolor;
+
+    let bigPointSize = 0.5;
+    let bigLineSize = 10;
+
+    
+
+	var triangle = new EXP.Array({data: [[-15,0.4],[-20,0],[-18,3],[-15,0.4]]});
+
+    triangle.add(new EXP.PointOutput({width: bigPointSize, color: bigPointColor}));
+    triangle.add(new EXP.LineOutput({width: bigLineSize, color: bgcolor}));
+
+    objects.push(triangle);
+
+    let wave = new EXP.Area({bounds: [[0, Math.PI * 4]], numItems: 50});
+
+    let angle = 78 * Math.PI/180;
+    let wavePositionTransform = new EXP.Transformation({expr: (i,t,x,y) => [x*Math.sin(angle) - Math.cos(angle)*y - 12, Math.cos(angle)*x + y*Math.sin(angle) - 2]});
+
+    wave.add(new EXP.Transformation({expr: (i,t,theta) => [-theta - 1, Math.sin(theta*1.5)]}))
+    .add(wavePositionTransform)
+    .add(new EXP.LineOutput({width: bigLineSize, color: bgcolor}));
+	objects.push(wave);
+
+    let circle = new EXP.Area({bounds: [[0, Math.PI * 2]], numItems: 50});
+    circle.add(new EXP.Transformation({expr: (i,t,theta) => [Math.cos(theta), Math.sin(theta)]}))
+    .add(wavePositionTransform.makeLink())
+    .add(new EXP.LineOutput({width: bigLineSize, color: bgcolor}));
+    objects.push(circle);
+
+    let point = new EXP.Array({data: [Math.PI]})
+    point.add(new EXP.Transformation({expr: (i,t,theta) => [Math.cos(theta), Math.sin(theta)]}))
+    .add(wavePositionTransform.makeLink())
+    .add(new EXP.PointOutput({width: bigPointSize, color: bigPointColor}));
+    
+    objects.push(point)
+
+
+    //middle grid
+
+    /*
+    //unbent grid
+    let rect = new EXP.Area({bounds: [[0,3], [0,3]], numItems: [5,5]})
+    let rectRotation = new EXP.Transformation({expr: (i,t,x,y) => [x * 2 - y*0.2 - 1,y + 2]});
+    */
+
+    let rect = new EXP.Area({bounds: [[0,3], [0,3]], numItems: [5,5]})
+    let rectRotation = new EXP.Transformation({expr: (i,t,x,y) => [x * 2 - y*0.2 + 3, y * 0.8 + 1.5 + Math.sin(x)]});
+    rect.add(rectRotation).add(new EXP.LineOutput({width: bigLineSize, color: bgcolor}));
+    rect.add(new EXP.Transformation({expr: (i,t,x,y,z) => [y,x,z]})).add(rectRotation.makeLink())
+        .add(new EXP.LineOutput({width: bigLineSize, color: bgcolor}));
+    //.add(new EXP.SurfaceOutput({color: bgcolor, gridSquares: 9, showSolid: false}));
+
+    objects.push(rect)
+
+
+    //random points
+    let randomPoints = [];
+    for(let i=0;i<30;i++){
+        randomPoints.push([Math.random()*10.5+0.5, Math.random()*3 - 5]);
+    }
+
+    let pointcluster = new EXP.Array({data: randomPoints});
+    pointcluster.add(new EXP.PointOutput({color: bigPointColor, width: bigPointSize - 0.3}))
+    objects.push(pointcluster)
+
+    //top lines
+
+    let lines = new EXP.Area({bounds: [[-3,-1], [-3,4]], numItems: 3});
+    lines
+    .add(new EXP.Transformation({expr: (i,t,x,y) => [(y-x),x-0.1*y]}))
+    .add(new EXP.Transformation({expr: (i,t,x,y,z) => [x-5.5,y+5.2]}))
+    .add(new EXP.LineOutput({color: bgcolor, width: bigLineSize}));
+
+    objects.push(lines)
+
+
+    //torus
+
+
+	var a=1;
+	var b=2;
+	var manifoldParametrization = new EXP.Transformation({'expr': (i,t,theta1,theta2) => 
+		[(a*Math.cos(theta1)+b)*Math.cos(theta2),(a*Math.cos(theta1)+b)*Math.sin(theta2),a*Math.sin(theta1)]
+	});
+    
+    let torus = new EXP.Area({bounds: [[0,Math.PI*2], [0,Math.PI*2]], numItems: [50,50]})
+    torus.add(manifoldParametrization)
+    .add(new EXP.Transformation({expr: (i,t,x,y, z) => [x + 13, y+2, z]}))
+    .add(new EXP.SurfaceOutput({color: bgcolor, gridSquares: 9, gridColor: darkerbgcolor}));
+
+    objects.push(torus)
+
+    // swooshy surface
+
+    let surface1 = new EXP.Area({bounds: [[-2,2], [-1.5, 1.2]], numItems: [25,25]});
+    surface1
+    .add(new EXP.Transformation({expr: (i,t,x,z) => [(x+z)/1.8,(z-x)/1.6]}))
+    .add(new EXP.Transformation({expr: (i,t,x,z) => [x,-z*z*z/5+x*x/3,z]}))
+    .add(new EXP.Transformation({expr: (i,t,x,y,z) => [x*2 - 11, y*1.5+2,z*1.5]}))
+    .add(new EXP.SurfaceOutput({color: bgcolor, gridSquares: 9, gridColor: darkerbgcolor}));
+
+    objects.push(surface1)
+
+
+    //curly surface
+    let surface2 = new EXP.Area({bounds: [[0, 1.5], [-3.14,6.28]], numItems: [25,25]});
+    surface2
+    .add(new EXP.Transformation({expr: (i,t,theta,y) => [Math.cos(theta+y), y,Math.sin(theta+y)]}))
+    .add(new EXP.Transformation({expr: (i,t,x,y,z) => [y,x,z]}))
+    .add(new EXP.Transformation({expr: (i,t,x,y,z) => [x*1-7,y-3.5 - 0.1*x,z]}))
+    .add(new EXP.SurfaceOutput({color: bgcolor, gridSquares: 4, gridColor: darkerbgcolor}));
+
+    objects.push(surface2)
+
+
+    let ellipticcurve = new EXP.Area({bounds: [[-1.76929,5]], numItems: 80});
+    //y^2 = x^3 - 2x+2
+    let ellipticCurvePos = new EXP.Transformation({expr: (i,t,x,y) => [x+14,-y-3]});
+    ellipticcurve
+    .add(new EXP.Transformation({expr: (i,t,x) => [x, 0.8*Math.sqrt(x*x*x-2*x+2)]}))
+    .add(ellipticCurvePos)
+    .add(new EXP.LineOutput({color: darkerbgcolor, width: bigLineSize}));
+    ellipticcurve
+    .add(new EXP.Transformation({expr: (i,t,x) => [x, -0.8*Math.sqrt(x*x*x-2*x+2)]}))
+    .add(ellipticCurvePos.makeLink())
+    .add(new EXP.LineOutput({color: darkerbgcolor, width: bigLineSize}));
+
+    objects.push(ellipticcurve)
+
+
+    let arcs = new EXP.Area({bounds: [[1,3], [Math.PI - Math.PI, Math.PI + Math.PI/6], ], numItems: [4,30]});
+    arcs
+    .add(new EXP.Transformation({expr: (i,t,x, theta) => [x*Math.cos(theta) - x*1, x*Math.sin(theta)]}))
+    .add(new EXP.Transformation({expr: (i,t,x,y,z) => [x+23.5,1.5*y-4.1]}))
+    .add(new EXP.LineOutput({color: bgcolor, width: bigLineSize}));
+
+    objects.push(arcs)
+
+
+	class twoPointLine{
+		constructor(funcA,funcB, col){
+
+			let pt1 = funcA;
+			let pt2 = funcB;
+
+			this.area = new EXP.Area({bounds: [[0,1]],numItems:2});
+			this.revealTransform = new EXP.Transformation({'expr': (i,t,x) => [0]});
+			this.lineDefinition = new EXP.Transformation({'expr': (i,t,x) => EXP.Math.vectorAdd(EXP.Math.multiplyScalar((1-x),funcA(i,t,x)),EXP.Math.multiplyScalar(x,funcB(i,t,x)))});
+			this.linePostTransform = new EXP.Transformation({'expr': (i,t,x,y,z) => [x,y]});
+			this.out = new EXP.LineOutput({width:5,color:col});
+			this.area.add(this.revealTransform).add(this.lineDefinition).add(this.linePostTransform).add(this.out);
+		}
+		activate(time){
+			this.area.activate(time);
+		}	
+		reveal(duration=800){
+			EXP.TransitionTo(this.revealTransform,{'expr': (i,t,x) => [x]},duration);
+		}	
+	}	
+	
+
+
+	three.on("update",function(time){
+		objects.forEach(i => i.activate(time.t));
+		//controls.update();
+
+        
+        three.camera.position.x = 20*Math.sin(time.t);
+        three.camera.position.y = 10*Math.cos(time.t);
+        three.camera.lookAt(new THREE.Vector3())
+	});
+
+	async function animate(){
+
+		
+	}
+
+	window.onload = animate;
+
+    /*
+    let isFullSize = false;
+    function showFull(){
+        if(!isFullSize){
+            document.getElementById("container").style.transform = 'scale(1)';
+            isFullSize = true;
+        }
+        //todo make a toggle
+    
+    }*/
+
+  </script>
+</body>
+</html>

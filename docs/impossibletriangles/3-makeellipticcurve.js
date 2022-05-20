@@ -1,5 +1,6 @@
 
 import {cardanoRealRoots} from "./3-cubicroots.js";
+import {ellipticCurveColor} from "./colors.js";
 
 function range(startAt = 0,endAt=10, numSubdivisions = 10) { // from https://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-a-range-within-the-supp#10050831
     let arr = Array(numSubdivisions)
@@ -23,8 +24,8 @@ export function constructEXPEllipticCurve(p=-2, q=1){
 	    var leftCurveComponent = new EXP.Area({bounds: [[realroots[0], realroots[1]]], numItems: 30});
 	    var positiveLeftHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, positiveY(x)]});
 	    var negativeLeftHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, -positiveY(x)]});
-	    leftCurveComponent.add(positiveLeftHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));
-        leftCurveComponent.add(negativeLeftHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));
+	    leftCurveComponent.add(positiveLeftHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:ellipticCurveColor, opacity:1}));
+        leftCurveComponent.add(negativeLeftHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:ellipticCurveColor, opacity:1}));
         curveObjects.push(leftCurveComponent);
     }
     //right connected component of the curve, or the entire thing if there's only one root (untested)
@@ -33,8 +34,8 @@ export function constructEXPEllipticCurve(p=-2, q=1){
     var rightCurveComponent = new EXP.Array({data: range(lastRoot, lastRoot+3, 20).concat(range(lastRoot+3, 10, 10).concat(range(10, 100, 10)))});
     var positiveRightHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, positiveY(x)]});
     var negativeRightHalf = new EXP.Transformation({'expr': (i,t,x,y) => [x, -positiveY(x)]});
-    rightCurveComponent.add(positiveRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));
-    rightCurveComponent.add(negativeRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:0x0070f0, opacity:1}));
+    rightCurveComponent.add(positiveRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:ellipticCurveColor, opacity:1}));
+    rightCurveComponent.add(negativeRightHalf).add(curveProjection.makeLink()).add(new EXP.LineOutput({width:5,color:ellipticCurveColor, opacity:1}));
     curveObjects.push(rightCurveComponent);
     return [curveObjects, curveProjection];
 }

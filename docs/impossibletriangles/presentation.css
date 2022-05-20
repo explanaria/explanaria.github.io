@@ -216,6 +216,38 @@ ul {
     padding-left: 1em;
 }
 
+a{
+    text-decoration: underline;
+}
+
+.emailbox, .emailbtn{
+    padding: 0.5em 0em;
+    color: #333;
+	text-align:center;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.emailbox{
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #bbb;
+    /* like a .examplelink*/
+    margin-bottom: 0.5em;
+}
+
+.emailbtn{
+    border: 1px solid #bbb;
+    background-color: #444;
+    color: #eee;
+    font-weight: bold;
+}
+.emailbtn:hover{
+    background-color: hsl(240, 90%, 70%);
+}
 
 @media screen and (max-height:600px) and (min-width:600px){
 

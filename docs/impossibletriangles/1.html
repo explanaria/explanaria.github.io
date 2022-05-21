@@ -89,11 +89,11 @@
 
 
             <div class="exp-slide slideTextItem">
-                First, let's take a look at the congruent number problem: For a given number <kmath color="N">N</kmath>, can you find a right triangle with area <kmath color="N">N</kmath> whose side lengths are all <span class="rationalnumber">rational</span> numbers?
+                First, let's take a look at the congruent number problem. Here's the problem: for a given number <kmath color="N">N</kmath>, can you find a right triangle with area <kmath color="N">N</kmath> whose side lengths are all <span class="rationalnumber">rational</span> numbers?
 
                 <br>Let's start with <kmath color="N">N=30</kmath>, which is a particularly easy example. Our goal: find a right triangle with area <kmath color="N">30</kmath> whose side lengths are all <span class="rationalnumber">rational</span> numbers.
 
-                <br><aside>(As a reminder, a <span class="rationalnumber">rational</span> number is a number like <kmath color="rational">\frac{1}{2}, \frac{5}{8}, \frac{6}{1}</kmath> (also known as 6), or any number of the form <kmath>\frac{x}{y}</kmath> where <kmath>x</kmath> and <kmath>y</kmath> are integers.)</aside>
+                <br><aside>(As a reminder, a <span class="rationalnumber">rational</span> number is a number like <kmath color="rational">\frac{1}{2}, \frac{5}{8}, 6</kmath> (which is equal to <kmath color="rational">\frac{6}{1}</kmath>), or any number of the form <kmath>\frac{x}{y}</kmath> where <kmath>x</kmath> and <kmath>y</kmath> are integers. I'll color rational numbers <span class="rationalnumber">green</span>.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
                 For example, here's a random triangle with area <kmath color="N">30</kmath>, where we've drawn the lengths of the triangle's three sides. We're looking for triangles where all the sides are <span class="rationalnumber">rational</span> numbers, so even though this triangle has area <kmath color="N">30</kmath>, it doesn't mean that <kmath color="N">30</kmath> is a congruent number: one side has length <kmath color="irrational">\sqrt{136}</kmath>, and <kmath color="irrational">\sqrt{136}</kmath> isn't a <span class="rationalnumber">rational</span> number.
@@ -128,8 +128,12 @@
 
             <div class="exp-slide slideTextItem">
                 What about the number after six, 7? Can you find a right triangle with area <kmath color="N">7</kmath> and <span class="rationalnumber">rational</span> sides?
+                <br>
 
-                <br>Click the right arrow when you want a hint.
+                <div class="has-text-centered">
+                    <button onclick="presentation.handleForwardsPress()" class="button">Click for a hint</button>
+                </div>
+                <!-- this simulates pressing the right arrow key. it's a bit hacky -->
             </div>
 
             <div class="exp-slide slideTextItem">
@@ -143,7 +147,12 @@
             <div class="exp-slide slideTextItem">
                 And what about <kmath color="N">16</kmath>? Is <kmath color="N">16</kmath> is a congruent number? Try for yourself - can you find a triangle with area <kmath color="N">16</kmath> and <span class="rationalnumber">rational</span> sides?
 
-                <br>Click the right arrow when you want a hint.
+                <br />
+
+                <div class="has-text-centered">
+                    <button onclick="presentation.handleForwardsPress()" class="button">Click for a hint</button>
+                </div>
+                <!-- this simulates pressing the right arrow key. it's a bit hacky -->
             </div>
 
             <div class="exp-slide slideTextItem">

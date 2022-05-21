@@ -149,20 +149,21 @@ class Dynamic3DText{
     }
 
     computealignText(){
+        let buffer="20px";
         if(this._align == "center"){
             return "translate(-50%, -50%)";
         }
         if(this._align == "right"){ //0%, 50% plus a 10% buffer
-            return "translate(10%, -50%)";
+            return "translate(0%, -50%) translate(10px, 0)";
         }
         if(this._align == "left"){
-            return "translate(-110%, -50%)";
+            return "translate(-100%, -50%) translate(-10px, 0)";
         }
         if(this._align == "top"){
-            return "translate(-50%, -110%)";
+            return "translate(-50%, -110%) translate(0, -10px)";
         }
         if(this._align == "bottom"){
-            return "translate(-50%, 10%)";
+            return "translate(-50%, 10%) translate(0, 10px)";
         }
     }
 

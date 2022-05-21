@@ -124,7 +124,6 @@ export class ColorSuccessiveNumbers3DText extends Dynamic3DText{
         let colorsUsed = 0;
         for(let j=0;j<katexHtmlRoot.children.length;j++){
             let base = katexHtmlRoot.children[j];
-            console.log(base);
             for(let i=0;i<base.children.length;i++){
                 let elem = base.children[i];
                 if(elem.className == "mord" && colorsUsed < this.customColors.length){

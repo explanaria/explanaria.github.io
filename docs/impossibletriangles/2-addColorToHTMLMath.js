@@ -81,7 +81,11 @@ function scanPageAndAddColor(){
 
 export function addColorToHTML(){
     //call before page loaded
+    if(document.readyState == 'complete'){
+        scanPageAndAddColor();
+    }else{
     document.addEventListener("DOMContentLoaded", scanPageAndAddColor);
+    }
 }
 
 

@@ -346,10 +346,10 @@ function setupThree(fps=30, length = 5, canvasElem = null){
 
 async function pageLoad(){ //so you can await pageLoad(); and know the DOM is loaded
   return new Promise(resolve => {
-    if(document.readyState == "loading"){
-	    window.addEventListener('DOMContentLoaded', resolve, false);  
-    }else{
+    if(document.readyState == "complete"){
         resolve();
+    }else{
+	    window.addEventListener('load', resolve, false);  
     }
   })
 }

@@ -4,7 +4,6 @@ import {gridColor, xColor, yColor, triangleVisArrowColor, reflectionLineColor, v
 
 import {Dynamic3DText} from "./katex-labels.js";
 import {addColorToHTML, AutoColoring3DText, ColorSuccessiveNumbers3DText} from './2-addColorToHTMLMath.js';
-addColorToHTML();
 
 import {makeLabeledCurve, makeTriangle, makeFractionallyLabeledTriangle} from "./3-makethings.js";
 
@@ -16,6 +15,7 @@ const additionLineColor = 0xbf5050;
 
 await EXP.pageLoad();
 window.three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
+addColorToHTML();
 
 three.camera.position.set(0,0,10);
 three.camera.lookAt(new THREE.Vector3(0,0,0));

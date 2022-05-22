@@ -152,8 +152,9 @@ class NonDecreasingDirector{
         return new Promise(function(resolve, reject){
             if(document.readyState == 'complete'){
                 resolve();
+            }else{
+                window.addEventListener("DOMContentLoaded",resolve, false);
             }
-            window.addEventListener("DOMContentLoaded",resolve);
         });
     }
     async nextSlide(){

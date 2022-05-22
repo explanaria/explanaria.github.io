@@ -4,7 +4,6 @@ import {Dynamic3DText} from "./katex-labels.js";
 import {gridColor, twoNColor, black, hintArrowColor, triangleLineColor, triangleGrabbableCornerColor, triangleNonGrabbableCornerColor, invalidIntegerColor} from "./colors.js";
 
 import {addColorToHTML} from './2-addColorToHTMLMath.js';
-addColorToHTML();
 
 import {vecScale, vecAdd, dist, distSquared, isInteger, roundPointIfCloseToInteger, roundToIntegerIfClose, roundPoint, roundCoord} from "./1-trianglemath.js"
 
@@ -21,6 +20,7 @@ window.trianglePoints = [fixedPoint, slidingHorizontalPoint, draggablePoint]
 
 
 await EXP.pageLoad();
+addColorToHTML();
 
 
 let sceneObjects = []

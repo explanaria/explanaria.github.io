@@ -12,11 +12,13 @@ let a=1;
 let b=4;
 let c=6;
 
-addColorToHTML();
 
 await EXP.pageLoad();
 window.three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
 //var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+
+
+addColorToHTML();
 
 console.log("Loaded.");
 

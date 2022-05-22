@@ -248,7 +248,7 @@
             <div class="exp-slide slideTextItem">
                 By the way, modern encryption is built around adding points on elliptic curves!
 
-                <br>Remember how I said your computer uses elliptic curves to encrypt its connection to the internet? In a nutshell, elliptic curve encryption weaponizes the fact that adding points on elliptic curves is really hard to undo. If someone adds a point <kmath>P</kmath> to itself repeatedly and hands you <kmath>P + P + \ldots + P</kmath>, it's almost impossible to find <kmath>P</kmath>, the point they started with. Elliptic curve encryption turns "undoing addition is hard" into "decrypting a message is hard"!
+                <br>Remember how I said your computer uses elliptic curves to encrypt its connection to the internet? In a nutshell, elliptic curve encryption weaponizes the fact that adding points on elliptic curves is really hard to undo. If someone adds a point <kmath>P</kmath> to itself repeatedly and hands you <kmath>P + P + \ldots + P</kmath>, it's almost impossible to find <kmath>P</kmath>, the point they started with. Then, elliptic curve encryption turns "undoing addition is hard" into "decrypting a message is hard"!
             </div>
 
             <div class="exp-slide slideTextItem">
@@ -317,9 +317,11 @@
 
 
             <div class="exp-slide slideTextItem">
-                Here's why it works: Tunnell showed that if his criterion is invalid, it means the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> has no <span class="rationalnumber">rational</span> solutions. And as we've seen, no <span class="rationalnumber">rational</span> solutions on the elliptic curve means no <span class="rationalnumber">rational</span> triangles with area <kmath>N</kmath>.
+                Here's why it works: Tunnell showed that if <kmath>N</kmath> fails his criterion, it means the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> has no<aside>*</aside> <span class="rationalnumber">rational</span> solutions. And as we've seen, no <span class="rationalnumber">rational</span> solutions on the elliptic curve means no <span class="rationalnumber">rational</span> triangles with area <kmath>N</kmath>.
 
                 <br>By the way, we started with a geometry question about triangles, and now we're answering it using number theory. Isn't that interesting? Mathematicians love elliptic curves because they connect to so many different areas of math.
+
+                <br><aside>(Technical note: Actually, even if Tunnell's criterion is failed, there's always three boring <span class="rationalnumber">rational</span> solutions with y=0. But they all create triangles with area 0.)</aside>
             </div>
 
             <div class="exp-slide slideTextItem">

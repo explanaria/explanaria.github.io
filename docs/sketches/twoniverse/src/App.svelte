@@ -1,6 +1,7 @@
 <script>
 	import GridSquare from "./GridSquare.svelte"
     import Intro from "./Intro.svelte";
+    import ImplicationAnimationTooltip from "./ImplicationAnimationTooltip.svelte";
 
     let gridSize = [5,5];
     let startEquation = [3,2,2] //2*3 = 2
@@ -38,6 +39,8 @@
 
     addMultiplicationEntry(...startEquation) //2*3 = 2
 
+    let implicationAnimations = []; //these guys appear when you click a button, show an animation, then calls addMultiplicationEntry 
+
     function buttonClick(sourceCoords, arrowDirection){
         //todo: check if sourceCoords[0] and sourceCoords[1] are in bounds
         let sourceX = sourceCoords[0];
@@ -50,18 +53,13 @@
         let targetNumbers = numbers[targetY-1][targetX-1];
 
         for(let number of sourceNumbers){
-            //distributive law time!
-            //if coords are (3,2) and we move in the (1,0) direction, we're adding 2.
-            //if coords are (3,2) and we move in the (0,1) direction, we're adding 3. y is down
-            number += sourceCoords[1] * arrowDirection[0]
-            number += sourceCoords[0] * arrowDirection[1]
 
-            console.log(number);
-            if(!numbers[targetY-1][targetX-1].includes(number)){
-                numbers[targetY-1][targetX-1].push(number);
-            }
+
+            //if(!numbers[targetY-1][targetX-1].includes(newNumber)){
+            //}
+            implicationAnimations.push([sourceCoords, arrowDirection, number]);
+            implicationAnimations = implicationAnimations;
         }
-        notifySvelteOfChange(targetX,targetY);
     }
 	
 </script>
@@ -71,19 +69,24 @@
 	.biggrid{
 			display:grid;
 			grid: repeat(5, 1fr)/repeat(5, 1fr);
-		max-width: 500px;
+		    max-width: 500px;
 	}
 </style>
 
 
-<h1>yeah</h1>
 
 <Intro startEquation={[2,3,2]}/>
 
-<div class="biggrid">
-	{#each numbers as column, j}
-			{#each column as values, i}
-			<GridSquare numbers={values} coords={[i+1,j+1]} buttonCallback={buttonClick} gridSize={gridSize} />
-			{/each}
-	{/each}
+
+<div class="position: relative">
+    {#each implicationAnimations as tooltipData}
+        <ImplicationAnimationTooltip sourceCoords={tooltipData[0]} arrowDirection={tooltipData[1]} sourceNumber={tooltipData[2]} addMultiplicationEntry={addMultiplicationEntry}/>
+    {/each}
+    <div class="biggrid">
+	    {#each numbers as column, j}
+			    {#each column as values, i}
+			    <GridSquare numbers={values} coords={[i+1,j+1]} buttonCallback={buttonClick} gridSize={gridSize} />
+			    {/each}
+	    {/each}
+    </div>
 </div>

@@ -11,10 +11,12 @@ let hasAValue =false;
 $: hasAValue = numbers.length > 0
 $: shouldShowArrows = hasAValue;
 
+$: textID = coords.join("-"); //needed for the tooltips
+
 /*$: if( coords[0] == 1  || coords[1] == 1){ 
 		shouldShowArrows = false;
 }*/
-	
+
 </script>
 
 <style>
@@ -53,21 +55,11 @@ $: shouldShowArrows = hasAValue;
 		grid-row-start: 3;
 	}
 
-    .tooltip{
-
-		grid-column: 1 / 4;
-        grid-row-start: 1;
-        position: relative;
-        background-color: red;
-        transform: translate(0px, -2em);
-        font-size: 1.3em;
-    }
 </style>
 
 <span>
 
-    <span class="numbergrid">
-        <span class="tooltip">{coords[0]} * {coords[1]} = {numbers[0]} </span>
+    <span class="numbergrid" id={ textID }>
 
 	    <span class="centerpart">
 	      {#if hasAValue}

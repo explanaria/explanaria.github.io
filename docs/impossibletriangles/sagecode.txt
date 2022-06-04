@@ -1,0 +1,11 @@
+#https://sagecell.sagemath.org/
+
+E = EllipticCurve([-36,0])
+print(E)
+print(E.torsion_points())
+x = E.torsion_points()[3]
+
+p = E.point([25/4, 35/8]) # the one corresponding to a 3-4-5 triangle
+print[(n, n*x) for n in range(10)] # multiples
+print(x + p) # x satisfies x+x=e, so (x+p) is interesting since (x+p)+x = p. can be used to talk about torsion points
+

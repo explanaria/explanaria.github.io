@@ -48,7 +48,8 @@
                 <p>The Group Law</p>
         </div>
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-23 exp-slide-24 exp-slide-25">
-            <h1>List of <span class="rationalnumber">rational</span> points found by adding <kmath>P_1</kmath> to itself</h1>
+            <p>List of <span class="rationalnumber">rational</span> points found by adding <kmath>P_1</kmath> to itself</p>
+            <br>
             <p class="willFadeInFromJS exp-slide-24 exp-slide-25">Will this list be infinite?</p>
             <p class="willFadeInFromJS exp-slide-25">There's a million-dollar unsolved problem about this!</p>
         </div>
@@ -101,10 +102,10 @@
                 <p> If so, <kmath>N</kmath> is a congruent number! Otherwise, <kmath>N</kmath> isn't!</p>
         </div>
 
-        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-34 exp-slide-35" >
+        <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-34 exp-slide-35">
             <h1>But why does that mean <kmath>N</kmath> is a congruent number?</h1>
-            <p class="willFadeInFromJS exp-slide-35">If Tunnel's criterion is false, <kmath>y^2 = x^3 - N^2 x</kmath> has no <span class="rationalnumber">rational</span> solutions.
-            <p class="willFadeInFromJS exp-slide-35">No <span class="rationalnumber">rational</span> solutions means no triangles with area <kmath>N</kmath>.
+            <p class="willFadeInFromJS exp-slide-35">If Tunnel's criterion is false, <kmath>y^2 = x^3 - N^2 x</kmath> has no <span class="rationalnumber">rational</span> solutions.</p>
+            <p class="willFadeInFromJS exp-slide-35">No <span class="rationalnumber">rational</span> solutions means no triangles with area <kmath>N</kmath>.</p>
         </div>
 
         <div class="threeDPartHeader canvasOverlay exp-toptext willFadeInFromJS exp-slide-36 exp-slide-37">
@@ -173,7 +174,7 @@
                 Here's how to convert triangles into points on this curve. First, let's start with this <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
-                From this triangle, we can compute the areas of the three squares we saw in the previous chapter, <kmath>r^2, s^2</kmath> and <kmath>t^2</kmath>.
+                Comparing this triangle to the one whose sides we found last chapter, with a bit of work we can compute the areas of the three squares we saw in the previous chapter, <kmath>r^2, s^2</kmath> and <kmath>t^2</kmath>.
             </div>
             <div class="exp-slide slideTextItem">
                 During our algebra last chapter, we decided to take <kmath>s^2</kmath> and rename it to <kmath>x</kmath>.
@@ -190,7 +191,7 @@
                 <br><aside>(Technical note: if <kmath>x</kmath> isn't a square number, we need to use a different formula than <kmath>s^2 = x</kmath>. The other formula works for all <kmath>x</kmath>, but it's uglier and doesn't have a nice geometric interpretation, so I won't show it here.)</aside>
             </div>
             <div class="exp-slide slideTextItem">
-                But more importantly: if we can find a point <kmath>(x,y)</kmath> on the elliptic curve where both <kmath>x</kmath> and <kmath>y</kmath> are <span class="rationalnumber">rational</span>, we can construct a <span class="rationalnumber">rational</span>-sided triangle with area <kmath color="N">6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
+                But more importantly: this means if we can find a point <kmath>(x,y)</kmath> on the elliptic curve where both <kmath>x</kmath> and <kmath>y</kmath> are <span class="rationalnumber">rational</span>, we can construct a <span class="rationalnumber">rational</span>-sided triangle with area <kmath color="N">6</kmath> - proving <kmath color="N">6</kmath> is a congruent number!
             </div>
             <div class="exp-slide slideTextItem">
                 Therefore, we've turned the problem of "is <kmath>N</kmath> a congruent number?" into "Does the equation <kmath>y^2 = x^3 - N^2 x</kmath> have any pairs of <span class="rationalnumber">rational</span> numbers <kmath>(x,y)</kmath> which solve the equation?"
@@ -234,7 +235,7 @@
                 <br>Here's how: first, find the point <kmath>P_1</kmath> on an elliptic curve which corresponds to your triangle. Then, use elliptic curve addition to compute <kmath>P_1 + P_1</kmath>. Then, turn that new point back into a triangle, and we'll get a new <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>!
             </div>
             <div class="exp-slide slideTextItem">      
-                Let's find <kmath>P_1 + P_1</kmath> by following the same elliptic curve addition recipe. The math guarantees <kmath>P_1 + P_1</kmath> is point on the elliptic curve, but we might need to zoom out a bit to see it.
+                Let's find <kmath>P_1 + P_1</kmath> by following the same elliptic curve addition recipe. The math guarantees <kmath>P_1 + P_1</kmath> lies on the elliptic curve, but we might need to zoom out a bit to see it.
             </div>
             <div class="exp-slide slideTextItem">     
                 Those are some big numbers. But what matters is that <kmath>P_1 + P_1</kmath>'s coordinates are big <span class="rationalnumber">rational</span> numbers, meaning we can turn this point into a new valid <span class="rationalnumber">rational</span> triangle with area <kmath color="N">6</kmath>! 
@@ -296,11 +297,11 @@
             </div>
 
             <div class="exp-slide slideTextItem">
-                Finally, let me tell you about the solution to the congruent number problem!
+                Finally, let's return to the very first question we started with, the congruent number problem. Given an integer <kmath>N</kmath>, like <kmath color="N">30</kmath>, can we find a triangle with <span color="rationalnumber">rational</span> sides and area <kmath>N</kmath>? Let me tell you the solution!
             </div>
  
             <div class="exp-slide slideTextItem">
-                In 1983, a mathematician named J. B. Tunnell used deep properties of the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> to solve the congruent number problem. It's not the neatest answer, so don't be scared, but it still is an answer.
+                In 1983, a mathematician named J. B. Tunnell used deep properties of the elliptic curve <kmath>y^2 = x^3 - N^2 x</kmath> to solve the congruent number problem. It's not the neatest answer, so don't be scared, but it still is a complete answer.
             </div>
     
 
@@ -312,7 +313,7 @@
 
 
             <div class="exp-slide slideTextItem">
-                What a complicated criterion. What do solutions of these equations have to do with whether or not N is a congruent number?
+                What a complicated criterion. What do solutions of these equations have to do with whether or not <kmath>N</kmath> is a congruent number?
             </div>
 
 
@@ -321,7 +322,7 @@
 
                 <br>By the way, we started with a geometry question about triangles, and now we're answering it using number theory. Isn't that interesting? Mathematicians love elliptic curves because they connect to so many different areas of math.
 
-                <br><aside>(Technical note: Actually, even if Tunnell's criterion is failed, there's always three boring <span class="rationalnumber">rational</span> solutions with y=0. But they all create triangles with area 0.)</aside>
+                <br><aside>(Technical note: Actually, even if <kmath>N</kmath> fails Tunnell's criterion, the curve always has three boring <span class="rationalnumber">rational</span> solutions with y=0. But they all create triangles with area 0.)</aside>
             </div>
 
             <div class="exp-slide slideTextItem">

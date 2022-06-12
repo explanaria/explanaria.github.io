@@ -1,7 +1,9 @@
 <script>
 export let numbers = [];
 export let coords = [0,0];
-export let gridSize = [5,5]
+export let gridSize = [5,5];
+
+export let numbersWhichWouldBeCreated = (coords, directionVec) => [0]; //overwrite
 
 export let buttonCallback = (coords, directionVec) => {}; //overwrite
 function setID(){

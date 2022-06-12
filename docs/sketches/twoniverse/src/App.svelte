@@ -24,6 +24,7 @@
 		numbers[0][i] = [i+1];
 	}
 
+
     function addMultiplicationEntry(x,y, newProduct){
         if(!numbers[y-1][x-1].includes(newProduct)){
             numbers[y-1][x-1].push(newProduct);
@@ -35,6 +36,36 @@
     }
     function notifySvelteOfChange(x,y){
         numbers[y-1][x-1]=numbers[y-1][x-1]
+    }
+
+    function numbersWhichWouldBeCreated(numbers, sourceCoords, arrowDirection){
+        //assuming we're at x*y and want to click the arrow in [1,0] direction, return the NEW numbers we'd learn. not any which are already there
+
+        let newNumbers = [];
+
+        let sourceX = sourceCoords[0];
+        let sourceY = sourceCoords[1];
+        let sourceNumbers = numbers[sourceY-1][sourceX-1];
+
+        let targetX = sourceCoords[0] + arrowDirection[0];
+        let targetY = sourceCoords[1] + arrowDirection[1];
+
+        if(targetX-1 < 0 || targetY-1 < 0 || targetY-1 >= numbers.length || targetX-1 >= numbers[targetY-1].length){
+            //out of bounds
+            return [];
+        }
+        console.log(targetY-1, targetX-1, numbers)
+
+        let targetNumbers = numbers[targetY-1][targetX-1];
+
+        for(let number of sourceNumbers){
+            let newNumber = number;
+            newNumber += sourceCoords[1] * arrowDirection[0] + sourceCoords[0] * arrowDirection[1]; //one of the two terms will always be zero so i might as well add them
+            if(!numbers[targetY-1][targetX-1].includes(newNumber)){
+                newNumbers.push(newNumber)
+            }
+        }
+        return newNumbers;
     }
 
     addMultiplicationEntry(...startEquation) //2*3 = 2
@@ -53,10 +84,6 @@
         let targetNumbers = numbers[targetY-1][targetX-1];
 
         for(let number of sourceNumbers){
-
-
-            //if(!numbers[targetY-1][targetX-1].includes(newNumber)){
-            //}
             implicationAnimations.push([sourceCoords, arrowDirection, number]);
             implicationAnimations = implicationAnimations;
         }
@@ -85,7 +112,7 @@
     <div class="biggrid">
 	    {#each numbers as column, j}
 			    {#each column as values, i}
-			    <GridSquare numbers={values} coords={[i+1,j+1]} buttonCallback={buttonClick} gridSize={gridSize} />
+			    <GridSquare numbers={values} coords={[i+1,j+1]} buttonCallback={buttonClick} gridSize={gridSize} numbersWhichWouldBeCreated={numbersWhichWouldBeCreated}/>
 			    {/each}
 	    {/each}
     </div>

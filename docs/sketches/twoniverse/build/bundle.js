@@ -680,7 +680,7 @@ var app = (function () {
 
     const file$3 = "src/GridSquare.svelte";
 
-    // (72:6) {:else}
+    // (74:6) {:else}
     function create_else_block_1(ctx) {
     	let t_value = "-" + "";
     	let t;
@@ -702,14 +702,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(72:6) {:else}",
+    		source: "(74:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (65:7) {#if hasAValue}
+    // (67:7) {#if hasAValue}
     function create_if_block_5(ctx) {
     	let if_block_anchor;
 
@@ -753,14 +753,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(65:7) {#if hasAValue}",
+    		source: "(67:7) {#if hasAValue}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (68:7) {:else}
+    // (70:7) {:else}
     function create_else_block(ctx) {
     	let span;
     	let t_value = /*numbers*/ ctx[0].join(" = ") + "";
@@ -771,7 +771,7 @@ var app = (function () {
     			span = element("span");
     			t = text(t_value);
     			attr_dev(span, "class", "multiplenums svelte-1r102f");
-    			add_location(span, file$3, 68, 8, 1216);
+    			add_location(span, file$3, 70, 8, 1301);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -789,14 +789,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(68:7) {:else}",
+    		source: "(70:7) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (66:7) {#if numbers.length == 1}
+    // (68:7) {#if numbers.length == 1}
     function create_if_block_6(ctx) {
     	let t;
 
@@ -819,14 +819,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(66:7) {#if numbers.length == 1}",
+    		source: "(68:7) {#if numbers.length == 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (76:5) {#if shouldShowArrows}
+    // (78:5) {#if shouldShowArrows}
     function create_if_block$1(ctx) {
     	let t0;
     	let t1;
@@ -927,14 +927,14 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(76:5) {#if shouldShowArrows}",
+    		source: "(78:5) {#if shouldShowArrows}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (78:9) {#if coords[0] > 1 && coords[1] > 1}
+    // (80:9) {#if coords[0] > 1 && coords[1] > 1}
     function create_if_block_4(ctx) {
     	let button;
     	let t0;
@@ -949,7 +949,7 @@ var app = (function () {
     			t0 = text("< -");
     			t1 = text(t1_value);
     			attr_dev(button, "class", "leftarrow svelte-1r102f");
-    			add_location(button, file$3, 78, 13, 1432);
+    			add_location(button, file$3, 80, 13, 1517);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -986,14 +986,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(78:9) {#if coords[0] > 1 && coords[1] > 1}",
+    		source: "(80:9) {#if coords[0] > 1 && coords[1] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (84:9) {#if coords[0] < gridSize[0] && coords[1] > 1}
+    // (86:9) {#if coords[0] < gridSize[0] && coords[1] > 1}
     function create_if_block_3$1(ctx) {
     	let button;
     	let t0;
@@ -1008,7 +1008,7 @@ var app = (function () {
     			t0 = text("> +");
     			t1 = text(t1_value);
     			attr_dev(button, "class", "rightarrow svelte-1r102f");
-    			add_location(button, file$3, 84, 13, 1643);
+    			add_location(button, file$3, 86, 13, 1728);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -1045,14 +1045,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(84:9) {#if coords[0] < gridSize[0] && coords[1] > 1}",
+    		source: "(86:9) {#if coords[0] < gridSize[0] && coords[1] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (91:9) {#if coords[1] > 1 && coords[0] > 1}
+    // (93:9) {#if coords[1] > 1 && coords[0] > 1}
     function create_if_block_2$1(ctx) {
     	let button;
     	let t0;
@@ -1067,7 +1067,7 @@ var app = (function () {
     			t0 = text("^ -");
     			t1 = text(t1_value);
     			attr_dev(button, "class", "uparrow svelte-1r102f");
-    			add_location(button, file$3, 91, 13, 1845);
+    			add_location(button, file$3, 93, 13, 1930);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -1104,14 +1104,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(91:9) {#if coords[1] > 1 && coords[0] > 1}",
+    		source: "(93:9) {#if coords[1] > 1 && coords[0] > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (97:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}
+    // (99:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}
     function create_if_block_1$1(ctx) {
     	let button;
     	let t0;
@@ -1126,7 +1126,7 @@ var app = (function () {
     			t0 = text("V +");
     			t1 = text(t1_value);
     			attr_dev(button, "class", "downarrow svelte-1r102f");
-    			add_location(button, file$3, 97, 13, 2052);
+    			add_location(button, file$3, 99, 13, 2137);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -1163,7 +1163,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(97:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}",
+    		source: "(99:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}",
     		ctx
     	});
 
@@ -1194,11 +1194,11 @@ var app = (function () {
     			t = space();
     			if (if_block1) if_block1.c();
     			attr_dev(span0, "class", "centerpart svelte-1r102f");
-    			add_location(span0, file$3, 63, 5, 1093);
+    			add_location(span0, file$3, 65, 5, 1178);
     			attr_dev(span1, "class", "numbergrid svelte-1r102f");
     			attr_dev(span1, "id", /*textID*/ ctx[5]);
-    			add_location(span1, file$3, 61, 4, 1047);
-    			add_location(span2, file$3, 59, 0, 1035);
+    			add_location(span1, file$3, 63, 4, 1132);
+    			add_location(span2, file$3, 61, 0, 1120);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1269,6 +1269,7 @@ var app = (function () {
     	let { numbers = [] } = $$props;
     	let { coords = [0, 0] } = $$props;
     	let { gridSize = [5, 5] } = $$props;
+    	let { numbersWhichWouldBeCreated = (coords, directionVec) => [0] } = $$props;
 
     	let { buttonCallback = (coords, directionVec) => {
     		
@@ -1279,7 +1280,14 @@ var app = (function () {
     	}
 
     	let hasAValue = false;
-    	const writable_props = ['numbers', 'coords', 'gridSize', 'buttonCallback'];
+
+    	const writable_props = [
+    		'numbers',
+    		'coords',
+    		'gridSize',
+    		'numbersWhichWouldBeCreated',
+    		'buttonCallback'
+    	];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<GridSquare> was created with unknown prop '${key}'`);
@@ -1289,6 +1297,7 @@ var app = (function () {
     		if ('numbers' in $$props) $$invalidate(0, numbers = $$props.numbers);
     		if ('coords' in $$props) $$invalidate(1, coords = $$props.coords);
     		if ('gridSize' in $$props) $$invalidate(2, gridSize = $$props.gridSize);
+    		if ('numbersWhichWouldBeCreated' in $$props) $$invalidate(7, numbersWhichWouldBeCreated = $$props.numbersWhichWouldBeCreated);
     		if ('buttonCallback' in $$props) $$invalidate(3, buttonCallback = $$props.buttonCallback);
     	};
 
@@ -1296,6 +1305,7 @@ var app = (function () {
     		numbers,
     		coords,
     		gridSize,
+    		numbersWhichWouldBeCreated,
     		buttonCallback,
     		setID,
     		hasAValue,
@@ -1307,6 +1317,7 @@ var app = (function () {
     		if ('numbers' in $$props) $$invalidate(0, numbers = $$props.numbers);
     		if ('coords' in $$props) $$invalidate(1, coords = $$props.coords);
     		if ('gridSize' in $$props) $$invalidate(2, gridSize = $$props.gridSize);
+    		if ('numbersWhichWouldBeCreated' in $$props) $$invalidate(7, numbersWhichWouldBeCreated = $$props.numbersWhichWouldBeCreated);
     		if ('buttonCallback' in $$props) $$invalidate(3, buttonCallback = $$props.buttonCallback);
     		if ('hasAValue' in $$props) $$invalidate(4, hasAValue = $$props.hasAValue);
     		if ('textID' in $$props) $$invalidate(5, textID = $$props.textID);
@@ -1331,7 +1342,16 @@ var app = (function () {
     		}
     	};
 
-    	return [numbers, coords, gridSize, buttonCallback, hasAValue, textID, shouldShowArrows];
+    	return [
+    		numbers,
+    		coords,
+    		gridSize,
+    		buttonCallback,
+    		hasAValue,
+    		textID,
+    		shouldShowArrows,
+    		numbersWhichWouldBeCreated
+    	];
     }
 
     class GridSquare extends SvelteComponentDev {
@@ -1342,6 +1362,7 @@ var app = (function () {
     			numbers: 0,
     			coords: 1,
     			gridSize: 2,
+    			numbersWhichWouldBeCreated: 7,
     			buttonCallback: 3
     		});
 
@@ -1374,6 +1395,14 @@ var app = (function () {
     	}
 
     	set gridSize(value) {
+    		throw new Error("<GridSquare>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get numbersWhichWouldBeCreated() {
+    		throw new Error("<GridSquare>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set numbersWhichWouldBeCreated(value) {
     		throw new Error("<GridSquare>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
@@ -1802,7 +1831,7 @@ var app = (function () {
 
     /* src/ImplicationAnimationTooltip.svelte generated by Svelte v3.46.4 */
 
-    const { console: console_1 } = globals;
+    const { console: console_1$1 } = globals;
     const file$1 = "src/ImplicationAnimationTooltip.svelte";
 
     // (115:0) {#if phase == 1}
@@ -2566,7 +2595,7 @@ var app = (function () {
     	const writable_props = ['sourceCoords', 'arrowDirection', 'sourceNumber', 'addMultiplicationEntry'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<ImplicationAnimationTooltip> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$1.warn(`<ImplicationAnimationTooltip> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
@@ -2717,6 +2746,8 @@ var app = (function () {
     }
 
     /* src/App.svelte generated by Svelte v3.46.4 */
+
+    const { console: console_1 } = globals;
     const file = "src/App.svelte";
 
     function get_each_context(ctx, list, i) {
@@ -2739,7 +2770,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (82:4) {#each implicationAnimations as tooltipData}
+    // (109:4) {#each implicationAnimations as tooltipData}
     function create_each_block_2(ctx) {
     	let implicationanimationtooltip;
     	let current;
@@ -2787,14 +2818,14 @@ var app = (function () {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(82:4) {#each implicationAnimations as tooltipData}",
+    		source: "(109:4) {#each implicationAnimations as tooltipData}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (87:7) {#each column as values, i}
+    // (114:7) {#each column as values, i}
     function create_each_block_1(ctx) {
     	let gridsquare;
     	let current;
@@ -2804,7 +2835,8 @@ var app = (function () {
     				numbers: /*values*/ ctx[11],
     				coords: [/*i*/ ctx[13] + 1, /*j*/ ctx[10] + 1],
     				buttonCallback: /*buttonClick*/ ctx[4],
-    				gridSize: /*gridSize*/ ctx[2]
+    				gridSize: /*gridSize*/ ctx[2],
+    				numbersWhichWouldBeCreated
     			},
     			$$inline: true
     		});
@@ -2840,14 +2872,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(87:7) {#each column as values, i}",
+    		source: "(114:7) {#each column as values, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:5) {#each numbers as column, j}
+    // (113:5) {#each numbers as column, j}
     function create_each_block(ctx) {
     	let each_1_anchor;
     	let current;
@@ -2880,7 +2912,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*numbers, buttonClick, gridSize*/ 21) {
+    			if (dirty & /*numbers, buttonClick, gridSize, numbersWhichWouldBeCreated*/ 21) {
     				each_value_1 = /*column*/ ctx[8];
     				validate_each_argument(each_value_1);
     				let i;
@@ -2936,7 +2968,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(86:5) {#each numbers as column, j}",
+    		source: "(113:5) {#each numbers as column, j}",
     		ctx
     	});
 
@@ -2998,9 +3030,9 @@ var app = (function () {
     			}
 
     			attr_dev(div0, "class", "biggrid svelte-yqp3f");
-    			add_location(div0, file, 84, 4, 2348);
+    			add_location(div0, file, 111, 4, 3484);
     			attr_dev(div1, "class", "position: relative");
-    			add_location(div1, file, 80, 0, 2071);
+    			add_location(div1, file, 107, 0, 3207);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3052,7 +3084,7 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (dirty & /*numbers, buttonClick, gridSize*/ 21) {
+    			if (dirty & /*numbers, buttonClick, gridSize, numbersWhichWouldBeCreated*/ 21) {
     				each_value = /*numbers*/ ctx[0];
     				validate_each_argument(each_value);
     				let i;
@@ -3130,6 +3162,36 @@ var app = (function () {
     	return block;
     }
 
+    function numbersWhichWouldBeCreated(numbers, sourceCoords, arrowDirection) {
+    	//assuming we're at x*y and want to click the arrow in [1,0] direction, return the NEW numbers we'd learn. not any which are already there
+    	let newNumbers = [];
+
+    	let sourceX = sourceCoords[0];
+    	let sourceY = sourceCoords[1];
+    	let sourceNumbers = numbers[sourceY - 1][sourceX - 1];
+    	let targetX = sourceCoords[0] + arrowDirection[0];
+    	let targetY = sourceCoords[1] + arrowDirection[1];
+
+    	if (targetX - 1 < 0 || targetY - 1 < 0 || targetY - 1 >= numbers.length || targetX - 1 >= numbers[targetY - 1].length) {
+    		//out of bounds
+    		return [];
+    	}
+
+    	console.log(targetY - 1, targetX - 1, numbers);
+    	numbers[targetY - 1][targetX - 1];
+
+    	for (let number of sourceNumbers) {
+    		let newNumber = number;
+    		newNumber += sourceCoords[1] * arrowDirection[0] + sourceCoords[0] * arrowDirection[1]; //one of the two terms will always be zero so i might as well add them
+
+    		if (!numbers[targetY - 1][targetX - 1].includes(newNumber)) {
+    			newNumbers.push(newNumber);
+    		}
+    	}
+
+    	return newNumbers;
+    }
+
     function instance($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
@@ -3188,10 +3250,7 @@ var app = (function () {
     		numbers[targetY - 1][targetX - 1];
 
     		for (let number of sourceNumbers) {
-    			//if(!numbers[targetY-1][targetX-1].includes(newNumber)){
-    			//}
     			implicationAnimations.push([sourceCoords, arrowDirection, number]);
-
     			$$invalidate(1, implicationAnimations);
     		}
     	}
@@ -3199,7 +3258,7 @@ var app = (function () {
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$capture_state = () => ({
@@ -3212,6 +3271,7 @@ var app = (function () {
     		addMultiplicationEntry,
     		getMultiplicationEntry,
     		notifySvelteOfChange,
+    		numbersWhichWouldBeCreated,
     		implicationAnimations,
     		buttonClick
     	});

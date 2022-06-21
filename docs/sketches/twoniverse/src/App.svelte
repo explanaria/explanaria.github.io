@@ -96,8 +96,15 @@
         let targetNumbers = numbers[targetY-1][targetX-1];
 
         for(let number of sourceNumbers){
-            implicationAnimations.push([sourceCoords, arrowDirection, number]);
-            implicationAnimations = implicationAnimations;
+            let newNumber = number;
+            newNumber += sourceCoords[1] * arrowDirection[0] + sourceCoords[0] * arrowDirection[1]; //one of the two terms will always be zero so i might as well add them
+            //only create an animation starting from the number which would create something new
+            if(!numbers[targetY-1][targetX-1].includes(newNumber)){
+                implicationAnimations.push([sourceCoords, arrowDirection, number]);
+                implicationAnimations = implicationAnimations;
+
+                return; //then stop. don't create multiple animations per button press
+            }
         }
     }
 	

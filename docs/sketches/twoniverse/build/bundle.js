@@ -2767,7 +2767,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (121:4) {#each implicationAnimations as tooltipData}
+    // (128:4) {#each implicationAnimations as tooltipData}
     function create_each_block_2(ctx) {
     	let implicationanimationtooltip;
     	let current;
@@ -2815,14 +2815,14 @@ var app = (function () {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(121:4) {#each implicationAnimations as tooltipData}",
+    		source: "(128:4) {#each implicationAnimations as tooltipData}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (126:7) {#each column as values, i}
+    // (133:7) {#each column as values, i}
     function create_each_block_1(ctx) {
     	let gridsquare;
     	let current;
@@ -2870,14 +2870,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(126:7) {#each column as values, i}",
+    		source: "(133:7) {#each column as values, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (125:5) {#each numbers as column, j}
+    // (132:5) {#each numbers as column, j}
     function create_each_block(ctx) {
     	let each_1_anchor;
     	let current;
@@ -2966,7 +2966,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(125:5) {#each numbers as column, j}",
+    		source: "(132:5) {#each numbers as column, j}",
     		ctx
     	});
 
@@ -3028,9 +3028,9 @@ var app = (function () {
     			}
 
     			attr_dev(div0, "class", "biggrid svelte-yqp3f");
-    			add_location(div0, file, 123, 4, 4140);
+    			add_location(div0, file, 130, 4, 4622);
     			attr_dev(div1, "class", "position: relative");
-    			add_location(div1, file, 119, 0, 3863);
+    			add_location(div1, file, 126, 0, 4345);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3268,8 +3268,15 @@ var app = (function () {
     		numbers[targetY - 1][targetX - 1];
 
     		for (let number of sourceNumbers) {
-    			implicationAnimations.push([sourceCoords, arrowDirection, number]);
-    			$$invalidate(1, implicationAnimations);
+    			let newNumber = number;
+    			newNumber += sourceCoords[1] * arrowDirection[0] + sourceCoords[0] * arrowDirection[1]; //one of the two terms will always be zero so i might as well add them
+
+    			//only create an animation starting from the number which would create something new
+    			if (!numbers[targetY - 1][targetX - 1].includes(newNumber)) {
+    				implicationAnimations.push([sourceCoords, arrowDirection, number]);
+    				$$invalidate(1, implicationAnimations);
+    				return; //then stop. don't create multiple animations per button press
+    			}
     		}
     	}
 

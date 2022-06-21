@@ -3,7 +3,7 @@ export let numbers = [];
 export let coords = [0,0];
 export let gridSize = [5,5];
 
-export let numbersWhichWouldBeCreated = (coords, directionVec) => [0]; //overwrite
+export let arrowsToShow = {"up": false, "down": false, "right": false, "left": false};
 
 export let buttonCallback = (coords, directionVec) => {}; //overwrite
 function setID(){
@@ -11,7 +11,7 @@ function setID(){
 }
 let hasAValue =false;
 $: hasAValue = numbers.length > 0
-$: shouldShowArrows = hasAValue;
+$: shouldShowArrows = true //hasAValue;
 
 $: textID = coords.join("-"); //needed for the tooltips
 
@@ -77,26 +77,26 @@ $: textID = coords.join("-"); //needed for the tooltips
 	    </span>
 	    {#if shouldShowArrows}
 
-	        {#if coords[0] > 1 && coords[1] > 1}
+	        {#if coords[0] > 1 && coords[1] > 1 && arrowsToShow.left}
 	            <button on:click={buttonCallback(coords, [-1,0])} class="leftarrow">
 	            &lt; -{coords[1]}
 	            </button>
             {/if}
 
-	        {#if coords[0] < gridSize[0] && coords[1] > 1}
+	        {#if coords[0] < gridSize[0] && coords[1] > 1 && arrowsToShow.right}
 	            <button on:click={buttonCallback(coords, [1,0])} class="rightarrow">
 	            &gt; +{coords[1]}
 	            </button>
             {/if}
 
 
-	        {#if coords[1] > 1 && coords[0] > 1}
+	        {#if coords[1] > 1 && coords[0] > 1 && arrowsToShow.up}
 	            <button on:click={buttonCallback(coords, [0,-1])} class="uparrow">
 	            ^ -{coords[0]}
 	            </button>
             {/if}
 
-	        {#if coords[1] < gridSize[1]  && coords[0] > 1}
+	        {#if coords[1] < gridSize[1]  && coords[0] > 1 && arrowsToShow.down}
 	            <button on:click={buttonCallback(coords, [0,1])} class="downarrow">
 	            V +{coords[0]}
 	            </button>

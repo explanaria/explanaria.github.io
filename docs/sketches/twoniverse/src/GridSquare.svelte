@@ -1,7 +1,10 @@
 <script>
+    import {introEmoji} from "./constants.js";
 export let numbers = [];
 export let coords = [0,0];
 export let gridSize = [5,5];
+
+export let spooky = false; //shows a spooky emoji to show you that this multiplication table is in an alternate universe
 
 export let arrowsToShow = {"up": false, "down": false, "right": false, "left": false};
 
@@ -57,11 +60,30 @@ $: textID = coords.join("-"); //needed for the tooltips
 		grid-row-start: 3;
 	}
 
+    @keyframes rotate {
+      from {transform: scale(2) rotate(0deg);}
+      to {transform: scale(2) rotate(360deg);}
+    }
+
+    .spooky{
+        font-size: 2em;
+        opacity: 0.2;
+        animation: rotate 30s linear infinite;
+        pointer-events: none;
+    }
+
 </style>
 
 <span>
 
     <span class="numbergrid" id={ textID }>
+
+
+        {#if spooky}
+        <span class="centerpart spooky">
+				    {introEmoji}<br>{introEmoji}
+	    </span>
+        {/if}
 
 	    <span class="centerpart">
 	      {#if hasAValue}

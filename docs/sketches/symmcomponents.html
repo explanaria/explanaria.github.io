@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="../resources/favicon.ico" sizes="any">
+  <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
+  <title>Explanarian - Symmetric Components</title>
+  
+  
+  
+  <script src="../resources/build/explanaria-bundle.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+
+  <link type="text/css" rel="stylesheet" href="../resources/oldstyle.css" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  <script type="module">
+	var three = EXP.setupThree(60,15);
+    window.three = three;
+	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
+
+	console.log("Loaded.");
+
+    three.camera.zoom = 1.3;
+    three.camera.updateProjectionMatrix()
+
+    function rotate(vec, radians){
+
+        return [
+            vec[0] * Math.cos(radians) + vec[1] * -Math.sin(radians),
+            vec[0] * Math.sin(radians) + vec[1] * Math.cos(radians)
+        ]
+
+    }
+    function rotate120Deg(vec){
+        return rotate(vec, 120 * Math.PI/180);
+    }
+    function rotate240Deg(vec){
+        return rotate(vec, 240 * Math.PI/180);
+    }
+
+    let objects = [];
+
+    let startV1 = [0,4];
+    let startV2 = rotate120Deg([0,2]);
+    let startV3 = rotate120Deg(startV2);
+
+    let v1 = [0,0]; //startV1, but rotated over time
+    let v2 = [0,0];
+    let v3 = [0,1];
+
+
+    let v1Color = 'green';
+    let v2Color = 'red';
+    let v3Color = 'blue';
+
+    let zeroComponentColor = 'gray';
+    let oneComponentColor = 'gray';
+    let oneComponentV1Color = 'hsl(120  , 20%, 70%)';
+    let oneComponentV2Color = 'hsl(0, 20%, 70%)';
+    let oneComponentV3Color = 'hsl(240, 20%, 70%)';
+    let twoComponentColor = 'gray';
+
+
+    let rotateOverTime = new EXP.Transformation({expr: (i,t,x,y) => rotate([x,y], t/5)});
+    let rotateOverTimeTwiceAsFast = new EXP.Transformation({expr: (i,t,x,y) => rotate([x,y], t*2/5)});
+
+
+    let mainDiagramPosition = [-2,0];
+    let mainDiagramTranslation = new EXP.Transformation({expr: (i,t,x,y) => EXP.Math.vectorAdd([x,y], mainDiagramPosition)})
+
+
+
+
+    let updater = new EXP.Array({data: [0]});
+    updater.add(new EXP.Transformation({expr: (i,t,index) => startV1})).add(rotateOverTime.makeLink()).add(new EXP.FlatArrayOutput({array: v1}));
+    updater.add(new EXP.Transformation({expr: (i,t,index) => startV2})).add(rotateOverTime.makeLink()).add(new EXP.FlatArrayOutput({array: v2}));
+    updater.add(new EXP.Transformation({expr: (i,t,index) => startV3})).add(rotateOverTime.makeLink()).add(new EXP.FlatArrayOutput({array: v3}));
+
+    objects.push(updater);
+
+
+
+    let v1Vec = new EXP.Array({data: [[0,0],v1]});
+    v1Vec.add(mainDiagramTranslation.makeLink()).add(new EXP.VectorOutput({color: v1Color}))
+
+    let v2Vec = new EXP.Array({data: [[0,0],v2]});
+    v2Vec.add(mainDiagramTranslation.makeLink()).add(new EXP.VectorOutput({color: v2Color}))
+
+    let v3Vec = new EXP.Array({data: [[0,0],v3]});
+    v3Vec.add(mainDiagramTranslation.makeLink()).add(new EXP.VectorOutput({color: v3Color}))
+
+
+
+    objects = objects.concat([v1Vec, v2Vec, v3Vec]);
+    window.objects = objects;
+
+    let zeroComponent = [];
+
+    //compute zero component
+    updater.add(new EXP.Transformation({expr: () => 
+        [0,1].map(index => (v1[index] + v2[index] + v3[index])/3)
+    })).add(new EXP.FlatArrayOutput({array: zeroComponent}));
+
+
+    let zeroComponentVec = new EXP.Array({data: [0,1]});
+    let zeroComponentPosition = new EXP.Transformation({expr: (i,t,x,y) => [x+4,y+3]})
+    zeroComponentVec.add(new EXP.Transformation({expr: (i,t,index) => index == 0 ? [0,0] : zeroComponent})).add(zeroComponentPosition).add(new EXP.VectorOutput({color: zeroComponentColor}));
+
+    window.zeroComponentVec = zeroComponentVec;
+
+    let oneComponent = [0,1];
+
+    //one component = v1 + a * v2 + a^2 * v3
+    //a here is e^i 2pi/3, or a 120 deg rotation
+    updater.add(new EXP.Transformation({expr: () => 
+        EXP.Math.vectorScale(
+            EXP.Math.vectorAdd(EXP.Math.vectorAdd(v1, rotate240Deg(v2)), rotate120Deg(v3)), //multiplying v1 by 1, v2 by e^-2pi/3, v3 by e^(-2pi/3) ^2
+         1/3)
+    })).add(new EXP.FlatArrayOutput({array: oneComponent}));
+    
+    let oneComponentVec = new EXP.Array({data: [[0,0],oneComponent]}); //todo: make dynamic
+    let oneComponentPosition = new EXP.Transformation({expr: (i,t,x,y) => [x+4,y]})
+    oneComponentVec.add(oneComponentPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV1Color}))
+    oneComponentVec.add(new EXP.Transformation({expr: (i,t,x,y) => rotate120Deg([x,y])})).add(oneComponentPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV2Color}));
+    oneComponentVec.add(new EXP.Transformation({expr: (i,t,x,y) => rotate240Deg([x,y])})).add(oneComponentPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV3Color}));
+
+
+    //two component = v1 + a^2 * v2 + a^4 * v3, but a^4 = a
+    let twoComponent = [0,0];
+    updater.add(new EXP.Transformation({expr: () => 
+        EXP.Math.vectorScale(
+            EXP.Math.vectorAdd(EXP.Math.vectorAdd(v1, rotate120Deg(v2)), rotate240Deg(v3)), //it's reversed because the fourier transform involves negative exponents!
+         1/3)
+    })).add(new EXP.FlatArrayOutput({array: twoComponent}));
+
+    let twoComponentPosition = new EXP.Transformation({expr: (i,t,x,y) => [x+4,y-3]})
+    let twoComponentVec = new EXP.Array({data: [[0,0],twoComponent]}); //todo: make dynamic
+    //let rotatedTwoComponentVec = twoComponentVec.add(rotateOverTimeTwiceAsFast.makeLink());
+    twoComponentVec.add(twoComponentPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV1Color}))
+
+    //note that the V2 is rotated 240 deg and the V3 is 120 deg. why the reversal?
+    //the rotation of these triangles is kinda doing an inverse fourier transform. this is the two component, so the first phasor is rotated by  (e^2pi/3)^(2*0) the second by (e^2pi/3)^(2*1), then (e^2pi/3)^(2*2) 
+    
+    twoComponentVec.add(new EXP.Transformation({expr: (i,t,x,y) => rotate240Deg([x,y])})).add(twoComponentPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV2Color})); //rotating 240 deg because it's e^i 2pi/3 raised to the second power, since this is the second component
+    twoComponentVec.add(new EXP.Transformation({expr: (i,t,x,y) => rotate120Deg([x,y])})).add(twoComponentPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV3Color}));
+
+
+
+
+    objects = objects.concat([zeroComponentVec, oneComponentVec, twoComponentVec]);
+
+    let zeroComponentMainDiagramCopy = new EXP.Array({data: [[0,0],zeroComponent]}); //todo: make dynamic
+    let zeroComponentMainDiagramPosition = zeroComponentPosition.clone();
+    zeroComponentMainDiagramCopy.add(zeroComponentMainDiagramPosition).add(new EXP.VectorOutput({color: zeroComponentColor}));
+
+    window.zeroComponentMainDiagramCopy = zeroComponentMainDiagramCopy;
+
+
+
+    
+    let oneComponentMainDiagramCopy = new EXP.Array({data: [[0,0],oneComponent]}); //todo: make dynamic
+    let oneComponentMainDiagramPosition = oneComponentPosition.clone(); //start at the same position as oneComponentPosition
+    //let rotatedOneComponentMainDiagramVec = oneComponentMainDiagramCopy.add(rotateOverTime.makeLink());
+    oneComponentMainDiagramCopy.add(oneComponentMainDiagramPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV1Color}))
+    oneComponentMainDiagramCopy.add(new EXP.Transformation({expr: (i,t,x,y) => rotate120Deg([x,y])})).add(oneComponentMainDiagramPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV2Color}));
+    oneComponentMainDiagramCopy.add(new EXP.Transformation({expr: (i,t,x,y) => rotate240Deg([x,y])})).add(oneComponentMainDiagramPosition.makeLink()).add(new EXP.VectorOutput({color: oneComponentV3Color}));
+
+    let twoComponentMainDiagramCopy = new EXP.Array({data: [[0,0],twoComponent]}); //todo: make dynamic
+    /*
+    let twoComponentStartPos1 = new EXP.Transformation({expr: (i,t,x,y) =>
+            EXP.Math.vectorAdd(EXP.Math.vectorAdd([x,y], zeroComponent), 
+                oneComponent)});
+    let twoComponentStartPos2 = new EXP.Transformation({expr: (i,t,x,y) =>
+            EXP.Math.vectorAdd(EXP.Math.vectorAdd([x,y], zeroComponent), 
+                rotate240Deg(oneComponent))}); //rotating 240 deg because it's e^i 2pi/3 raised to the second power, since this is the second component
+    let twoComponentStartPos3 = new EXP.Transformation({expr: (i,t,x,y) =>
+            EXP.Math.vectorAdd(EXP.Math.vectorAdd([x,y], zeroComponent), 
+                rotate120Deg(oneComponent))}); //rotating 240 deg because it's e^i 2pi/3 raised to the fourth power, since this is the second component * second vec
+    */
+    let twoComponentStartPos1 = twoComponentPosition.clone();
+    let twoComponentStartPos2 = twoComponentPosition.clone();
+    let twoComponentStartPos3 = twoComponentPosition.clone();
+
+    twoComponentMainDiagramCopy
+        .add(twoComponentStartPos1).add(new EXP.VectorOutput({color: oneComponentV1Color, opacity: 0.8}));
+    twoComponentMainDiagramCopy
+        .add(new EXP.Transformation({expr: (i,t,x,y) => rotate240Deg([x,y])})) 
+        .add(twoComponentStartPos2).add(new EXP.VectorOutput({color: oneComponentV2Color, opacity: 0.8}));
+    twoComponentMainDiagramCopy
+        .add(new EXP.Transformation({expr: (i,t,x,y) => rotate120Deg([x,y])})) 
+        .add(twoComponentStartPos3).add(new EXP.VectorOutput({color: oneComponentV3Color, opacity: 0.8}));
+
+
+    objects = objects.concat([zeroComponentMainDiagramCopy, oneComponentMainDiagramCopy, twoComponentMainDiagramCopy]);
+
+    
+	three.on("update",function(time){
+		objects.forEach(item => item.activate(time.t));
+		controls.update();
+	});
+
+    let presentation = new EXP.UndoCapableDirector();
+    await presentation.begin();
+
+
+	await presentation.nextSlide();
+	//EXP.TransitionTo(id, {'expr': (i,t,x,y) => [x,x*x/5+y*x/5,0]});
+
+    presentation.TransitionTo(zeroComponentMainDiagramPosition, {expr: (i,t,x,y) => EXP.Math.vectorAdd([x,y], mainDiagramPosition)});
+    window.zeroComponentMainDiagramPosition = zeroComponentMainDiagramPosition;
+
+    //vector from zeroComponent to rotatedcopy(oneComponentVec)
+
+    await presentation.delay(1000);
+
+    window.oneComponentMainDiagramPosition = oneComponentMainDiagramPosition;
+    presentation.TransitionTo(oneComponentMainDiagramPosition, {expr: (i,t,x,y) => EXP.Math.vectorAdd(EXP.Math.vectorAdd([x,y], zeroComponent), mainDiagramPosition)})
+
+    await presentation.delay(1000);
+
+    presentation.TransitionTo(twoComponentStartPos1, {expr: (i,t,x,y) =>
+            EXP.Math.vectorAdd(EXP.Math.vectorAdd(EXP.Math.vectorAdd([x,y], zeroComponent), 
+                oneComponent), mainDiagramPosition)}); //not rtoating, since this is e^i 2pi / 3 raised to the second * 0 th power
+    presentation.TransitionTo(twoComponentStartPos2, {expr: (i,t,x,y) =>
+            EXP.Math.vectorAdd(EXP.Math.vectorAdd(EXP.Math.vectorAdd([x,y], zeroComponent), 
+                rotate120Deg(oneComponent)), mainDiagramPosition)}); //rotating 240 deg because it's e^i 2pi/3 raised to the second power, since this is the second component * first vec
+    presentation.TransitionTo(twoComponentStartPos3, {expr: (i,t,x,y) =>
+            EXP.Math.vectorAdd(EXP.Math.vectorAdd(EXP.Math.vectorAdd([x,y], zeroComponent), 
+                rotate240Deg(oneComponent)), mainDiagramPosition)});
+
+
+  </script>
+</body>
+</html>

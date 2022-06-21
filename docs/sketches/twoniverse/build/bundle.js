@@ -771,7 +771,7 @@ var app = (function () {
     			span = element("span");
     			t = text(t_value);
     			attr_dev(span, "class", "multiplenums svelte-1r102f");
-    			add_location(span, file$3, 70, 8, 1301);
+    			add_location(span, file$3, 70, 8, 1312);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -832,10 +832,10 @@ var app = (function () {
     	let t1;
     	let t2;
     	let if_block3_anchor;
-    	let if_block0 = /*coords*/ ctx[1][0] > 1 && /*coords*/ ctx[1][1] > 1 && create_if_block_4(ctx);
-    	let if_block1 = /*coords*/ ctx[1][0] < /*gridSize*/ ctx[2][0] && /*coords*/ ctx[1][1] > 1 && create_if_block_3$1(ctx);
-    	let if_block2 = /*coords*/ ctx[1][1] > 1 && /*coords*/ ctx[1][0] > 1 && create_if_block_2$1(ctx);
-    	let if_block3 = /*coords*/ ctx[1][1] < /*gridSize*/ ctx[2][1] && /*coords*/ ctx[1][0] > 1 && create_if_block_1$1(ctx);
+    	let if_block0 = /*coords*/ ctx[1][0] > 1 && /*coords*/ ctx[1][1] > 1 && /*arrowsToShow*/ ctx[3].left && create_if_block_4(ctx);
+    	let if_block1 = /*coords*/ ctx[1][0] < /*gridSize*/ ctx[2][0] && /*coords*/ ctx[1][1] > 1 && /*arrowsToShow*/ ctx[3].right && create_if_block_3$1(ctx);
+    	let if_block2 = /*coords*/ ctx[1][1] > 1 && /*coords*/ ctx[1][0] > 1 && /*arrowsToShow*/ ctx[3].up && create_if_block_2$1(ctx);
+    	let if_block3 = /*coords*/ ctx[1][1] < /*gridSize*/ ctx[2][1] && /*coords*/ ctx[1][0] > 1 && /*arrowsToShow*/ ctx[3].down && create_if_block_1$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -859,7 +859,7 @@ var app = (function () {
     			insert_dev(target, if_block3_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (/*coords*/ ctx[1][0] > 1 && /*coords*/ ctx[1][1] > 1) {
+    			if (/*coords*/ ctx[1][0] > 1 && /*coords*/ ctx[1][1] > 1 && /*arrowsToShow*/ ctx[3].left) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
@@ -872,7 +872,7 @@ var app = (function () {
     				if_block0 = null;
     			}
 
-    			if (/*coords*/ ctx[1][0] < /*gridSize*/ ctx[2][0] && /*coords*/ ctx[1][1] > 1) {
+    			if (/*coords*/ ctx[1][0] < /*gridSize*/ ctx[2][0] && /*coords*/ ctx[1][1] > 1 && /*arrowsToShow*/ ctx[3].right) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -885,7 +885,7 @@ var app = (function () {
     				if_block1 = null;
     			}
 
-    			if (/*coords*/ ctx[1][1] > 1 && /*coords*/ ctx[1][0] > 1) {
+    			if (/*coords*/ ctx[1][1] > 1 && /*coords*/ ctx[1][0] > 1 && /*arrowsToShow*/ ctx[3].up) {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
@@ -898,7 +898,7 @@ var app = (function () {
     				if_block2 = null;
     			}
 
-    			if (/*coords*/ ctx[1][1] < /*gridSize*/ ctx[2][1] && /*coords*/ ctx[1][0] > 1) {
+    			if (/*coords*/ ctx[1][1] < /*gridSize*/ ctx[2][1] && /*coords*/ ctx[1][0] > 1 && /*arrowsToShow*/ ctx[3].down) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
     				} else {
@@ -934,7 +934,7 @@ var app = (function () {
     	return block;
     }
 
-    // (80:9) {#if coords[0] > 1 && coords[1] > 1}
+    // (80:9) {#if coords[0] > 1 && coords[1] > 1 && arrowsToShow.left}
     function create_if_block_4(ctx) {
     	let button;
     	let t0;
@@ -949,7 +949,7 @@ var app = (function () {
     			t0 = text("< -");
     			t1 = text(t1_value);
     			attr_dev(button, "class", "leftarrow svelte-1r102f");
-    			add_location(button, file$3, 80, 13, 1517);
+    			add_location(button, file$3, 80, 13, 1549);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -961,7 +961,7 @@ var app = (function () {
     					button,
     					"click",
     					function () {
-    						if (is_function(/*buttonCallback*/ ctx[3](/*coords*/ ctx[1], [-1, 0]))) /*buttonCallback*/ ctx[3](/*coords*/ ctx[1], [-1, 0]).apply(this, arguments);
+    						if (is_function(/*buttonCallback*/ ctx[4](/*coords*/ ctx[1], [-1, 0]))) /*buttonCallback*/ ctx[4](/*coords*/ ctx[1], [-1, 0]).apply(this, arguments);
     					},
     					false,
     					false,
@@ -986,14 +986,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(80:9) {#if coords[0] > 1 && coords[1] > 1}",
+    		source: "(80:9) {#if coords[0] > 1 && coords[1] > 1 && arrowsToShow.left}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:9) {#if coords[0] < gridSize[0] && coords[1] > 1}
+    // (86:9) {#if coords[0] < gridSize[0] && coords[1] > 1 && arrowsToShow.right}
     function create_if_block_3$1(ctx) {
     	let button;
     	let t0;
@@ -1008,7 +1008,7 @@ var app = (function () {
     			t0 = text("> +");
     			t1 = text(t1_value);
     			attr_dev(button, "class", "rightarrow svelte-1r102f");
-    			add_location(button, file$3, 86, 13, 1728);
+    			add_location(button, file$3, 86, 13, 1782);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -1020,7 +1020,7 @@ var app = (function () {
     					button,
     					"click",
     					function () {
-    						if (is_function(/*buttonCallback*/ ctx[3](/*coords*/ ctx[1], [1, 0]))) /*buttonCallback*/ ctx[3](/*coords*/ ctx[1], [1, 0]).apply(this, arguments);
+    						if (is_function(/*buttonCallback*/ ctx[4](/*coords*/ ctx[1], [1, 0]))) /*buttonCallback*/ ctx[4](/*coords*/ ctx[1], [1, 0]).apply(this, arguments);
     					},
     					false,
     					false,
@@ -1045,14 +1045,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(86:9) {#if coords[0] < gridSize[0] && coords[1] > 1}",
+    		source: "(86:9) {#if coords[0] < gridSize[0] && coords[1] > 1 && arrowsToShow.right}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (93:9) {#if coords[1] > 1 && coords[0] > 1}
+    // (93:9) {#if coords[1] > 1 && coords[0] > 1 && arrowsToShow.up}
     function create_if_block_2$1(ctx) {
     	let button;
     	let t0;
@@ -1067,7 +1067,7 @@ var app = (function () {
     			t0 = text("^ -");
     			t1 = text(t1_value);
     			attr_dev(button, "class", "uparrow svelte-1r102f");
-    			add_location(button, file$3, 93, 13, 1930);
+    			add_location(button, file$3, 93, 13, 2003);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -1079,7 +1079,7 @@ var app = (function () {
     					button,
     					"click",
     					function () {
-    						if (is_function(/*buttonCallback*/ ctx[3](/*coords*/ ctx[1], [0, -1]))) /*buttonCallback*/ ctx[3](/*coords*/ ctx[1], [0, -1]).apply(this, arguments);
+    						if (is_function(/*buttonCallback*/ ctx[4](/*coords*/ ctx[1], [0, -1]))) /*buttonCallback*/ ctx[4](/*coords*/ ctx[1], [0, -1]).apply(this, arguments);
     					},
     					false,
     					false,
@@ -1104,14 +1104,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(93:9) {#if coords[1] > 1 && coords[0] > 1}",
+    		source: "(93:9) {#if coords[1] > 1 && coords[0] > 1 && arrowsToShow.up}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (99:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}
+    // (99:9) {#if coords[1] < gridSize[1]  && coords[0] > 1 && arrowsToShow.down}
     function create_if_block_1$1(ctx) {
     	let button;
     	let t0;
@@ -1126,7 +1126,7 @@ var app = (function () {
     			t0 = text("V +");
     			t1 = text(t1_value);
     			attr_dev(button, "class", "downarrow svelte-1r102f");
-    			add_location(button, file$3, 99, 13, 2137);
+    			add_location(button, file$3, 99, 13, 2231);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -1138,7 +1138,7 @@ var app = (function () {
     					button,
     					"click",
     					function () {
-    						if (is_function(/*buttonCallback*/ ctx[3](/*coords*/ ctx[1], [0, 1]))) /*buttonCallback*/ ctx[3](/*coords*/ ctx[1], [0, 1]).apply(this, arguments);
+    						if (is_function(/*buttonCallback*/ ctx[4](/*coords*/ ctx[1], [0, 1]))) /*buttonCallback*/ ctx[4](/*coords*/ ctx[1], [0, 1]).apply(this, arguments);
     					},
     					false,
     					false,
@@ -1163,7 +1163,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(99:9) {#if coords[1] < gridSize[1]  && coords[0] > 1}",
+    		source: "(99:9) {#if coords[1] < gridSize[1]  && coords[0] > 1 && arrowsToShow.down}",
     		ctx
     	});
 
@@ -1177,13 +1177,13 @@ var app = (function () {
     	let t;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*hasAValue*/ ctx[4]) return create_if_block_5;
+    		if (/*hasAValue*/ ctx[5]) return create_if_block_5;
     		return create_else_block_1;
     	}
 
     	let current_block_type = select_block_type(ctx);
     	let if_block0 = current_block_type(ctx);
-    	let if_block1 = /*shouldShowArrows*/ ctx[6] && create_if_block$1(ctx);
+    	let if_block1 = /*shouldShowArrows*/ ctx[7] && create_if_block$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -1194,11 +1194,11 @@ var app = (function () {
     			t = space();
     			if (if_block1) if_block1.c();
     			attr_dev(span0, "class", "centerpart svelte-1r102f");
-    			add_location(span0, file$3, 65, 5, 1178);
+    			add_location(span0, file$3, 65, 5, 1189);
     			attr_dev(span1, "class", "numbergrid svelte-1r102f");
-    			attr_dev(span1, "id", /*textID*/ ctx[5]);
-    			add_location(span1, file$3, 63, 4, 1132);
-    			add_location(span2, file$3, 61, 0, 1120);
+    			attr_dev(span1, "id", /*textID*/ ctx[6]);
+    			add_location(span1, file$3, 63, 4, 1143);
+    			add_location(span2, file$3, 61, 0, 1131);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1224,7 +1224,7 @@ var app = (function () {
     				}
     			}
 
-    			if (/*shouldShowArrows*/ ctx[6]) {
+    			if (/*shouldShowArrows*/ ctx[7]) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -1237,8 +1237,8 @@ var app = (function () {
     				if_block1 = null;
     			}
 
-    			if (dirty & /*textID*/ 32) {
-    				attr_dev(span1, "id", /*textID*/ ctx[5]);
+    			if (dirty & /*textID*/ 64) {
+    				attr_dev(span1, "id", /*textID*/ ctx[6]);
     			}
     		},
     		i: noop,
@@ -1269,7 +1269,13 @@ var app = (function () {
     	let { numbers = [] } = $$props;
     	let { coords = [0, 0] } = $$props;
     	let { gridSize = [5, 5] } = $$props;
-    	let { numbersWhichWouldBeCreated = (coords, directionVec) => [0] } = $$props;
+
+    	let { arrowsToShow = {
+    		"up": false,
+    		"down": false,
+    		"right": false,
+    		"left": false
+    	} } = $$props;
 
     	let { buttonCallback = (coords, directionVec) => {
     		
@@ -1280,14 +1286,7 @@ var app = (function () {
     	}
 
     	let hasAValue = false;
-
-    	const writable_props = [
-    		'numbers',
-    		'coords',
-    		'gridSize',
-    		'numbersWhichWouldBeCreated',
-    		'buttonCallback'
-    	];
+    	const writable_props = ['numbers', 'coords', 'gridSize', 'arrowsToShow', 'buttonCallback'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<GridSquare> was created with unknown prop '${key}'`);
@@ -1297,15 +1296,15 @@ var app = (function () {
     		if ('numbers' in $$props) $$invalidate(0, numbers = $$props.numbers);
     		if ('coords' in $$props) $$invalidate(1, coords = $$props.coords);
     		if ('gridSize' in $$props) $$invalidate(2, gridSize = $$props.gridSize);
-    		if ('numbersWhichWouldBeCreated' in $$props) $$invalidate(7, numbersWhichWouldBeCreated = $$props.numbersWhichWouldBeCreated);
-    		if ('buttonCallback' in $$props) $$invalidate(3, buttonCallback = $$props.buttonCallback);
+    		if ('arrowsToShow' in $$props) $$invalidate(3, arrowsToShow = $$props.arrowsToShow);
+    		if ('buttonCallback' in $$props) $$invalidate(4, buttonCallback = $$props.buttonCallback);
     	};
 
     	$$self.$capture_state = () => ({
     		numbers,
     		coords,
     		gridSize,
-    		numbersWhichWouldBeCreated,
+    		arrowsToShow,
     		buttonCallback,
     		setID,
     		hasAValue,
@@ -1317,11 +1316,11 @@ var app = (function () {
     		if ('numbers' in $$props) $$invalidate(0, numbers = $$props.numbers);
     		if ('coords' in $$props) $$invalidate(1, coords = $$props.coords);
     		if ('gridSize' in $$props) $$invalidate(2, gridSize = $$props.gridSize);
-    		if ('numbersWhichWouldBeCreated' in $$props) $$invalidate(7, numbersWhichWouldBeCreated = $$props.numbersWhichWouldBeCreated);
-    		if ('buttonCallback' in $$props) $$invalidate(3, buttonCallback = $$props.buttonCallback);
-    		if ('hasAValue' in $$props) $$invalidate(4, hasAValue = $$props.hasAValue);
-    		if ('textID' in $$props) $$invalidate(5, textID = $$props.textID);
-    		if ('shouldShowArrows' in $$props) $$invalidate(6, shouldShowArrows = $$props.shouldShowArrows);
+    		if ('arrowsToShow' in $$props) $$invalidate(3, arrowsToShow = $$props.arrowsToShow);
+    		if ('buttonCallback' in $$props) $$invalidate(4, buttonCallback = $$props.buttonCallback);
+    		if ('hasAValue' in $$props) $$invalidate(5, hasAValue = $$props.hasAValue);
+    		if ('textID' in $$props) $$invalidate(6, textID = $$props.textID);
+    		if ('shouldShowArrows' in $$props) $$invalidate(7, shouldShowArrows = $$props.shouldShowArrows);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1330,27 +1329,25 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty & /*numbers*/ 1) {
-    			$$invalidate(4, hasAValue = numbers.length > 0);
-    		}
-
-    		if ($$self.$$.dirty & /*hasAValue*/ 16) {
-    			$$invalidate(6, shouldShowArrows = hasAValue);
+    			$$invalidate(5, hasAValue = numbers.length > 0);
     		}
 
     		if ($$self.$$.dirty & /*coords*/ 2) {
-    			$$invalidate(5, textID = coords.join("-")); //needed for the tooltips
+    			$$invalidate(6, textID = coords.join("-")); //needed for the tooltips
     		}
     	};
+
+    	$$invalidate(7, shouldShowArrows = true); //hasAValue;
 
     	return [
     		numbers,
     		coords,
     		gridSize,
+    		arrowsToShow,
     		buttonCallback,
     		hasAValue,
     		textID,
-    		shouldShowArrows,
-    		numbersWhichWouldBeCreated
+    		shouldShowArrows
     	];
     }
 
@@ -1362,8 +1359,8 @@ var app = (function () {
     			numbers: 0,
     			coords: 1,
     			gridSize: 2,
-    			numbersWhichWouldBeCreated: 7,
-    			buttonCallback: 3
+    			arrowsToShow: 3,
+    			buttonCallback: 4
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -1398,11 +1395,11 @@ var app = (function () {
     		throw new Error("<GridSquare>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	get numbersWhichWouldBeCreated() {
+    	get arrowsToShow() {
     		throw new Error("<GridSquare>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set numbersWhichWouldBeCreated(value) {
+    	set arrowsToShow(value) {
     		throw new Error("<GridSquare>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
@@ -2752,34 +2749,34 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
-    	child_ctx[10] = i;
+    	child_ctx[10] = list[i];
+    	child_ctx[12] = i;
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[11] = list[i];
-    	child_ctx[13] = i;
+    	child_ctx[13] = list[i];
+    	child_ctx[15] = i;
     	return child_ctx;
     }
 
     function get_each_context_2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[14] = list[i];
+    	child_ctx[16] = list[i];
     	return child_ctx;
     }
 
-    // (109:4) {#each implicationAnimations as tooltipData}
+    // (121:4) {#each implicationAnimations as tooltipData}
     function create_each_block_2(ctx) {
     	let implicationanimationtooltip;
     	let current;
 
     	implicationanimationtooltip = new ImplicationAnimationTooltip({
     			props: {
-    				sourceCoords: /*tooltipData*/ ctx[14][0],
-    				arrowDirection: /*tooltipData*/ ctx[14][1],
-    				sourceNumber: /*tooltipData*/ ctx[14][2],
+    				sourceCoords: /*tooltipData*/ ctx[16][0],
+    				arrowDirection: /*tooltipData*/ ctx[16][1],
+    				sourceNumber: /*tooltipData*/ ctx[16][2],
     				addMultiplicationEntry: /*addMultiplicationEntry*/ ctx[3]
     			},
     			$$inline: true
@@ -2795,9 +2792,9 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const implicationanimationtooltip_changes = {};
-    			if (dirty & /*implicationAnimations*/ 2) implicationanimationtooltip_changes.sourceCoords = /*tooltipData*/ ctx[14][0];
-    			if (dirty & /*implicationAnimations*/ 2) implicationanimationtooltip_changes.arrowDirection = /*tooltipData*/ ctx[14][1];
-    			if (dirty & /*implicationAnimations*/ 2) implicationanimationtooltip_changes.sourceNumber = /*tooltipData*/ ctx[14][2];
+    			if (dirty & /*implicationAnimations*/ 2) implicationanimationtooltip_changes.sourceCoords = /*tooltipData*/ ctx[16][0];
+    			if (dirty & /*implicationAnimations*/ 2) implicationanimationtooltip_changes.arrowDirection = /*tooltipData*/ ctx[16][1];
+    			if (dirty & /*implicationAnimations*/ 2) implicationanimationtooltip_changes.sourceNumber = /*tooltipData*/ ctx[16][2];
     			implicationanimationtooltip.$set(implicationanimationtooltip_changes);
     		},
     		i: function intro(local) {
@@ -2818,25 +2815,25 @@ var app = (function () {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(109:4) {#each implicationAnimations as tooltipData}",
+    		source: "(121:4) {#each implicationAnimations as tooltipData}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (114:7) {#each column as values, i}
+    // (126:7) {#each column as values, i}
     function create_each_block_1(ctx) {
     	let gridsquare;
     	let current;
 
     	gridsquare = new GridSquare({
     			props: {
-    				numbers: /*values*/ ctx[11],
-    				coords: [/*i*/ ctx[13] + 1, /*j*/ ctx[10] + 1],
-    				buttonCallback: /*buttonClick*/ ctx[4],
+    				numbers: /*values*/ ctx[13],
+    				coords: [/*i*/ ctx[15] + 1, /*j*/ ctx[12] + 1],
+    				buttonCallback: /*buttonClick*/ ctx[5],
     				gridSize: /*gridSize*/ ctx[2],
-    				numbersWhichWouldBeCreated
+    				arrowsToShow: /*computeArrowsToShow*/ ctx[4](/*numbers*/ ctx[0], /*i*/ ctx[15] + 1, /*j*/ ctx[12] + 1)
     			},
     			$$inline: true
     		});
@@ -2851,7 +2848,8 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const gridsquare_changes = {};
-    			if (dirty & /*numbers*/ 1) gridsquare_changes.numbers = /*values*/ ctx[11];
+    			if (dirty & /*numbers*/ 1) gridsquare_changes.numbers = /*values*/ ctx[13];
+    			if (dirty & /*numbers*/ 1) gridsquare_changes.arrowsToShow = /*computeArrowsToShow*/ ctx[4](/*numbers*/ ctx[0], /*i*/ ctx[15] + 1, /*j*/ ctx[12] + 1);
     			gridsquare.$set(gridsquare_changes);
     		},
     		i: function intro(local) {
@@ -2872,18 +2870,18 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(114:7) {#each column as values, i}",
+    		source: "(126:7) {#each column as values, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (113:5) {#each numbers as column, j}
+    // (125:5) {#each numbers as column, j}
     function create_each_block(ctx) {
     	let each_1_anchor;
     	let current;
-    	let each_value_1 = /*column*/ ctx[8];
+    	let each_value_1 = /*column*/ ctx[10];
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -2912,8 +2910,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*numbers, buttonClick, gridSize, numbersWhichWouldBeCreated*/ 21) {
-    				each_value_1 = /*column*/ ctx[8];
+    			if (dirty & /*numbers, buttonClick, gridSize, computeArrowsToShow*/ 53) {
+    				each_value_1 = /*column*/ ctx[10];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -2968,7 +2966,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(113:5) {#each numbers as column, j}",
+    		source: "(125:5) {#each numbers as column, j}",
     		ctx
     	});
 
@@ -3030,9 +3028,9 @@ var app = (function () {
     			}
 
     			attr_dev(div0, "class", "biggrid svelte-yqp3f");
-    			add_location(div0, file, 111, 4, 3484);
+    			add_location(div0, file, 123, 4, 4140);
     			attr_dev(div1, "class", "position: relative");
-    			add_location(div1, file, 107, 0, 3207);
+    			add_location(div1, file, 119, 0, 3863);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3084,7 +3082,7 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (dirty & /*numbers, buttonClick, gridSize, numbersWhichWouldBeCreated*/ 21) {
+    			if (dirty & /*numbers, buttonClick, gridSize, computeArrowsToShow*/ 53) {
     				each_value = /*numbers*/ ctx[0];
     				validate_each_argument(each_value);
     				let i;
@@ -3177,7 +3175,6 @@ var app = (function () {
     		return [];
     	}
 
-    	console.log(targetY - 1, targetX - 1, numbers);
     	numbers[targetY - 1][targetX - 1];
 
     	for (let number of sourceNumbers) {
@@ -3189,6 +3186,7 @@ var app = (function () {
     		}
     	}
 
+    	if (newNumbers.length > 0) console.log(sourceX, sourceY, targetX, targetY, sourceNumbers, newNumbers);
     	return newNumbers;
     }
 
@@ -3210,12 +3208,12 @@ var app = (function () {
     		numbers.push(column);
     	}
 
-    	//first row
+    	//fill in first row
     	for (let i = 0; i < gridSize[0]; i++) {
     		numbers[i][0] = [i + 1];
     	}
 
-    	//first column
+    	//fill in first column
     	for (let i = 0; i < gridSize[1]; i++) {
     		numbers[0][i] = [i + 1];
     	}
@@ -3234,6 +3232,26 @@ var app = (function () {
 
     	function notifySvelteOfChange(x, y) {
     		$$invalidate(0, numbers);
+    	}
+
+    	const arrowTemplate = {
+    		'up': [0, -1],
+    		"left": [-1, 0],
+    		"down": [0, 1],
+    		"right": [1, 0]
+    	};
+
+    	//given a square [x,y], which arrows should we show?
+    	function computeArrowsToShow(numbers, x, y) {
+    		let arrowVisibility = {};
+
+    		for (let arrowName in arrowTemplate) {
+    			let arrowDirection = arrowTemplate[arrowName];
+    			let newNumbers = numbersWhichWouldBeCreated(numbers, [x, y], arrowDirection);
+    			arrowVisibility[arrowName] = newNumbers.length > 0; //show an arrow if we'd learn something from it
+    		}
+
+    		return arrowVisibility;
     	}
 
     	addMultiplicationEntry(...startEquation); //2*3 = 2
@@ -3271,6 +3289,8 @@ var app = (function () {
     		addMultiplicationEntry,
     		getMultiplicationEntry,
     		notifySvelteOfChange,
+    		arrowTemplate,
+    		computeArrowsToShow,
     		numbersWhichWouldBeCreated,
     		implicationAnimations,
     		buttonClick
@@ -3287,7 +3307,14 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [numbers, implicationAnimations, gridSize, addMultiplicationEntry, buttonClick];
+    	return [
+    		numbers,
+    		implicationAnimations,
+    		gridSize,
+    		addMultiplicationEntry,
+    		computeArrowsToShow,
+    		buttonClick
+    	];
     }
 
     class App extends SvelteComponentDev {

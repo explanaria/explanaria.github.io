@@ -15,11 +15,11 @@
 		numbers.push(column)
 	}
 	
-    //first row
+    //fill in first row
 	for(let i=0;i<gridSize[0];i++){
 		numbers[i][0] = [i+1];
     }
-    //first column
+    //fill in first column
 	for(let i=0;i<gridSize[1];i++){
 		numbers[0][i] = [i+1];
 	}
@@ -38,6 +38,18 @@
         numbers[y-1][x-1]=numbers[y-1][x-1]
     }
 
+    const arrowTemplate = {'up': [0,-1], "left": [-1,0], "down": [0,1], "right": [1,0]};
+    //given a square [x,y], which arrows should we show?
+    function computeArrowsToShow(numbers, x, y){
+        let arrowVisibility = {};
+        for(let arrowName in arrowTemplate){
+            let arrowDirection = arrowTemplate[arrowName];
+            let newNumbers = numbersWhichWouldBeCreated(numbers, [x,y], arrowDirection);
+            arrowVisibility[arrowName] = newNumbers.length > 0; //show an arrow if we'd learn something from it
+        }
+        return arrowVisibility;
+    }
+
     function numbersWhichWouldBeCreated(numbers, sourceCoords, arrowDirection){
         //assuming we're at x*y and want to click the arrow in [1,0] direction, return the NEW numbers we'd learn. not any which are already there
 
@@ -54,7 +66,6 @@
             //out of bounds
             return [];
         }
-        console.log(targetY-1, targetX-1, numbers)
 
         let targetNumbers = numbers[targetY-1][targetX-1];
 
@@ -65,6 +76,7 @@
                 newNumbers.push(newNumber)
             }
         }
+        if(newNumbers.length > 0)console.log(sourceX, sourceY, targetX, targetY, sourceNumbers, newNumbers)
         return newNumbers;
     }
 
@@ -112,7 +124,7 @@
     <div class="biggrid">
 	    {#each numbers as column, j}
 			    {#each column as values, i}
-			    <GridSquare numbers={values} coords={[i+1,j+1]} buttonCallback={buttonClick} gridSize={gridSize} numbersWhichWouldBeCreated={numbersWhichWouldBeCreated}/>
+			    <GridSquare numbers={values} coords={[i+1,j+1]} buttonCallback={buttonClick} gridSize={gridSize} arrowsToShow={computeArrowsToShow(numbers, i+1,j+1)}/>
 			    {/each}
 	    {/each}
     </div>

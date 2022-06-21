@@ -131,7 +131,7 @@
     <div class="biggrid">
 	    {#each numbers as column, j}
 			    {#each column as values, i}
-			    <GridSquare numbers={values} coords={[i+1,j+1]} buttonCallback={buttonClick} gridSize={gridSize} arrowsToShow={computeArrowsToShow(numbers, i+1,j+1)}/>
+			    <GridSquare numbers={values} coords={[i+1,j+1]} buttonCallback={buttonClick} gridSize={gridSize} arrowsToShow={computeArrowsToShow(numbers, i+1,j+1)} spooky={(i+1 == startEquation[0] && j+1 == startEquation[1])}/>
 			    {/each}
 	    {/each}
     </div>

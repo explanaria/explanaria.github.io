@@ -1,2 +1,0 @@
-https://svelte.dev/tutorial/reactive-declarations
-https://svelte.dev/repl/hello-world?version=3.46.3

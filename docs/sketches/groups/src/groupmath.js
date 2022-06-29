@@ -84,34 +84,73 @@ export function permutationIsInList(elem, alist){
     return false
 }
 
+export class Group{
+    //represents a finite group. give it some generators and it'll compute all the elements
+    constructor(generators, relations=[], sizeOfUnderlyingPermutationGroup=3){
+        this.generators = generators;
+        this.relations = relations; //mostly just used to simplify names. optional
+        this.elements = this.computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup);
 
-export function makegroup(generators, relations, sizeOfUnderlyingPermutationGroup=3){
+        this.nameLookupTable = {};
+        for(let elem of this.elements){
+            this.nameLookupTable[elem.name] = elem;
+        }
+    }
+    getElemByName(name){
+        if(this.nameLookupTable[name] !== undefined){
+            return this.nameLookupTable[name];
+        }
+        throw new ReferenceError("nothing named" + name + "is in this group!");
+    }
+    multiply(elem1, elem2){
+        if(this.elements.indexOf(elem1) == -1 || this.elements.indexOf(elem2) == -1){
+            throw new ReferenceError(elem1, elem2, "aren't in this group!");
+        }
+        let newelem = compose(elem1, elem2);
 
-    let groupelements = [new GroupElement("e", "("+sizeOfUnderlyingPermutationGroup+")")] //start with identity
+        //now figure out which existing element it is. there's gotta be a better way to do this
+        for(let elem of this.elements){
+            let match = true;
+            for(let number in elem.permutation){
+                if(elem.permutation[number] != newelem.permutation[number]){
+                    match = false;
+                    break
+                }
+            }
+            if(match){
+                return elem;
+            }
+        }
 
-    //add generators in the first step.
-    //we keep track of what new elements we find each time through a loop so that once we stop finding new elements,
-    //we stop looping.
-    
-    //also, the identity is placed in groupelements so that e * a generator won't result in a new element with an "e" in the name.
-    let newelements = generators.slice()
+        throw new Error("I composed", elem1, elem2, "but got something not in this group!", newelem);
+    }
+    computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup=3){
 
-    while(newelements.length > 0){
-        groupelements = groupelements.concat(newelements)
-        newelements = []
+        let groupelements = [new GroupElement("e", "("+sizeOfUnderlyingPermutationGroup+")")] //start with identity
 
-        for(let el of groupelements){
-            // combine each element with all generators
-            for(let gen of generators){
-                let newelem = compose(el, gen) 
-                newelem = reduceName(newelem, relations)
+        //add generators in the first step.
+        //we keep track of what new elements we find each time through a loop so that once we stop finding new elements,
+        //we stop looping.
+        
+        //also, the identity is placed in groupelements so that e * a generator won't result in a new element with an "e" in the name.
+        let newelements = generators.slice()
 
-                if(!permutationIsInList(newelem, groupelements) && !permutationIsInList(newelem, newelements)){
-                    newelements.push(newelem)
+        while(newelements.length > 0){
+            groupelements = groupelements.concat(newelements)
+            newelements = []
+
+            for(let el of groupelements){
+                // combine each element with all generators
+                for(let gen of generators){
+                    let newelem = compose(el, gen) 
+                    newelem = reduceName(newelem, relations)
+
+                    if(!permutationIsInList(newelem, groupelements) && !permutationIsInList(newelem, newelements)){
+                        newelements.push(newelem)
+                    }
                 }
             }
         }
-        print("new list", newelements)
+        return groupelements;
     }
-    return groupelements
 }

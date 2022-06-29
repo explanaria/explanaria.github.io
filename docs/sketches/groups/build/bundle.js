@@ -19,6 +19,12 @@ var app = (function () {
     }
 
     function noop() { }
+    function assign(tar, src) {
+        // @ts-ignore
+        for (const k in src)
+            tar[k] = src[k];
+        return tar;
+    }
     function add_location(element, file, line, column, char) {
         element.__svelte_meta = {
             loc: { file, line, column, char }
@@ -41,6 +47,52 @@ var app = (function () {
     }
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
+    }
+    function create_slot(definition, ctx, $$scope, fn) {
+        if (definition) {
+            const slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
+            return definition[0](slot_ctx);
+        }
+    }
+    function get_slot_context(definition, ctx, $$scope, fn) {
+        return definition[1] && fn
+            ? assign($$scope.ctx.slice(), definition[1](fn(ctx)))
+            : $$scope.ctx;
+    }
+    function get_slot_changes(definition, $$scope, dirty, fn) {
+        if (definition[2] && fn) {
+            const lets = definition[2](fn(dirty));
+            if ($$scope.dirty === undefined) {
+                return lets;
+            }
+            if (typeof lets === 'object') {
+                const merged = [];
+                const len = Math.max($$scope.dirty.length, lets.length);
+                for (let i = 0; i < len; i += 1) {
+                    merged[i] = $$scope.dirty[i] | lets[i];
+                }
+                return merged;
+            }
+            return $$scope.dirty | lets;
+        }
+        return $$scope.dirty;
+    }
+    function update_slot_base(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
+        if (slot_changes) {
+            const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
+            slot.p(slot_context, slot_changes);
+        }
+    }
+    function get_all_dirty_from_scope($$scope) {
+        if ($$scope.ctx.length > 32) {
+            const dirty = [];
+            const length = $$scope.ctx.length / 32;
+            for (let i = 0; i < length; i++) {
+                dirty[i] = -1;
+            }
+            return dirty;
+        }
+        return -1;
     }
     function append(target, node) {
         target.appendChild(node);
@@ -220,6 +272,12 @@ var app = (function () {
             block.o(local);
         }
     }
+
+    const globals = (typeof window !== 'undefined'
+        ? window
+        : typeof globalThis !== 'undefined'
+            ? globalThis
+            : global);
     function create_component(block) {
         block && block.c();
     }
@@ -414,8 +472,6 @@ var app = (function () {
         $inject_state() { }
     }
 
-    let print = console.log;
-
     class GroupElement{
         constructor(name, permutation){
             this.name = name;
@@ -500,36 +556,325 @@ var app = (function () {
         return false
     }
 
+    class Group{
+        //represents a finite group. give it some generators and it'll compute all the elements
+        constructor(generators, relations=[], sizeOfUnderlyingPermutationGroup=3){
+            this.generators = generators;
+            this.relations = relations; //mostly just used to simplify names. optional
+            this.elements = this.computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup);
 
-    function makegroup(generators, relations, sizeOfUnderlyingPermutationGroup=3){
+            this.nameLookupTable = {};
+            for(let elem of this.elements){
+                this.nameLookupTable[elem.name] = elem;
+            }
+        }
+        getElemByName(name){
+            if(this.nameLookupTable[name] !== undefined){
+                return this.nameLookupTable[name];
+            }
+            throw new ReferenceError("nothing named" + name + "is in this group!");
+        }
+        multiply(elem1, elem2){
+            if(this.elements.indexOf(elem1) == -1 || this.elements.indexOf(elem2) == -1){
+                throw new ReferenceError(elem1, elem2, "aren't in this group!");
+            }
+            let newelem = compose(elem1, elem2);
 
-        let groupelements = [new GroupElement("e", "("+sizeOfUnderlyingPermutationGroup+")")]; //start with identity
+            //now figure out which existing element it is. there's gotta be a better way to do this
+            for(let elem of this.elements){
+                let match = true;
+                for(let number in elem.permutation){
+                    if(elem.permutation[number] != newelem.permutation[number]){
+                        match = false;
+                        break
+                    }
+                }
+                if(match){
+                    return elem;
+                }
+            }
 
-        //add generators in the first step.
-        //we keep track of what new elements we find each time through a loop so that once we stop finding new elements,
-        //we stop looping.
-        
-        //also, the identity is placed in groupelements so that e * a generator won't result in a new element with an "e" in the name.
-        let newelements = generators.slice();
+            throw new Error("I composed", elem1, elem2, "but got something not in this group!", newelem);
+        }
+        computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup=3){
 
-        while(newelements.length > 0){
-            groupelements = groupelements.concat(newelements);
-            newelements = [];
+            let groupelements = [new GroupElement("e", "("+sizeOfUnderlyingPermutationGroup+")")]; //start with identity
 
-            for(let el of groupelements){
-                // combine each element with all generators
-                for(let gen of generators){
-                    let newelem = compose(el, gen); 
-                    newelem = reduceName(newelem, relations);
+            //add generators in the first step.
+            //we keep track of what new elements we find each time through a loop so that once we stop finding new elements,
+            //we stop looping.
+            
+            //also, the identity is placed in groupelements so that e * a generator won't result in a new element with an "e" in the name.
+            let newelements = generators.slice();
 
-                    if(!permutationIsInList(newelem, groupelements) && !permutationIsInList(newelem, newelements)){
-                        newelements.push(newelem);
+            while(newelements.length > 0){
+                groupelements = groupelements.concat(newelements);
+                newelements = [];
+
+                for(let el of groupelements){
+                    // combine each element with all generators
+                    for(let gen of generators){
+                        let newelem = compose(el, gen); 
+                        newelem = reduceName(newelem, relations);
+
+                        if(!permutationIsInList(newelem, groupelements) && !permutationIsInList(newelem, newelements)){
+                            newelements.push(newelem);
+                        }
                     }
                 }
             }
-            print("new list", newelements);
+            return groupelements;
         }
-        return groupelements
+    }
+
+    const lightblue = "hsla(240, 90%, 70%, 1)";
+
+    let groupElementBorderColor = lightblue;
+
+    /* src/GroupElementDisplay.svelte generated by Svelte v3.46.4 */
+    const file$3 = "src/GroupElementDisplay.svelte";
+
+    const get_default_slot_changes = dirty => ({ element: dirty & /*element*/ 4 });
+    const get_default_slot_context = ctx => ({ element: /*element*/ ctx[2] });
+
+    // (37:32)  
+    function fallback_block(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "representation of the element goes here";
+    			add_location(p, file$3, 37, 12, 996);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: fallback_block.name,
+    		type: "fallback",
+    		source: "(37:32)  ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$3(ctx) {
+    	let div;
+    	let t0_value = /*element*/ ctx[2].name + "";
+    	let t0;
+    	let t1;
+    	let t2;
+    	let current;
+    	const default_slot_template = /*#slots*/ ctx[6].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[5], get_default_slot_context);
+    	const default_slot_or_fallback = default_slot || fallback_block(ctx);
+    	let if_block = false ;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			t0 = text(t0_value);
+    			t1 = space();
+    			if (default_slot_or_fallback) default_slot_or_fallback.c();
+    			t2 = space();
+    			attr_dev(div, "class", "elementcontainer svelte-aze8gj");
+    			set_style(div, "position", "absolute");
+    			set_style(div, "top", /*top*/ ctx[0] + "px");
+    			set_style(div, "left", /*left*/ ctx[1] + "px");
+    			add_location(div, file$3, 33, 0, 751);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, t0);
+    			append_dev(div, t1);
+
+    			if (default_slot_or_fallback) {
+    				default_slot_or_fallback.m(div, null);
+    			}
+
+    			append_dev(div, t2);
+    			/*div_binding*/ ctx[7](div);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if ((!current || dirty & /*element*/ 4) && t0_value !== (t0_value = /*element*/ ctx[2].name + "")) set_data_dev(t0, t0_value);
+
+    			if (default_slot) {
+    				if (default_slot.p && (!current || dirty & /*$$scope, element*/ 36)) {
+    					update_slot_base(
+    						default_slot,
+    						default_slot_template,
+    						ctx,
+    						/*$$scope*/ ctx[5],
+    						!current
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[5])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[5], dirty, get_default_slot_changes),
+    						get_default_slot_context
+    					);
+    				}
+    			}
+
+    			if (!current || dirty & /*top*/ 1) {
+    				set_style(div, "top", /*top*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*left*/ 2) {
+    				set_style(div, "left", /*left*/ ctx[1] + "px");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(default_slot_or_fallback, local);
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(default_slot_or_fallback, local);
+    			transition_out(if_block);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (default_slot_or_fallback) default_slot_or_fallback.d(detaching);
+    			/*div_binding*/ ctx[7](null);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$3.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$3($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('GroupElementDisplay', slots, ['default']);
+    	let { top = 0 } = $$props;
+    	let { left = 0 } = $$props;
+    	let { element } = $$props;
+    	let { arrows = [] } = $$props;
+
+    	//control colors via js
+    	let containerElem;
+
+    	onMount(() => {
+    		containerElem.style.setProperty('--groupElementBorderColor', groupElementBorderColor);
+    	});
+
+    	const writable_props = ['top', 'left', 'element', 'arrows'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<GroupElementDisplay> was created with unknown prop '${key}'`);
+    	});
+
+    	function div_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			containerElem = $$value;
+    			$$invalidate(4, containerElem);
+    		});
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('top' in $$props) $$invalidate(0, top = $$props.top);
+    		if ('left' in $$props) $$invalidate(1, left = $$props.left);
+    		if ('element' in $$props) $$invalidate(2, element = $$props.element);
+    		if ('arrows' in $$props) $$invalidate(3, arrows = $$props.arrows);
+    		if ('$$scope' in $$props) $$invalidate(5, $$scope = $$props.$$scope);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		GroupElement,
+    		onMount,
+    		groupElementBorderColor,
+    		top,
+    		left,
+    		element,
+    		arrows,
+    		containerElem
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('top' in $$props) $$invalidate(0, top = $$props.top);
+    		if ('left' in $$props) $$invalidate(1, left = $$props.left);
+    		if ('element' in $$props) $$invalidate(2, element = $$props.element);
+    		if ('arrows' in $$props) $$invalidate(3, arrows = $$props.arrows);
+    		if ('containerElem' in $$props) $$invalidate(4, containerElem = $$props.containerElem);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [top, left, element, arrows, containerElem, $$scope, slots, div_binding];
+    }
+
+    class GroupElementDisplay extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { top: 0, left: 1, element: 2, arrows: 3 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "GroupElementDisplay",
+    			options,
+    			id: create_fragment$3.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*element*/ ctx[2] === undefined && !('element' in props)) {
+    			console.warn("<GroupElementDisplay> was created without expected prop 'element'");
+    		}
+    	}
+
+    	get top() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set top(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get left() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set left(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get element() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set element(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get arrows() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set arrows(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     function rotate2D(degrees, x,y){
@@ -56537,19 +56882,19 @@ var app = (function () {
     }, [explanariaBundle]));
 
     /* src/D6ElementCanvas.svelte generated by Svelte v3.46.4 */
-    const file$3 = "src/D6ElementCanvas.svelte";
+    const file$2 = "src/D6ElementCanvas.svelte";
 
-    function create_fragment$3(ctx) {
+    function create_fragment$2(ctx) {
     	let canvas_1;
 
     	const block = {
     		c: function create() {
     			canvas_1 = element("canvas");
-    			attr_dev(canvas_1, "class", "elementcanvas svelte-19m5jbi");
+    			attr_dev(canvas_1, "class", "elementcanvas svelte-yk45lw");
     			attr_dev(canvas_1, "id", /*canvasName*/ ctx[0]);
-    			attr_dev(canvas_1, "width", 150);
-    			attr_dev(canvas_1, "height", 150);
-    			add_location(canvas_1, file$3, 218, 0, 8403);
+    			attr_dev(canvas_1, "width", 100);
+    			attr_dev(canvas_1, "height", 100);
+    			add_location(canvas_1, file$2, 218, 0, 8436);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -56571,7 +56916,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$3.name,
+    		id: create_fragment$2.name,
     		type: "component",
     		source: "",
     		ctx
@@ -56581,10 +56926,10 @@ var app = (function () {
     }
 
     const triangleRadius = 40;
-    const arowCenterDistance = 50; //how far from the center should the arced arrow that shows a rotation be?
+    const arowCenterDistance = 45; //how far from the center should the arced arrow that shows a rotation be?
     const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
     const num_dashes = 5;
-    const dash_radius = 60; //how far from the center should dashed lines for mirroring go
+    const dash_radius = 50; //how far from the center should dashed lines for mirroring go
 
     function isAllRs(string) {
     	for (let i = 0; i < string.length; i++) {
@@ -56599,11 +56944,11 @@ var app = (function () {
     	return (1 - Math.cos(t * Math.PI)) / 2;
     }
 
-    function instance$3($$self, $$props, $$invalidate) {
+    function instance$2($$self, $$props, $$invalidate) {
     	let canvasName;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('D6ElementCanvas', slots, []);
-    	let { element = new GroupElement() } = $$props;
+    	let { element = new GroupElement("", "(3)") } = $$props;
     	let canvas = null, ctx = null;
 
     	function drawTrianglePath(ctx, centerX, centerY, oneVertexVectorFromCenter) {
@@ -56619,6 +56964,7 @@ var app = (function () {
     	}
 
     	let startVertex = [0, -triangleRadius]; //one vertex of the triangle
+    	let { NUM_DEGREES_IN_ONE_ROTATION = 120 } = $$props;
     	let lastTime = 0;
 
     	function draw(currentTime) {
@@ -56654,8 +57000,6 @@ var app = (function () {
     		lastTime = currentTime;
     		window.requestAnimationFrame(draw);
     	}
-
-    	let NUM_DEGREES_IN_ONE_ROTATION = 120;
 
     	function drawStaticElements(ctx) {
     		//draw things like arcs or dotted lines to represent transformations. these don't move
@@ -56805,7 +57149,7 @@ var app = (function () {
     		await animationLoop();
     	});
 
-    	const writable_props = ['element'];
+    	const writable_props = ['element', 'NUM_DEGREES_IN_ONE_ROTATION'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<D6ElementCanvas> was created with unknown prop '${key}'`);
@@ -56813,6 +57157,7 @@ var app = (function () {
 
     	$$self.$$set = $$props => {
     		if ('element' in $$props) $$invalidate(1, element = $$props.element);
+    		if ('NUM_DEGREES_IN_ONE_ROTATION' in $$props) $$invalidate(2, NUM_DEGREES_IN_ONE_ROTATION = $$props.NUM_DEGREES_IN_ONE_ROTATION);
     	};
 
     	$$self.$capture_state = () => ({
@@ -56830,10 +57175,10 @@ var app = (function () {
     		offsetDegrees,
     		num_dashes,
     		dash_radius,
+    		NUM_DEGREES_IN_ONE_ROTATION,
     		lastTime,
     		draw,
     		isAllRs,
-    		NUM_DEGREES_IN_ONE_ROTATION,
     		drawStaticElements,
     		animationProgress,
     		easing,
@@ -56849,8 +57194,8 @@ var app = (function () {
     		if ('canvas' in $$props) canvas = $$props.canvas;
     		if ('ctx' in $$props) ctx = $$props.ctx;
     		if ('startVertex' in $$props) startVertex = $$props.startVertex;
+    		if ('NUM_DEGREES_IN_ONE_ROTATION' in $$props) $$invalidate(2, NUM_DEGREES_IN_ONE_ROTATION = $$props.NUM_DEGREES_IN_ONE_ROTATION);
     		if ('lastTime' in $$props) lastTime = $$props.lastTime;
-    		if ('NUM_DEGREES_IN_ONE_ROTATION' in $$props) NUM_DEGREES_IN_ONE_ROTATION = $$props.NUM_DEGREES_IN_ONE_ROTATION;
     		if ('animationProgress' in $$props) animationProgress = $$props.animationProgress;
     		if ('canvasName' in $$props) $$invalidate(0, canvasName = $$props.canvasName);
     	};
@@ -56865,19 +57210,23 @@ var app = (function () {
     		}
     	};
 
-    	return [canvasName, element];
+    	return [canvasName, element, NUM_DEGREES_IN_ONE_ROTATION];
     }
 
     class D6ElementCanvas extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { element: 1 });
+
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {
+    			element: 1,
+    			NUM_DEGREES_IN_ONE_ROTATION: 2
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "D6ElementCanvas",
     			options,
-    			id: create_fragment$3.name
+    			id: create_fragment$2.name
     		});
     	}
 
@@ -56888,201 +57237,88 @@ var app = (function () {
     	set element(value) {
     		throw new Error("<D6ElementCanvas>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get NUM_DEGREES_IN_ONE_ROTATION() {
+    		throw new Error("<D6ElementCanvas>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set NUM_DEGREES_IN_ONE_ROTATION(value) {
+    		throw new Error("<D6ElementCanvas>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
-    /* src/GroupElementDisplay.svelte generated by Svelte v3.46.4 */
-    const file$2 = "src/GroupElementDisplay.svelte";
+    /* src/D6Group.svelte generated by Svelte v3.46.4 */
 
-    function create_fragment$2(ctx) {
-    	let div;
-    	let t0_value = /*element*/ ctx[2].name + "";
-    	let t0;
-    	let t1;
+    const { console: console_1 } = globals;
+    const file$1 = "src/D6Group.svelte";
+
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[13] = list[i];
+    	return child_ctx;
+    }
+
+    // (62:8) <GroupElementDisplay element={element} top={positions.get(element)[1]} left={positions.get(element)[0]}>
+    function create_default_slot(ctx) {
     	let d6elementcanvas;
-    	let t2;
+    	let t;
     	let current;
 
     	d6elementcanvas = new D6ElementCanvas({
-    			props: {
-    				class: "elementcanvas",
-    				element: /*element*/ ctx[2]
-    			},
+    			props: { element: /*element*/ ctx[13] },
     			$$inline: true
     		});
 
-    	let if_block = false ;
-
     	const block = {
     		c: function create() {
-    			div = element("div");
-    			t0 = text(t0_value);
-    			t1 = space();
     			create_component(d6elementcanvas.$$.fragment);
-    			t2 = space();
-    			attr_dev(div, "class", "elementcontainer svelte-1jqtgu8");
-    			set_style(div, "paosition", "absolute");
-    			set_style(div, "top", /*top*/ ctx[0] + "px");
-    			set_style(div, "left", /*left*/ ctx[1] + "px");
-    			add_location(div, file$2, 28, 0, 516);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    			t = space();
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, t0);
-    			append_dev(div, t1);
-    			mount_component(d6elementcanvas, div, null);
-    			append_dev(div, t2);
+    			mount_component(d6elementcanvas, target, anchor);
+    			insert_dev(target, t, anchor);
     			current = true;
     		},
-    		p: function update(ctx, [dirty]) {
-    			if ((!current || dirty & /*element*/ 4) && t0_value !== (t0_value = /*element*/ ctx[2].name + "")) set_data_dev(t0, t0_value);
-    			const d6elementcanvas_changes = {};
-    			if (dirty & /*element*/ 4) d6elementcanvas_changes.element = /*element*/ ctx[2];
-    			d6elementcanvas.$set(d6elementcanvas_changes);
-
-    			if (!current || dirty & /*top*/ 1) {
-    				set_style(div, "top", /*top*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*left*/ 2) {
-    				set_style(div, "left", /*left*/ ctx[1] + "px");
-    			}
-    		},
+    		p: noop,
     		i: function intro(local) {
     			if (current) return;
     			transition_in(d6elementcanvas.$$.fragment, local);
-    			transition_in(if_block);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(d6elementcanvas.$$.fragment, local);
-    			transition_out(if_block);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_component(d6elementcanvas);
+    			destroy_component(d6elementcanvas, detaching);
+    			if (detaching) detach_dev(t);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$2.name,
-    		type: "component",
-    		source: "",
+    		id: create_default_slot.name,
+    		type: "slot",
+    		source: "(62:8) <GroupElementDisplay element={element} top={positions.get(element)[1]} left={positions.get(element)[0]}>",
     		ctx
     	});
 
     	return block;
     }
 
-    function instance$2($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('GroupElementDisplay', slots, []);
-    	let { top = 0 } = $$props;
-    	let { left = 0 } = $$props;
-    	let { element = new GroupElement() } = $$props;
-    	let { arrows = [] } = $$props;
-    	const writable_props = ['top', 'left', 'element', 'arrows'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<GroupElementDisplay> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('top' in $$props) $$invalidate(0, top = $$props.top);
-    		if ('left' in $$props) $$invalidate(1, left = $$props.left);
-    		if ('element' in $$props) $$invalidate(2, element = $$props.element);
-    		if ('arrows' in $$props) $$invalidate(3, arrows = $$props.arrows);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		GroupElement,
-    		D6ElementCanvas,
-    		top,
-    		left,
-    		element,
-    		arrows
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('top' in $$props) $$invalidate(0, top = $$props.top);
-    		if ('left' in $$props) $$invalidate(1, left = $$props.left);
-    		if ('element' in $$props) $$invalidate(2, element = $$props.element);
-    		if ('arrows' in $$props) $$invalidate(3, arrows = $$props.arrows);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [top, left, element, arrows];
-    }
-
-    class GroupElementDisplay extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { top: 0, left: 1, element: 2, arrows: 3 });
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "GroupElementDisplay",
-    			options,
-    			id: create_fragment$2.name
-    		});
-    	}
-
-    	get top() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set top(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get left() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set left(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get element() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set element(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get arrows() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set arrows(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    /* src/D6Group.svelte generated by Svelte v3.46.4 */
-    const file$1 = "src/D6Group.svelte";
-
-    function get_each_context(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[7] = list[i];
-    	return child_ctx;
-    }
-
-    // (26:4) {#each d6group as element}
+    // (61:4) {#each d6group.elements as element}
     function create_each_block(ctx) {
     	let groupelementdisplay;
     	let current;
 
     	groupelementdisplay = new GroupElementDisplay({
-    			props: { element: /*element*/ ctx[7] },
+    			props: {
+    				element: /*element*/ ctx[13],
+    				top: /*positions*/ ctx[1].get(/*element*/ ctx[13])[1],
+    				left: /*positions*/ ctx[1].get(/*element*/ ctx[13])[0],
+    				$$slots: { default: [create_default_slot] },
+    				$$scope: { ctx }
+    			},
     			$$inline: true
     		});
 
@@ -57094,7 +57330,15 @@ var app = (function () {
     			mount_component(groupelementdisplay, target, anchor);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			const groupelementdisplay_changes = {};
+
+    			if (dirty & /*$$scope*/ 65536) {
+    				groupelementdisplay_changes.$$scope = { dirty, ctx };
+    			}
+
+    			groupelementdisplay.$set(groupelementdisplay_changes);
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(groupelementdisplay.$$.fragment, local);
@@ -57113,7 +57357,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(26:4) {#each d6group as element}",
+    		source: "(61:4) {#each d6group.elements as element}",
     		ctx
     	});
 
@@ -57123,7 +57367,7 @@ var app = (function () {
     function create_fragment$1(ctx) {
     	let div;
     	let current;
-    	let each_value = /*d6group*/ ctx[0];
+    	let each_value = /*d6group*/ ctx[0].elements;
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -57144,7 +57388,7 @@ var app = (function () {
     			}
 
     			attr_dev(div, "class", "groupdisplay svelte-rf3aw3");
-    			add_location(div, file$1, 24, 0, 534);
+    			add_location(div, file$1, 59, 0, 1934);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -57159,8 +57403,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*d6group*/ 1) {
-    				each_value = /*d6group*/ ctx[0];
+    			if (dirty & /*d6group, positions*/ 3) {
+    				each_value = /*d6group*/ ctx[0].elements;
     				validate_each_argument(each_value);
     				let i;
 
@@ -57227,56 +57471,111 @@ var app = (function () {
     	validate_slots('D6Group', slots, []);
     	let r = new GroupElement("r", "(123)");
     	let f = new GroupElement("f", "(23)");
-    	let d6group = makegroup([r, f], { "rfr": "f", "rrr": "", "ff": "" });
+    	let d6group = new Group([r, f], { "rfr": "f", "rrr": "", "ff": "" });
+    	console.log(d6group);
     	let { elements = [] } = $$props;
     	let { visibleElements = [] } = $$props;
     	let generators = ["r", "f"];
-    	let relations = ["rrr=e", "rfr=f"];
+
+    	//placing them on a 2D grid
+    	let positions = new Map();
+
+    	d6group.elements.forEach(element => {
+    		positions.set(element, [0, 0]);
+    	}); //fill this dict with one position per element
+
+    	let startPos = [300, 250];
+    	let outerRadius = 250;
+    	let innerRadius = 100;
+    	let rotationRadians = 120 * Math.PI / 180;
+    	let startRadians = -Math.PI / 2; //start upwards
+    	let currentElem = d6group.getElemByName("e");
+    	console.log(currentElem);
+
+    	for (let i = 0; i < 3; i++) {
+    		//place rotation elements on the outside of the circle.
+    		let position = [
+    			startPos[0] + outerRadius * Math.cos(rotationRadians * i + startRadians),
+    			startPos[1] + outerRadius * Math.sin(rotationRadians * i + startRadians)
+    		];
+
+    		positions.set(currentElem, position);
+
+    		//place flip elements on the inside of the circle
+    		let flipElem = d6group.multiply(currentElem, d6group.getElemByName("f"));
+
+    		let flipPosition = [
+    			startPos[0] + innerRadius * Math.cos(rotationRadians * i + startRadians),
+    			startPos[1] + innerRadius * Math.sin(rotationRadians * i + startRadians)
+    		];
+
+    		positions.set(flipElem, flipPosition);
+
+    		//move to next element
+    		currentElem = d6group.multiply(currentElem, d6group.getElemByName("r"));
+
+    		console.log(currentElem);
+    	}
+
+    	console.log(positions);
     	const writable_props = ['elements', 'visibleElements'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<D6Group> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<D6Group> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
-    		if ('elements' in $$props) $$invalidate(1, elements = $$props.elements);
-    		if ('visibleElements' in $$props) $$invalidate(2, visibleElements = $$props.visibleElements);
+    		if ('elements' in $$props) $$invalidate(2, elements = $$props.elements);
+    		if ('visibleElements' in $$props) $$invalidate(3, visibleElements = $$props.visibleElements);
     	};
 
     	$$self.$capture_state = () => ({
     		GroupElement,
-    		makegroup,
+    		Group,
     		GroupElementDisplay,
     		r,
     		f,
     		d6group,
+    		D6ElementCanvas,
     		elements,
     		visibleElements,
     		generators,
-    		relations
+    		positions,
+    		startPos,
+    		outerRadius,
+    		innerRadius,
+    		rotationRadians,
+    		startRadians,
+    		currentElem
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('r' in $$props) r = $$props.r;
     		if ('f' in $$props) f = $$props.f;
     		if ('d6group' in $$props) $$invalidate(0, d6group = $$props.d6group);
-    		if ('elements' in $$props) $$invalidate(1, elements = $$props.elements);
-    		if ('visibleElements' in $$props) $$invalidate(2, visibleElements = $$props.visibleElements);
+    		if ('elements' in $$props) $$invalidate(2, elements = $$props.elements);
+    		if ('visibleElements' in $$props) $$invalidate(3, visibleElements = $$props.visibleElements);
     		if ('generators' in $$props) generators = $$props.generators;
-    		if ('relations' in $$props) relations = $$props.relations;
+    		if ('positions' in $$props) $$invalidate(1, positions = $$props.positions);
+    		if ('startPos' in $$props) startPos = $$props.startPos;
+    		if ('outerRadius' in $$props) outerRadius = $$props.outerRadius;
+    		if ('innerRadius' in $$props) innerRadius = $$props.innerRadius;
+    		if ('rotationRadians' in $$props) rotationRadians = $$props.rotationRadians;
+    		if ('startRadians' in $$props) startRadians = $$props.startRadians;
+    		if ('currentElem' in $$props) currentElem = $$props.currentElem;
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [d6group, elements, visibleElements];
+    	return [d6group, positions, elements, visibleElements];
     }
 
     class D6Group extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { elements: 1, visibleElements: 2 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { elements: 2, visibleElements: 3 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -57316,7 +57615,8 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(d6group.$$.fragment);
-    			add_location(div, file, 5, 0, 62);
+    			attr_dev(div, "class", "main svelte-1o77uog");
+    			add_location(div, file, 11, 0, 130);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");

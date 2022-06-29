@@ -1,1 +1,0 @@
-get rid of the unneeded buttons if clicking them wouldn't make you learn anything

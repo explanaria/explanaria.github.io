@@ -4,7 +4,7 @@
     import { GroupElement } from "./groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
 
-    export let element = new GroupElement();
+    export let element = new GroupElement("", "(3)"); //a GroupElement
 
     $: canvasName = "canvas-" + element.name;
     let canvas = null, ctx = null;
@@ -24,10 +24,11 @@
 
     const triangleRadius = 40;
     let startVertex = [0,-triangleRadius]; //one vertex of the triangle
-    const arowCenterDistance = 50; //how far from the center should the arced arrow that shows a rotation be?
+    const arowCenterDistance = 45; //how far from the center should the arced arrow that shows a rotation be?
     const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
     const num_dashes = 5;
-    const dash_radius = 60; //how far from the center should dashed lines for mirroring go
+    const dash_radius = 50; //how far from the center should dashed lines for mirroring go
+    export let NUM_DEGREES_IN_ONE_ROTATION = 120;
 
     let lastTime = 0;
     function draw(currentTime){
@@ -71,7 +72,6 @@
         return true;
     }
 
-    let NUM_DEGREES_IN_ONE_ROTATION = 120;
 
     function drawStaticElements(ctx){
         //draw things like arcs or dotted lines to represent transformations. these don't move
@@ -211,9 +211,9 @@
 
 <style>
     .elementcanvas{
-        width: 150px;
-        height: 150px;
+        width: 100px;
+        height: 100px;
     }
 </style>
 
-<canvas class="elementcanvas" id={canvasName} width={150} height={150}/> 
+<canvas class="elementcanvas" id={canvasName} width={100} height={100}/> 

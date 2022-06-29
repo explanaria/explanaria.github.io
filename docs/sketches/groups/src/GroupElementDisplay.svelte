@@ -1,35 +1,42 @@
 <script>
     import { GroupElement } from "./groupmath.js";
-    import D6ElementCanvas from "./D6ElementCanvas.svelte";
+	import { onMount } from 'svelte';
+
+    import {groupElementBorderColor} from "./colors.js";
 
     export let top = 0;
     export let left = 0;
 
-    export let element = new GroupElement();
-    export let arrows = [];   
+    export let element; //a GroupElement
+    export let arrows = [];  
+
+    //control colors via js
+    let containerElem;
+    onMount( () => {containerElem.style.setProperty('--groupElementBorderColor', groupElementBorderColor);});
 </script>
 
 <style>
-    .elementcanvas{
-        width: 150px;
-        height: 150px;
-    }
 
     .elementcontainer{
         display: grid;
         grid: 1fr / 1fr;
         justify-items: center;
-        border: 1px solid gray;
+        --groupElementBorderColor: #333;
+        border: 2px solid var(--groupElementBorderColor);
+        border-radius: 5px;
         max-width: 300px;
+        margin: 1em;
     }
 
 </style>
 
 
-<div class="elementcontainer" style="paosition: absolute; top: {top}px; left: {left}px">
+<div class="elementcontainer" bind:this={containerElem} style="position: absolute; top: {top}px; left: {left}px">
 
         {element.name}
-        <D6ElementCanvas class="elementcanvas" element={element} />
+        <slot element={element}> <!-- for the canvas. but this doesn't seem to work?? weird-->
+            <p>representation of the element goes here</p>
+        </slot>
 
         {#if false}
             

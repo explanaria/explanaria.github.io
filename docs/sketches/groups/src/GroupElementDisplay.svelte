@@ -25,7 +25,8 @@
         border: 2px solid var(--groupElementBorderColor);
         border-radius: 5px;
         max-width: 300px;
-        margin: 1em;
+        transform: translate(-50%, -50%); /*so that the position set by position: absolute is in the center */
+        /* margin: 1em; not with position:absolute*/
     }
 
 </style>

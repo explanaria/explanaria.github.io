@@ -3,7 +3,6 @@
     import {GroupElement, Group} from "./groupmath.js";
     import GroupElementDisplay from "./GroupElementDisplay.svelte";
     import SVGCayleyArrows from "./SVGCayleyArrows.svelte";
-    import { generatorcolors } from "./colors.js";
 
     let r = new GroupElement("r", "(123)");
     let f = new GroupElement("f", "(23)");
@@ -30,7 +29,6 @@
     let startRadians = -Math.PI/2; //start upwards
 
     let currentElem = d6group.getElemByName("e");
-    console.log(currentElem);
     for(let i=0;i<3;i++){
         //place rotation elements on the outside of the circle.
         let position = [startPos[0] + outerRadius * Math.cos(rotationRadians * i + startRadians), 
@@ -49,17 +47,6 @@
     }
 
     console.log(positions);
-
-    // resize the svg with the arrows to match
-    let width = 1000;
-    let height = 300;
-    function recalcPageSize(){
-        width = window.innerWidth;
-        height = window.innerHeight;
-    }
-    
-    window.addEventListener("resize", recalcPageSize);
-    onMount(recalcPageSize)
     
 </script>
 
@@ -73,15 +60,6 @@
     grid-column-start: 1;
   grid-row-start: 1;
 }*/
-.arrowsvg{
-    width: 100%;
-    height: 100%;
-    position:absolute;
-    top:0;
-    left:0;
-    pointer-events: none;
-}
-
 </style>
 
 <div class="groupdisplay">
@@ -91,35 +69,5 @@
         </GroupElementDisplay>
     {/each}
 
-    <svg class="arrowsvg" xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 {width} {height}">
-      <defs>
-        {#each generatorcolors as color, i}
-        <marker id={"arrowhead-"+i} markerWidth="8" markerHeight="8" 
-        refX="8" refY="4" orient="auto">
-          <polygon points="0 0, 8 4, 0 8" fill={color}/>
-          <ellipse rx="2.5" ry="1.25"
-            cy="5" cx="3" fill="#fff" stroke="#000" stroke-width=0.2/>
-          <ellipse rx="2.5" ry="1.25"
-            cy="3" cx="3" fill="#fff" stroke="#000" stroke-width=0.2/>
-          <ellipse rx="1.5" ry="0.7"
-            cy="5" cx="4" fill="#000000"/>
-          <ellipse rx="1.5" ry="0.7"
-            cy="3" cx="4" fill="#000000"/>
-        </marker>
-        {/each}
-        <filter id="outline" x="-100%" y="-100%" width="300%" height="300%">
-          <!-- outline filter stolen from redblobgames, http://bl.ocks.org/redblobgames/c0da29c0539c8e7885664e774ffeae57 -->
-          <feMorphology result="outline" in="SourceGraphic" operator="dilate" radius="1"></feMorphology>
-          <feColorMatrix type="matrix" in="outline" result="black-outline" values="0 0 0 0 0  
-                            0 0 0 0 0  
-                            0 0 0 0 0  
-                            0 0 0 1 0"></feColorMatrix>
-          <feBlend in="SourceGraphic" in2="black-outline" mode="normal"></feBlend>
-        </filter>
-      </defs>
-      
-      {#each d6group.elements as element}
-        <SVGCayleyArrows group={d6group} positionsPerElementMap={positions} startElement={element} />
-      {/each}
-    </svg>
+    <SVGCayleyArrows group={d6group} positionsPerElementMap={positions}/>
 </div>

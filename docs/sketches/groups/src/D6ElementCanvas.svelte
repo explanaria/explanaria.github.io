@@ -22,13 +22,19 @@
         ctx.translate(-centerX, -centerY);
     }
 
-    const triangleRadius = 40;
-    let startVertex = [0,-triangleRadius]; //one vertex of the triangle
-    const arowCenterDistance = 45; //how far from the center should the arced arrow that shows a rotation be?
+    const canvasSize = 70;
+
+
+    const triangleRadius = 0.4*canvasSize;
+    const arowCenterDistance = 0.45*canvasSize; //how far from the center should the arced arrow that shows a rotation be?
     const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
     const num_dashes = 5;
-    const dash_radius = 50; //how far from the center should dashed lines for mirroring go
+    const dash_radius = canvasSize/2; //how far from the center should dashed lines for mirroring go
+    const D6_text_size = 12;
     export let NUM_DEGREES_IN_ONE_ROTATION = 120;
+
+
+    let startVertex = [0,-triangleRadius]; //one vertex of the triangle
 
     let lastTime = 0;
     function draw(currentTime){
@@ -54,7 +60,7 @@
         ctx.fill();
 
         ctx.fillStyle = "#000";
-        ctx.font = "12pt serif"
+        ctx.font = D6_text_size+ "pt serif"
         ctx.fillText("D6", -10,-10);
 
         ctx.restore();
@@ -211,9 +217,9 @@
 
 <style>
     .elementcanvas{
-        width: 100px;
-        height: 100px;
+        width: 70px;
+        height: 70px;
     }
 </style>
 
-<canvas class="elementcanvas" id={canvasName} width={100} height={100}/> 
+<canvas class="elementcanvas" id={canvasName} width={canvasSize} height={canvasSize}/> 

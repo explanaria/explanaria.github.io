@@ -10,6 +10,8 @@
     export let element; //a GroupElement
     export let arrows = [];  
 
+    export let borderColor=groupElementBorderColor;
+
     //control colors via js
     let containerElem;
     onMount( () => {containerElem.style.setProperty('--groupElementBorderColor', groupElementBorderColor);});
@@ -18,11 +20,11 @@
 <style>
 
     .elementcontainer{
+        position: absolute; /*top and left set dynamically */
         display: grid;
         grid: 1fr / 1fr;
         justify-items: center;
-        --groupElementBorderColor: #333;
-        border: 2px solid var(--groupElementBorderColor);
+        border: 2px solid var(--groupElementBorderColor); /* set using borderColor variable by svelte */
         border-radius: 5px;
         max-width: 300px;
         transform: translate(-50%, -50%); /*so that the position set by position: absolute is in the center */
@@ -32,7 +34,8 @@
 </style>
 
 
-<div class="elementcontainer" bind:this={containerElem} style="position: absolute; top: {top}px; left: {left}px">
+<div class="elementcontainer" bind:this={containerElem} 
+style:top={top+"px"} style:left={left+"px"} style:--groupElementBorderColor={borderColor}>
 
         {element.name}
         <slot element={element}> <!-- for the canvas. but this doesn't seem to work?? weird-->

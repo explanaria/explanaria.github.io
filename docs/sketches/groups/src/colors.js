@@ -6,8 +6,13 @@ export const green = "hsla(120, 90%, 70%, 1)";
 export const red = "hsla(0, 90%, 70%, 1)";
 
 
-export const generator1color = green;
-export const generator2color = red;
+export const darkergreen = "hsla(120, 90%, 40%, 1)";
+export const darkerred = "hsla(0, 90%, 40%, 1)";
 
+
+export const generator1color = darkergreen;
+export const generator2color = darkerred;
+export const drawGeneratorsWithOutlines = false;
+export const drawEyesOnArrows = true;
 
 export const generatorcolors = [green, red, lightblue]; //subtle bug here: this will error if we use a group with more generator than there are colors here

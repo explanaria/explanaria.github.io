@@ -1,7 +1,7 @@
 <script>
     export let group = {elements: []};
     export let positionsPerElementMap;
-    import {generatorcolors, drawGeneratorsWithOutlines, drawEyesOnArrows} from "./colors.js"
+    import {generatorColors, drawGeneratorsWithOutlines, drawEyesOnArrows} from "./colors.js"
 	import { onMount } from 'svelte';
     import SVGArrowLine from "./SVGArrowLine.svelte";
 
@@ -48,7 +48,7 @@
 
 <svg class="arrowsvg" xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 {width} {height}">
   <defs>
-    {#each generatorcolors as color, i}
+    {#each generatorColors as color, i}
     <marker id={"arrowhead-"+i} markerWidth="4" markerHeight="4" 
     refX="0" refY="2" orient="auto"> <!-- from https://thenewcode.com/1068/Making-Arrows-in-SVG -->
       <polygon points="0 0, 4 2, 0 4" fill={color}/>
@@ -79,13 +79,13 @@
     {#each group.elements as startElement}
         {#each elementTimesGenerators.get(startElement) as targetElement, i}
             {#if drawGeneratorsWithOutlines}
-                <line x1={positionsPerElementMap.get(startElement)[0]} y1={positionsPerElementMap.get(startElement)[1]} x2={positionsPerElementMap.get(targetElement)[0]} y2={positionsPerElementMap.get(targetElement)[1]} stroke=#000 
-                  stroke-width="6" 
-                  marker-end={"url(#arrowhead-"+i+")"} /> <!-- black outline -->
+                <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
+                stroke={generatorColors[i]} markerEnd={"url(#arrowhead-"+i+")"}
+                strokeWidth="5" />
             {/if}
             <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
-                stroke={generatorcolors[i]} markerEnd={"url(#arrowhead-"+i+")"}
-                strokeWidth="5" />
+                stroke={generatorColors[i]} markerEnd={"url(#arrowhead-"+i+")"}
+                strokeWidth="4" />
         {/each}
     {/each}
 </svg>

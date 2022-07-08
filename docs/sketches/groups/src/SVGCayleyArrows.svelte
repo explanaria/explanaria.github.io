@@ -41,7 +41,7 @@
     top:0;
     left:0;
     pointer-events: none;
-    overflow: show; /* important if there's a scrollbar */
+    overflow: visible; /* important if there's a scrollbar */
 }
 
 </style>

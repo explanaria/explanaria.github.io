@@ -4,6 +4,8 @@
     import GroupElementDisplay from "./GroupElementDisplay.svelte";
     import SVGCayleyArrows from "./SVGCayleyArrows.svelte";
 
+    import { defaultGroupElementBorderColor, generatorColors, identityColor} from "./colors.js";
+
     let r = new GroupElement("r", "(123)");
     let f = new GroupElement("f", "(23)");
     let d6group = new Group([r,f], {"rfr":"f", "rrr":"", "ff":""});
@@ -47,6 +49,16 @@
     }
 
     console.log(positions);
+
+    function chooseBorderColor(element){
+        if(element.name == "e"){
+            return identityColor;
+        }
+        if(d6group.generators.indexOf(element) !== -1){ //if the element is a generator, color it appropriately
+            return generatorColors[d6group.generators.indexOf(element)] ;
+        }
+        return defaultGroupElementBorderColor;
+    }
     
 </script>
 
@@ -64,7 +76,10 @@
 
 <div class="groupdisplay">
     {#each d6group.elements as element}
-        <GroupElementDisplay element={element} top={positions.get(element)[1]} left={positions.get(element)[0]}>
+        <GroupElementDisplay element={element}
+            borderColor={chooseBorderColor(element)}
+            top={positions.get(element)[1]} left={positions.get(element)[0]}
+        >
             <D6ElementCanvas element={element}/>
         </GroupElementDisplay>
     {/each}

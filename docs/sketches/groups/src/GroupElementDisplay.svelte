@@ -2,7 +2,7 @@
     import { GroupElement } from "./groupmath.js";
 	import { onMount } from 'svelte';
 
-    import {groupElementBorderColor} from "./colors.js";
+    import {defaultGroupElementBorderColor} from "./colors.js";
 
     export let top = 0;
     export let left = 0;
@@ -10,11 +10,8 @@
     export let element; //a GroupElement
     export let arrows = [];  
 
-    export let borderColor=groupElementBorderColor;
+    export let borderColor=defaultGroupElementBorderColor;
 
-    //control colors via js
-    let containerElem;
-    onMount( () => {containerElem.style.setProperty('--groupElementBorderColor', groupElementBorderColor);});
 </script>
 
 <style>
@@ -24,7 +21,7 @@
         display: grid;
         grid: 1fr / 1fr;
         justify-items: center;
-        border: 2px solid var(--groupElementBorderColor); /* set using borderColor variable by svelte */
+        border: 2px solid var(--groupElementBorderColor); /* overwritten using borderColor variable by svelte */
         border-radius: 5px;
         max-width: 300px;
         transform: translate(-50%, -50%); /*so that the position set by position: absolute is in the center */
@@ -34,7 +31,7 @@
 </style>
 
 
-<div class="elementcontainer" bind:this={containerElem} 
+<div class="elementcontainer"
 style:top={top+"px"} style:left={left+"px"} style:--groupElementBorderColor={borderColor}>
 
         {element.name}

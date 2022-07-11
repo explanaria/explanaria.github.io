@@ -32,6 +32,14 @@ function vectorSub(v1,v2){
 	}
 	return vec
 }
+function vectorScale(v1,scalar){
+    //unlike multiplyScalar, this clones the input, and the arguments are in a different order
+    let vec = clone(v1);
+	for(var i=0;i<v1.length;i++){
+		vec[i] *= scalar;
+	}
+	return vec
+}
 function lerpVectors(t, p1, p2){
 	//assumed t in [0,1]
 	return vectorAdd(multiplyScalar(t,clone(p1)),multiplyScalar(1-t,clone(p2)));
@@ -60,6 +68,6 @@ function multiplyMatrix(vec, matrix){
 }
 
 //hack
-let EXPMath = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, vectorSub: vectorSub, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix, normalize: normalize};
+let EXPMath = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, vectorSub: vectorSub, vectorScale: vectorScale, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix, normalize: normalize};
 
 export {vectorAdd, vectorSub, lerpVectors, clone, multiplyScalar, multiplyMatrix, EXPMath as Math};

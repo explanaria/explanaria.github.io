@@ -210,7 +210,7 @@ class Animation{
         }else{
             this.mode = "copyToTarget";
             //support Animation([a,b,c],[a,b,c,d,e]) where fromValues[property] might not be interpolatable, but fromValues is
-		    this.fromValues = EXP.Math.clone(this.target);
+		    this.fromValues = math.clone(this.target);
             let wholeThingInterpolator = this.chooseInterpolator(this.fromValues, this.toValues,this.interpolationFunction);
             this.interpolators.push(wholeThingInterpolator);
         }

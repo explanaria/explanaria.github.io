@@ -1,5 +1,5 @@
 <script>
-	import D6Group from "./D6Group.svelte";
+	import InteractiveD6Creator from "./InteractiveD6Creator.svelte";
 </script>
 
 <style>
@@ -10,5 +10,5 @@
 
 
 <div class="main">
-    <D6Group />
+    <InteractiveD6Creator />
 </div>

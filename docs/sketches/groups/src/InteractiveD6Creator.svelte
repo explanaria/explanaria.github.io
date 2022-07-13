@@ -2,7 +2,7 @@
     import D6Group from "./components/D6Group.svelte";
     import { GroupElement, Group } from "./components/groupmath.js";
     import {generatorColors} from "./colors.js";
-    import {drawTrianglePath, canvasSize, triangleRadius, lineWidth, D6_text_size, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "./components/d6canvasdrawing.js";
+    import {drawTrianglePath, lineWidth, D6_text_size, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "./components/d6canvasdrawing.js";
     
 	import { onMount } from 'svelte';
 
@@ -68,8 +68,14 @@
 
 
     //drawing a triangle like D6ElementCanvas
+
+    const canvasSize = 100; // a bit bigger
+    const triangleRadius = 0.35*canvasSize;
+
+
     let startVertex = [0,-triangleRadius];
     let canvas, ctx;
+
 
     let lastTime = 0;
     function draw(currentTime){
@@ -142,10 +148,6 @@
         margin-top:-40px;
         box-shadow: 0px 0px 50px hsl(240, 89.5%, 70%);
     }
-    .controlledtriangle{
-        width: 70px;
-        height: 70px;
-    }
     .grouppart{
         width: 100%;
         position: relative;
@@ -157,9 +159,17 @@
 
 
 
-    <canvas class="controlledtriangle" bind:this={canvas} style:width={canvasSize+"px"} style:height={canvasSize+"px"} /> 
-
-    Current orientation: {currentOrientation.name}
+    <canvas bind:this={canvas} style:width={canvasSize+"px"} style:height={canvasSize+"px"} /> 
+    <br>
+    How many ways are there to fit an equilateral triangle into an equilateral triangle shaped hole? Use these buttons to find out!
+    <!-->Current orientation: {currentOrientation.name}<-->
+    <br>Orientations found: {data.isElementVisible.reduce((prev, current) => current ? prev+1 : prev, 0)}
+    <br>Arrows found: {
+        d6group.elements.reduce((prev, groupElem) => {
+            let sum = prev;
+            data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {if(arrowVisible){sum++}})
+            return sum;
+        }, 0)}/{d6group.elements.length * d6group.generators.length}
     <br>
     <button on:click={onRotate} style:border-color={generatorColors[0]}>Rotate by 120 degrees</button>
     <button on:click={onFlip} style:border-color={generatorColors[1]}>Flip horizontally</button>

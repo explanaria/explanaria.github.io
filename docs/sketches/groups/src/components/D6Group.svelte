@@ -36,13 +36,13 @@
         positions.set(currentElem, position)
 
         //place flip elements on the inside of the circle
-        let flipElem = d6group.multiply(currentElem, d6group.getElemByName("f"));
-        let flipPosition = [startPos[0] + innerRadius * Math.cos(rotationRadians * i + startRadians), 
-                           startPos[1] + innerRadius * Math.sin(rotationRadians * i + startRadians)];
+        let flipElem = d6group.multiply(d6group.getElemByName("f"), currentElem);
+        let flipPosition = [startPos[0] + innerRadius * Math.cos(-rotationRadians * i + startRadians), //rotation reversed
+                           startPos[1] + innerRadius * Math.sin(-rotationRadians * i + startRadians)];
         positions.set(flipElem, flipPosition)
 
         //move to next element
-        currentElem = d6group.multiply(currentElem, d6group.getElemByName("r"));
+        currentElem = d6group.multiply(d6group.getElemByName("r"), currentElem);
         console.log(currentElem);
     }
 

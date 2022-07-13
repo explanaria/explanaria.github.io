@@ -1,4 +1,5 @@
 <script>
+    import * as EXP from "../../../../resources/build/explanaria-bundle.js";
     export let start = [0,0];
     export let end = [0,0];
     export let stroke="black"
@@ -21,9 +22,20 @@
     $: movedStartPoint = moveBackwardsAConstantDistance(start, end, elementRadius)
     $: movedEndPoint = moveBackwardsAConstantDistance(end, start, elementRadius)
 
+    //animation
+    let displayedEndPoint = end;
+    let animateAppearance = false;
+    $:{
+        displayedEndPoint = movedEndPoint;
+        if(animateAppearance){
+            displayedEndPoint = movedStartPoint;
+            EXP.TransitionTo(displayedEndPoint, movedEndPoint, 500); //weird bugs
+        }
+    }
+
 </script>
 
-<line x1={movedStartPoint[0]} y1={movedStartPoint[1]} x2={movedEndPoint[0]} y2={movedEndPoint[1]} 
+<line x1={movedStartPoint[0]} y1={movedStartPoint[1]} x2={displayedEndPoint[0]} y2={displayedEndPoint[1]} 
     stroke={stroke} marker-end={markerEnd}
     stroke-width={strokeWidth} />
 

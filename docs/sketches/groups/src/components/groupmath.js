@@ -51,7 +51,7 @@ export function reduceName(elem, relations){
 }
 
 export function compose(el1, el2){
-    // return xy, which means do y then x
+    // x * y = xy, which means do y then x
     let x = el1.permutation;
     let y = el2.permutation;
     let composed = {}

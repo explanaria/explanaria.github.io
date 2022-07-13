@@ -43,8 +43,8 @@
 <style>
 
 .arrowsvg{
-    width: 100%;
-    height: 100%;
+    /*width: 100%;
+    height: 100%;*/
     position:absolute;
     top:0;
     left:0;
@@ -52,13 +52,17 @@
     overflow: visible; /* important if there's a scrollbar */
 }
 
+.arrowhead{
+    z-index: 2;
+}
+
 </style>
 
 <svg class="arrowsvg" xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 {width} {height}">
   <defs>
     {#each generatorColors as color, i}
-    <marker id={"arrowhead-"+i} markerWidth="4" markerHeight="4" 
-    refX="0" refY="2" orient="auto"> <!-- from https://thenewcode.com/1068/Making-Arrows-in-SVG -->
+    <marker class="arrowhead" id={"arrowhead-"+i} markerWidth="4" markerHeight="4" 
+    refX="2" refY="2" orient="auto"> <!-- from https://thenewcode.com/1068/Making-Arrows-in-SVG -->
       <polygon points="0 0, 4 2, 0 4" fill={color}/>
       {#if drawEyesOnArrows}
           <ellipse rx="1" ry="0.6"

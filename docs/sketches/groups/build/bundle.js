@@ -57939,14 +57939,14 @@ var app = (function () {
     const arrowColor = "hsl(240, 90%, 70%)";
 
 
-    const canvasSize = 70;
+    const canvasSize$1 = 70;
 
 
-    const triangleRadius = 0.35*canvasSize;
-    const arrowCenterDistance = 0.43*canvasSize; //how far from the center should the arced arrow that shows a rotation be?
+    const triangleRadius = 0.35*canvasSize$1;
+    const arrowCenterDistance = 0.43*canvasSize$1; //how far from the center should the arced arrow that shows a rotation be?
     const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
     const num_dashes = 5;
-    const dash_radius = canvasSize/2; //how far from the center should dashed lines for mirroring go
+    const dash_radius = canvasSize$1/2; //how far from the center should dashed lines for mirroring go
     const D6_text_size = 12;
     const lineWidth = 2;
     let NUM_DEGREES_IN_ONE_ROTATION = 120;
@@ -58051,8 +58051,8 @@ var app = (function () {
     			canvas_1 = element("canvas");
     			attr_dev(canvas_1, "class", "elementcanvas svelte-1qedwb2");
     			attr_dev(canvas_1, "id", /*canvasName*/ ctx[0]);
-    			attr_dev(canvas_1, "width", canvasSize);
-    			attr_dev(canvas_1, "height", canvasSize);
+    			attr_dev(canvas_1, "width", canvasSize$1);
+    			attr_dev(canvas_1, "height", canvasSize$1);
     			add_location(canvas_1, file$3, 142, 0, 5277);
     		},
     		l: function claim(nodes) {
@@ -58239,7 +58239,7 @@ var app = (function () {
     		drawTrianglePath,
     		drawStaticElements,
     		isAllRs,
-    		canvasSize,
+    		canvasSize: canvasSize$1,
     		triangleRadius,
     		lineWidth,
     		D6_text_size,
@@ -58828,18 +58828,30 @@ var app = (function () {
     	let div2;
     	let canvas_1;
     	let t0;
-    	let t1_value = /*currentOrientation*/ ctx[1].name + "";
+    	let br0;
     	let t1;
+    	let br1;
     	let t2;
-    	let br;
+    	let t3_value = /*data*/ ctx[0].isElementVisible.reduce(func, 0) + "";
     	let t3;
-    	let button0;
+    	let t4;
+    	let br2;
     	let t5;
-    	let button1;
+    	let t6_value = /*d6group*/ ctx[4].elements.reduce(/*func_1*/ ctx[9], 0) + "";
+    	let t6;
     	let t7;
+    	let t8_value = /*d6group*/ ctx[4].elements.length * /*d6group*/ ctx[4].generators.length + "";
+    	let t8;
+    	let t9;
+    	let br3;
+    	let t10;
+    	let button0;
+    	let t12;
+    	let button1;
+    	let t14;
     	let div1;
     	let div0;
-    	let t8;
+    	let t15;
     	let d6group_1;
     	let updating_positions;
     	let current;
@@ -58848,7 +58860,7 @@ var app = (function () {
     	const d6group_1_spread_levels = [/*data*/ ctx[0]];
 
     	function d6group_1_positions_binding(value) {
-    		/*d6group_1_positions_binding*/ ctx[8](value);
+    		/*d6group_1_positions_binding*/ ctx[10](value);
     	}
 
     	let d6group_1_props = {};
@@ -58868,31 +58880,43 @@ var app = (function () {
     		c: function create() {
     			div2 = element("div");
     			canvas_1 = element("canvas");
-    			t0 = text(" \n\n    Current orientation: ");
-    			t1 = text(t1_value);
-    			t2 = space();
-    			br = element("br");
-    			t3 = space();
+    			t0 = space();
+    			br0 = element("br");
+    			t1 = text("\n    How many ways are there to fit an equilateral triangle into an equilateral triangle shaped hole? Use these buttons to find out!\n    \n    ");
+    			br1 = element("br");
+    			t2 = text("Orientations found: ");
+    			t3 = text(t3_value);
+    			t4 = space();
+    			br2 = element("br");
+    			t5 = text("Arrows found: ");
+    			t6 = text(t6_value);
+    			t7 = text("/");
+    			t8 = text(t8_value);
+    			t9 = space();
+    			br3 = element("br");
+    			t10 = space();
     			button0 = element("button");
     			button0.textContent = "Rotate by 120 degrees";
-    			t5 = space();
+    			t12 = space();
     			button1 = element("button");
     			button1.textContent = "Flip horizontally";
-    			t7 = space();
+    			t14 = space();
     			div1 = element("div");
     			div0 = element("div");
-    			t8 = space();
+    			t15 = space();
     			create_component(d6group_1.$$.fragment);
-    			attr_dev(canvas_1, "class", "controlledtriangle svelte-145c725");
     			set_style(canvas_1, "width", canvasSize + "px", false);
     			set_style(canvas_1, "height", canvasSize + "px", false);
-    			add_location(canvas_1, file$1, 159, 4, 5050);
-    			add_location(br, file$1, 162, 4, 5225);
+    			add_location(canvas_1, file$1, 161, 4, 5040);
+    			add_location(br0, file$1, 162, 4, 5136);
+    			add_location(br1, file$1, 165, 4, 5337);
+    			add_location(br2, file$1, 166, 4, 5443);
+    			add_location(br3, file$1, 172, 4, 5745);
     			set_style(button0, "border-color", generatorColors[0], false);
-    			add_location(button0, file$1, 163, 4, 5234);
+    			add_location(button0, file$1, 173, 4, 5754);
     			set_style(button1, "border-color", generatorColors[1], false);
-    			add_location(button1, file$1, 164, 4, 5337);
-    			attr_dev(div0, "class", "highlight svelte-145c725");
+    			add_location(button1, file$1, 174, 4, 5857);
+    			attr_dev(div0, "class", "highlight svelte-x9t0t8");
 
     			set_style(
     				div0,
@@ -58912,10 +58936,10 @@ var app = (function () {
     				false
     			);
 
-    			add_location(div0, file$1, 167, 8, 5467);
-    			attr_dev(div1, "class", "grouppart svelte-145c725");
-    			add_location(div1, file$1, 166, 4, 5435);
-    			add_location(div2, file$1, 155, 0, 5037);
+    			add_location(div0, file$1, 177, 8, 5987);
+    			attr_dev(div1, "class", "grouppart svelte-x9t0t8");
+    			add_location(div1, file$1, 176, 4, 5955);
+    			add_location(div2, file$1, 157, 0, 5027);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -58923,33 +58947,44 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
     			append_dev(div2, canvas_1);
-    			/*canvas_1_binding*/ ctx[7](canvas_1);
+    			/*canvas_1_binding*/ ctx[8](canvas_1);
     			append_dev(div2, t0);
+    			append_dev(div2, br0);
     			append_dev(div2, t1);
+    			append_dev(div2, br1);
     			append_dev(div2, t2);
-    			append_dev(div2, br);
     			append_dev(div2, t3);
-    			append_dev(div2, button0);
+    			append_dev(div2, t4);
+    			append_dev(div2, br2);
     			append_dev(div2, t5);
-    			append_dev(div2, button1);
+    			append_dev(div2, t6);
     			append_dev(div2, t7);
+    			append_dev(div2, t8);
+    			append_dev(div2, t9);
+    			append_dev(div2, br3);
+    			append_dev(div2, t10);
+    			append_dev(div2, button0);
+    			append_dev(div2, t12);
+    			append_dev(div2, button1);
+    			append_dev(div2, t14);
     			append_dev(div2, div1);
     			append_dev(div1, div0);
-    			append_dev(div1, t8);
+    			append_dev(div1, t15);
     			mount_component(d6group_1, div1, null);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*onRotate*/ ctx[4], false, false, false),
-    					listen_dev(button1, "click", /*onFlip*/ ctx[5], false, false, false)
+    					listen_dev(button0, "click", /*onRotate*/ ctx[5], false, false, false),
+    					listen_dev(button1, "click", /*onFlip*/ ctx[6], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if ((!current || dirty & /*currentOrientation*/ 2) && t1_value !== (t1_value = /*currentOrientation*/ ctx[1].name + "")) set_data_dev(t1, t1_value);
+    			if ((!current || dirty & /*data*/ 1) && t3_value !== (t3_value = /*data*/ ctx[0].isElementVisible.reduce(func, 0) + "")) set_data_dev(t3, t3_value);
+    			if ((!current || dirty & /*data*/ 1) && t6_value !== (t6_value = /*d6group*/ ctx[4].elements.reduce(/*func_1*/ ctx[9], 0) + "")) set_data_dev(t6, t6_value);
 
     			if (dirty & /*elemPositions, currentOrientation*/ 6) {
     				set_style(
@@ -58996,7 +59031,7 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div2);
-    			/*canvas_1_binding*/ ctx[7](null);
+    			/*canvas_1_binding*/ ctx[8](null);
     			destroy_component(d6group_1);
     			mounted = false;
     			run_all(dispose);
@@ -59014,6 +59049,9 @@ var app = (function () {
     	return block;
     }
 
+    const canvasSize = 100; // a bit bigger
+    const func = (prev, current) => current ? prev + 1 : prev;
+
     function instance$1($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('InteractiveD6Creator', slots, []);
@@ -59023,7 +59061,7 @@ var app = (function () {
     	let { isArrowVisibleMap = {} } = $$props;
 
     	d6group.elements.forEach(startElement => {
-    		$$invalidate(6, isArrowVisibleMap[startElement.name] = d6group.generators.map(generator => false), isArrowVisibleMap); //every generator starts false
+    		$$invalidate(7, isArrowVisibleMap[startElement.name] = d6group.generators.map(generator => false), isArrowVisibleMap); //every generator starts false
     	});
 
     	//isArrowVisibleMap["e"] = [true, true];
@@ -59070,10 +59108,8 @@ var app = (function () {
     }*/
 
     	let elemPositions; //filled in by svelte bind:positions={positions} from D6group.svelte
-
-    	//drawing a triangle like D6ElementCanvas
+    	const triangleRadius = 0.35 * canvasSize;
     	let startVertex = [0, -triangleRadius];
-
     	let canvas, ctx;
     	let lastTime = 0;
 
@@ -59147,13 +59183,25 @@ var app = (function () {
     		});
     	}
 
+    	const func_1 = (prev, groupElem) => {
+    		let sum = prev;
+
+    		data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {
+    			if (arrowVisible) {
+    				sum++;
+    			}
+    		});
+
+    		return sum;
+    	};
+
     	function d6group_1_positions_binding(value) {
     		elemPositions = value;
     		$$invalidate(2, elemPositions);
     	}
 
     	$$self.$$set = $$props => {
-    		if ('isArrowVisibleMap' in $$props) $$invalidate(6, isArrowVisibleMap = $$props.isArrowVisibleMap);
+    		if ('isArrowVisibleMap' in $$props) $$invalidate(7, isArrowVisibleMap = $$props.isArrowVisibleMap);
     	};
 
     	$$self.$capture_state = () => ({
@@ -59162,8 +59210,6 @@ var app = (function () {
     		Group,
     		generatorColors,
     		drawTrianglePath,
-    		canvasSize,
-    		triangleRadius,
     		lineWidth,
     		D6_text_size,
     		triangleStrokeStyle,
@@ -59182,6 +59228,8 @@ var app = (function () {
     		onFlip,
     		showNewGroupElements,
     		elemPositions,
+    		canvasSize,
+    		triangleRadius,
     		startVertex,
     		canvas,
     		ctx,
@@ -59200,8 +59248,8 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ('r' in $$props) r = $$props.r;
     		if ('f' in $$props) f = $$props.f;
-    		if ('d6group' in $$props) d6group = $$props.d6group;
-    		if ('isArrowVisibleMap' in $$props) $$invalidate(6, isArrowVisibleMap = $$props.isArrowVisibleMap);
+    		if ('d6group' in $$props) $$invalidate(4, d6group = $$props.d6group);
+    		if ('isArrowVisibleMap' in $$props) $$invalidate(7, isArrowVisibleMap = $$props.isArrowVisibleMap);
     		if ('data' in $$props) $$invalidate(0, data = $$props.data);
     		if ('prevOrientation' in $$props) prevOrientation = $$props.prevOrientation;
     		if ('currentOrientation' in $$props) $$invalidate(1, currentOrientation = $$props.currentOrientation);
@@ -59227,10 +59275,12 @@ var app = (function () {
     		currentOrientation,
     		elemPositions,
     		canvas,
+    		d6group,
     		onRotate,
     		onFlip,
     		isArrowVisibleMap,
     		canvas_1_binding,
+    		func_1,
     		d6group_1_positions_binding
     	];
     }
@@ -59238,7 +59288,7 @@ var app = (function () {
     class InteractiveD6Creator extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { isArrowVisibleMap: 6 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { isArrowVisibleMap: 7 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,

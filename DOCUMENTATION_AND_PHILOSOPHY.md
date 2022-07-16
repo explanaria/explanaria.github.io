@@ -39,7 +39,7 @@ Finally, we need to connect the objects we've created together so that they all 
 domain.add(xCubed).add(output);
 ```
 
-This line of code creates a chain: `domain -> xCubed -> output`. Internally, this is stored as a [tree](https://en.wikipedia.org/wiki/Tree_(data_structure)) - you can see that `domain.children` is now `[xCubed]`, while `xCubed.parent` is `domain`. Now that the objects have been added to one another, calling `domain.update()` will first cause `xCubed` to run, and that will cause `output` to run and draw a line.
+This line of code creates a chain: `domain -> xCubed -> output`. Internally, this is stored as a [tree](https://en.wikipedia.org/wiki/Tree_(data_structure)) - you can see that `domain.children` is now `[xCubed]`, while `xCubed.parent` is `domain`. Now that the objects have been added to one another, calling `domain.update()` will first cause `xCubed` to activate, and that will cause `output` to activate and draw a line.
 
 This domain-function-range chain is at the core of how Explanaria operates internally. `Node`s must be connected via .add() to form such a chain. Calling `.activate()` on a Domain will recursively call and update each of its children in turn. 
 
@@ -50,7 +50,7 @@ Now everything is set up - all you need to do is call `domain.activate()` every 
 Here is some sample code using Explanaria to render a Lissajous curve.
 
 ```
-var three = EXP.setupThree(60,15);
+var three = EXP.setupThree();
 var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 var area = new EXP.Area({bounds: [[0,2*Math.PI]], numItems: 16});
@@ -318,7 +318,7 @@ There are a few helper functions defined in EXP.Math and EXP.Utils that may be h
 
 # Threeasy Setup
 
-Explanaria comes with a standalone helper function to setup a three.js environment easily. Simply call `EXP.setupThree()` to create a three.js environment and renderer, as well as a render loop and an update loop.
+Explanaria comes with a standalone helper function to setup a three.js environment easily. Simply call `let three = EXP.setupThree()` to create a three.js environment and renderer, create a full-screen canvas, and start a render loop and an update loop.
 
 Call `setupThree()` before creating any `EXP.*Output`s, or else the outputs will not render.
 
@@ -326,9 +326,16 @@ Using `setupThree()` also allows an animation to be recorded on a frame-by-frame
 
 * EXP.setupThree()
 	Parameters:
-	* fps: frames per second to record, if recording.
-	* seconds: seconds of footage to record, if recording.
-    * canvasElem (optional): An existing <canvas> element to render inside.
+    * canvasElem (optional): An existing <canvas> element to render inside. If not provided, setupThree() will create a full-screen canvas and render to that.
+
+    Returns:
+    {
+        renderer: a THREE.Renderer(). (accessible via .renderer.domElement)
+        camera: a THREE.Camera()
+        scene: a THREE.Scene()
+        on: a function which can be used to register callbacks, so you can call functions once per frame
+        IS_RECORDING: boolean, true if recording a video
+    }
 
 This also starts a render loop. To use it, call `three.on("render", callback)` or `three.on("update", callback)`. Think of this as an event listener.
 
@@ -340,7 +347,7 @@ A callback function registered to the `render` event will be called with no argu
 
 Example usage:
 
-    var three = EXP.setupThree(60,15);
+    var three = EXP.setupThree();
     // can now access three.camera, three.renderer, three.scene, three.IS_RECORDING
 
     var domain = new EXP.Area({bounds: [[-5,5]], numItems: 11});
@@ -362,20 +369,20 @@ If you run scripts in a `<script type="module">`, you can use await at the top l
 Example usage:
 ```
 await EXP.pageLoad();
-EXP.setupThree(60, 15, document.getElementById("mycoolcanvas"))
+EXP.setupThree(document.getElementById("mycoolcanvas"))
 // more explanaria code...
 
 ```
 
 ## Recording with Explanaria
 
-Explanaria will record the output of the canvas whenever `?record=true` is present in the URL. If `EXP.setupThree(fps, seconds)` will record `fps * seconds` frames. If you want to record for longer, change the `seconds` number in the `EXP.setupThree()` call.
-
-Note that recording will only capture the 3D content rendered to the <canvas> element - any DOM, such as buttons, sliders, or text boxes, will not be included. This is a limitation of CCapture.
-
-You may also wish to increase the resolution or `numItems` of any Domains while recording, since you are no longer constrained by a 60fps refresh rate. To do so, you may wish to use a ternary operator to dynamically switch between a low resolution and a high resolution if recording, such as `three.IS_RECORDING ? 20 : 200`. For example, you could define an object like this: `var myArea = new EXP.Area({bounds: [[-5,5]], numItems: three.IS_RECORDING ? 20 : 200});`. 
+Explanaria will record the output of the canvas whenever `?record=true` is present in the URL. In that case, loading a page with `?record=true` will prompt the user for how long to record for and how many frames per second to record in, then record many images one by one. Then, these images can be downloaded from the browser to be assembled into a high-quality video.
 
 Explanaria will record a frame that is the size of the current window. To record video at a specific resolution such as 1920x1080, instead of laboriously resizing your window, we recommend using your browser's developer tools, such as Firefox's [Responsive Design Mode](https://developer.mozilla.org/en-US/docs/Tools/Responsive_Design_Mode) or Chrome's [Device Mode](https://developers.google.com/web/tools/chrome-devtools/device-mode/), which allow one to type in "1920x1080" directly.
+
+Note that recording will only capture the 3D content rendered to the <canvas> element. This means any overlaid DOM elements, such as buttons, sliders, or text boxes, will not be included. This is a limitation of the recording library, CCapture.
+
+You may also wish to increase the resolution or `numItems` of any Domains while recording, since you are no longer constrained by aiming for 60fps. To do so, you may wish to use a ternary operator to dynamically switch between a low resolution and a high resolution if recording, such as `three.IS_RECORDING ? 20 : 200`. For example, you could define an object like this: `var myArea = new EXP.Area({bounds: [[-5,5]], numItems: three.IS_RECORDING ? 20 : 200});`. 
 
 # Presentations
 If you want to synchronize text-based slides to your animations, use an EXP.Director, such as EXP.NonDecreasingDirector() or EXP.UndoCapableDirector().

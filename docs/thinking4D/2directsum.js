@@ -5,7 +5,7 @@ let userPointParams = {x1:0,x2:0,factors:['linear','linear']};
 let sliderColors = {'col1':{'c':"#f07000", 'faded':"#F0CAA8"},'col2':{'c':"#f070f0",'faded':'#D6C2D6'}}
 
 function setup(){
-	three = EXP.setupThree(60,15,document.getElementById("canvas"));
+	three = EXP.setupThree(document.getElementById("canvas"));
 	controls = new FrontViewPreferredOrbitControls(three.camera,three.renderer.domElement);
     
 

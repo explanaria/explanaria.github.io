@@ -94,7 +94,7 @@ let sphereParametrization = (i,t,theta1,theta2) =>
 	[(a*Math.sin(theta1))*Math.cos(theta2),a*Math.cos(theta1),(a*Math.sin(theta1))*Math.sin(theta2)];
 
 function setup(){
-	three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
+	three = EXP.setupThree(document.getElementById("threeDcanvas"));
 	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
     presentation = new EXP.UndoCapableDirector();

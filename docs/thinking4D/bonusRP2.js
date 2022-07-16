@@ -12,7 +12,7 @@ let coord1SliderR = null;
 
 
 function setup(){
-	three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
+	three = EXP.setupThree(document.getElementById("threeDcanvas"));
 	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
     presentation = new EXP.UndoCapableDirector();

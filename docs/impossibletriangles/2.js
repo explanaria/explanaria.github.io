@@ -14,7 +14,7 @@ let c=6;
 
 
 await EXP.pageLoad();
-window.three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
+window.three = EXP.setupThree(document.getElementById("threeDcanvas"));
 //var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 
 

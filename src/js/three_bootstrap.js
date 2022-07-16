@@ -201,9 +201,15 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 	// ffmpeg -i video.mp4 -vcodec libx264 -pix_fmt yuv420p -strict -2 -acodec aac finished_video.mp4
 	//check with ffmpeg -i finished_video.mp4
 
-	constructor(fps=30, length = 5, canvasElem = null){
+	constructor(canvasElem = null){
 		/* fps is evident, autostart is a boolean (by default, true), and length is in s.*/
 		super(canvasElem);
+
+        let length = Number(window.prompt("?record=true at the end of the URL has enabled screen-record mode! Use this to record high quality gifs one frame at a time. How many seconds of video would you like to record?", "15"));
+        let fps = Number(window.prompt("What fps do you want to record at?", "60"));
+
+        if(isNaN(length) || isNaN(fps) || fps < 1 || length < 0)alert(`A fps and length of ${fps} and ${length} didn't make sense...`)
+
 		this.fps = fps;
 		this.elapsedTime = 0;
 		this.frameCount = fps * length;
@@ -314,7 +320,7 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 	}
 }
 
-function setupThree(fps=30, length = 5, canvasElem = null){
+function setupThree(canvasElem = null){
 	/* Set up the three.js environment. Switch between classes dynamically so that you can record by appending "?record=true" to an url. Then EXP.threeEnvironment.camera and EXP.threeEnvironment.scene work, as well as EXP.threeEnvironment.on('event name', callback). Only one environment exists at a time.
 
     The returned object is a singleton: multiple calls will return the same object: EXP.threeEnvironment.*/
@@ -335,8 +341,16 @@ function setupThree(fps=30, length = 5, canvasElem = null){
         return threeEnvironment;
     }
 
+    if(typeof(canvasElem) == "number"){
+        if(arguments.length == 3){
+            canvasElem = arguments[2] //if using old fps, length, canvas format, get canvas in the right spot
+        }else{
+            canvasElem = null;
+        }
+    } 
+
 	if(is_recording){
-		threeEnvironment = new ThreeasyRecorder(fps, length, canvasElem);
+		threeEnvironment = new ThreeasyRecorder(canvasElem);
 	}else{
 		threeEnvironment = new ThreeasyEnvironment(canvasElem);
 	}

@@ -14,7 +14,7 @@ const pointColor = 0xff7070;
 const additionLineColor = 0xbf5050;
 
 await EXP.pageLoad();
-window.three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
+window.three = EXP.setupThree(document.getElementById("threeDcanvas"));
 addColorToHTML();
 
 three.camera.position.set(0,0,10);

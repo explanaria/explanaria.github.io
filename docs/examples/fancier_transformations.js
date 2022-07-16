@@ -4,7 +4,7 @@
 
 
     await EXP.pageLoad();
-    let three  = EXP.setupThree(60,15, document.getElementById(canvasElemName));
+    let three  = EXP.setupThree(document.getElementById(canvasElemName));
     let controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
     controls.enableZoom = false;
     console.log("Loaded.");

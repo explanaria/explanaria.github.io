@@ -13,7 +13,6 @@ class Atlas{
 
         this.threeDPointMesh = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshBasicMaterial({color: 0xFFA500})); //the mesh representing the 3D point
         three.scene.add(this.threeDPointMesh);
-1
         this.decalMaterial = new THREE.MeshLambertMaterial({
 	        specular: 0x444444,
 	        shininess: 0.3,

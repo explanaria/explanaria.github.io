@@ -216,7 +216,7 @@ class overlayCanvas{
 }
 
 function setup(){
-	three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
+	three = EXP.setupThree(document.getElementById("threeDcanvas"));
 	controls = new FrontViewPreferredOrbitControls(three.camera,three.renderer.domElement);
 
     presentation = new EXP.UndoCapableDirector();

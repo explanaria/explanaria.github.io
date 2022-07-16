@@ -9,7 +9,7 @@ let xAxis, yAxis,zAxis = null;
 
 
 function setupThree(){
-	three = EXP.setupThree(60,15,document.getElementById("canvas"));
+	three = EXP.setupThree(document.getElementById("canvas"));
 	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
     controlsToRotateAboutOrigin = new RotateAboutCenterControls([],three.renderer.domElement);

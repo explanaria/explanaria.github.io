@@ -24,7 +24,7 @@ addColorToHTML();
 
 
 let sceneObjects = []
-window.three = EXP.setupThree(60,15,document.getElementById("threeDcanvas"));
+window.three = EXP.setupThree(document.getElementById("threeDcanvas"));
 //window.twoD = setup2DCanvas();
 //var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
 

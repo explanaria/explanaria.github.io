@@ -1,6 +1,6 @@
 import {Dynamic3DText} from "./katex-labels-v2.js";
 
-var three = EXP.setupThree(60,15);
+var three = EXP.setupThree();
 var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 

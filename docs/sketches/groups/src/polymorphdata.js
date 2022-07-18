@@ -1,4 +1,4 @@
-import {parseCIF} from "./parseCIF.js"
+import {parseCIFString, CIFStringTo3DInfo} from "./parseCIF.js"
 
 //kyaniteData, sillimaniteData, andalusiteData
 //these CIF files obtained from the American Mineralogist Crystal Structure Database at http://rruff.geo.arizona.edu/AMS/amcsd.php
@@ -7,8 +7,8 @@ import {parseCIF} from "./parseCIF.js"
 //kyanite: https://www.mindat.org/min-2303.html
 //andalusite: https://www.mindat.org/min-217.html
 //sillimanite: https://www.mindat.org/min-3662.html
-
-export const andalusiteData = parseCIFString(`
+/*
+export const andalusiteData = CIFStringTo3DInfo(`
 data_global
 _chemical_name_mineral 'Andalusite'
 loop_
@@ -74,9 +74,9 @@ Ob 0.00308 0.00854 0.01345 0.00062 0.00000 0.00000
 Oc 0.00555 0.00886 0.00469 -0.00094 0.00000 0.00000
 Od 0.00493 0.01013 0.00469 -0.00125 -0.00088 0.00111
 
-`)
+`)*/
 
-export const kyaniteData = console.log(parseCIFString(
+export const kyaniteData = (CIFStringTo3DInfo(
 `
 data_global
 _chemical_name_mineral 'Kyanite'
@@ -156,7 +156,8 @@ O9 0.00525 0.00633 0.00770 0.00333 -0.00093 0.00021
 O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
 ))
 
-export const sillimaniteData = parseCIFString(`
+/*
+export const sillimaniteData = CIFStringTo3DInfo(`
 data_global
 _chemical_name_mineral 'Sillimanite'
 loop_
@@ -222,4 +223,4 @@ O2 0.00341 0.00986 0.00795 -0.00117 0.00000 0.00000
 O3 0.00852 0.00986 0.01505 -0.00466 0.00000 0.00000
 O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
 
-`)
+`)*/

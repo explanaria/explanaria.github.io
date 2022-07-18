@@ -1,5 +1,6 @@
 <script>
 	import InteractiveD6Creator from "./InteractiveD6Creator.svelte";
+    import MoleculeCanvas from "./components/MoleculeCanvas.svelte";
 </script>
 
 <style>
@@ -8,6 +9,8 @@
     }
 </style>
 
+
+<MoleculeCanvas />
 
 <div class="main">
     <InteractiveD6Creator />

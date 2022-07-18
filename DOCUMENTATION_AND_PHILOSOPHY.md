@@ -347,6 +347,7 @@ A callback function registered to the `render` event will be called with no argu
 
 Example usage:
 
+```
     var three = EXP.setupThree();
     // can now access three.camera, three.renderer, three.scene, three.IS_RECORDING
 
@@ -357,6 +358,13 @@ Example usage:
         //console.log("Seconds since last update: " + time.delta);
         domain.activate(time.t);
     });
+```
+
+Or, 
+```
+await EXP.pageLoad(); //wait for the document to be load, otherwise document.getElementById() in the next line won't work
+var three = EXP.setupThree(document.getElementById("my-custom-canvas"));
+```
 
 Technical note: The result of a EXP.setupThree() call is also available at EXP.threeEnvironment. This is used internally to create three.js entities. As a result, the three.js environment is a 'singleton': after the first call, calling EXP.setupThree() multiple times will return the same object each time.
 

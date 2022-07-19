@@ -59419,9 +59419,24 @@ var app = (function () {
             }
         }
         imposePeriodicBoundaryConditions(atomPositions);
+        deduplicateAtoms(atomPositions);
 
-        return convertToCartesianSpace(atomPositions, cifData); //all the atoms are expressed in the [a,b,c] basis. scale and stretch em   
+        let cartesianAtomPositions = convertToCartesianSpace(atomPositions, cifData); //all the atoms are expressed in the [a,b,c] basis. scale and stretch em  
+
+        let [aVec, bVec, cVec] = computeBasisVectorsFromAngles(cifData);
+        let bondList = computeBonds(cartesianAtomPositions, aVec, bVec, cVec);
+
+        return {
+            name: cifData.chemical_name_mineral,
+            atoms: cartesianAtomPositions,
+            aVec: aVec,
+            bVec: bVec,
+            cVec: cVec,
+            bonds: bondList,
+            biggestBasisLength: Math.max(cifData.cell_length_a, cifData.cell_length_b, cifData.cell_length_c),
+        }
     }
+
 
     function generateSymmetricAtoms(atomPos, cifData){
         let symmetries = cifData.space_group_symop_operation_xyz;
@@ -59459,6 +59474,34 @@ var app = (function () {
         }
         return generatedPositions;
     }
+
+
+    function deduplicateAtoms(atomData){
+        //reduce duplicate atom positions to one atom, to vastly speed up stuff like computing bonds later
+        for(let atomType in atomData){
+            let generatedPositions = atomData[atomType];
+
+            let deduplicatedPositions = [];
+            for(let i=0;i<generatedPositions.length;i++){
+                let newPos = generatedPositions[i];
+                let duplicate = false;
+                for(let j=0;j<deduplicatedPositions.length;j++){
+                    let existingPos = deduplicatedPositions[j];
+                    if((Math.abs(newPos[0] - existingPos[0]) + 
+                        Math.abs(newPos[1] - existingPos[1]) + 
+                        Math.abs(newPos[2] - existingPos[2])) < 0.01){
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if(!duplicate){
+                    deduplicatedPositions.push(newPos);
+                }
+            }
+            atomData[atomType] = deduplicatedPositions; 
+        }
+    }
+
     function imposePeriodicBoundaryConditions(atomData){
 
         for(let atomName in atomData){
@@ -59475,19 +59518,22 @@ var app = (function () {
         }
     }
 
+
     function convertToCartesianSpace(atomData, cifData){
         //the coordinates here go from 0 to 1, called "fractional space". but they're really at an angle and the sides might be different lengths. this function turns the fractional space into the real xyz positions of the atoms
 
         let [aVec, bVec, cVec] = computeBasisVectorsFromAngles(cifData);
 
+        let newAtomPositions = {};
         for(let atomName in atomData){
             let atomPositions = atomData[atomName];
+            newAtomPositions[atomName] = [];
             for(let i=0;i<atomPositions.length;i++){
                 //modifies the array in place because we won't be using it later
-                atomPositions[i] = applyBasisVectors(atomPositions[i], aVec, bVec, cVec);
+                newAtomPositions[atomName].push(applyBasisVectors(atomPositions[i], aVec, bVec, cVec));
             }
         }
-        return atomData
+        return newAtomPositions;
     }
 
 
@@ -59505,6 +59551,80 @@ var app = (function () {
         let cVec = explanariaBundle.Math.vectorScale([Math.cos(β), n2, Math.sqrt(Math.sin(β)*Math.sin(β) - n2*n2)], cifData.cell_length_c);
         return [aVec, bVec, cVec]
     }
+
+    function shouldBond(cartesianAtomPos1, cartesianAtomPos2, maxBondLength=2){
+        //decides on whether to draw a bond between two atoms based on their positions
+
+        let cartesianDelta = [0,1,2].map((i) => (cartesianAtomPos1[i] - cartesianAtomPos2[i]));
+        let lengthSquared = cartesianDelta[0]*cartesianDelta[0] + cartesianDelta[1]*cartesianDelta[1] + cartesianDelta[2]*cartesianDelta[2];
+
+        if(lengthSquared > 0.1 && lengthSquared < maxBondLength * maxBondLength){
+            //atoms are close enough together. yes bond
+            //>0.1 is used so atoms don't bond with themselves
+            return true; 
+        }
+        return false;
+    }
+
+    function computeBonds(cartesianAtomPositions, aVec, bVec, cVec, includePeriodicBoundaryCrossers=true){
+        //ASSUMPTION: atoms of the same type don't bond together
+        //this may be incorrect
+        let bonds = [];
+
+        let allAtoms = [];
+        for(let atomType in cartesianAtomPositions){
+            for(let atomPos of cartesianAtomPositions[atomType]){
+                allAtoms.push([atomType, atomPos]);
+            }
+        }
+
+        let numAtomTypes = Object.keys(cartesianAtomPositions).length;
+
+        for(let i=0;i<allAtoms.length;i++){
+            for(let j=i+1;j<allAtoms.length;j++){ //start from i+1 so atoms don't bond to themselves
+                let [atom1Type, atom1Pos] = allAtoms[i];
+                let [atom2Type, atom2Pos] = allAtoms[j];
+
+                if(atom1Type == atom2Type && numAtomTypes > 1)continue; //speedup: atoms of same type don't bond.
+            
+                //atoms in same unit cell
+                if(shouldBond(atom1Pos, atom2Pos)){
+                    bonds.push([atom1Pos, atom2Pos, atom1Type, atom2Type]);
+                }
+
+                if(includePeriodicBoundaryCrossers){
+                    //atom 2 in this unit cell, atom 1 in a different one
+                    for(let atom1SymmetryPosition of atomCopiesInSurroundingUnitCells(atom1Pos, aVec, bVec, cVec)){
+                        if(shouldBond(atom1SymmetryPosition, atom2Pos)){
+                            bonds.push([atom1SymmetryPosition, atom2Pos, atom1Type, atom2Type]);
+                        }
+                    }
+                    //atom 1 in this unit cell, atom 2 in a different one
+                    for(let atom2SymmetryPosition of atomCopiesInSurroundingUnitCells(atom2Pos, aVec, bVec, cVec)){
+                        if(shouldBond(atom1Pos, atom2SymmetryPosition)){
+                            bonds.push([atom1Pos, atom2SymmetryPosition, atom1Type, atom2Type]);
+                        }
+                    }
+                }
+            }
+        }
+        //return extraAtomsBeyondThisUnitCell; //todo: use this data somehow
+        return bonds;
+    }
+
+    function atomCopiesInSurroundingUnitCells(atomPos, aVec, bVec, cVec){
+        //return copies of atomPos either in this unit cell or in neighboring unit cells
+        return [
+            [0,1,2].map((i) => atomPos[i] + aVec[i]), //vector addition
+            [0,1,2].map((i) => atomPos[i] + bVec[i]),
+            [0,1,2].map((i) => atomPos[i] + cVec[i]),
+            [0,1,2].map((i) => atomPos[i] - aVec[i]),
+            [0,1,2].map((i) => atomPos[i] - bVec[i]),
+            [0,1,2].map((i) => atomPos[i] - cVec[i]),
+        ]
+    }
+
+
     function applyBasisVectors(fractionalPos, aVec, bVec, cVec){
         //compute the matrix-vector product [aVec, bVec, cVec] * fractionalPos
         //converts from fratctional (0-1) coordinates to cartesian xyz positions
@@ -59541,74 +59661,74 @@ var app = (function () {
     //kyanite: https://www.mindat.org/min-2303.html
     //andalusite: https://www.mindat.org/min-217.html
     //sillimanite: https://www.mindat.org/min-3662.html
-    /*
-    export const andalusiteData = CIFStringTo3DInfo(`
-    data_global
-    _chemical_name_mineral 'Andalusite'
-    loop_
-    _publ_author_name
-    'Winter J K'
-    'Ghose S'
-    _journal_name_full 'American Mineralogist'
-    _journal_volume 64 
-    _journal_year 1979
-    _journal_page_first 573
-    _journal_page_last 586
-    _publ_section_title
-    ;
-     Thermal expansion and high-temperature crystal chemistry of the Al2SiO5 polymorphs
-     T = 25 deg C
-    ;
-    _database_code_amcsd 0000728
-    _chemical_formula_sum 'Al2 Si O5'
-    _cell_length_a 7.7980
-    _cell_length_b 7.9031
-    _cell_length_c 5.5566
-    _cell_angle_alpha 90
-    _cell_angle_beta 90
-    _cell_angle_gamma 90
-    _cell_volume 342.444
-    _exptl_crystal_density_diffrn      3.143
-    _symmetry_space_group_name_H-M 'P n n m'
-    loop_
-    _space_group_symop_operation_xyz
-      'x,y,z'
-      '1/2+x,1/2-y,1/2+z'
-      '1/2-x,1/2+y,1/2-z'
-      '1/2-x,1/2+y,1/2+z'
-      '1/2+x,1/2-y,1/2-z'
-      'x,y,-z'
-      '-x,-y,z'
-      '-x,-y,-z'
-    loop_
-    _atom_site_label
-    _atom_site_fract_x
-    _atom_site_fract_y
-    _atom_site_fract_z
-    Al1   0.00000   0.00000   0.24190
-    Al2   0.37050   0.13910   0.50000
-    Si   0.24600   0.25200   0.00000
-    Oa   0.42460   0.36290   0.00000
-    Ob   0.10300   0.40030   0.00000
-    Oc   0.42330   0.36290   0.50000
-    Od   0.23050   0.13390   0.23940
-    loop_
-    _atom_site_aniso_label
-    _atom_site_aniso_U_11
-    _atom_site_aniso_U_22
-    _atom_site_aniso_U_33
-    _atom_site_aniso_U_12
-    _atom_site_aniso_U_13
-    _atom_site_aniso_U_23
-    Al1 0.00647 0.00918 0.00360 0.00156 0.00000 0.00000
-    Al2 0.00277 0.00823 0.00438 0.00000 0.00000 0.00000
-    Si 0.00216 0.00759 0.00391 0.00000 0.00000 0.00000
-    Oa 0.00339 0.00981 0.00485 -0.00187 0.00000 0.00000
-    Ob 0.00308 0.00854 0.01345 0.00062 0.00000 0.00000
-    Oc 0.00555 0.00886 0.00469 -0.00094 0.00000 0.00000
-    Od 0.00493 0.01013 0.00469 -0.00125 -0.00088 0.00111
 
-    `)*/
+    const andalusiteData = CIFStringTo3DInfo(`
+data_global
+_chemical_name_mineral 'Andalusite'
+loop_
+_publ_author_name
+'Winter J K'
+'Ghose S'
+_journal_name_full 'American Mineralogist'
+_journal_volume 64 
+_journal_year 1979
+_journal_page_first 573
+_journal_page_last 586
+_publ_section_title
+;
+ Thermal expansion and high-temperature crystal chemistry of the Al2SiO5 polymorphs
+ T = 25 deg C
+;
+_database_code_amcsd 0000728
+_chemical_formula_sum 'Al2 Si O5'
+_cell_length_a 7.7980
+_cell_length_b 7.9031
+_cell_length_c 5.5566
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 90
+_cell_volume 342.444
+_exptl_crystal_density_diffrn      3.143
+_symmetry_space_group_name_H-M 'P n n m'
+loop_
+_space_group_symop_operation_xyz
+  'x,y,z'
+  '1/2+x,1/2-y,1/2+z'
+  '1/2-x,1/2+y,1/2-z'
+  '1/2-x,1/2+y,1/2+z'
+  '1/2+x,1/2-y,1/2-z'
+  'x,y,-z'
+  '-x,-y,z'
+  '-x,-y,-z'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Al1   0.00000   0.00000   0.24190
+Al2   0.37050   0.13910   0.50000
+Si   0.24600   0.25200   0.00000
+Oa   0.42460   0.36290   0.00000
+Ob   0.10300   0.40030   0.00000
+Oc   0.42330   0.36290   0.50000
+Od   0.23050   0.13390   0.23940
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Al1 0.00647 0.00918 0.00360 0.00156 0.00000 0.00000
+Al2 0.00277 0.00823 0.00438 0.00000 0.00000 0.00000
+Si 0.00216 0.00759 0.00391 0.00000 0.00000 0.00000
+Oa 0.00339 0.00981 0.00485 -0.00187 0.00000 0.00000
+Ob 0.00308 0.00854 0.01345 0.00062 0.00000 0.00000
+Oc 0.00555 0.00886 0.00469 -0.00094 0.00000 0.00000
+Od 0.00493 0.01013 0.00469 -0.00125 -0.00088 0.00111
+
+`);
 
     const kyaniteData = (CIFStringTo3DInfo(
 `
@@ -59690,74 +59810,74 @@ O9 0.00525 0.00633 0.00770 0.00333 -0.00093 0.00021
 O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
     ));
 
-    /*
-    export const sillimaniteData = CIFStringTo3DInfo(`
-    data_global
-    _chemical_name_mineral 'Sillimanite'
-    loop_
-    _publ_author_name
-    'Winter J K'
-    'Ghose S'
-    _journal_name_full 'American Mineralogist'
-    _journal_volume 64 
-    _journal_year 1979
-    _journal_page_first 573
-    _journal_page_last 586
-    _publ_section_title
-    ;
-     Thermal expansion and high-temperature crystal chemistry of the Al2SiO5 polymorphs
-     T = 25 deg C
-    ;
-    _database_code_amcsd 0000723
-    _chemical_formula_sum 'Al2 Si O5'
-    _cell_length_a 7.4883
-    _cell_length_b 7.6808
-    _cell_length_c 5.7774
-    _cell_angle_alpha 90
-    _cell_angle_beta 90
-    _cell_angle_gamma 90
-    _cell_volume 332.294
-    _exptl_crystal_density_diffrn 3.239
-    _symmetry_space_group_name_H-M 'P b n m'
-    loop_
-    _space_group_symop_operation_xyz
-     'x,y,z'
-     'x,y,1/2-z'
-     '-x,-y,1/2+z'
-     '1/2+x,1/2-y,1/2+z'
-     '1/2-x,1/2+y,1/2-z'
-     '1/2-x,1/2+y,z'
-     '1/2+x,1/2-y,-z'
-     '-x,-y,-z'
-    loop_
-    _atom_site_label
-    _atom_site_fract_x
-    _atom_site_fract_y
-    _atom_site_fract_z
-    Al1 0.00000 0.00000 0.00000
-    Al2 0.14170 0.34490 0.25000
-    Si 0.15330 0.34020 0.75000
-    O1 0.36050 0.40940 0.75000
-    O2 0.35690 0.43410 0.25000
-    O3 0.47630 0.00150 0.75000
-    O4 0.12520 0.22300 0.51450
-    loop_
-    _atom_site_aniso_label
-    _atom_site_aniso_U_11
-    _atom_site_aniso_U_22
-    _atom_site_aniso_U_33
-    _atom_site_aniso_U_12
-    _atom_site_aniso_U_13
-    _atom_site_aniso_U_23
-    Al1 0.00256 0.00568 0.00693 -0.00029 0.00000 -0.00022
-    Al2 0.00341 0.00717 0.00761 -0.00029 0.00000 0.00000
-    Si 0.00227 0.00568 0.00761 -0.00058 0.00000 0.00000
-    O1 0.00341 0.00807 0.00930 -0.00146 0.00000 0.00000
-    O2 0.00341 0.00986 0.00795 -0.00117 0.00000 0.00000
-    O3 0.00852 0.00986 0.01505 -0.00466 0.00000 0.00000
-    O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
 
-    `)*/
+    CIFStringTo3DInfo(`
+data_global
+_chemical_name_mineral 'Sillimanite'
+loop_
+_publ_author_name
+'Winter J K'
+'Ghose S'
+_journal_name_full 'American Mineralogist'
+_journal_volume 64 
+_journal_year 1979
+_journal_page_first 573
+_journal_page_last 586
+_publ_section_title
+;
+ Thermal expansion and high-temperature crystal chemistry of the Al2SiO5 polymorphs
+ T = 25 deg C
+;
+_database_code_amcsd 0000723
+_chemical_formula_sum 'Al2 Si O5'
+_cell_length_a 7.4883
+_cell_length_b 7.6808
+_cell_length_c 5.7774
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 90
+_cell_volume 332.294
+_exptl_crystal_density_diffrn 3.239
+_symmetry_space_group_name_H-M 'P b n m'
+loop_
+_space_group_symop_operation_xyz
+ 'x,y,z'
+ 'x,y,1/2-z'
+ '-x,-y,1/2+z'
+ '1/2+x,1/2-y,1/2+z'
+ '1/2-x,1/2+y,1/2-z'
+ '1/2-x,1/2+y,z'
+ '1/2+x,1/2-y,-z'
+ '-x,-y,-z'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Al1 0.00000 0.00000 0.00000
+Al2 0.14170 0.34490 0.25000
+Si 0.15330 0.34020 0.75000
+O1 0.36050 0.40940 0.75000
+O2 0.35690 0.43410 0.25000
+O3 0.47630 0.00150 0.75000
+O4 0.12520 0.22300 0.51450
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Al1 0.00256 0.00568 0.00693 -0.00029 0.00000 -0.00022
+Al2 0.00341 0.00717 0.00761 -0.00029 0.00000 0.00000
+Si 0.00227 0.00568 0.00761 -0.00058 0.00000 0.00000
+O1 0.00341 0.00807 0.00930 -0.00146 0.00000 0.00000
+O2 0.00341 0.00986 0.00795 -0.00117 0.00000 0.00000
+O3 0.00852 0.00986 0.01505 -0.00466 0.00000 0.00000
+O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
+
+`);
 
     /* src/components/MoleculeCanvas.svelte generated by Svelte v3.46.4 */
 
@@ -59765,25 +59885,46 @@ O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
     const file$1 = "src/components/MoleculeCanvas.svelte";
 
     function create_fragment$1(ctx) {
+    	let t0;
+    	let t1;
+    	let br;
+    	let t2;
     	let canvas;
 
     	const block = {
     		c: function create() {
+    			t0 = text("Fps: ");
+    			t1 = text(/*fps*/ ctx[0]);
+    			br = element("br");
+    			t2 = space();
     			canvas = element("canvas");
+    			add_location(br, file$1, 77, 10, 2543);
     			attr_dev(canvas, "id", "threecanvas");
     			set_style(canvas, "border", `1px solid red`, false);
-    			add_location(canvas, file$1, 64, 0, 2049);
+    			set_style(canvas, "width", 500, false);
+    			set_style(canvas, "height", 500, false);
+    			add_location(canvas, file$1, 78, 0, 2550);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, br, anchor);
+    			insert_dev(target, t2, anchor);
     			insert_dev(target, canvas, anchor);
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*fps*/ 1) set_data_dev(t1, /*fps*/ ctx[0]);
+    		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(br);
+    			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(canvas);
     		}
     	};
@@ -59820,6 +59961,7 @@ O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
     			color: "green"
     		});
 
+    	console.log(kyaniteData);
     	let materialsCache = new Map();
 
     	function getAtomMaterial(atomName) {
@@ -59836,12 +59978,12 @@ O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
     		return mat;
     	}
 
-    	function makeBallStickDiagram(cifdata) {
+    	function makeBallStickDiagram(crystaldata) {
+    		console.log(crystaldata);
     		let parent = new explanariaBundle.THREE.Object3D();
 
-    		for (let atomType in cifdata) {
-    			let atoms = cifdata[atomType];
-    			console.log(atomType, atoms);
+    		for (let atomType in crystaldata.atoms) {
+    			let atoms = crystaldata.atoms[atomType];
 
     			for (let i = 0; i < atoms.length; i++) {
     				let material = getAtomMaterial(atomType);
@@ -59854,17 +59996,30 @@ O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
     			}
     		}
 
+    		let scaleVal = 5 * 1 / crystaldata.biggestBasisLength;
+    		parent.scale.set(scaleVal, scaleVal, scaleVal); //todo: set scale to minimum of a,b,c 
     		return parent;
     	}
 
-    	let three, controls;
+    	let three, controls, fps = 0;
 
     	onMount(() => {
     		three = explanariaBundle.setupThree(document.getElementById("threecanvas"));
     		window.three = three;
     		controls = new explanariaBundle.OrbitControls(three.camera, three.renderer.domElement);
-    		let object = makeBallStickDiagram(kyaniteData);
-    		three.scene.add(object);
+
+    		/*
+    let object = makeBallStickDiagram(kyaniteData);
+    three.scene.add(object)
+    object.position.x -= 4;*/
+    		let andalusite = makeBallStickDiagram(andalusiteData);
+
+    		three.scene.add(andalusite);
+    		andalusite.position.x += 4;
+
+    		three.on("update", data => {
+    			$$invalidate(0, fps = Math.round(1 / data.realtimeDelta));
+    		});
     	});
 
     	const writable_props = [];
@@ -59875,6 +60030,7 @@ O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
 
     	$$self.$capture_state = () => ({
     		kyaniteData,
+    		andalusiteData,
     		THREE: explanariaBundle.THREE,
     		EXP: EXP$1,
     		onMount,
@@ -59888,7 +60044,8 @@ O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
     		getAtomMaterial,
     		makeBallStickDiagram,
     		three,
-    		controls
+    		controls,
+    		fps
     	});
 
     	$$self.$inject_state = $$props => {
@@ -59897,13 +60054,14 @@ O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
     		if ('materialsCache' in $$props) materialsCache = $$props.materialsCache;
     		if ('three' in $$props) three = $$props.three;
     		if ('controls' in $$props) controls = $$props.controls;
+    		if ('fps' in $$props) $$invalidate(0, fps = $$props.fps);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [];
+    	return [fps];
     }
 
     class MoleculeCanvas extends SvelteComponentDev {

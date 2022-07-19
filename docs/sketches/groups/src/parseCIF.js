@@ -97,9 +97,24 @@ export function CIFStringTo3DInfo(cifstring){
         }
     }
     imposePeriodicBoundaryConditions(atomPositions);
+    deduplicateAtoms(atomPositions);
 
-    return convertToCartesianSpace(atomPositions, cifData); //all the atoms are expressed in the [a,b,c] basis. scale and stretch em   
+    let cartesianAtomPositions = convertToCartesianSpace(atomPositions, cifData); //all the atoms are expressed in the [a,b,c] basis. scale and stretch em  
+
+    let [aVec, bVec, cVec] = computeBasisVectorsFromAngles(cifData);
+    let bondList = computeBonds(cartesianAtomPositions, aVec, bVec, cVec);
+
+    return {
+        name: cifData.chemical_name_mineral,
+        atoms: cartesianAtomPositions,
+        aVec: aVec,
+        bVec: bVec,
+        cVec: cVec,
+        bonds: bondList,
+        biggestBasisLength: Math.max(cifData.cell_length_a, cifData.cell_length_b, cifData.cell_length_c),
+    }
 }
+
 
 function generateSymmetricAtoms(atomPos, cifData){
     let symmetries = cifData.space_group_symop_operation_xyz;
@@ -137,6 +152,34 @@ function generateSymmetricAtoms(atomPos, cifData){
     }
     return generatedPositions;
 }
+
+
+function deduplicateAtoms(atomData){
+    //reduce duplicate atom positions to one atom, to vastly speed up stuff like computing bonds later
+    for(let atomType in atomData){
+        let generatedPositions = atomData[atomType]
+
+        let deduplicatedPositions = [];
+        for(let i=0;i<generatedPositions.length;i++){
+            let newPos = generatedPositions[i];
+            let duplicate = false;
+            for(let j=0;j<deduplicatedPositions.length;j++){
+                let existingPos = deduplicatedPositions[j];
+                if((Math.abs(newPos[0] - existingPos[0]) + 
+                    Math.abs(newPos[1] - existingPos[1]) + 
+                    Math.abs(newPos[2] - existingPos[2])) < 0.01){
+                    duplicate = true;
+                    break;
+                }
+            }
+            if(!duplicate){
+                deduplicatedPositions.push(newPos)
+            }
+        }
+        atomData[atomType] = deduplicatedPositions; 
+    }
+}
+
 function imposePeriodicBoundaryConditions(atomData){
 
     for(let atomName in atomData){
@@ -153,19 +196,22 @@ function imposePeriodicBoundaryConditions(atomData){
     }
 }
 
+
 function convertToCartesianSpace(atomData, cifData){
     //the coordinates here go from 0 to 1, called "fractional space". but they're really at an angle and the sides might be different lengths. this function turns the fractional space into the real xyz positions of the atoms
 
     let [aVec, bVec, cVec] = computeBasisVectorsFromAngles(cifData);
 
+    let newAtomPositions = {};
     for(let atomName in atomData){
         let atomPositions = atomData[atomName];
+        newAtomPositions[atomName] = [];
         for(let i=0;i<atomPositions.length;i++){
             //modifies the array in place because we won't be using it later
-            atomPositions[i] = applyBasisVectors(atomPositions[i], aVec, bVec, cVec)
+            newAtomPositions[atomName].push(applyBasisVectors(atomPositions[i], aVec, bVec, cVec))
         }
     }
-    return atomData
+    return newAtomPositions;
 }
 
 
@@ -183,6 +229,108 @@ function computeBasisVectorsFromAngles(cifData){
     let cVec = EXPMath.vectorScale([Math.cos(β), n2, Math.sqrt(Math.sin(β)*Math.sin(β) - n2*n2)], cifData.cell_length_c);
     return [aVec, bVec, cVec]
 }
+
+function shouldBond(cartesianAtomPos1, cartesianAtomPos2, maxBondLength=2){
+    //decides on whether to draw a bond between two atoms based on their positions
+
+    let cartesianDelta = [0,1,2].map((i) => (cartesianAtomPos1[i] - cartesianAtomPos2[i]))
+    let lengthSquared = cartesianDelta[0]*cartesianDelta[0] + cartesianDelta[1]*cartesianDelta[1] + cartesianDelta[2]*cartesianDelta[2];
+
+    if(lengthSquared > 0.1 && lengthSquared < maxBondLength * maxBondLength){
+        //atoms are close enough together. yes bond
+        //>0.1 is used so atoms don't bond with themselves
+        return true; 
+    }
+    return false;
+}
+
+function shouldBondWraparound(fractionalAtomPos1, fractionalAtomPos2, aVec, bVec, cVec, maxBondLength=3){
+    //decides on whether to draw a bond between two atoms based on their positions
+    //I want to measure M * v1 - M * v2
+    //which is equal to M * (v1 - v2)
+    //but if the atoms are on opposite sides of the cube, i should measure distance the short way
+    // so I compute (v1 - v2), and if any components of that vector are longer than 1, the cube's side length, i shrink it
+    //then multiply by M to get the length in angstroms between the two atoms
+
+    let fractionalDelta = [0,1,2].map((i) => {
+        let delta = Math.abs(fractionalAtomPos1[i] - fractionalAtomPos2[i]);
+        delta = delta % 1; //wrap around the cube if needed
+        return delta
+    })
+    let cartesianDelta = applyBasisVectors(fractionalDelta, aVec, bVec, cVec);
+    let lengthSquared = cartesianDelta[0]*cartesianDelta[0] + cartesianDelta[1]*cartesianDelta[1] + cartesianDelta[2]*cartesianDelta[2];
+
+    if(lengthSquared > 0.1 && lengthSquared < maxBondLength * maxBondLength){
+        //atoms are close enough together. yes bond
+        //>0.1 is used so atoms don't bond with themselves
+        return true; 
+    }
+    return false;
+}
+
+function computeBonds(cartesianAtomPositions, aVec, bVec, cVec, includePeriodicBoundaryCrossers=true){
+    //ASSUMPTION: atoms of the same type don't bond together
+    //this may be incorrect
+    let bonds = [];
+
+    let allAtoms = [];
+    for(let atomType in cartesianAtomPositions){
+        for(let atomPos of cartesianAtomPositions[atomType]){
+            allAtoms.push([atomType, atomPos])
+        }
+    }
+
+    let extraAtomsBeyondThisUnitCell = []; //extra atoms in neighboring unit cells to render
+
+    let numAtomTypes = Object.keys(cartesianAtomPositions).length;
+
+    for(let i=0;i<allAtoms.length;i++){
+        for(let j=i+1;j<allAtoms.length;j++){ //start from i+1 so atoms don't bond to themselves
+            let [atom1Type, atom1Pos] = allAtoms[i];
+            let [atom2Type, atom2Pos] = allAtoms[j];
+
+            if(atom1Type == atom2Type && numAtomTypes > 1)continue; //speedup: atoms of same type don't bond.
+        
+            //atoms in same unit cell
+            if(shouldBond(atom1Pos, atom2Pos)){
+                bonds.push([atom1Pos, atom2Pos, atom1Type, atom2Type])
+            }
+
+            if(includePeriodicBoundaryCrossers){
+                //atom 2 in this unit cell, atom 1 in a different one
+                for(let atom1SymmetryPosition of atomCopiesInSurroundingUnitCells(atom1Pos, aVec, bVec, cVec)){
+                    if(shouldBond(atom1SymmetryPosition, atom2Pos)){
+                        bonds.push([atom1SymmetryPosition, atom2Pos, atom1Type, atom2Type])
+                        extraAtomsBeyondThisUnitCell.push([atom1Type, atom1SymmetryPosition]);
+                    }
+                }
+                //atom 1 in this unit cell, atom 2 in a different one
+                for(let atom2SymmetryPosition of atomCopiesInSurroundingUnitCells(atom2Pos, aVec, bVec, cVec)){
+                    if(shouldBond(atom1Pos, atom2SymmetryPosition)){
+                        bonds.push([atom1Pos, atom2SymmetryPosition, atom1Type, atom2Type])
+                        extraAtomsBeyondThisUnitCell.push([atom2Type, atom2SymmetryPosition]);
+                    }
+                }
+            }
+        }
+    }
+    //return extraAtomsBeyondThisUnitCell; //todo: use this data somehow
+    return bonds;
+}
+
+function atomCopiesInSurroundingUnitCells(atomPos, aVec, bVec, cVec){
+    //return copies of atomPos either in this unit cell or in neighboring unit cells
+    return [
+        [0,1,2].map((i) => atomPos[i] + aVec[i]), //vector addition
+        [0,1,2].map((i) => atomPos[i] + bVec[i]),
+        [0,1,2].map((i) => atomPos[i] + cVec[i]),
+        [0,1,2].map((i) => atomPos[i] - aVec[i]),
+        [0,1,2].map((i) => atomPos[i] - bVec[i]),
+        [0,1,2].map((i) => atomPos[i] - cVec[i]),
+    ]
+}
+
+
 function applyBasisVectors(fractionalPos, aVec, bVec, cVec){
     //compute the matrix-vector product [aVec, bVec, cVec] * fractionalPos
     //converts from fratctional (0-1) coordinates to cartesian xyz positions

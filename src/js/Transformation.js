@@ -1,14 +1,15 @@
 "use strict";
 
 import Node from './Node.js';
+import { Utils } from './utils.js';
 
 //Usage: var y = new Transformation({expr: function(...a){console.log(...a)}});
 class Transformation extends Node{
 	constructor(options){
 		super();
 	
-		EXP.Utils.assertPropExists(options, "expr"); // a function that returns a multidimensional array
-		EXP.Utils.assertType(options.expr, Function);
+		Utils.assertPropExists(options, "expr"); // a function that returns a multidimensional array
+		Utils.assertType(options.expr, Function);
 
 		this.expr = options.expr;
 	}
@@ -42,7 +43,7 @@ class LinkedTransformation extends Node{
     */
 	constructor(transformationToLinkTo){
 		super({});
-		EXP.Utils.assertType(transformationToLinkTo, Transformation);
+		Utils.assertType(transformationToLinkTo, Transformation);
         this.linkedTransformationNode = transformationToLinkTo;
 	}
 	evaluateSelf(...coordinates){

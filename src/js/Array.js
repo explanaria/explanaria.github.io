@@ -1,6 +1,9 @@
 "use strict";
 
 import { DomainNode }  from './Node.js';
+import { Utils } from './utils.js';
+import { Transformation } from './Transformation.js';
+
 class EXPArray extends DomainNode{
 	constructor(options){
 		super();
@@ -9,8 +12,8 @@ class EXPArray extends DomainNode{
 			[10,10]]
 		})*/
 
-		EXP.Utils.assertPropExists(options, "data"); // a multidimensional array. assumed to only contain one type: either numbers or arrays
-		EXP.Utils.assertType(options.data, Array);
+		Utils.assertPropExists(options, "data"); // a multidimensional array. assumed to only contain one type: either numbers or arrays
+		Utils.assertType(options.data, Array);
 
 		//It's assumed an EXP.Array will only store things such as 0, [0], [0,0] or [0,0,0]. If an array type is stored, this.arrayTypeDimensions contains the .length of that array. Otherwise it's 0, because points are 0-dimensional.
 		if(options.data[0].constructor === Number){
@@ -22,7 +25,7 @@ class EXPArray extends DomainNode{
 		}
 
 
-		EXP.Utils.assert(options.data[0].length != 0); //don't accept [[]], data needs to be something like [[1,2]].
+		Utils.assert(options.data[0].length != 0); //don't accept [[]], data needs to be something like [[1,2]].
 
 		this.data = options.data;
 		this.numItems = this.data.length;
@@ -52,7 +55,7 @@ class EXPArray extends DomainNode{
 		}
 	}
 	clone(){
-		let clone = new EXP.Array({data: EXP.Utils.arrayCopy(this.data)});
+		let clone = new EXPArray({data: Utils.arrayCopy(this.data)});
 		for(var i=0;i<this.children.length;i++){
 			clone.add(this.children[i].clone());
 		}
@@ -63,8 +66,8 @@ class EXPArray extends DomainNode{
 
 //testing code
 function testArray(){
-	var x = new EXP.Array({data: [[0,1],[0,1]]});
-	var y = new EXP.Transformation({expr: function(...a){console.log(...a); return [2]}});
+	var x = new EXPArray({data: [[0,1],[0,1]]});
+	var y = new Transformation({expr: function(...a){console.log(...a); return [2]}});
 	x.add(y);
 	x.activate(512);
 }

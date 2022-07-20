@@ -29,5 +29,5 @@ export { OrbitControls } from "./lib/OrbitControls";
 // bundle three.js as well
 import * as THREE from "./lib/three.module.js";
 window.THREE = THREE;
-export THREE;
+export * as THREE from "./lib/three.module.js";
 

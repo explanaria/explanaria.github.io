@@ -1082,65 +1082,6 @@ var app = (function () {
     	}
     	DomainNode.prototype.isDomainNode = true;
 
-    	class EXPArray extends DomainNode{
-    		constructor(options){
-    			super();
-    			/*var points = new EXP.Array({
-    			data: [[-10,10],
-    				[10,10]]
-    			})*/
-
-    			EXP.Utils.assertPropExists(options, "data"); // a multidimensional array. assumed to only contain one type: either numbers or arrays
-    			EXP.Utils.assertType(options.data, Array);
-
-    			//It's assumed an EXP.Array will only store things such as 0, [0], [0,0] or [0,0,0]. If an array type is stored, this.arrayTypeDimensions contains the .length of that array. Otherwise it's 0, because points are 0-dimensional.
-    			if(options.data[0].constructor === Number){
-    				this.arrayTypeDimensions = 0;
-    			}else if(options.data[0].constructor === Array){
-    				this.arrayTypeDimensions = options.data[0].length;
-    			}else {
-    				console.error("Data in an EXP.Array should be a number or an array of other things, not " + options.data[0].constructor);
-    			}
-
-
-    			EXP.Utils.assert(options.data[0].length != 0); //don't accept [[]], data needs to be something like [[1,2]].
-
-    			this.data = options.data;
-    			this.numItems = this.data.length;
-
-    			this.itemDimensions = [this.data.length]; // array to store the number of times this is called per dimension.
-
-    			//the number of times every child's expr is called
-    			this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y);
-    		}
-    		activate(t){
-    			if(this.arrayTypeDimensions == 0){
-    				//numbers can't be spread using ... operator
-    				for(var i=0;i<this.data.length;i++){
-    					this._callAllChildren(i,t,this.data[i]);
-    				}
-    			}else {
-    				for(var i=0;i<this.data.length;i++){
-    					this._callAllChildren(i,t,...this.data[i]);
-    				}
-    			}
-
-    			this.onAfterActivation(); // call children if necessary
-    		}
-    		_callAllChildren(...coordinates){
-    			for(var i=0;i<this.children.length;i++){
-    				this.children[i].evaluateSelf(...coordinates);
-    			}
-    		}
-    		clone(){
-    			let clone = new EXP.Array({data: EXP.Utils.arrayCopy(this.data)});
-    			for(var i=0;i<this.children.length;i++){
-    				clone.add(this.children[i].clone());
-    			}
-    			return clone;
-    		}
-    	}
-
     	function multiplyScalar(c, array){
     	    //modifies input
     		for(var i=0;i<array.length;i++){
@@ -1296,6 +1237,128 @@ var app = (function () {
 
     	}
 
+    	//Usage: var y = new Transformation({expr: function(...a){console.log(...a)}});
+    	class Transformation extends Node$2{
+    		constructor(options){
+    			super();
+    		
+    			Utils$1.assertPropExists(options, "expr"); // a function that returns a multidimensional array
+    			Utils$1.assertType(options.expr, Function);
+
+    			this.expr = options.expr;
+    		}
+    		evaluateSelf(...coordinates){
+    			//evaluate this Transformation's _expr, and broadcast the result to all children.
+    			let result = this.expr(...coordinates);
+    			if(result.constructor !== Array)result = [result];
+
+    			for(var i=0;i<this.children.length;i++){
+    				this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result);
+    			}
+    		}
+    		clone(){
+    			let thisExpr = this.expr;
+    			let clone = new Transformation({expr: thisExpr.bind()});
+    			for(var i=0;i<this.children.length;i++){
+    				clone.add(this.children[i].clone());
+    			}
+    			return clone;
+    		}
+    		makeLink(){
+    	        //like a clone, but will use the same expr as this Transformation.
+    	        //useful if there's a specific function that needs to be used by a bunch of objects
+    			return new LinkedTransformation(this);
+    		}
+    	}
+
+    	class LinkedTransformation extends Node$2{
+    	    /*
+    	        Like an EXP.Transformation, but it uses an existing EXP.Transformation's expr(), so if the linked transformation updates, so does this one. It's like a pointer to a Transformation, but in object form. 
+    	    */
+    		constructor(transformationToLinkTo){
+    			super({});
+    			Utils$1.assertType(transformationToLinkTo, Transformation);
+    	        this.linkedTransformationNode = transformationToLinkTo;
+    		}
+    		evaluateSelf(...coordinates){
+    			let result = this.linkedTransformationNode.expr(...coordinates);
+    			if(result.constructor !== Array)result = [result];
+
+    			for(var i=0;i<this.children.length;i++){
+    				this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result);
+    			}
+    		}
+    		clone(){
+    			let clone = new LinkedTransformation(this.linkedTransformationNode);
+    			for(var i=0;i<this.children.length;i++){
+    				clone.add(this.children[i].clone());
+    			}
+    			return clone;
+    		}
+    		makeLink(){
+    			return new LinkedTransformation(this.linkedTransformationNode);
+    		}
+    	}
+
+    	class EXPArray extends DomainNode{
+    		constructor(options){
+    			super();
+    			/*var points = new EXP.Array({
+    			data: [[-10,10],
+    				[10,10]]
+    			})*/
+
+    			Utils$1.assertPropExists(options, "data"); // a multidimensional array. assumed to only contain one type: either numbers or arrays
+    			Utils$1.assertType(options.data, Array);
+
+    			//It's assumed an EXP.Array will only store things such as 0, [0], [0,0] or [0,0,0]. If an array type is stored, this.arrayTypeDimensions contains the .length of that array. Otherwise it's 0, because points are 0-dimensional.
+    			if(options.data[0].constructor === Number){
+    				this.arrayTypeDimensions = 0;
+    			}else if(options.data[0].constructor === Array){
+    				this.arrayTypeDimensions = options.data[0].length;
+    			}else {
+    				console.error("Data in an EXP.Array should be a number or an array of other things, not " + options.data[0].constructor);
+    			}
+
+
+    			Utils$1.assert(options.data[0].length != 0); //don't accept [[]], data needs to be something like [[1,2]].
+
+    			this.data = options.data;
+    			this.numItems = this.data.length;
+
+    			this.itemDimensions = [this.data.length]; // array to store the number of times this is called per dimension.
+
+    			//the number of times every child's expr is called
+    			this.numCallsPerActivation = this.itemDimensions.reduce((sum,y)=>sum*y);
+    		}
+    		activate(t){
+    			if(this.arrayTypeDimensions == 0){
+    				//numbers can't be spread using ... operator
+    				for(var i=0;i<this.data.length;i++){
+    					this._callAllChildren(i,t,this.data[i]);
+    				}
+    			}else {
+    				for(var i=0;i<this.data.length;i++){
+    					this._callAllChildren(i,t,...this.data[i]);
+    				}
+    			}
+
+    			this.onAfterActivation(); // call children if necessary
+    		}
+    		_callAllChildren(...coordinates){
+    			for(var i=0;i<this.children.length;i++){
+    				this.children[i].evaluateSelf(...coordinates);
+    			}
+    		}
+    		clone(){
+    			let clone = new EXPArray({data: Utils$1.arrayCopy(this.data)});
+    			for(var i=0;i<this.children.length;i++){
+    				clone.add(this.children[i].clone());
+    			}
+    			return clone;
+    		}
+    	}
+
     	class Area extends DomainNode{
     		constructor(options){
     			super();
@@ -1389,69 +1452,6 @@ var app = (function () {
     				if(clone.children[i]._onAdd)clone.children[i]._onAdd(); // necessary now that the chain of adding has been established
     			}
     			return clone;
-    		}
-    	}
-
-    	//Usage: var y = new Transformation({expr: function(...a){console.log(...a)}});
-    	class Transformation extends Node$2{
-    		constructor(options){
-    			super();
-    		
-    			EXP.Utils.assertPropExists(options, "expr"); // a function that returns a multidimensional array
-    			EXP.Utils.assertType(options.expr, Function);
-
-    			this.expr = options.expr;
-    		}
-    		evaluateSelf(...coordinates){
-    			//evaluate this Transformation's _expr, and broadcast the result to all children.
-    			let result = this.expr(...coordinates);
-    			if(result.constructor !== Array)result = [result];
-
-    			for(var i=0;i<this.children.length;i++){
-    				this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result);
-    			}
-    		}
-    		clone(){
-    			let thisExpr = this.expr;
-    			let clone = new Transformation({expr: thisExpr.bind()});
-    			for(var i=0;i<this.children.length;i++){
-    				clone.add(this.children[i].clone());
-    			}
-    			return clone;
-    		}
-    		makeLink(){
-    	        //like a clone, but will use the same expr as this Transformation.
-    	        //useful if there's a specific function that needs to be used by a bunch of objects
-    			return new LinkedTransformation(this);
-    		}
-    	}
-
-    	class LinkedTransformation extends Node$2{
-    	    /*
-    	        Like an EXP.Transformation, but it uses an existing EXP.Transformation's expr(), so if the linked transformation updates, so does this one. It's like a pointer to a Transformation, but in object form. 
-    	    */
-    		constructor(transformationToLinkTo){
-    			super({});
-    			EXP.Utils.assertType(transformationToLinkTo, Transformation);
-    	        this.linkedTransformationNode = transformationToLinkTo;
-    		}
-    		evaluateSelf(...coordinates){
-    			let result = this.linkedTransformationNode.expr(...coordinates);
-    			if(result.constructor !== Array)result = [result];
-
-    			for(var i=0;i<this.children.length;i++){
-    				this.children[i].evaluateSelf(coordinates[0],coordinates[1], ...result);
-    			}
-    		}
-    		clone(){
-    			let clone = new LinkedTransformation(this.linkedTransformationNode);
-    			for(var i=0;i<this.children.length;i++){
-    				clone.add(this.children[i].clone());
-    			}
-    			return clone;
-    		}
-    		makeLink(){
-    			return new LinkedTransformation(this.linkedTransformationNode);
     		}
     	}
 
@@ -59552,7 +59552,7 @@ var app = (function () {
         return [aVec, bVec, cVec]
     }
 
-    function shouldBond(cartesianAtomPos1, cartesianAtomPos2, maxBondLength=2){
+    function shouldBond(cartesianAtomPos1, cartesianAtomPos2, maxBondLength=2.3){
         //decides on whether to draw a bond between two atoms based on their positions
 
         let cartesianDelta = [0,1,2].map((i) => (cartesianAtomPos1[i] - cartesianAtomPos2[i]));
@@ -59898,12 +59898,12 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			br = element("br");
     			t2 = space();
     			canvas = element("canvas");
-    			add_location(br, file$1, 77, 10, 2543);
+    			add_location(br, file$1, 95, 10, 3459);
     			attr_dev(canvas, "id", "threecanvas");
     			set_style(canvas, "border", `1px solid red`, false);
-    			set_style(canvas, "width", 500, false);
-    			set_style(canvas, "height", 500, false);
-    			add_location(canvas, file$1, 78, 0, 2550);
+    			set_style(canvas, "width", 800 + "px", false);
+    			set_style(canvas, "height", 500 + "px", false);
+    			add_location(canvas, file$1, 96, 0, 3466);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -59996,9 +59996,32 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			}
     		}
 
+    		let bondArray = crystaldata.bonds;
+
+    		let expbonds = new explanariaBundle.Area({
+    				bounds: [[0, bondArray.length - 1], [0, 1]],
+    				numItems: [bondArray.length, 2]
+    			});
+
+    		//whichAtom is an index which is always 0,1. bondNum is always an integer.
+    		//bonds[x] currently hsa extra data in indices 3 and 4 for the colors
+    		expbonds.add(new explanariaBundle.Transformation({
+    				expr: (i, t, bondNum, whichAtom) => crystaldata.bonds[Math.round(bondNum)][whichAtom]
+    			})).add(new explanariaBundle.Transformation({
+    				expr: (i, t, x, y, z) => [
+    					parent.position.x + x * parent.scale.x,
+    					parent.position.y + y * parent.scale.y,
+    					parent.position.z + z * parent.scale.z
+    				]
+    			})).add(new explanariaBundle.LineOutput({ color: 0x333333 }));
+
+    		three.on("update", data => {
+    			expbonds.activate();
+    		});
+
     		let scaleVal = 5 * 1 / crystaldata.biggestBasisLength;
     		parent.scale.set(scaleVal, scaleVal, scaleVal); //todo: set scale to minimum of a,b,c 
-    		return parent;
+    		return [parent, expbonds];
     	}
 
     	let three, controls, fps = 0;
@@ -60007,13 +60030,12 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		three = explanariaBundle.setupThree(document.getElementById("threecanvas"));
     		window.three = three;
     		controls = new explanariaBundle.OrbitControls(three.camera, three.renderer.domElement);
-
-    		/*
-    let object = makeBallStickDiagram(kyaniteData);
-    three.scene.add(object)
-    object.position.x -= 4;*/
-    		let andalusite = makeBallStickDiagram(andalusiteData);
-
+    		three.camera.position.z = 20;
+    		three.camera.zoom = 10;
+    		let [kyanite, expkyanitebonds] = makeBallStickDiagram(kyaniteData);
+    		three.scene.add(kyanite);
+    		kyanite.position.x -= 4;
+    		let [andalusite, expandalusitebonds] = makeBallStickDiagram(andalusiteData);
     		three.scene.add(andalusite);
     		andalusite.position.x += 4;
 

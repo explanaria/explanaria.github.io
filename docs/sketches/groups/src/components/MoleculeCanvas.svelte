@@ -44,9 +44,23 @@
             }
         }
 
+        let bondArray = crystaldata.bonds;
+        let expbonds = new EXP.Area({bounds: [[0, bondArray.length-1], [0,1]], numItems: [bondArray.length, 2]});
+        //whichAtom is an index which is always 0,1. bondNum is always an integer.
+        //bonds[x] currently hsa extra data in indices 3 and 4 for the colors
+        expbonds.add(new EXP.Transformation({expr: 
+            (i,t, bondNum, whichAtom) => crystaldata.bonds[Math.round(bondNum)][whichAtom]
+        }))
+        .add(new EXP.Transformation({expr: 
+            (i,t, x,y,z) => [parent.position.x + x * parent.scale.x, parent.position.y + y * parent.scale.y, parent.position.z + z * parent.scale.z]
+        }))
+        .add(new EXP.LineOutput({color: 0x333333}))
+        three.on("update", (data) => {expbonds.activate()})
+
+
         let scaleVal = 5 * 1/crystaldata.biggestBasisLength;
         parent.scale.set(scaleVal,scaleVal,scaleVal) //todo: set scale to minimum of a,b,c 
-        return parent
+        return [parent, expbonds]
     }
 
 
@@ -59,13 +73,17 @@
 	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 
-        /*
-        let object = makeBallStickDiagram(kyaniteData);
-        three.scene.add(object)
-        object.position.x -= 4;*/
+        three.camera.position.z = 20;
+        three.camera.zoom = 10;
 
 
-        let andalusite = makeBallStickDiagram(andalusiteData);
+        
+        let [kyanite, expkyanitebonds] = makeBallStickDiagram(kyaniteData);
+        three.scene.add(kyanite)
+        kyanite.position.x -= 4;
+
+
+        let [andalusite, expandalusitebonds] = makeBallStickDiagram(andalusiteData);
         three.scene.add(andalusite)
         andalusite.position.x += 4;
 
@@ -76,4 +94,4 @@
 </script>
 
 Fps: {fps}<br />
-<canvas id="threecanvas" style:border="1px solid red" style:width={500} style:height={500}/>
+<canvas id="threecanvas" style:border="1px solid red" style:width={800+"px"} style:height={500+"px"}/>

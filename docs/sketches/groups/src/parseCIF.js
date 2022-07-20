@@ -230,7 +230,7 @@ function computeBasisVectorsFromAngles(cifData){
     return [aVec, bVec, cVec]
 }
 
-function shouldBond(cartesianAtomPos1, cartesianAtomPos2, maxBondLength=2){
+function shouldBond(cartesianAtomPos1, cartesianAtomPos2, maxBondLength=2.3){
     //decides on whether to draw a bond between two atoms based on their positions
 
     let cartesianDelta = [0,1,2].map((i) => (cartesianAtomPos1[i] - cartesianAtomPos2[i]))
@@ -244,7 +244,7 @@ function shouldBond(cartesianAtomPos1, cartesianAtomPos2, maxBondLength=2){
     return false;
 }
 
-function shouldBondWraparound(fractionalAtomPos1, fractionalAtomPos2, aVec, bVec, cVec, maxBondLength=3){
+function shouldBondWraparound(fractionalAtomPos1, fractionalAtomPos2, aVec, bVec, cVec, maxBondLength=2){
     //decides on whether to draw a bond between two atoms based on their positions
     //I want to measure M * v1 - M * v2
     //which is equal to M * (v1 - v2)

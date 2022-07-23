@@ -59811,7 +59811,7 @@ O10 0.00456 0.00575 0.00830 0.00154 -0.00074 -0.00042`
     ));
 
 
-    CIFStringTo3DInfo(`
+    const sillimaniteData = CIFStringTo3DInfo(`
 data_global
 _chemical_name_mineral 'Sillimanite'
 loop_
@@ -59898,12 +59898,12 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			br = element("br");
     			t2 = space();
     			canvas = element("canvas");
-    			add_location(br, file$1, 95, 10, 3459);
+    			add_location(br, file$1, 144, 10, 6393);
     			attr_dev(canvas, "id", "threecanvas");
     			set_style(canvas, "border", `1px solid red`, false);
     			set_style(canvas, "width", 800 + "px", false);
     			set_style(canvas, "height", 500 + "px", false);
-    			add_location(canvas, file$1, 96, 0, 3466);
+    			add_location(canvas, file$1, 145, 0, 6400);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -59978,42 +59978,107 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		return mat;
     	}
 
-    	function makeBallStickDiagram(crystaldata) {
-    		console.log(crystaldata);
+    	function getSymmetryClones(
+    		atomPosition,
+    	crystaldata,
+    	extraAdirectionCells,
+    	extraBdirectionCells,
+    	extraCdirectionCells
+    	) {
+    		let positions = [atomPosition];
+
+    		for (let i = -extraAdirectionCells; i <= extraAdirectionCells; i++) {
+    			for (let j = -extraBdirectionCells; j <= extraBdirectionCells; j++) {
+    				for (let k = -extraCdirectionCells; k <= extraCdirectionCells; k++) {
+    					let pos = atomPosition;
+    					pos = explanariaBundle.Math.vectorAdd(pos, explanariaBundle.Math.vectorScale(crystaldata.aVec, i));
+    					pos = explanariaBundle.Math.vectorAdd(pos, explanariaBundle.Math.vectorScale(crystaldata.bVec, j));
+    					pos = explanariaBundle.Math.vectorAdd(pos, explanariaBundle.Math.vectorScale(crystaldata.cVec, k));
+    					positions.push(pos);
+    				}
+    			}
+    		}
+
+    		return positions;
+    	}
+
+    	function computeBondSymmetryClones(
+    		bondarray,
+    	crystaldata,
+    	extraAdirectionCells,
+    	extraBdirectionCells,
+    	extraCdirectionCells
+    	) {
+    		let newbonds = [];
+
+    		for (let [originalatom1pos, originalatom2pos, atom1type, atom2type] of crystaldata.bonds) {
+    			for (let i = -extraAdirectionCells; i <= extraAdirectionCells; i++) {
+    				for (let j = -extraBdirectionCells; j <= extraBdirectionCells; j++) {
+    					for (let k = -extraCdirectionCells; k <= extraCdirectionCells; k++) {
+    						let atom1pos = originalatom1pos;
+    						let atom2pos = originalatom2pos;
+    						atom1pos = explanariaBundle.Math.vectorAdd(atom1pos, explanariaBundle.Math.vectorScale(crystaldata.aVec, i));
+    						atom1pos = explanariaBundle.Math.vectorAdd(atom1pos, explanariaBundle.Math.vectorScale(crystaldata.bVec, j));
+    						atom1pos = explanariaBundle.Math.vectorAdd(atom1pos, explanariaBundle.Math.vectorScale(crystaldata.cVec, k));
+    						atom2pos = explanariaBundle.Math.vectorAdd(atom2pos, explanariaBundle.Math.vectorScale(crystaldata.aVec, i));
+    						atom2pos = explanariaBundle.Math.vectorAdd(atom2pos, explanariaBundle.Math.vectorScale(crystaldata.bVec, j));
+    						atom2pos = explanariaBundle.Math.vectorAdd(atom2pos, explanariaBundle.Math.vectorScale(crystaldata.cVec, k));
+    						newbonds.push([atom1pos, atom2pos, atom1type, atom2type]);
+    					}
+    				}
+    			}
+    		}
+
+    		return newbonds; //includes old bonds too
+    	}
+
+    	function makeBallStickDiagram(
+    		crystaldata,
+    	extraAdirectionCells = 1,
+    	extraBdirectionCells = 1,
+    	extraCdirectionCells = 1
+    	) {
     		let parent = new explanariaBundle.THREE.Object3D();
 
     		for (let atomType in crystaldata.atoms) {
     			let atoms = crystaldata.atoms[atomType];
 
     			for (let i = 0; i < atoms.length; i++) {
-    				let material = getAtomMaterial(atomType);
-    				let mesh = new explanariaBundle.THREE.Mesh(spheregeo, material);
+    				let originalAtomPos = atoms[i];
 
-    				//mesh.color.set(getAtomColor(atomType))
-    				mesh.position.set(atoms[i][0], atoms[i][1], atoms[i][2]);
+    				for (let atomPos of getSymmetryClones(originalAtomPos, crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells)) {
+    					let material = getAtomMaterial(atomType);
+    					let mesh = new explanariaBundle.THREE.Mesh(spheregeo, material);
 
-    				parent.add(mesh);
+    					//mesh.color.set(getAtomColor(atomType))
+    					mesh.position.set(atomPos[0], atomPos[1], atomPos[2]);
+
+    					mesh.scale.setScalar(0.5);
+    					parent.add(mesh);
+    				}
     			}
     		}
 
-    		let bondArray = crystaldata.bonds;
+    		let bondArray = computeBondSymmetryClones(crystaldata.bonds, crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells);
 
     		let expbonds = new explanariaBundle.Area({
     				bounds: [[0, bondArray.length - 1], [0, 1]],
     				numItems: [bondArray.length, 2]
     			});
 
+    		let expbondsoutput = new explanariaBundle.LineOutput({ color: 0x333333, opacity: 0.3 });
+
     		//whichAtom is an index which is always 0,1. bondNum is always an integer.
     		//bonds[x] currently hsa extra data in indices 3 and 4 for the colors
     		expbonds.add(new explanariaBundle.Transformation({
-    				expr: (i, t, bondNum, whichAtom) => crystaldata.bonds[Math.round(bondNum)][whichAtom]
+    				expr: (i, t, bondNum, whichAtom) => bondArray[Math.round(bondNum)][whichAtom]
     			})).add(new explanariaBundle.Transformation({
     				expr: (i, t, x, y, z) => [
     					parent.position.x + x * parent.scale.x,
     					parent.position.y + y * parent.scale.y,
     					parent.position.z + z * parent.scale.z
     				]
-    			})).add(new explanariaBundle.LineOutput({ color: 0x333333 }));
+    			})).add(expbondsoutput);
 
     		three.on("update", data => {
     			expbonds.activate();
@@ -60031,18 +60096,24 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		window.three = three;
     		controls = new explanariaBundle.OrbitControls(three.camera, three.renderer.domElement);
     		three.camera.position.z = 20;
-    		three.camera.zoom = 10;
+
+    		//three.camera.zoom = 10;
     		let [kyanite, expkyanitebonds] = makeBallStickDiagram(kyaniteData);
+
     		three.scene.add(kyanite);
-    		kyanite.position.x -= 4;
+    		kyanite.position.x -= 4 * 3;
     		let [andalusite, expandalusitebonds] = makeBallStickDiagram(andalusiteData);
     		three.scene.add(andalusite);
-    		andalusite.position.x += 4;
+    		andalusite.position.x += 4 * 3;
 
     		three.on("update", data => {
     			$$invalidate(0, fps = Math.round(1 / data.realtimeDelta));
     		});
-    	});
+    	}); /*
+    var color = 0xFFFFFF;  // white
+      var near = 20;
+      var far = 25;
+    three.scene.fog = new THREE.Fog(color, near, far);*/
 
     	const writable_props = [];
 
@@ -60053,6 +60124,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     	$$self.$capture_state = () => ({
     		kyaniteData,
     		andalusiteData,
+    		sillimaniteData,
     		THREE: explanariaBundle.THREE,
     		EXP: EXP$1,
     		onMount,
@@ -60064,6 +60136,8 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		getAtomColor,
     		materialsCache,
     		getAtomMaterial,
+    		getSymmetryClones,
+    		computeBondSymmetryClones,
     		makeBallStickDiagram,
     		three,
     		controls,
@@ -60104,9 +60178,9 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     const file = "src/App.svelte";
 
     function create_fragment(ctx) {
+    	let div;
     	let moleculecanvas;
     	let t;
-    	let div;
     	let interactived6creator;
     	let current;
     	moleculecanvas = new MoleculeCanvas({ $$inline: true });
@@ -60114,20 +60188,20 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(moleculecanvas.$$.fragment);
     			t = space();
-    			div = element("div");
     			create_component(interactived6creator.$$.fragment);
-    			attr_dev(div, "class", "main svelte-1o77uog");
-    			add_location(div, file, 14, 0, 245);
+    			attr_dev(div, "class", "maincontainer svelte-18pzzlk");
+    			add_location(div, file, 18, 0, 373);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(moleculecanvas, target, anchor);
-    			insert_dev(target, t, anchor);
     			insert_dev(target, div, anchor);
+    			mount_component(moleculecanvas, div, null);
+    			append_dev(div, t);
     			mount_component(interactived6creator, div, null);
     			current = true;
     		},
@@ -60144,9 +60218,8 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(moleculecanvas, detaching);
-    			if (detaching) detach_dev(t);
     			if (detaching) detach_dev(div);
+    			destroy_component(moleculecanvas);
     			destroy_component(interactived6creator);
     		}
     	};

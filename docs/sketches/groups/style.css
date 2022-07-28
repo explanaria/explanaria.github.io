@@ -1,0 +1,58 @@
+.maincontainer{
+    font-family: Lora,serif;
+    aspect-ratio: 16 / 9;
+    max-height: 100vh;
+    margin: auto;
+}
+body{
+    margin: 0;
+    font-size: 14px;
+}
+
+
+/* These next two rules help create a font size which fits the 16 / 9 box of .maincontainer, no matter the true size of the viewport */
+.maincontainer{
+    font-size: 2vw; /* Aspect ratio smaller than 16/9. So to fit a 16/9 rectangle as big as possible, we're limited by width */ 
+}
+
+@media (min-aspect-ratio: 16 / 9){
+    /* This is the intended viewing experience, width bigger than height. */
+    .maincontainer{
+        font-size: calc(16 / 9 * 2vh); /* wider than 16/9. so to fit, we letterbox sideways. that means it's limited by height */ 
+    }
+}
+@media (orientation:portrait) and (max-aspect-ratio: 9 / 16){
+    .maincontainer{
+        font-size: calc(16 / 9 * 2vw); /*you're holding your phone in portrait. i want to encourage you to switch to landscape, and i've artificially rotated the site sideways. calc font size using width instead of height */
+    }
+}
+
+.overlappingItemContainer{
+  display: grid;
+  grid-template-columns: 1fr;
+  width:100%;
+}
+
+.twocolumns{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+
+
+.rotatesign{
+    display: none;
+    font-size: 3em;
+    text-align: center;
+}
+
+@media only screen and (orientation:portrait) and (max-aspect-ratio: 9/16){
+  /* if you're on a phone and holding in portrait, rotate site to encourage you to switch to landscape */
+  body {
+    height: 100vw;
+    transform: rotate(90deg);
+  }
+  .rotatesign{
+        display: visible;
+   }
+}

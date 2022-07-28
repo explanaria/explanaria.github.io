@@ -1,10 +1,10 @@
 <script>
-    import D6Group from "./components/D6Group.svelte";
-    import { GroupElement, Group } from "./components/groupmath.js";
+    import D6Group from "./twoD/D6Group.svelte";
+    import { GroupElement, Group } from "./twoD/groupmath.js";
     import {generatorColors} from "./colors.js";
-    import {drawTrianglePath, lineWidth, D6_text_size, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "./components/d6canvasdrawing.js";
+    import {drawTrianglePath, lineWidth, D6_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "./twoD/d6canvasdrawing.js";
     
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
     //group stuff
     let r = new GroupElement("r", "(123)");
@@ -69,8 +69,10 @@
 
     //drawing a triangle like D6ElementCanvas
 
-    const canvasSize = 100; // a bit bigger
-    const triangleRadius = 0.35*canvasSize;
+    const canvasSize = 15; // a bit bigger
+
+    const canvasSizePixels = canvasSize * 30;
+    const triangleRadius = 0.35*canvasSizePixels;
 
 
     let startVertex = [0,-triangleRadius];
@@ -78,10 +80,14 @@
 
 
     let lastTime = 0;
+    let drawLoopEnabled = true;
     function draw(currentTime){
         let delta = (currentTime - lastTime)/1000;
         ctx = canvas.getContext("2d");
-        canvas.width = canvas.height = canvasSize;
+
+        canvas.width = canvasSizePixels;
+        canvas.height = canvasSizePixels;
+
         ctx.translate(canvas.width/2, canvas.height/2); //make all transformations start from center of canvas
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = triangleStrokeStyle;
@@ -100,13 +106,14 @@
         ctx.fill();
 
         ctx.fillStyle = D6TextColor;
-        ctx.font = D6_text_size+ "pt serif"
-        ctx.fillText("D6", -10,-10);
+        ctx.font = D6_text_size_multiplier * canvasSize+ "em serif"
+        ctx.fillText("D6", -0.4 * D6_text_size_multiplier * canvasSizePixels,-0.1 *D6_text_size_multiplier * canvasSizePixels);
         lastTime = currentTime;
         window.requestAnimationFrame(draw);
     }
 
-    onMount(() => draw(0))
+    onMount(() => {drawLoopEnabled = true; draw(0)})
+    onDestroy(() => {drawLoopEnabled = false;})
 
     let flipScaleTarget = 1;
     let flipScaleAmount = 1;
@@ -135,6 +142,8 @@
         ctx.scale(flipScaleAmount, 1);
         ctx.rotate(rotationAmount * Math.PI/180);
     }
+
+    window.data = data;
     
 
 </script>
@@ -142,10 +151,10 @@
 <style>
     .highlight{
         position:absolute;
-        width:70px;
-        margin-left:-35px;
-        height:80px;
-        margin-top:-40px;
+        width:3em;
+        margin-left:-1.5em;
+        height:4em;
+        margin-top:-2em;
         box-shadow: 0px 0px 50px hsl(240, 89.5%, 70%);
     }
     .grouppart{
@@ -156,11 +165,7 @@
 </style>
 
 <div>
-
-
-
-    <canvas bind:this={canvas} style:width={canvasSize+"px"} style:height={canvasSize+"px"} /> 
-    <br>
+    
     How many ways are there to fit an equilateral triangle into an equilateral triangle shaped hole? Use these buttons to find out!
     <!-->Current orientation: {currentOrientation.name}<-->
     <br>Orientations found: {data.isElementVisible.reduce((prev, current) => current ? prev+1 : prev, 0)}
@@ -170,15 +175,21 @@
             data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {if(arrowVisible){sum++}})
             return sum;
         }, 0)}/{d6group.elements.length * d6group.generators.length}
-    <br>
-    <button on:click={onRotate} style:border-color={generatorColors[0]}>Rotate by 120 degrees</button>
-    <button on:click={onFlip} style:border-color={generatorColors[1]}>Flip horizontally</button>
 
-    <div class="grouppart">
-        <div class="highlight" 
-            style:left={elemPositions !== undefined ? elemPositions.get(currentOrientation)[0] + "px":""} 
-            style:top={elemPositions !== undefined ? elemPositions.get(currentOrientation)[1]+ "px":""} />
-        <D6Group {...data} bind:positions={elemPositions} />
+    <div class="twocolumns">
+
+        <div class="column">
+            <canvas bind:this={canvas} style:width={canvasSize+"em"} style:height={canvasSize+"em"} /> 
+            <br>
+            <button on:click={onRotate} style:border-color={generatorColors[0]}>Rotate by 120 degrees</button>
+            <button on:click={onFlip} style:border-color={generatorColors[1]}>Flip horizontally</button>
+        </div>
+
+        <div class="grouppart">
+            <div class="highlight" 
+                style:left={elemPositions !== undefined ? elemPositions.get(currentOrientation)[0] + "em":""} 
+                style:top={elemPositions !== undefined ? elemPositions.get(currentOrientation)[1]+ "em":""} />
+            <D6Group {...data} bind:positions={elemPositions} />
+        </div>
     </div>
-
 </div>

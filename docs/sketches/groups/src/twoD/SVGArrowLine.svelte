@@ -3,7 +3,7 @@
     export let start = [0,0];
     export let end = [0,0];
     export let stroke="black"
-    export let strokeWidth = "5";
+    export let strokeWidth = "0.2em";
     export let markerEnd;
 
     export let elementRadius = 3; //if start and end are the centers of elements, end the arrows early to give the group elements a bit of a margin

@@ -28,23 +28,25 @@
 
 
     // resize the svg with the arrows to match
+
+    /*
     let width = 1000;
     let height = 300;
     function recalcPageSize(){
         width = window.innerWidth;
         height = window.innerHeight;
     }
-    
     window.addEventListener("resize", recalcPageSize);
-    onMount(recalcPageSize)
+    onMount(recalcPageSize) */
+
+    let width = 50;
+    let height = 50; //The above code means that if this svg isn't positioned exactly at the top left of the screen, it creates scrollbars on the page. This small size means the svg won't create scrollbars, while overflow:visible ensures all the elements will still be there
 
 </script>
 
 <style>
 
 .arrowsvg{
-    /*width: 100%;
-    height: 100%;*/
     position:absolute;
     top:0;
     left:0;
@@ -94,11 +96,11 @@
                 {#if drawGeneratorsWithOutlines}
                     <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
                     stroke={generatorColors[i]} markerEnd={"url(#arrowhead-"+i+")"}
-                    strokeWidth="5" />
+                    strokeWidth="0.25em" />
                 {/if}
                 <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
                     stroke={generatorColors[i]} markerEnd={"url(#arrowhead-"+i+")"}
-                    strokeWidth="4" />
+                    strokeWidth="0.2em" />
             {/if}
         {/each}
     {/each}

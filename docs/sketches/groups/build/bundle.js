@@ -57003,7 +57003,7 @@ var app = (function () {
     			attr_dev(line, "stroke", /*stroke*/ ctx[0]);
     			attr_dev(line, "marker-end", /*markerEnd*/ ctx[2]);
     			attr_dev(line, "stroke-width", /*strokeWidth*/ ctx[1]);
-    			add_location(line, file$6, 37, 0, 1402);
+    			add_location(line, file$6, 37, 0, 1406);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -57077,7 +57077,7 @@ var app = (function () {
     	let { start = [0, 0] } = $$props;
     	let { end = [0, 0] } = $$props;
     	let { stroke = "black" } = $$props;
-    	let { strokeWidth = "5" } = $$props;
+    	let { strokeWidth = "0.2em" } = $$props;
     	let { markerEnd } = $$props;
     	let { elementRadius = 3 } = $$props;
 
@@ -57248,25 +57248,25 @@ var app = (function () {
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[8] = list[i];
+    	child_ctx[7] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[11] = list[i];
-    	child_ctx[13] = i;
+    	child_ctx[10] = list[i];
+    	child_ctx[12] = i;
     	return child_ctx;
     }
 
     function get_each_context_2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[14] = list[i];
-    	child_ctx[13] = i;
+    	child_ctx[13] = list[i];
+    	child_ctx[12] = i;
     	return child_ctx;
     }
 
-    // (67:6) {#if drawEyesOnArrows}
+    // (69:6) {#if drawEyesOnArrows}
     function create_if_block_2(ctx) {
     	let ellipse0;
     	let ellipse1;
@@ -57286,7 +57286,7 @@ var app = (function () {
     			attr_dev(ellipse0, "fill", "#fff");
     			attr_dev(ellipse0, "stroke", "#000");
     			attr_dev(ellipse0, "stroke-width", "0.1");
-    			add_location(ellipse0, file$5, 67, 10, 2268);
+    			add_location(ellipse0, file$5, 69, 10, 2531);
     			attr_dev(ellipse1, "rx", "1");
     			attr_dev(ellipse1, "ry", "0.6");
     			attr_dev(ellipse1, "cy", "1.5");
@@ -57294,19 +57294,19 @@ var app = (function () {
     			attr_dev(ellipse1, "fill", "#fff");
     			attr_dev(ellipse1, "stroke", "#000");
     			attr_dev(ellipse1, "stroke-width", "0.1");
-    			add_location(ellipse1, file$5, 69, 10, 2378);
+    			add_location(ellipse1, file$5, 71, 10, 2641);
     			attr_dev(ellipse2, "rx", "0.6");
     			attr_dev(ellipse2, "ry", "0.35");
     			attr_dev(ellipse2, "cy", "2.5");
     			attr_dev(ellipse2, "cx", "1.85");
     			attr_dev(ellipse2, "fill", "#000000");
-    			add_location(ellipse2, file$5, 71, 10, 2488);
+    			add_location(ellipse2, file$5, 73, 10, 2751);
     			attr_dev(ellipse3, "rx", "0.6");
     			attr_dev(ellipse3, "ry", "0.35");
     			attr_dev(ellipse3, "cy", "1.5");
     			attr_dev(ellipse3, "cx", "1.85");
     			attr_dev(ellipse3, "fill", "#000000");
-    			add_location(ellipse3, file$5, 73, 10, 2574);
+    			add_location(ellipse3, file$5, 75, 10, 2837);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ellipse0, anchor);
@@ -57326,14 +57326,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(67:6) {#if drawEyesOnArrows}",
+    		source: "(69:6) {#if drawEyesOnArrows}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (63:4) {#each generatorColors as color, i}
+    // (65:4) {#each generatorColors as color, i}
     function create_each_block_2(ctx) {
     	let marker;
     	let polygon;
@@ -57345,16 +57345,16 @@ var app = (function () {
     			polygon = svg_element("polygon");
     			if (if_block) if_block.c();
     			attr_dev(polygon, "points", "0 0, 4 2, 0 4");
-    			attr_dev(polygon, "fill", /*color*/ ctx[14]);
-    			add_location(polygon, file$5, 65, 6, 2182);
-    			attr_dev(marker, "class", "arrowhead svelte-1ijgktw");
-    			attr_dev(marker, "id", "arrowhead-" + /*i*/ ctx[13]);
+    			attr_dev(polygon, "fill", /*color*/ ctx[13]);
+    			add_location(polygon, file$5, 67, 6, 2445);
+    			attr_dev(marker, "class", "arrowhead svelte-11kt62b");
+    			attr_dev(marker, "id", "arrowhead-" + /*i*/ ctx[12]);
     			attr_dev(marker, "markerWidth", "4");
     			attr_dev(marker, "markerHeight", "4");
     			attr_dev(marker, "refX", "2");
     			attr_dev(marker, "refY", "2");
     			attr_dev(marker, "orient", "auto");
-    			add_location(marker, file$5, 63, 4, 1996);
+    			add_location(marker, file$5, 65, 4, 2259);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, marker, anchor);
@@ -57372,14 +57372,14 @@ var app = (function () {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(63:4) {#each generatorColors as color, i}",
+    		source: "(65:4) {#each generatorColors as color, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (93:12) {#if isArrowVisibleMap[startElement.name][i]}
+    // (95:12) {#if isArrowVisibleMap[startElement.name][i]}
     function create_if_block$2(ctx) {
     	let if_block_anchor;
     	let svgarrowline;
@@ -57388,11 +57388,11 @@ var app = (function () {
 
     	svgarrowline = new SVGArrowLine({
     			props: {
-    				start: /*positionsPerElementMap*/ ctx[1].get(/*startElement*/ ctx[8]),
-    				end: /*positionsPerElementMap*/ ctx[1].get(/*targetElement*/ ctx[11]),
-    				stroke: generatorColors[/*i*/ ctx[13]],
-    				markerEnd: "url(#arrowhead-" + /*i*/ ctx[13] + ")",
-    				strokeWidth: "4"
+    				start: /*positionsPerElementMap*/ ctx[1].get(/*startElement*/ ctx[7]),
+    				end: /*positionsPerElementMap*/ ctx[1].get(/*targetElement*/ ctx[10]),
+    				stroke: generatorColors[/*i*/ ctx[12]],
+    				markerEnd: "url(#arrowhead-" + /*i*/ ctx[12] + ")",
+    				strokeWidth: "0.2em"
     			},
     			$$inline: true
     		});
@@ -57409,8 +57409,8 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const svgarrowline_changes = {};
-    			if (dirty & /*positionsPerElementMap, group*/ 3) svgarrowline_changes.start = /*positionsPerElementMap*/ ctx[1].get(/*startElement*/ ctx[8]);
-    			if (dirty & /*positionsPerElementMap, group*/ 3) svgarrowline_changes.end = /*positionsPerElementMap*/ ctx[1].get(/*targetElement*/ ctx[11]);
+    			if (dirty & /*positionsPerElementMap, group*/ 3) svgarrowline_changes.start = /*positionsPerElementMap*/ ctx[1].get(/*startElement*/ ctx[7]);
+    			if (dirty & /*positionsPerElementMap, group*/ 3) svgarrowline_changes.end = /*positionsPerElementMap*/ ctx[1].get(/*targetElement*/ ctx[10]);
     			svgarrowline.$set(svgarrowline_changes);
     		},
     		i: function intro(local) {
@@ -57434,18 +57434,18 @@ var app = (function () {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(93:12) {#if isArrowVisibleMap[startElement.name][i]}",
+    		source: "(95:12) {#if isArrowVisibleMap[startElement.name][i]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (92:8) {#each elementTimesGenerators.get(startElement) as targetElement, i}
+    // (94:8) {#each elementTimesGenerators.get(startElement) as targetElement, i}
     function create_each_block_1(ctx) {
     	let if_block_anchor;
     	let current;
-    	let if_block = /*isArrowVisibleMap*/ ctx[2][/*startElement*/ ctx[8].name][/*i*/ ctx[13]] && create_if_block$2(ctx);
+    	let if_block = /*isArrowVisibleMap*/ ctx[2][/*startElement*/ ctx[7].name][/*i*/ ctx[12]] && create_if_block$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -57458,7 +57458,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (/*isArrowVisibleMap*/ ctx[2][/*startElement*/ ctx[8].name][/*i*/ ctx[13]]) {
+    			if (/*isArrowVisibleMap*/ ctx[2][/*startElement*/ ctx[7].name][/*i*/ ctx[12]]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
@@ -57500,18 +57500,18 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(92:8) {#each elementTimesGenerators.get(startElement) as targetElement, i}",
+    		source: "(94:8) {#each elementTimesGenerators.get(startElement) as targetElement, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (91:4) {#each group.elements as startElement}
+    // (93:4) {#each group.elements as startElement}
     function create_each_block$1(ctx) {
     	let each_1_anchor;
     	let current;
-    	let each_value_1 = /*elementTimesGenerators*/ ctx[5].get(/*startElement*/ ctx[8]);
+    	let each_value_1 = /*elementTimesGenerators*/ ctx[3].get(/*startElement*/ ctx[7]);
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -57540,8 +57540,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*positionsPerElementMap, group, elementTimesGenerators, generatorColors, drawGeneratorsWithOutlines, isArrowVisibleMap*/ 39) {
-    				each_value_1 = /*elementTimesGenerators*/ ctx[5].get(/*startElement*/ ctx[8]);
+    			if (dirty & /*positionsPerElementMap, group, elementTimesGenerators, generatorColors, drawGeneratorsWithOutlines, isArrowVisibleMap*/ 15) {
+    				each_value_1 = /*elementTimesGenerators*/ ctx[3].get(/*startElement*/ ctx[7]);
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -57596,7 +57596,7 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(91:4) {#each group.elements as startElement}",
+    		source: "(93:4) {#each group.elements as startElement}",
     		ctx
     	});
 
@@ -57610,7 +57610,6 @@ var app = (function () {
     	let feMorphology;
     	let feColorMatrix;
     	let feBlend;
-    	let svg_viewBox_value;
     	let current;
     	let each_value_2 = generatorColors;
     	validate_each_argument(each_value_2);
@@ -57654,29 +57653,29 @@ var app = (function () {
     			attr_dev(feMorphology, "in", "SourceGraphic");
     			attr_dev(feMorphology, "operator", "dilate");
     			attr_dev(feMorphology, "radius", "1");
-    			add_location(feMorphology, file$5, 80, 6, 2888);
+    			add_location(feMorphology, file$5, 82, 6, 3151);
     			attr_dev(feColorMatrix, "type", "matrix");
     			attr_dev(feColorMatrix, "in", "outline");
     			attr_dev(feColorMatrix, "result", "black-outline");
     			attr_dev(feColorMatrix, "values", "0 0 0 0 0  \n                        0 0 0 0 0  \n                        0 0 0 0 0  \n                        0 0 0 1 0");
-    			add_location(feColorMatrix, file$5, 81, 6, 2989);
+    			add_location(feColorMatrix, file$5, 83, 6, 3252);
     			attr_dev(feBlend, "in", "SourceGraphic");
     			attr_dev(feBlend, "in2", "black-outline");
     			attr_dev(feBlend, "mode", "normal");
-    			add_location(feBlend, file$5, 85, 6, 3204);
+    			add_location(feBlend, file$5, 87, 6, 3467);
     			attr_dev(filter, "id", "outline");
     			attr_dev(filter, "x", "-100%");
     			attr_dev(filter, "y", "-100%");
     			attr_dev(filter, "width", "300%");
     			attr_dev(filter, "height", "300%");
-    			add_location(filter, file$5, 78, 4, 2692);
-    			add_location(defs, file$5, 61, 2, 1945);
-    			attr_dev(svg, "class", "arrowsvg svelte-1ijgktw");
+    			add_location(filter, file$5, 80, 4, 2955);
+    			add_location(defs, file$5, 63, 2, 2208);
+    			attr_dev(svg, "class", "arrowsvg svelte-11kt62b");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
-    			attr_dev(svg, "width", /*width*/ ctx[3]);
-    			attr_dev(svg, "height", /*height*/ ctx[4]);
-    			attr_dev(svg, "viewBox", svg_viewBox_value = "0 0 " + /*width*/ ctx[3] + " " + /*height*/ ctx[4]);
-    			add_location(svg, file$5, 60, 0, 1824);
+    			attr_dev(svg, "width", /*width*/ ctx[4]);
+    			attr_dev(svg, "height", /*height*/ ctx[5]);
+    			attr_dev(svg, "viewBox", "0 0 " + /*width*/ ctx[4] + " " + /*height*/ ctx[5]);
+    			add_location(svg, file$5, 62, 0, 2087);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -57725,7 +57724,7 @@ var app = (function () {
     				each_blocks_1.length = each_value_2.length;
     			}
 
-    			if (dirty & /*elementTimesGenerators, group, positionsPerElementMap, generatorColors, drawGeneratorsWithOutlines, isArrowVisibleMap*/ 39) {
+    			if (dirty & /*elementTimesGenerators, group, positionsPerElementMap, generatorColors, drawGeneratorsWithOutlines, isArrowVisibleMap*/ 15) {
     				each_value = /*group*/ ctx[0].elements;
     				validate_each_argument(each_value);
     				let i;
@@ -57751,18 +57750,6 @@ var app = (function () {
     				}
 
     				check_outros();
-    			}
-
-    			if (!current || dirty & /*width*/ 8) {
-    				attr_dev(svg, "width", /*width*/ ctx[3]);
-    			}
-
-    			if (!current || dirty & /*height*/ 16) {
-    				attr_dev(svg, "height", /*height*/ ctx[4]);
-    			}
-
-    			if (!current || dirty & /*width, height*/ 24 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + /*width*/ ctx[3] + " " + /*height*/ ctx[4])) {
-    				attr_dev(svg, "viewBox", svg_viewBox_value);
     			}
     		},
     		i: function intro(local) {
@@ -57816,17 +57803,18 @@ var app = (function () {
     	let elementTimesGenerators = new Map(); //elementTimesGenerators[x.name] is [x*a, x*b] where a,b are the generators of the group
 
     	// resize the svg with the arrows to match
-    	let width = 1000;
+    	/*
+    let width = 1000;
+    let height = 300;
+    function recalcPageSize(){
+        width = window.innerWidth;
+        height = window.innerHeight;
+    }
+    window.addEventListener("resize", recalcPageSize);
+    onMount(recalcPageSize) */
+    	let width = 50;
 
-    	let height = 300;
-
-    	function recalcPageSize() {
-    		$$invalidate(3, width = window.innerWidth);
-    		$$invalidate(4, height = window.innerHeight);
-    	}
-
-    	window.addEventListener("resize", recalcPageSize);
-    	onMount(recalcPageSize);
+    	let height = 50; //The above code means that if this svg isn't positioned exactly at the top left of the screen, it creates scrollbars on the page. This small size means the svg won't create scrollbars, while overflow:visible ensures all the elements will still be there
     	const writable_props = ['group', 'positionsPerElementMap', 'isArrowVisibleMap'];
 
     	Object.keys($$props).forEach(key => {
@@ -57851,8 +57839,7 @@ var app = (function () {
     		isArrowVisibleMap,
     		elementTimesGenerators,
     		width,
-    		height,
-    		recalcPageSize
+    		height
     	});
 
     	$$self.$inject_state = $$props => {
@@ -57860,9 +57847,9 @@ var app = (function () {
     		if ('positionsPerElementMap' in $$props) $$invalidate(1, positionsPerElementMap = $$props.positionsPerElementMap);
     		if ('defaultShowArray' in $$props) defaultShowArray = $$props.defaultShowArray;
     		if ('isArrowVisibleMap' in $$props) $$invalidate(2, isArrowVisibleMap = $$props.isArrowVisibleMap);
-    		if ('elementTimesGenerators' in $$props) $$invalidate(5, elementTimesGenerators = $$props.elementTimesGenerators);
-    		if ('width' in $$props) $$invalidate(3, width = $$props.width);
-    		if ('height' in $$props) $$invalidate(4, height = $$props.height);
+    		if ('elementTimesGenerators' in $$props) $$invalidate(3, elementTimesGenerators = $$props.elementTimesGenerators);
+    		if ('width' in $$props) $$invalidate(4, width = $$props.width);
+    		if ('height' in $$props) $$invalidate(5, height = $$props.height);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -57885,9 +57872,9 @@ var app = (function () {
     		group,
     		positionsPerElementMap,
     		isArrowVisibleMap,
+    		elementTimesGenerators,
     		width,
-    		height,
-    		elementTimesGenerators
+    		height
     	];
     }
 
@@ -59192,7 +59179,7 @@ var app = (function () {
     			rotationAmount += delta * 120 * rotationSpeed * Math.sign(rotationTarget - rotationAmount);
     		}
 
-    		if (Math.abs(rotationAmount - rotationTarget) < 1) {
+    		if (Math.abs(rotationAmount - rotationTarget) < 2) {
     			rotationAmount = rotationTarget;
     		}
     	}
@@ -60310,9 +60297,9 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			if (if_block1) if_block1.c();
     			attr_dev(div0, "class", "rotatesign");
     			add_location(div0, file, 12, 4, 294);
-    			add_location(button, file, 13, 85, 445);
+    			add_location(button, file, 13, 88, 448);
     			set_style(span, "position", `absolute`, false);
-    			set_style(span, "top", `2em`, false);
+    			set_style(span, "bottom", `2em`, false);
     			set_style(span, "left", `0em`, false);
     			add_location(span, file, 13, 4, 364);
     			attr_dev(div1, "class", "maincontainer");

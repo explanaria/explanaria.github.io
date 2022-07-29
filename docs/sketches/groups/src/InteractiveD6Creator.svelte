@@ -133,7 +133,7 @@
         if(rotationAmount != rotationTarget){
             rotationAmount += delta * 120 * rotationSpeed * Math.sign(rotationTarget-rotationAmount)
         }
-        if(Math.abs(rotationAmount - rotationTarget) < 1){
+        if(Math.abs(rotationAmount - rotationTarget) < 2){
             rotationAmount = rotationTarget;
         }
     }

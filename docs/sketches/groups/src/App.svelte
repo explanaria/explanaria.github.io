@@ -11,7 +11,7 @@
 
 <div class="maincontainer">
     <div class="rotatesign"> <!-- todo: put a message here --> </div>
-    <span style:position="absolute" style:top="2em" style:left="0em">Chapter {mode}. <button on:click={swapmode} >Swap chapter</button></span>
+    <span style:position="absolute" style:bottom="2em" style:left="0em">Chapter {mode}. <button on:click={swapmode} >Swap chapter</button></span>
     {#if mode == 0}
         <MoleculeCanvas />
     {/if}

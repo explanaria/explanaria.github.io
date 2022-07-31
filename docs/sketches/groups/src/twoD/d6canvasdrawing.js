@@ -14,12 +14,12 @@ export const canvasSize = 3; //in em
 //30 should really be "em to px"
 export const canvasSizePixels = canvasSize * 30; //is this the right calculation? 
 
-export const triangleRadius = 0.35*canvasSizePixels;
+export const triangleRadius = 0.4*canvasSizePixels;
 export const arrowCenterDistance = 0.43*canvasSizePixels; //how far from the center should the arced arrow that shows a rotation be?
 export const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
 export const num_dashes = 5;
 export const dash_radius = canvasSize/2; //how far from the center should dashed lines for mirroring go
-export const D6_text_size_multiplier = 0.3;
+export const D6_text_size_multiplier = 0.35;
 export const lineWidth = 2;
 export let NUM_DEGREES_IN_ONE_ROTATION = 120;
 

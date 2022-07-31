@@ -32,6 +32,11 @@ body{
   grid-template-columns: 1fr;
   width:100%;
 }
+.overlappingItem{
+ grid-row-start: 1;
+ grid-column-start: 1;
+ width:100%;
+}
 
 .twocolumns{
   display: grid;

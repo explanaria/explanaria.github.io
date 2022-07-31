@@ -11,7 +11,7 @@
     let f = new GroupElement("f", "(23)");
     let d6group = new Group([r,f], {"rfr":"f", "rrr":"", "ff":""});
 
-    export let isArrowVisibleMap = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
+    let isArrowVisibleMap = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
     d6group.elements.forEach(startElement => {
                 isArrowVisibleMap[startElement.name] = d6group.generators.map(generator => false) //every generator starts false
             }
@@ -19,7 +19,7 @@
     //isArrowVisibleMap["e"] = [true, true];
     
 
-    let data = {
+    export let data = {
         d6group: d6group,
         isElementVisible: d6group.elements.map(element => 
             (
@@ -72,7 +72,7 @@
     const canvasSize = 15; // a bit bigger
 
     const canvasSizePixels = canvasSize * 30;
-    const triangleRadius = 0.35*canvasSizePixels;
+    const triangleRadius = 0.4*canvasSizePixels;
 
 
     let startVertex = [0,-triangleRadius];
@@ -156,40 +156,58 @@
         height:4em;
         margin-top:-2em;
         box-shadow: 0px 0px 50px hsl(240, 89.5%, 70%);
+        border-radius: 3em;
     }
     .grouppart{
         width: 100%;
         position: relative;
         min-height: 300px;
     }
+
+    .mainlayout{
+        display: grid;
+        grid-template-rows: 2em 1fr 3em;
+    }
 </style>
 
 <div>
-    
-    How many ways are there to fit an equilateral triangle into an equilateral triangle shaped hole? Use these buttons to find out!
-    <!-->Current orientation: {currentOrientation.name}<-->
-    <br>Orientations found: {data.isElementVisible.reduce((prev, current) => current ? prev+1 : prev, 0)}
-    <br>Arrows found: {
-        d6group.elements.reduce((prev, groupElem) => {
-            let sum = prev;
-            data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {if(arrowVisible){sum++}})
-            return sum;
-        }, 0)}/{d6group.elements.length * d6group.generators.length}
 
-    <div class="twocolumns">
+    <div class="mainlayout">
+        <slot name="toppart">
+            <div class="top" style:background-color="red">
+                stuff on top
+            </div>
+        </slot>
+        <div class="twocolumns">
+            <div class="column">
+                <canvas bind:this={canvas} style:width={canvasSize+"em"} style:height={canvasSize+"em"} /> 
+                <br>
+                <div class="twocolumns">
+                    <button on:click={onRotate} style:border-color={generatorColors[0]}>Rotate by 120 degrees</button>
+                    <button on:click={onFlip} style:border-color={generatorColors[1]}>Flip horizontally</button>
+                </div>
+                <!-->Current orientation: {currentOrientation.name}<-->
+                <br>Orientations found: {data.isElementVisible.reduce((prev, current) => current ? prev+1 : prev, 0)}
+                <br>Arrows found: {
+                    d6group.elements.reduce((prev, groupElem) => {
+                        let sum = prev;
+                        data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {if(arrowVisible){sum++}})
+                        return sum;
+                    }, 0)}/{d6group.elements.length * d6group.generators.length}
 
-        <div class="column">
-            <canvas bind:this={canvas} style:width={canvasSize+"em"} style:height={canvasSize+"em"} /> 
-            <br>
-            <button on:click={onRotate} style:border-color={generatorColors[0]}>Rotate by 120 degrees</button>
-            <button on:click={onFlip} style:border-color={generatorColors[1]}>Flip horizontally</button>
+            </div>
+
+            <div class="grouppart">
+                <div class="highlight" 
+                    style:left={elemPositions !== undefined ? elemPositions.get(currentOrientation)[0] + "em":""} 
+                    style:top={elemPositions !== undefined ? elemPositions.get(currentOrientation)[1]+ "em":""} />
+                <D6Group {...data} bind:positions={elemPositions} />
+            </div>
         </div>
-
-        <div class="grouppart">
-            <div class="highlight" 
-                style:left={elemPositions !== undefined ? elemPositions.get(currentOrientation)[0] + "em":""} 
-                style:top={elemPositions !== undefined ? elemPositions.get(currentOrientation)[1]+ "em":""} />
-            <D6Group {...data} bind:positions={elemPositions} />
-        </div>
+        <slot name="textpart">
+            <div class="textpart" style:background-color="red">
+                How many ways are there to fit an equilateral triangle into an equilateral triangle shaped hole? Use these buttons to find out!
+            </div>
+        </slot>
     </div>
 </div>

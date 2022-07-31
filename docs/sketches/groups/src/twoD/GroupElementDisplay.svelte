@@ -22,7 +22,7 @@
         grid: 1fr / 1fr;
         justify-items: center;
         border: 2px solid var(--groupElementBorderColor); /* overwritten using borderColor variable by svelte */
-        border-radius: 5px;
+        border-radius: 3em;
         max-width: 300px;
         transform: translate(-50%, -50%); /*so that the position set by position: absolute is in the center */
         /* margin: 1em; not with position:absolute*/

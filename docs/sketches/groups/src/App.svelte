@@ -1,5 +1,6 @@
 <script>
 	import InteractiveD6Creator from "./InteractiveD6Creator.svelte";
+	import CayleyGraphIntroPart from "./CayleyGraphIntroPart.svelte";
     import MoleculeCanvas from "./threeD/MoleculeCanvas.svelte";
 
     let mode = 1;
@@ -16,6 +17,6 @@
         <MoleculeCanvas />
     {/if}
     {#if mode == 1}
-        <InteractiveD6Creator />
+        <CayleyGraphIntroPart />
     {/if}
 </div>

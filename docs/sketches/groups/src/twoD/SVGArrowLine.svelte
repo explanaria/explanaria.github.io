@@ -6,7 +6,7 @@
     export let strokeWidth = "0.2em";
     export let markerEnd;
 
-    export let elementRadius = 3; //if start and end are the centers of elements, end the arrows early to give the group elements a bit of a margin
+    export let elementAvoidRadius = 2.75; //in em. if start and end are the centers of elements, end the arrows early to give the group elements a bit of a margin
 
     function moveBackwardsAConstantDistance(endpoint, pointToMoveTowards, distance){
 
@@ -19,8 +19,8 @@
     }
 
 
-    $: movedStartPoint = moveBackwardsAConstantDistance(start, end, elementRadius)
-    $: movedEndPoint = moveBackwardsAConstantDistance(end, start, elementRadius)
+    $: movedStartPoint = moveBackwardsAConstantDistance(start, end, elementAvoidRadius)
+    $: movedEndPoint = moveBackwardsAConstantDistance(end, start, elementAvoidRadius)
 
     //animation
     let displayedEndPoint = end;

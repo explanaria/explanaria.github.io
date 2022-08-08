@@ -220,7 +220,7 @@ await presentation.delay(250);
 //[integerGrid, triangleLine, grabbablePoints, fixedPointDisplay].forEach(item => item.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':1}, 500, {staggerFraction: 2/3})));
 presentation.TransitionTo(areaText, {opacity: 1});
 
-presentation.TransitionTo(introSettings, {introObjectsActive: false}, 1);
+presentation.TransitionInstantly(introSettings, {introObjectsActive: false});
 
 await presentation.nextSlide();
 
@@ -252,8 +252,8 @@ await presentation.nextSlide();
 presentation.TransitionTo(dragMeText, {'opacity':0}, 500);
 twentyFourHint.getDeepestChildren().forEach(output => presentation.TransitionTo(output, {'opacity':0}, 500));
 let target1 = [8+fixedPoint[0],6+fixedPoint[0]];
-presentation.TransitionTo(draggablePoint, {"0": target1[0], "1":target1[1]});
-presentation.TransitionTo(slidingHorizontalPoint, {"0":target1[0]});
+presentation.ResetTo(draggablePoint, {"0": target1[0], "1":target1[1]});
+presentation.ResetTo(slidingHorizontalPoint, {"0":target1[0]});
 await presentation.nextSlide();
 await presentation.nextSlide();
 

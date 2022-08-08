@@ -11,9 +11,9 @@ export function attachCanvas(newparent, classToGive){
         newparent = document.getElementById(newparent);
     }
     removeCanvas();
-    three.resizeCanvasIfNecessary()
     newparent.appendChild(canvas)
     canvas.className = classToGive;
+    three.resizeCanvasIfNecessary();
     return canvas;
 }
 export function removeCanvas(){

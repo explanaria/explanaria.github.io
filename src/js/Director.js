@@ -456,13 +456,20 @@ class UndoCapableDirector extends NonDecreasingDirector{
     async redoAnItem(redoItem){
         switch(redoItem.type){
             case DELAY:
-                //keep in mind during this delay period, the user might push the left arrow key. If that happens, this.currentReplayDirection will be DECREASING, so handleForwardsPress() will quit
+                //keep in mind during this delay period, the user might push the left arrow key. If that happens, this.currentReplayDirection will be BACKWARDS, so handleForwardsPress() will quit
                 await this._sleep(redoItem.waitTime);
                 break;
             case TRANSITIONTO:
                 var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.duration, redoItem.optionalArguments);
               //and now redoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
                 break;
+            case RESETTO:
+                //like TRANSITIONTO, but onnly redoes, not undoes
+                var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.duration, redoItem.optionalArguments);
+            case TRANSITIONINSTANTLY:
+                for(let property in redoItem.toValues){
+                    redoItem.target[property] = redoItem.toValues[property]
+                }
             case NEWSLIDE:
                 break;
             default:
@@ -533,7 +540,13 @@ class UndoCapableDirector extends NonDecreasingDirector{
                     var undoAnimation = new Animation(undoItem.target, undoItem.fromValues, duration, undoItem.optionalArguments);
                     //and now undoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
                     break;
+                case TRANSITIONINSTANTLY:
+                    for(let property in undoItem.fromValues){
+                        undoItem.target[property] = undoItem.fromValues[property]
+                    }
                 case NEWSLIDE:
+                    break;
+                case RESETTO: //reset to doesn't undo, only redo
                     break;
                 default:
                     break;
@@ -603,10 +616,35 @@ class UndoCapableDirector extends NonDecreasingDirector{
         }
     }
     TransitionTo(target, toValues, durationMS, optionalArguments){
+        //TransitionTo(data, {property: newvalue}, 1000) will smoothly animate data.property from whatever it was to newvalue over the course of 1000 milliseconds.
+        //when this is called, the current value of data.property is saved to create an UndoItem. Then, if you click the undo button, explanaria will animate data.property from newvalue to whatever it was before.
         let duration = durationMS === undefined ? 1 : durationMS/1000;
         var animation = new Animation(target, toValues, duration, optionalArguments);
         let fromValues = animation.fromValues;
         this.undoStack.push(new UndoItem(target, toValues, fromValues, duration, optionalArguments));
+        this.undoStackIndex++;
+    }
+    TransitionInstantly(target, toValues){
+        //TransitionInstantly(data, {property: newvalue}) instantly sets data.property = newvalue, but saves an undo
+
+        let fromValues = {};
+
+        for(let property in toValues){
+            fromValues[property] = target[property]
+            target[property] = toValues[property]
+        }
+
+        this.undoStack.push(new InstantUndoItem(target, toValues, fromValues));
+        this.undoStackIndex++;
+    }
+    ResetTo(target, toValues, durationMS, optionalArguments){
+        //This is like TransitionTo(), except it doesn't save the previous value. When you undo a ResetTo, it doesn't do anything, and when you redo a ResetTo(), it transitions again.
+        //When using TransitionTo on something an user can also control, such as cursor position or the rotation of a 3D model,
+        // undoing will move it from "whatever's in toValues" to "whatever wacky place the user positioned it". That wacky place usually isn't desirable
+        let duration = durationMS === undefined ? 1 : durationMS/1000;
+        var animation = new Animation(target, toValues, duration, optionalArguments);
+        //no fromValues
+        this.undoStack.push(new ResetToUndoItem(target, toValues, duration, optionalArguments));
         this.undoStackIndex++;
     }
 }
@@ -616,6 +654,8 @@ class UndoCapableDirector extends NonDecreasingDirector{
 const TRANSITIONTO = 0;
 const NEWSLIDE = 1;
 const DELAY=2;
+const RESETTO=3;
+const TRANSITIONINSTANTLY = 4;
 
 //things that can be stored in a UndoCapableDirector's .undoStack[]
 class UndoItem{
@@ -626,6 +666,22 @@ class UndoItem{
         this.duration = duration;
         this.type = TRANSITIONTO;
         this.optionalArguments = optionalArguments;
+    }
+}
+
+class InstantUndoItem{
+    constructor(target, toValues, fromValues){
+        this.target = target;
+        this.toValues = toValues;
+        this.fromValues = fromValues;
+        this.type = TRANSITIONINSTANTLY;
+    }
+}
+
+class ResetToUndoItem extends UndoItem{
+    constructor(target, toValues, duration, optionalArguments){
+        super(target, toValues, undefined, duration, optionalArguments)
+        this.type = RESETTO;
     }
 }
 

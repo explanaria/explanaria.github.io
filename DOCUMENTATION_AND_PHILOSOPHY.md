@@ -394,5 +394,25 @@ You may also wish to increase the resolution or `numItems` of any Domains while 
 
 # Presentations
 If you want to synchronize text-based slides to your animations, use an EXP.Director, such as EXP.NonDecreasingDirector() or EXP.UndoCapableDirector().
-This section will be expanded later.
+TODO: This section will be expanded later.
 
+* TransitionTo()
+
+This works like EXP.TransitionTo(target, toValues) but saves the current values at the time of the TransitionTo() call. Then, if you press undo in the presentation, it'll construct an animation from the toValues 
+
+* TransitionInstantly()
+
+This works like EXP.TransitionTo() but transitions and undoes instantly. This is useful for strings (such as adjusting CSS) or booleans, or anywhere a smooth animation doesn't quite make sense. The current values of each property are saved, and will be applied if the user presses undo.
+
+Examples:
+
+```
+let presentation = new EXP.UndoCapableDirector();
+presentation.TransitionInstantly(document.getElementById("some ID").style, {opacity: "1", backgroundColor: "blue"})
+```
+
+* ResetTo()
+
+Sometimes a value is controlled both by the user and by a presentation, such as the camera, the position of something you can drag and drop, or the rotation of a spinnable 3D model. If you use TransitionTo() on one of these variables, it'll save the current position, and return to it when you undo. Returning to a weird and unintended position when you undo can be very unexpected.
+
+If you use ResetTo(target, {property: value}), then undoing won't affect target.property, but redoing will animate target.property from wherever it is to `value`. 

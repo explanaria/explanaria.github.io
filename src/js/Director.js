@@ -103,6 +103,13 @@ class NonDecreasingDirector{
         this.initialized = true;
     }
 
+    removeClickables(){
+        //Remove arrows, stop listening to clicks, and shut down entirely.
+        this.nextSlideResolveFunction = null;
+        this.rightArrow.hideSelf();
+        window.setTimeout(() => document.body.removeChild(this.rightArrow.arrowImage), 1000);
+    }
+
     setupAndHideAllSlideHTMLElements(){
 
         this.slides = document.getElementsByClassName("exp-slide");
@@ -356,6 +363,16 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.rightArrow.onclickCallback = function(){
             self.handleForwardsPress();
         }
+    }
+
+    removeClickables(){
+        //Remove arrows, stop listening to clicks
+        this.rightArrow.hideSelf();
+        this.leftArrow.hideSelf();
+        window.setTimeout(() => {
+            document.body.removeChild(this.rightArrow.arrowImage)
+            document.body.removeChild(this.leftArrow.arrowImage)
+        }, 1000);
     }
 
     moveFurtherIntoPresentation(){

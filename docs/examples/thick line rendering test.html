@@ -56,12 +56,12 @@
 
 
     //debug line
-    var geometry = new THREE.Geometry();
-    geometry.vertices.push(
-    new THREE.Vector3(0, 1, 0),
-    new THREE.Vector3(-c, -c, 0),
-    new THREE.Vector3(1, 0, 0),
-    new THREE.Vector3(2, -3, 0));
+    var geometry = new THREE.BufferGeometry();
+    let points = [0, 1, 0,
+    -c, -c, 0,
+    1, 0, 0,
+    2, -3, 0];
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( points, 3 ) );
 
 
     let originalLine = new THREE.Line(geometry, new THREE.LineBasicMaterial({

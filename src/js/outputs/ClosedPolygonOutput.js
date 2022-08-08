@@ -40,7 +40,7 @@ class ClosedPolygonOutput extends OutputNode{
             opacity: this._opacity,
             //color: this._color,
             side: THREE.DoubleSide,
-            vertexColors: THREE.VertexColors,
+            vertexColors: true,
         });
 
         this.mesh = new THREE.Mesh(this._geometry,this.material);
@@ -52,14 +52,14 @@ class ClosedPolygonOutput extends OutputNode{
     }
 
     makeGeometry(){
-        const MAX_POINTS = 100; //these arrays get discarded on first activation anyways
+        const MAX_POINTS = 1; //these arrays get discarded on first activation anyways
         this._vertices = new Float32Array(this._outputDimensions * MAX_POINTS);
         this._colors = new Float32Array(3 * MAX_POINTS);
         this._faceIndices = new Uint32Array(3 * MAX_POINTS);
 
-        this._geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( this._vertices, this._outputDimensions ) );
-        this._geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( this._colors, 3 ) );
-        this._geometry.setIndex(new THREE.Uint32BufferAttribute( this._faceIndices, 1 ) );
+        this._geometry.setAttribute( 'position', new THREE.BufferAttribute( this._vertices, this._outputDimensions ) );
+        this._geometry.setAttribute( 'color', new THREE.BufferAttribute( this._colors, 3 ) );
+        this._geometry.setIndex(new THREE.BufferAttribute( this._faceIndices, 1 ) );
 
         this._currentPointIndex = 0; //used during updates as a pointer to the buffer
         this._activatedOnce = false;
@@ -86,23 +86,26 @@ class ClosedPolygonOutput extends OutputNode{
 
         const numVerts = this.numCallsPerActivation;
 
-        let positionAttribute = this._geometry.attributes.position;
+        
         this._vertices = new Float32Array( this._outputDimensions * numVerts);
-        positionAttribute.setArray(this._vertices);
-        positionAttribute.needsUpdate = true;
+        let positionAttribute = new THREE.BufferAttribute( this._vertices, this._outputDimensions );
+        this._geometry.deleteAttribute('position');
+        this._geometry.setAttribute('position', positionAttribute);
 
-        let colorAttribute = this._geometry.attributes.color;
         this._colors = new Float32Array( 3 * numVerts);
-        colorAttribute.setArray(this._colors);
+        let colorAttribute = new THREE.BufferAttribute( this._colors, 3 );
+        this._geometry.deleteAttribute('color');
+        this._geometry.setAttribute('color', colorAttribute);
 
         this._faceIndices = new Uint32Array( 3 * numVerts); //at most one face per vertex.
         //is this enough? probably?? todo: do the math and see whether a polygon with n vertices can have n faces. It can definitely have at least n-2 cases (n-gon). I think no but I haven't checked
-        let faceAttribute = this._geometry.index;
-        faceAttribute.setArray(this._faceIndices);
+        let faceAttribute = new THREE.BufferAttribute( this._faceIndices, 1 )
+        this._geometry.setIndex(faceAttribute);
 
         this._projected2DCoords = new Float32Array( 2 * numVerts);
 
         this.triangulateAndGenerateFaces();
+        faceAttribute.needsUpdate = true;
         this.setAllVerticesToColor(this.color);
     }
 

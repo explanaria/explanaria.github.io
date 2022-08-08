@@ -90,10 +90,10 @@ class LineOutput extends OutputNode{
 
         // build geometry
 
-        this._geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( this._vertices, this._outputDimensions ) );
-        this._geometry.addAttribute( 'nextPointPosition', new THREE.Float32BufferAttribute( this._nextPointVertices, this._outputDimensions ) );
-        this._geometry.addAttribute( 'previousPointPosition', new THREE.Float32BufferAttribute( this._prevPointVertices, this._outputDimensions ) );
-        this._geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( this._colors, 3 ) );
+        this._geometry.setAttribute( 'position', new THREE.BufferAttribute( this._vertices, this._outputDimensions ) );
+        this._geometry.setAttribute( 'nextPointPosition', new THREE.BufferAttribute( this._nextPointVertices, this._outputDimensions ) );
+        this._geometry.setAttribute( 'previousPointPosition', new THREE.BufferAttribute( this._prevPointVertices, this._outputDimensions ) );
+        this._geometry.setAttribute( 'color', new THREE.BufferAttribute( this._colors, 3 ) );
 
         this._currentPointIndex = 0; //used during updates as a pointer to the buffer
         this._activatedOnce = false;
@@ -122,40 +122,34 @@ class LineOutput extends OutputNode{
         const NUM_POINTS_PER_LINE_SEGMENT = 4; //4 used for beveling
         const numVerts = (this.numCallsPerActivation) * NUM_POINTS_PER_LINE_SEGMENT;
 
-        let vertices = new Float32Array( this._outputDimensions * numVerts);
-        let nextVertices = new Float32Array( this._outputDimensions * numVerts);
-        let prevVertices = new Float32Array( this._outputDimensions * numVerts);
-        let colors = new Float32Array( 3 * numVerts);
+        this._vertices = new Float32Array(this._outputDimensions * numVerts);
+        this._nextPointVertices = new Float32Array(this._outputDimensions * numVerts);
+        this._prevPointVertices = new Float32Array(this._outputDimensions * numVerts);
+        this._colors = new Float32Array(numVerts * 3);
 
-        let positionAttribute = this._geometry.attributes.position;
-        this._vertices = vertices;
-        positionAttribute.setArray(this._vertices);
+        this._geometry.deleteAttribute('position');
+        this._geometry.deleteAttribute('nextPointPosition');
+        this._geometry.deleteAttribute('previousPointPosition');
+        this._geometry.deleteAttribute('color');
 
-        let prevPointPositionAttribute = this._geometry.attributes.previousPointPosition;
-        this._prevPointVertices = prevVertices;
-        prevPointPositionAttribute.setArray(this._prevPointVertices);
-
-        let nextPointPositionAttribute = this._geometry.attributes.nextPointPosition;
-        this._nextPointVertices = nextVertices;
-        nextPointPositionAttribute.setArray(this._nextPointVertices);
-
-        let colorAttribute = this._geometry.attributes.color;
-        this._colors = colors;
-        colorAttribute.setArray(this._colors);
+        this._geometry.setAttribute( 'position', new THREE.BufferAttribute( this._vertices, this._outputDimensions ) );
+        this._geometry.setAttribute( 'nextPointPosition', new THREE.BufferAttribute( this._nextPointVertices, this._outputDimensions ) );
+        this._geometry.setAttribute( 'previousPointPosition', new THREE.BufferAttribute( this._prevPointVertices, this._outputDimensions ) );
+        this._geometry.setAttribute( 'color', new THREE.BufferAttribute( this._colors, 3 ) );
 
         //used to differentiate the left border of the line from the right border
         let direction = new Float32Array(numVerts);
         for(let i=0; i<numVerts;i++){
             direction[i] = i%2==0 ? 1 : 0; //alternate -1 and 1
         }
-        this._geometry.addAttribute( 'direction', new THREE.Float32BufferAttribute( direction, 1) );
+        this._geometry.setAttribute( 'direction', new THREE.BufferAttribute( direction, 1) );
 
         //used to differentiate the points which move towards prev vertex from points which move towards next vertex
         let nextOrPrev = new Float32Array(numVerts);
         for(let i=0; i<numVerts;i++){
             nextOrPrev[i] = i%4<2 ? 0 : 1; //alternate 0,0, 1,1
         }
-        this._geometry.addAttribute( 'approachNextOrPrevVertex', new THREE.Float32BufferAttribute( nextOrPrev, 1) );
+        this._geometry.setAttribute( 'approachNextOrPrevVertex', new THREE.BufferAttribute( nextOrPrev, 1) );
 
         //indices
         /*
@@ -193,9 +187,6 @@ class LineOutput extends OutputNode{
         if(!this._hasCustomColorFunction){
             this.setAllVerticesToColor(this.color);
         }
-
-        positionAttribute.needsUpdate = true;
-        colorAttribute.needsUpdate = true;
     }
     evaluateSelf(i, t, x, y, z, ...otherArgs){
         if(!this._activatedOnce){

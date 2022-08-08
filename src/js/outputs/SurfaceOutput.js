@@ -52,6 +52,7 @@ class SurfaceOutput extends OutputNode{
 		}
 
 		this.material = new THREE.ShaderMaterial({
+			glslVersion: THREE.GLSL3,
 			side: THREE.BackSide,
 			vertexShader: vShader, 
 			fragmentShader: fShader,
@@ -80,7 +81,7 @@ class SurfaceOutput extends OutputNode{
     }
 	makeGeometry(){
 
-		let MAX_POINTS = 10000;
+		let MAX_POINTS = 1;
 
 		this._vertices = new Float32Array(MAX_POINTS * this._outputDimensions);
 		this._normals = new Float32Array(MAX_POINTS * 3);
@@ -88,9 +89,9 @@ class SurfaceOutput extends OutputNode{
 
 		// build geometry
 
-		this._geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( this._vertices, this._outputDimensions ) );
-		this._geometry.addAttribute( 'normal', new THREE.Float32BufferAttribute( this._normals, 3 ) );
-		this._geometry.addAttribute( 'uv', new THREE.Float32BufferAttribute( this._uvs, 2 ) );
+		this._geometry.setAttribute( 'position', new THREE.BufferAttribute( this._vertices, this._outputDimensions ) );
+		this._geometry.setAttribute( 'normal', new THREE.BufferAttribute( this._normals, 3 ) );
+		this._geometry.setAttribute( 'uv', new THREE.BufferAttribute( this._uvs, 2 ) );
 
 		this._currentPointIndex = 0; //used during updates as a pointer to the buffer
 
@@ -108,23 +109,25 @@ class SurfaceOutput extends OutputNode{
 		this.numCallsPerActivation = root.numCallsPerActivation;
 		this.itemDimensions = root.itemDimensions;
 
-		// perhaps instead of generating a whole new array, this can reuse the old one?
-		let vertices = new Float32Array(this.numCallsPerActivation * this._outputDimensions);
-		let normals = new Float32Array(this.numCallsPerActivation * 3);
-		let uvs = new Float32Array(this.numCallsPerActivation * 2);
+
+		this._vertices = new Float32Array(this.numCallsPerActivation * this._outputDimensions);
+		this._normals = new Float32Array(this.numCallsPerActivation * 3);
+		this._uvs = new Float32Array(this.numCallsPerActivation * 2);
+
+		// build geometry
+
+        this._geometry.deleteAttribute('position');
+        this._geometry.deleteAttribute('normal');
+        this._geometry.deleteAttribute('uv');
+
+		this._geometry.setAttribute( 'position', new THREE.BufferAttribute( this._vertices, this._outputDimensions ) );
+		this._geometry.setAttribute( 'normal', new THREE.BufferAttribute( this._normals, 3 ) );
+		this._geometry.setAttribute( 'uv', new THREE.BufferAttribute( this._uvs, 2 ) );
+
 
 		let positionAttribute = this._geometry.attributes.position;
-		this._vertices = vertices;
-		positionAttribute.setArray(this._vertices);
-		positionAttribute.needsUpdate = true;
-
 		let normalAttribute = this._geometry.attributes.normal;
-		this._normals = normals;
-		normalAttribute.setArray(this._normals);
-		normalAttribute.needsUpdate = true;
-
 		let uvAttribute = this._geometry.attributes.uv;
-
 
 		//assert this.itemDimensions[0] * this.itemDimensions[1] = this.numCallsPerActivation and this._outputDimensions == 2
 		var indices = [];
@@ -157,18 +160,15 @@ class SurfaceOutput extends OutputNode{
 
 				let pointIndex = i + j * this.itemDimensions[1];
 				//set normal to [0,0,1] as a temporary value
-				normals[(pointIndex)*3] = 0;
-				normals[(pointIndex)*3+1] = 0;
-				normals[(pointIndex)*3+2] = 1;
+				this._normals[(pointIndex)*3] = 0;
+				this._normals[(pointIndex)*3+1] = 0;
+				this._normals[(pointIndex)*3+2] = 1;
 
 				//uvs
-				uvs[(pointIndex)*2] = j/(this.itemDimensions[0]-1);
-				uvs[(pointIndex)*2+1] = i/(this.itemDimensions[1]-1);
+				this._uvs[(pointIndex)*2] = j/(this.itemDimensions[0]-1);
+				this._uvs[(pointIndex)*2+1] = i/(this.itemDimensions[1]-1);
 			}
 		}
-
-		this._uvs = uvs;
-		uvAttribute.setArray(this._uvs);
 		uvAttribute.needsUpdate = true;
 
 		this._geometry.setIndex( indices );
@@ -220,7 +220,7 @@ class SurfaceOutput extends OutputNode{
             let vert2Index = indexArray[3*faceNo+1];
             let vert3Index = indexArray[3*faceNo+2];
 
-            let centroidX = (positionArray[3*vert1Index] +positionArray[3*vert2Index]  +positionArray[3*vert3Index])/3;
+            let centroidX = (positionArray[3*vert1Index]  +positionArray[3*vert2Index]  +positionArray[3*vert3Index])  /3;
 		    let centroidY = (positionArray[3*vert1Index+1]+positionArray[3*vert2Index+1]+positionArray[3*vert3Index+1])/3; //Y
 			let centroidZ = (positionArray[3*vert1Index+2]+positionArray[3*vert2Index+2]+positionArray[3*vert3Index+2])/3;
 
@@ -277,7 +277,7 @@ class SurfaceOutput extends OutputNode{
 				let a = i + j * this.itemDimensions[1];
 				let b,c;
 
-				//Tangents are calculated with finite differences - For (x,y), compute the partial derivatives using (x+1,y) and (x,y+1) and cross them. But if you're at theborder, x+1 and y+1 might not exist. So in that case we go backwards and use (x-1,y) and (x,y-1) instead.
+				//Tangents are calculated with finite differences - For (x,y), compute the partial derivatives using (x+1,y) and (x,y+1) and cross them. But if you're at the border, x+1 and y+1 might not exist. So in that case we go backwards and use (x-1,y) and (x,y-1) instead.
 				//When that happens, the vector subtraction will subtract the wrong way, introducing a factor of -1 into the cross product term. So negationFactor keeps track of when that happens and is multiplied again to cancel it out.
 				negationFactor = 1; 
 

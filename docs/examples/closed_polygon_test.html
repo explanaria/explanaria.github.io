@@ -39,6 +39,8 @@
         .add(new EXP.Transformation({'expr':(i,t,x,y) => [x+Math.cos(t), y+Math.cos(t)]})) //slight wobble
         .add(new EXP.ClosedPolygonOutput({color: 0x00ff55}));
 
+    window.polygon = polygon;
+
 	three.on("update",function(time){
 		grid.activate(time.t);
 		area.activate(time.t);

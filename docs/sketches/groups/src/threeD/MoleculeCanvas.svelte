@@ -1,8 +1,10 @@
 <script type="module">
     import {kyaniteData, andalusiteData, sillimaniteData} from "./polymorphdata.js";
+    import {getAtomColor} from "../colors.js";
     import { THREE } from "../../../../resources/build/explanaria-bundle.js";
     import * as EXP from "../../../../resources/build/explanaria-bundle.js";
     import {onMount} from "svelte";
+    import {attachCanvas, three} from "../sharedthreejscanvas.js";
 
     const atomRadius = 0.5;
     const widthSegments = 32;
@@ -11,14 +13,6 @@
     let spheregeo = new THREE.SphereGeometry(atomRadius, widthSegments, heightSegments);
     let material = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors, color: "green"});
 
-    console.log(kyaniteData)
-
-    function getAtomColor(atomName){
-        if(atomName == "O")return "red";
-        if(atomName == "Al")return "grey";
-        if(atomName == "Si")return "blue";
-        return "green";
-    }
 
     let materialsCache = new Map();
     function getAtomMaterial(atomName){
@@ -108,11 +102,11 @@
     }
 
 
-    let three, controls, fps=0;
+    let controls, fps=0;
 
     onMount(() => {  
+        let canvas = attachCanvas("threecanvas", "threecanvas")
 
-        three = EXP.setupThree(document.getElementById("threecanvas"));
         window.three = three;
 	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
@@ -139,11 +133,12 @@
           var far = 25;
         three.scene.fog = new THREE.Fog(color, near, far);*/
     })
+    /* todo: onDestroy() */
 
 </script>
 
 <style>
-    #threecanvas{
+    .threecanvascontainer{
         width:100%;
         height:100%;
         border-left: 1px solid gray;
@@ -152,5 +147,5 @@
 </style>
 
 
-<div style:position="absolute" style:top="0 px" style:right="0 px">Fps: {fps}</div>
-<canvas id="threecanvas"/>
+<div style:position="absolute" style:top="0%" style:text-align="right">Fps: {fps}</div>
+<div class="threecanvascontainer" id="threecanvas" /> <!-- three.hs canvas attached here -->

@@ -26,7 +26,8 @@
             //d6group.isGenerator(element) || 
             element.name == "e")
         ), //only e visible to start
-        isArrowVisibleMap: isArrowVisibleMap
+        isArrowVisibleMap: isArrowVisibleMap,
+        showgroup: true,
     }
 
     //controlling the orientation of the triangle
@@ -82,6 +83,7 @@
     let lastTime = 0;
     let drawLoopEnabled = true;
     function draw(currentTime){
+        if(!drawLoopEnabled)return;
         let delta = (currentTime - lastTime)/1000;
         ctx = canvas.getContext("2d");
 
@@ -198,10 +200,12 @@
             </div>
 
             <div class="grouppart">
+                {#if data.showgroup}
                 <div class="highlight" 
                     style:left={elemPositions !== undefined ? elemPositions.get(currentOrientation)[0] + "em":""} 
                     style:top={elemPositions !== undefined ? elemPositions.get(currentOrientation)[1]+ "em":""} />
                 <D6Group {...data} bind:positions={elemPositions} />
+                {/if}
             </div>
         </div>
         <slot name="textpart">

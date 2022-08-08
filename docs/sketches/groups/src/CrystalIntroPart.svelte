@@ -121,10 +121,19 @@
         </div>
         <div class="exp-slide">
             So do andalusite and kyanite repeat in the same way? Or a different way? What would "repeating in a different way" even mean?
+            <br>
 
-            We don't really have the words to describe these patterns in everyday language, so mathematicians invented their own: the language of  <b>group theory</b>. 
+            We don't really have the words to describe these patterns in everyday language, so mathematicians invented their own: the language of <b>group theory</b>. 
+
+            <br>
+            This explanarian presentation is an introduction to group theory, from the point of view of understanding crystals. When I was first learning group theory, it was taught very abstractly, and I had a hard time understanding why mathematicians cared about it so much.
         </div>
 
+        <div class="exp-slide">
+            <div class="frostedbg">
+                Group theory is usually used to talk about symmetry, but it also can be defined much more abstractly. Why does group theory keep cropping up everywhere in math? For one thing, it's the language used to talk about symmetry. But another way to describe group theory is more abstract, involving combining and undoing. Since there's lots of things in math which can be combined and undone, like adding numbers or applying rotations, there's lots of places in math to use the ideas of group theory.
+            </div>
+        </div>
         <!-->
         <div class="exp-slide frostedbg">
             Group theory usually isn't taught using crystals and pictures. In fact, it's usually taught much more abstractly. Being able to manipulate 

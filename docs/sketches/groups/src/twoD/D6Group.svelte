@@ -21,8 +21,8 @@
     export let positions = new Map();
     d6group.elements.forEach(element => {positions.set(element, [0,0])}) //fill this dict with one position per element
 
-    let startPos = [12,13];
-    let outerRadius = 12;
+    let startPos = [12,12];
+    let outerRadius = 11;
     let innerRadius = 4.5;
     let rotationRadians = 120 * Math.PI / 180;
     let startRadians = -Math.PI/2; //start upwards

@@ -63,23 +63,59 @@
         return newbonds; //includes old bonds too
     }
 
-    function makeBallStickDiagram(crystaldata, extraAdirectionCells=1, extraBdirectionCells=1, extraCdirectionCells=1){
-        let parent = new THREE.Object3D();
+
+    const dummy = new THREE.Object3D();
+    function setInstancePositionAndScale(instancedmesh, instanceIndex, xPos, yPos, zPos, scale){
+        //THREE.InstancedMesh only takes a matrix4, not position and scale,
+        //this uses a THREE.Object3D() to calculate a matrix with the appropriate position and scale components
+        dummy.position.set(xPos, yPos, zPos)
+        dummy.scale.setScalar(scale)
+        
+        instancedmesh.setMatrixAt(instanceIndex, dummy.matrix);
+    }
+
+
+    
+    function numAtomsIncludingSymmetryClones(crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells){
+        let total = 0;
         for(let atomType in crystaldata.atoms){
             let atoms = crystaldata.atoms[atomType];
-            for(let i=0;i<atoms.length;i++){
+            let numAtoms = atoms.length;
+            numAtoms *= 2*extraAdirectionCells + 1;
+            numAtoms *= 2*extraBdirectionCells + 1;
+            numAtoms *= 2*extraCdirectionCells + 1;
+            total += numAtoms;
+        }
+        return total;
+    }
 
+    function makeBallStickDiagram(crystaldata, extraAdirectionCells=1, extraBdirectionCells=1, extraCdirectionCells=1){
+        let parent = new THREE.Object3D();
+
+        let numAtoms = numAtomsIncludingSymmetryClones(crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells)
+        let instanceIndex = 0;
+
+        let ballMesh = new THREE.InstancedMesh(spheregeo, material, numAtoms)
+
+        for(let atomType in crystaldata.atoms){
+            let atoms = crystaldata.atoms[atomType];
+            let atomColor = getAtomColor(atomType);
+            for(let i=0;i<atoms.length;i++){
                 let originalAtomPos = atoms[i];
                 for(let atomPos of getSymmetryClones(originalAtomPos, crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells)){
-                    let material = getAtomMaterial(atomType);
-                    let mesh = new THREE.Mesh(spheregeo, material)
-                    //mesh.color.set(getAtomColor(atomType))
-                    mesh.position.set(atomPos[0], atomPos[1],atomPos[2])
-                    mesh.scale.setScalar(0.5)
-                    parent.add(mesh)
+                    const atomScale = 0.5;
+
+                    ballMesh.setColorAt(instanceIndex, atomColor)
+                    setInstancePositionAndScale(ballMesh, instanceIndex, 
+                        atomPos[0], atomPos[1],atomPos[2],
+                        atomScale)
+                    instanceIndex++;
                 }
             }
+            ballMesh.instanceMatrix.needsUpdate = true;
+            ballMesh.instanceColor.needsUpdate = true;
         }
+        parent.add(ballMesh)
 
         let bondArray = computeBondSymmetryClones(crystaldata.bonds, crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells);
         let expbonds = new EXP.Area({bounds: [[0, bondArray.length-1], [0,1]], numItems: [bondArray.length, 2]});

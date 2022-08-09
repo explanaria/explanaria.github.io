@@ -11,7 +11,7 @@
     const heightSegments = widthSegments/2;
 
     let spheregeo = new THREE.SphereGeometry(atomRadius, widthSegments, heightSegments);
-    let material = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors, color: "green"});
+    let material = new THREE.MeshBasicMaterial({color: "white"});
 
 
     let materialsCache = new Map();
@@ -65,11 +65,12 @@
 
 
     const dummy = new THREE.Object3D();
-    function setInstancePositionAndScale(instancedmesh, instanceIndex, xPos, yPos, zPos, scale){
+    function setInstancePositionAndScale(instancedmesh, instanceIndex, xPos, yPos, zPos, scale=1){
         //THREE.InstancedMesh only takes a matrix4, not position and scale,
         //this uses a THREE.Object3D() to calculate a matrix with the appropriate position and scale components
         dummy.position.set(xPos, yPos, zPos)
         dummy.scale.setScalar(scale)
+        dummy.updateMatrix();
         
         instancedmesh.setMatrixAt(instanceIndex, dummy.matrix);
     }
@@ -89,17 +90,18 @@
         return total;
     }
 
-    function makeBallStickDiagram(crystaldata, extraAdirectionCells=1, extraBdirectionCells=1, extraCdirectionCells=1){
+    function makeBallStickDiagram(crystaldata, extraAdirectionCells=2, extraBdirectionCells=2, extraCdirectionCells=2){
         let parent = new THREE.Object3D();
 
         let numAtoms = numAtomsIncludingSymmetryClones(crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells)
+        console.log(numAtoms)
         let instanceIndex = 0;
 
         let ballMesh = new THREE.InstancedMesh(spheregeo, material, numAtoms)
 
         for(let atomType in crystaldata.atoms){
             let atoms = crystaldata.atoms[atomType];
-            let atomColor = getAtomColor(atomType);
+            let atomColor = new THREE.Color(getAtomColor(atomType));
             for(let i=0;i<atoms.length;i++){
                 let originalAtomPos = atoms[i];
                 for(let atomPos of getSymmetryClones(originalAtomPos, crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells)){
@@ -116,6 +118,7 @@
             ballMesh.instanceColor.needsUpdate = true;
         }
         parent.add(ballMesh)
+        window.ballMesh = ballMesh;
 
         let bondArray = computeBondSymmetryClones(crystaldata.bonds, crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells);
         let expbonds = new EXP.Area({bounds: [[0, bondArray.length-1], [0,1]], numItems: [bondArray.length, 2]});
@@ -129,7 +132,11 @@
             (i,t, x,y,z) => [parent.position.x + x * parent.scale.x, parent.position.y + y * parent.scale.y, parent.position.z + z * parent.scale.z]
         }))
         .add(expbondsoutput)
-        three.on("update", (data) => {expbonds.activate()})
+        //three.on("update", (data) => {expbonds.activate()})
+
+        //optimization: only activate the EXP thing once, giving a static mesh, then attach it to the parent's transform
+        expbonds.activate();
+        parent.add(expbondsoutput.mesh)
 
 
         let scaleVal = 5 * 1/crystaldata.biggestBasisLength;
@@ -147,19 +154,21 @@
 	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 
-        three.camera.position.z = 20;
+        three.camera.position.z = 40;
         //three.camera.zoom = 10;
 
 
         
         let [kyanite, expkyanitebonds] = makeBallStickDiagram(kyaniteData);
         three.scene.add(kyanite)
-        kyanite.position.x -= 4*3;
+        kyanite.position.x -= 4*5;
+        kyanite.position.y -= 5;
 
 
         let [andalusite, expandalusitebonds] = makeBallStickDiagram(andalusiteData);
         three.scene.add(andalusite)
-        andalusite.position.x += 4*3;
+        andalusite.position.x += 4*5;
+        andalusite.position.y -= 5;
 
 
         three.on("update", (data) => {fps = Math.round(1/data.realtimeDelta)})

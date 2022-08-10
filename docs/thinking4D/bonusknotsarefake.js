@@ -274,12 +274,16 @@ function setup(){
 
     bonkEffect = new THREE.Mesh(new THREE.RingGeometry(0.2,0.3,32),new THREE.MeshBasicMaterial({color: blue, opacity: 0.0, transparent: true, side: THREE.DoubleSide}));
     //make the ring spiky
-    for(let i=0;i<bonkEffect.geometry.vertices.length;i++){
+    let vertices = bonkEffect.geometry.attributes.position;
+    for(let i=0;i<vertices.count;i++){
         if(i % 2 == 0){
-            bonkEffect.geometry.vertices[i].multiplyScalar(1.3);
+            const bigfactor = 1.3;
+            vertices.setX(i, vertices.getX(i) * bigfactor);
+            vertices.setY(i, vertices.getY(i) * bigfactor);
+            vertices.setZ(i, vertices.getZ(i) * bigfactor);
         }
     }
-    bonkEffect.geometry.verticesNeedUpdate =true
+    vertices.needsUpdate =true
     three.scene.add(bonkEffect);
 
     twoDCanvas = new overlayCanvas("twoDcanvas");

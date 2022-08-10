@@ -151,17 +151,28 @@ function setup(){
     let boxWidth = 2; //width of the area in R^3 that's being passed into this parametrization.
 
     let cubeGeom = new THREE.BoxGeometry(boxWidth,boxWidth,boxWidth);
-    for(var i=0;i<4;i++){
-        cubeGeom.faces[i].color = new THREE.Color(coordinateLine1ColorDarker);
-    }
-    for(var i=4;i<8;i++){
-        cubeGeom.faces[i].color = new THREE.Color(coordinateLine2ColorDarker);
-    }
-    for(var i=8;i<12;i++){
-        cubeGeom.faces[i].color = new THREE.Color(coordinateLine3ColorDarker);
-    }
+    //apply vertex colors to the box so you can see where the sides that are glued are
+    let colors = new THREE.BufferAttribute(new Float32Array(24 * 3), 3)
+    cubeGeom.setAttribute("color", colors)
 
-    cube = new THREE.Mesh(cubeGeom, new THREE.MeshBasicMaterial({ opacity:1, side: THREE.BackSide, vertexColors: THREE.FaceColors, transparent: true}));
+    for(var i=0;i<8;i++){
+        let color = new THREE.Color(coordinateLine1ColorDarker).toArray();
+        colors.setXYZ(i, ...color);
+    }
+    for(var i=8;i<16;i++){
+        let color = new THREE.Color(coordinateLine2ColorDarker).toArray();
+        colors.setXYZ(i, ...color);
+    }
+    for(var i=16;i<24;i++){
+        let color = new THREE.Color(coordinateLine3ColorDarker).toArray();
+        colors.setXYZ(i, ...color);
+    }
+    window.colors = colors;
+    window.coordinateLine3ColorDarker = coordinateLine3ColorDarker;
+    window.coordinateLine2ColorDarker = coordinateLine2ColorDarker;
+    window.coordinateLine1ColorDarker = coordinateLine1ColorDarker;
+
+    cube = new THREE.Mesh(cubeGeom, new THREE.MeshBasicMaterial({ opacity:1, side: THREE.BackSide, vertexColors: true, transparent: true}));
     three.scene.add(cube);
 
     let cubeMaterial2 = new THREE.MeshBasicMaterial({ opacity:0.2, side: THREE.BackSide, vertexColors: THREE.FaceColors, transparent: true});

@@ -12,156 +12,154 @@
  * mesh — Any mesh object
  * position — Position of the decal projector
  * orientation — Orientation of the decal projector
- * size — Size of the decal projector
+ * this.size — this.size of the decal projector
  *
  * reference: http://blog.wolfire.com/2009/06/how-to-project-decals/
  *
  */
 
-var DecalGeometry = function ( mesh, position, orientation, size ) {
+class DecalGeometry extends THREE.BufferGeometry{
+    constructor( mesh, position, orientation, size ) {
 
-	THREE.BufferGeometry.call( this );
+        super();
+        this.mesh = mesh;
+        this.size = size;
 
-	// buffers
+	    // buffers
 
-	var vertices = [];
-	var normals = [];
-	var uvs = [];
+	    var vertices = [];
+	    var normals = [];
+	    var uvs = [];
 
-	// helpers
+	    // helpers
 
-	var plane = new THREE.Vector3();
+	    var plane = new THREE.Vector3();
 
-	// this matrix represents the transformation of the decal projector
+	    // this matrix represents the transformation of the decal projector
 
-	var projectorMatrix = new THREE.Matrix4();
-	projectorMatrix.makeRotationFromEuler( orientation );
-	projectorMatrix.setPosition( position );
+	    var projectorMatrix = new THREE.Matrix4();
+	    projectorMatrix.makeRotationFromEuler( orientation );
+	    projectorMatrix.setPosition( position );
 
-	var projectorMatrixInverse = new THREE.Matrix4().getInverse( projectorMatrix );
+	    this.projectorMatrixInverse = new THREE.Matrix4().copy( projectorMatrix ).invert();
 
-	// generate buffers
+	    // generate buffers
 
-	generate();
+	    var i;
+	    var geometry = new THREE.BufferGeometry();
+	    var decalVertices = [];
 
-	// build geometry
+	    var vertex = new THREE.Vector3();
+	    var normal = new THREE.Vector3();
 
-	this.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
-	this.addAttribute( 'uv', new THREE.Float32BufferAttribute( uvs, 2 ) );
+	    // handle different geometry types
 
-	function generate() {
+	    if ( mesh.geometry.isGeometry ) {
 
-		var i;
-		var geometry = new THREE.BufferGeometry();
-		var decalVertices = [];
+		    geometry.fromGeometry( mesh.geometry );
 
-		var vertex = new THREE.Vector3();
-		var normal = new THREE.Vector3();
+	    } else {
 
-		// handle different geometry types
+		    geometry.copy( mesh.geometry );
 
-		if ( mesh.geometry.isGeometry ) {
+	    }
 
-			geometry.fromGeometry( mesh.geometry );
+	    var positionAttribute = geometry.attributes.position;
+	    var normalAttribute = geometry.attributes.normal;
 
-		} else {
+	    // first, create an array of 'DecalVertex' objects
+	    // three consecutive 'DecalVertex' objects represent a single face
+	    //
+	    // this data structure will be later used to perform the clipping
 
-			geometry.copy( mesh.geometry );
+	    if ( geometry.index !== null ) {
 
-		}
+		    // indexed THREE.BufferGeometry
 
-		var positionAttribute = geometry.attributes.position;
-		var normalAttribute = geometry.attributes.normal;
+		    var index = geometry.index;
 
-		// first, create an array of 'DecalVertex' objects
-		// three consecutive 'DecalVertex' objects represent a single face
-		//
-		// this data structure will be later used to perform the clipping
+		    for ( i = 0; i < index.count; i ++ ) {
 
-		if ( geometry.index !== null ) {
+			    vertex.fromBufferAttribute( positionAttribute, index.getX( i ) );
+			    normal.fromBufferAttribute( normalAttribute, index.getX( i ) );
 
-			// indexed THREE.BufferGeometry
+			    this.pushDecalVertex( decalVertices, vertex, normal );
 
-			var index = geometry.index;
+		    }
 
-			for ( i = 0; i < index.count; i ++ ) {
+	    } else {
 
-				vertex.fromBufferAttribute( positionAttribute, index.getX( i ) );
-				normal.fromBufferAttribute( normalAttribute, index.getX( i ) );
+		    // non-indexed THREE.BufferGeometry
 
-				pushDecalVertex( decalVertices, vertex, normal );
+		    for ( i = 0; i < positionAttribute.count; i ++ ) {
 
-			}
+			    vertex.fromBufferAttribute( positionAttribute, i );
+			    normal.fromBufferAttribute( normalAttribute, i );
 
-		} else {
+			    this.pushDecalVertex( decalVertices, vertex, normal );
 
-			// non-indexed THREE.BufferGeometry
+		    }
 
-			for ( i = 0; i < positionAttribute.count; i ++ ) {
+	    }
 
-				vertex.fromBufferAttribute( positionAttribute, i );
-				normal.fromBufferAttribute( normalAttribute, i );
+	    // second, clip the geometry so that it doesn't extend out from the projector
 
-				pushDecalVertex( decalVertices, vertex, normal );
+	    decalVertices = this.clipGeometry( decalVertices, plane.set( 1, 0, 0 ) );
+	    decalVertices = this.clipGeometry( decalVertices, plane.set( - 1, 0, 0 ) );
+	    decalVertices = this.clipGeometry( decalVertices, plane.set( 0, 1, 0 ) );
+	    decalVertices = this.clipGeometry( decalVertices, plane.set( 0, - 1, 0 ) );
+	    decalVertices = this.clipGeometry( decalVertices, plane.set( 0, 0, 1 ) );
+	    decalVertices = this.clipGeometry( decalVertices, plane.set( 0, 0, - 1 ) );
 
-			}
+	    // third, generate final vertices, normals and uvs
 
-		}
+	    for ( i = 0; i < decalVertices.length; i ++ ) {
 
-		// second, clip the geometry so that it doesn't extend out from the projector
+		    var decalVertex = decalVertices[ i ];
 
-		decalVertices = clipGeometry( decalVertices, plane.set( 1, 0, 0 ) );
-		decalVertices = clipGeometry( decalVertices, plane.set( - 1, 0, 0 ) );
-		decalVertices = clipGeometry( decalVertices, plane.set( 0, 1, 0 ) );
-		decalVertices = clipGeometry( decalVertices, plane.set( 0, - 1, 0 ) );
-		decalVertices = clipGeometry( decalVertices, plane.set( 0, 0, 1 ) );
-		decalVertices = clipGeometry( decalVertices, plane.set( 0, 0, - 1 ) );
+		    // create texture coordinates (we are still in projector space)
 
-		// third, generate final vertices, normals and uvs
+		    uvs.push(
+			    0.5 + ( decalVertex.position.x / this.size.x ),
+			    0.5 + ( decalVertex.position.y / this.size.y )
+		    );
 
-		for ( i = 0; i < decalVertices.length; i ++ ) {
+		    // transform the vertex back to world space
 
-			var decalVertex = decalVertices[ i ];
+		    decalVertex.position.applyMatrix4( projectorMatrix );
 
-			// create texture coordinates (we are still in projector space)
+		    // now create vertex and normal buffer data
 
-			uvs.push(
-				0.5 + ( decalVertex.position.x / size.x ),
-				0.5 + ( decalVertex.position.y / size.y )
-			);
+		    vertices.push( decalVertex.position.x, decalVertex.position.y, decalVertex.position.z );
+		    normals.push( decalVertex.normal.x, decalVertex.normal.y, decalVertex.normal.z );
 
-			// transform the vertex back to world space
+	    }
 
-			decalVertex.position.applyMatrix4( projectorMatrix );
+	    // build geometry
 
-			// now create vertex and normal buffer data
-
-			vertices.push( decalVertex.position.x, decalVertex.position.y, decalVertex.position.z );
-			normals.push( decalVertex.normal.x, decalVertex.normal.y, decalVertex.normal.z );
-
-		}
-
+	    this.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+	    this.setAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
+	    this.setAttribute( 'uv', new THREE.Float32BufferAttribute( uvs, 2 ) );
 	}
 
-	function pushDecalVertex( decalVertices, vertex, normal ) {
+	pushDecalVertex( decalVertices, vertex, normal ) {
 
 		// transform the vertex to world space, then to projector space
 
-		vertex.applyMatrix4( mesh.matrixWorld );
-		vertex.applyMatrix4( projectorMatrixInverse );
+		vertex.applyMatrix4( this.mesh.matrixWorld );
+		vertex.applyMatrix4( this.projectorMatrixInverse );
 
-		normal.transformDirection( mesh.matrixWorld );
+		normal.transformDirection( this.mesh.matrixWorld );
 
 		decalVertices.push( new DecalVertex( vertex.clone(), normal.clone() ) );
 
 	}
 
-	function clipGeometry( inVertices, plane ) {
+	clipGeometry( inVertices, plane ) {
 
 		var outVertices = [];
 
-		var s = 0.5 * Math.abs( size.dot( plane ) );
+		var s = 0.5 * Math.abs( this.size.dot( plane ) );
 
 		// a single iteration clips one face,
 		// which consists of three consecutive 'DecalVertex' objects
@@ -204,8 +202,8 @@ var DecalGeometry = function ( mesh, position, orientation, size ) {
 
 						nV1 = inVertices[ i + 1 ];
 						nV2 = inVertices[ i + 2 ];
-						nV3 = clip( inVertices[ i ], nV1, plane, s );
-						nV4 = clip( inVertices[ i ], nV2, plane, s );
+						nV3 = this.clip( inVertices[ i ], nV1, plane, s );
+						nV4 = this.clip( inVertices[ i ], nV2, plane, s );
 
 					}
 
@@ -213,8 +211,8 @@ var DecalGeometry = function ( mesh, position, orientation, size ) {
 
 						nV1 = inVertices[ i ];
 						nV2 = inVertices[ i + 2 ];
-						nV3 = clip( inVertices[ i + 1 ], nV1, plane, s );
-						nV4 = clip( inVertices[ i + 1 ], nV2, plane, s );
+						nV3 = this.clip( inVertices[ i + 1 ], nV1, plane, s );
+						nV4 = this.clip( inVertices[ i + 1 ], nV2, plane, s );
 
 						outVertices.push( nV3 );
 						outVertices.push( nV2.clone() );
@@ -231,8 +229,8 @@ var DecalGeometry = function ( mesh, position, orientation, size ) {
 
 						nV1 = inVertices[ i ];
 						nV2 = inVertices[ i + 1 ];
-						nV3 = clip( inVertices[ i + 2 ], nV1, plane, s );
-						nV4 = clip( inVertices[ i + 2 ], nV2, plane, s );
+						nV3 = this.clip( inVertices[ i + 2 ], nV1, plane, s );
+						nV4 = this.clip( inVertices[ i + 2 ], nV2, plane, s );
 
 					}
 
@@ -255,8 +253,8 @@ var DecalGeometry = function ( mesh, position, orientation, size ) {
 					if ( ! v1Out ) {
 
 						nV1 = inVertices[ i ].clone();
-						nV2 = clip( nV1, inVertices[ i + 1 ], plane, s );
-						nV3 = clip( nV1, inVertices[ i + 2 ], plane, s );
+						nV2 = this.clip( nV1, inVertices[ i + 1 ], plane, s );
+						nV3 = this.clip( nV1, inVertices[ i + 2 ], plane, s );
 						outVertices.push( nV1 );
 						outVertices.push( nV2 );
 						outVertices.push( nV3 );
@@ -266,8 +264,8 @@ var DecalGeometry = function ( mesh, position, orientation, size ) {
 					if ( ! v2Out ) {
 
 						nV1 = inVertices[ i + 1 ].clone();
-						nV2 = clip( nV1, inVertices[ i + 2 ], plane, s );
-						nV3 = clip( nV1, inVertices[ i ], plane, s );
+						nV2 = this.clip( nV1, inVertices[ i + 2 ], plane, s );
+						nV3 = this.clip( nV1, inVertices[ i ], plane, s );
 						outVertices.push( nV1 );
 						outVertices.push( nV2 );
 						outVertices.push( nV3 );
@@ -277,8 +275,8 @@ var DecalGeometry = function ( mesh, position, orientation, size ) {
 					if ( ! v3Out ) {
 
 						nV1 = inVertices[ i + 2 ].clone();
-						nV2 = clip( nV1, inVertices[ i ], plane, s );
-						nV3 = clip( nV1, inVertices[ i + 1 ], plane, s );
+						nV2 = this.clip( nV1, inVertices[ i ], plane, s );
+						nV3 = this.clip( nV1, inVertices[ i + 1 ], plane, s );
 						outVertices.push( nV1 );
 						outVertices.push( nV2 );
 						outVertices.push( nV3 );
@@ -305,7 +303,7 @@ var DecalGeometry = function ( mesh, position, orientation, size ) {
 
 	}
 
-	function clip( v0, v1, p, s ) {
+	clip( v0, v1, p, s ) {
 
 		var d0 = v0.position.dot( p ) - s;
 		var d1 = v1.position.dot( p ) - s;

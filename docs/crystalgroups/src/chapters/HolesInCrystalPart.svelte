@@ -87,6 +87,12 @@
         //TODO: show lines
 
         await presentation.nextSlide();
+
+        presentation.ResetTo(three.camera.position, {x: cameraRadius, y:0, z: 0});
+        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
+
+        await presentation.nextSlide();
+        await presentation.nextSlide();
         presentation.ResetTo(three.camera.position, {x: 0, y:0, z: cameraRadius});
         presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
 

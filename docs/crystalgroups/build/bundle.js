@@ -568,444 +568,6 @@ var app = (function () {
         $inject_state() { }
     }
 
-    class GroupElement{
-        constructor(name, permutation){
-            this.name = name;
-            this.permutation = permutation; //permutation is an object like {1:3,2:4}
-            if(permutation.constructor === String){
-                this.permutation = this.parsePermutationNotation(permutation);
-            }
-        }
-        parsePermutationNotation(string){
-            if(string[0] !== '(' && string[string.length-1] !== ')'){
-                throw new ValueError("permutations must start with ( and end with )")
-            }
-            string = string.substring(1, string.length-1); //remove leading ( and trailing )
-
-            let permutationMap = {};
-            let biggestNumber = 1;
-
-            //todo: check for duplicates
-
-            string.split(")(").forEach(orbit => {
-                for(let i=0;i<orbit.length;i++){
-                    biggestNumber = Math.max(biggestNumber, parseInt(orbit[i]));
-                    permutationMap[parseInt(orbit[i])] = parseInt(orbit[(i+1) % orbit.length]); //this would be =orbit[i+1] but it needs to loop around
-                }
-            });
-            //if any numbers weren't mentioned, like a permutation (23) doesn't mention 1, add them
-            for(let i=1;i<biggestNumber;i++){
-                if(permutationMap[i] === undefined){
-                    permutationMap[i] = i;
-                }
-            }
-            return permutationMap
-        }
-    }
-
-    function reduceName(elem, relations){
-        //relations is an object of the form {"rfr":"f", "rrr":"", "ff":""}
-        if(relations === undefined){
-            return elem;
-        }
-        let elname = elem.name;
-
-        for(let i=0;i<5;i++){ //arbitrary 5 iterations
-            Object.keys(relations).forEach( rel => {
-                    elname = elname.replace(rel, relations[rel]);
-            });
-        }
-        return new GroupElement(elname, elem.permutation)
-    }
-
-    function compose(el1, el2){
-        // x * y = xy, which means do y then x
-        let x = el1.permutation;
-        let y = el2.permutation;
-        let composed = {};
-        for (let i in y){
-            composed[i] = x[y[i]];
-        }
-
-        let newName = el1.name + el2.name; // yes i'm representing as contatenation. this doesn't leave room for inverses
-
-        return new GroupElement(newName, composed);
-    }
-
-    function permutationIsInList(elem, alist){
-        let elempermutation = elem.permutation;
-        for(let existingelem of alist){
-            let match = true;
-            //check if elempermutation is the same map as permutation
-            let permutation = existingelem.permutation;
-            for(let value in permutation){
-                if(permutation[value] != elempermutation[value]){
-                    match = false;
-                    break;
-                }
-            }
-            if(match){
-                return true;
-            }
-        }
-        //we checked every element, didn't match any of them
-        return false
-    }
-
-    class Group{
-        //represents a finite group. give it some generators and it'll compute all the elements
-        //assumption: elements have unique names
-        constructor(generators, relations=[], sizeOfUnderlyingPermutationGroup=3){
-            this.generators = generators;
-            this.relations = relations; //mostly just used to simplify names. optional
-            this.elements = this.computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup);
-
-            this.nameLookupTable = {};
-            for(let elem of this.elements){
-                this.nameLookupTable[elem.name] = elem;
-            }
-        }
-        getElemByName(name){
-            if(this.nameLookupTable[name] !== undefined){
-                return this.nameLookupTable[name];
-            }
-            throw new ReferenceError("nothing named" + name + "is in this group!");
-        }
-        getElementByName(name){
-            return this.getElemByName(name)
-        }
-        isGenerator(elem){
-            return this.generators.indexOf(elem) != -1;
-        }
-        multiply(elem1, elem2){
-            if(this.elements.indexOf(elem1) == -1 || this.elements.indexOf(elem2) == -1){
-                throw new ReferenceError(elem1, elem2, "aren't in this group!");
-            }
-            let newelem = compose(elem1, elem2);
-
-            //now figure out which existing element it is. there's gotta be a better way to do this
-            for(let elem of this.elements){
-                let match = true;
-                for(let number in elem.permutation){
-                    if(elem.permutation[number] != newelem.permutation[number]){
-                        match = false;
-                        break
-                    }
-                }
-                if(match){
-                    return elem;
-                }
-            }
-
-            throw new Error("I composed", elem1, elem2, "but got something not in this group!", newelem);
-        }
-        computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup=3){
-
-            let groupelements = [new GroupElement("e", "("+sizeOfUnderlyingPermutationGroup+")")]; //start with identity
-
-            //add generators in the first step.
-            //we keep track of what new elements we find each time through a loop so that once we stop finding new elements,
-            //we stop looping.
-            
-            //also, the identity is placed in groupelements so that e * a generator won't result in a new element with an "e" in the name.
-            let newelements = generators.slice();
-
-            while(newelements.length > 0){
-                groupelements = groupelements.concat(newelements);
-                newelements = [];
-
-                for(let el of groupelements){
-                    // combine each element with all generators
-                    for(let gen of generators){
-                        let newelem = compose(el, gen); 
-                        newelem = reduceName(newelem, relations);
-
-                        if(!permutationIsInList(newelem, groupelements) && !permutationIsInList(newelem, newelements)){
-                            newelements.push(newelem);
-                        }
-                    }
-                }
-            }
-            return groupelements;
-        }
-    }
-
-    const lightblue = "hsla(240, 90%, 70%, 1)";
-
-
-    const green = "hsla(120, 90%, 70%, 1)";
-    const red = "hsla(0, 90%, 70%, 1)";
-
-    const purple = "hsla(320, 90%, 70%, 1)";
-
-    //chapters 0,1
-    function getAtomColor(atomName){
-        if(atomName == "O")return "red";
-        if(atomName == "Al")return "grey";
-        if(atomName == "Si")return "blue";
-        return "green";
-    }
-
-    const chapter2linecolor = lightblue;
-    const chapter2linecolor2 = purple;
-    const chapter2linecolor3 = green;
-    const drawGeneratorsWithOutlines = false;
-    const drawEyesOnArrows = true;
-
-    const identityColor = "hsla(240, 0%, 70%, 1)";
-
-    const generatorColors = [green, red, purple, lightblue]; //subtle bug here: this will error if we use a group with more generator than there are colors here
-
-    let defaultGroupElementBorderColor = lightblue;
-
-    /* src/twoD/GroupElementDisplay.svelte generated by Svelte v3.46.4 */
-    const file$a = "src/twoD/GroupElementDisplay.svelte";
-    const get_default_slot_changes = dirty => ({ element: dirty & /*element*/ 4 });
-    const get_default_slot_context = ctx => ({ element: /*element*/ ctx[2] });
-
-    // (44:32)  
-    function fallback_block$1(ctx) {
-    	let p;
-
-    	const block = {
-    		c: function create() {
-    			p = element("p");
-    			p.textContent = "representation of the element goes here";
-    			add_location(p, file$a, 44, 12, 1245);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, p, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(p);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: fallback_block$1.name,
-    		type: "fallback",
-    		source: "(44:32)  ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$a(ctx) {
-    	let div1;
-    	let div0;
-    	let t0_value = /*element*/ ctx[2].name + "";
-    	let t0;
-    	let t1;
-    	let current;
-    	const default_slot_template = /*#slots*/ ctx[6].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[5], get_default_slot_context);
-    	const default_slot_or_fallback = default_slot || fallback_block$1(ctx);
-
-    	const block = {
-    		c: function create() {
-    			div1 = element("div");
-    			div0 = element("div");
-    			t0 = text(t0_value);
-    			t1 = space();
-    			if (default_slot_or_fallback) default_slot_or_fallback.c();
-    			attr_dev(div0, "class", "elementname svelte-1ky49vk");
-    			add_location(div0, file$a, 42, 8, 1092);
-    			attr_dev(div1, "class", "elementcontainer svelte-1ky49vk");
-    			set_style(div1, "top", /*top*/ ctx[0] + "em", false);
-    			set_style(div1, "left", /*left*/ ctx[1] + "em", false);
-    			set_style(div1, "--groupElementBorderColor", /*borderColor*/ ctx[3], false);
-    			add_location(div1, file$a, 39, 0, 962);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div1, anchor);
-    			append_dev(div1, div0);
-    			append_dev(div0, t0);
-    			append_dev(div1, t1);
-
-    			if (default_slot_or_fallback) {
-    				default_slot_or_fallback.m(div1, null);
-    			}
-
-    			current = true;
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if ((!current || dirty & /*element*/ 4) && t0_value !== (t0_value = /*element*/ ctx[2].name + "")) set_data_dev(t0, t0_value);
-
-    			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope, element*/ 36)) {
-    					update_slot_base(
-    						default_slot,
-    						default_slot_template,
-    						ctx,
-    						/*$$scope*/ ctx[5],
-    						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[5])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[5], dirty, get_default_slot_changes),
-    						get_default_slot_context
-    					);
-    				}
-    			}
-
-    			if (dirty & /*top*/ 1) {
-    				set_style(div1, "top", /*top*/ ctx[0] + "em", false);
-    			}
-
-    			if (dirty & /*left*/ 2) {
-    				set_style(div1, "left", /*left*/ ctx[1] + "em", false);
-    			}
-
-    			if (dirty & /*borderColor*/ 8) {
-    				set_style(div1, "--groupElementBorderColor", /*borderColor*/ ctx[3], false);
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(default_slot_or_fallback, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(default_slot_or_fallback, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div1);
-    			if (default_slot_or_fallback) default_slot_or_fallback.d(detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$a.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$a($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('GroupElementDisplay', slots, ['default']);
-    	let { top = 0 } = $$props;
-    	let { left = 0 } = $$props;
-    	let { element } = $$props;
-    	let { arrows = [] } = $$props;
-    	let { borderColor = defaultGroupElementBorderColor } = $$props;
-    	const writable_props = ['top', 'left', 'element', 'arrows', 'borderColor'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<GroupElementDisplay> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('top' in $$props) $$invalidate(0, top = $$props.top);
-    		if ('left' in $$props) $$invalidate(1, left = $$props.left);
-    		if ('element' in $$props) $$invalidate(2, element = $$props.element);
-    		if ('arrows' in $$props) $$invalidate(4, arrows = $$props.arrows);
-    		if ('borderColor' in $$props) $$invalidate(3, borderColor = $$props.borderColor);
-    		if ('$$scope' in $$props) $$invalidate(5, $$scope = $$props.$$scope);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		GroupElement,
-    		onMount,
-    		defaultGroupElementBorderColor,
-    		top,
-    		left,
-    		element,
-    		arrows,
-    		borderColor
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('top' in $$props) $$invalidate(0, top = $$props.top);
-    		if ('left' in $$props) $$invalidate(1, left = $$props.left);
-    		if ('element' in $$props) $$invalidate(2, element = $$props.element);
-    		if ('arrows' in $$props) $$invalidate(4, arrows = $$props.arrows);
-    		if ('borderColor' in $$props) $$invalidate(3, borderColor = $$props.borderColor);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [top, left, element, borderColor, arrows, $$scope, slots];
-    }
-
-    class GroupElementDisplay extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-
-    		init(this, options, instance$a, create_fragment$a, safe_not_equal, {
-    			top: 0,
-    			left: 1,
-    			element: 2,
-    			arrows: 4,
-    			borderColor: 3
-    		});
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "GroupElementDisplay",
-    			options,
-    			id: create_fragment$a.name
-    		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*element*/ ctx[2] === undefined && !('element' in props)) {
-    			console.warn("<GroupElementDisplay> was created without expected prop 'element'");
-    		}
-    	}
-
-    	get top() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set top(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get left() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set left(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get element() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set element(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get arrows() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set arrows(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get borderColor() {
-    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set borderColor(value) {
-    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
     function getDefaultExportFromCjs (x) {
@@ -57823,3223 +57385,6 @@ void main(){
         'default': explanariaBundle$1
     }, [explanariaBundle]));
 
-    /* src/twoD/SVGArrowLine.svelte generated by Svelte v3.46.4 */
-    const file$9 = "src/twoD/SVGArrowLine.svelte";
-
-    function create_fragment$9(ctx) {
-    	let line;
-    	let line_x__value;
-    	let line_y__value;
-    	let line_x__value_1;
-    	let line_y__value_1;
-
-    	const block = {
-    		c: function create() {
-    			line = svg_element("line");
-    			attr_dev(line, "x1", line_x__value = /*movedStartPoint*/ ctx[4][0] + "em");
-    			attr_dev(line, "y1", line_y__value = /*movedStartPoint*/ ctx[4][1] + "em");
-    			attr_dev(line, "x2", line_x__value_1 = /*displayedEndPoint*/ ctx[3][0] + "em");
-    			attr_dev(line, "y2", line_y__value_1 = /*displayedEndPoint*/ ctx[3][1] + "em");
-    			attr_dev(line, "stroke", /*stroke*/ ctx[0]);
-    			attr_dev(line, "marker-end", /*markerEnd*/ ctx[2]);
-    			attr_dev(line, "stroke-width", /*strokeWidth*/ ctx[1]);
-    			add_location(line, file$9, 37, 0, 1428);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, line, anchor);
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*movedStartPoint*/ 16 && line_x__value !== (line_x__value = /*movedStartPoint*/ ctx[4][0] + "em")) {
-    				attr_dev(line, "x1", line_x__value);
-    			}
-
-    			if (dirty & /*movedStartPoint*/ 16 && line_y__value !== (line_y__value = /*movedStartPoint*/ ctx[4][1] + "em")) {
-    				attr_dev(line, "y1", line_y__value);
-    			}
-
-    			if (dirty & /*displayedEndPoint*/ 8 && line_x__value_1 !== (line_x__value_1 = /*displayedEndPoint*/ ctx[3][0] + "em")) {
-    				attr_dev(line, "x2", line_x__value_1);
-    			}
-
-    			if (dirty & /*displayedEndPoint*/ 8 && line_y__value_1 !== (line_y__value_1 = /*displayedEndPoint*/ ctx[3][1] + "em")) {
-    				attr_dev(line, "y2", line_y__value_1);
-    			}
-
-    			if (dirty & /*stroke*/ 1) {
-    				attr_dev(line, "stroke", /*stroke*/ ctx[0]);
-    			}
-
-    			if (dirty & /*markerEnd*/ 4) {
-    				attr_dev(line, "marker-end", /*markerEnd*/ ctx[2]);
-    			}
-
-    			if (dirty & /*strokeWidth*/ 2) {
-    				attr_dev(line, "stroke-width", /*strokeWidth*/ ctx[1]);
-    			}
-    		},
-    		i: noop,
-    		o: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(line);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$9.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function moveBackwardsAConstantDistance(endpoint, pointToMoveTowards, distance) {
-    	let backwardsDirection = [pointToMoveTowards[0] - endpoint[0], pointToMoveTowards[1] - endpoint[1]];
-    	let norm = Math.sqrt(backwardsDirection[0] * backwardsDirection[0] + backwardsDirection[1] * backwardsDirection[1]);
-    	let normalizedBackwards = [backwardsDirection[0] / norm, backwardsDirection[1] / norm];
-
-    	return [
-    		endpoint[0] + normalizedBackwards[0] * distance,
-    		endpoint[1] + normalizedBackwards[1] * distance
-    	];
-    }
-
-    function instance$9($$self, $$props, $$invalidate) {
-    	let movedStartPoint;
-    	let movedEndPoint;
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('SVGArrowLine', slots, []);
-    	let { start = [0, 0] } = $$props;
-    	let { end = [0, 0] } = $$props;
-    	let { stroke = "black" } = $$props;
-    	let { strokeWidth = "0.2em" } = $$props;
-    	let { markerEnd } = $$props;
-    	let { elementAvoidRadius = 2.75 } = $$props;
-
-    	//animation
-    	let displayedEndPoint = end;
-
-    	let animateAppearance = false;
-    	const writable_props = ['start', 'end', 'stroke', 'strokeWidth', 'markerEnd', 'elementAvoidRadius'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<SVGArrowLine> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('start' in $$props) $$invalidate(5, start = $$props.start);
-    		if ('end' in $$props) $$invalidate(6, end = $$props.end);
-    		if ('stroke' in $$props) $$invalidate(0, stroke = $$props.stroke);
-    		if ('strokeWidth' in $$props) $$invalidate(1, strokeWidth = $$props.strokeWidth);
-    		if ('markerEnd' in $$props) $$invalidate(2, markerEnd = $$props.markerEnd);
-    		if ('elementAvoidRadius' in $$props) $$invalidate(7, elementAvoidRadius = $$props.elementAvoidRadius);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		EXP: EXP$1,
-    		start,
-    		end,
-    		stroke,
-    		strokeWidth,
-    		markerEnd,
-    		elementAvoidRadius,
-    		moveBackwardsAConstantDistance,
-    		displayedEndPoint,
-    		animateAppearance,
-    		movedEndPoint,
-    		movedStartPoint
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('start' in $$props) $$invalidate(5, start = $$props.start);
-    		if ('end' in $$props) $$invalidate(6, end = $$props.end);
-    		if ('stroke' in $$props) $$invalidate(0, stroke = $$props.stroke);
-    		if ('strokeWidth' in $$props) $$invalidate(1, strokeWidth = $$props.strokeWidth);
-    		if ('markerEnd' in $$props) $$invalidate(2, markerEnd = $$props.markerEnd);
-    		if ('elementAvoidRadius' in $$props) $$invalidate(7, elementAvoidRadius = $$props.elementAvoidRadius);
-    		if ('displayedEndPoint' in $$props) $$invalidate(3, displayedEndPoint = $$props.displayedEndPoint);
-    		if ('animateAppearance' in $$props) $$invalidate(9, animateAppearance = $$props.animateAppearance);
-    		if ('movedEndPoint' in $$props) $$invalidate(8, movedEndPoint = $$props.movedEndPoint);
-    		if ('movedStartPoint' in $$props) $$invalidate(4, movedStartPoint = $$props.movedStartPoint);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*start, end, elementAvoidRadius*/ 224) {
-    			$$invalidate(4, movedStartPoint = moveBackwardsAConstantDistance(start, end, elementAvoidRadius));
-    		}
-
-    		if ($$self.$$.dirty & /*end, start, elementAvoidRadius*/ 224) {
-    			$$invalidate(8, movedEndPoint = moveBackwardsAConstantDistance(end, start, elementAvoidRadius));
-    		}
-
-    		if ($$self.$$.dirty & /*movedEndPoint, movedStartPoint, displayedEndPoint*/ 280) {
-    			{
-    				$$invalidate(3, displayedEndPoint = movedEndPoint);
-
-    				if (animateAppearance) {
-    					$$invalidate(3, displayedEndPoint = movedStartPoint);
-    					explanariaBundle.TransitionTo(displayedEndPoint, movedEndPoint, 500); //weird bugs
-    				}
-    			}
-    		}
-    	};
-
-    	return [
-    		stroke,
-    		strokeWidth,
-    		markerEnd,
-    		displayedEndPoint,
-    		movedStartPoint,
-    		start,
-    		end,
-    		elementAvoidRadius,
-    		movedEndPoint
-    	];
-    }
-
-    class SVGArrowLine extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-
-    		init(this, options, instance$9, create_fragment$9, safe_not_equal, {
-    			start: 5,
-    			end: 6,
-    			stroke: 0,
-    			strokeWidth: 1,
-    			markerEnd: 2,
-    			elementAvoidRadius: 7
-    		});
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "SVGArrowLine",
-    			options,
-    			id: create_fragment$9.name
-    		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*markerEnd*/ ctx[2] === undefined && !('markerEnd' in props)) {
-    			console.warn("<SVGArrowLine> was created without expected prop 'markerEnd'");
-    		}
-    	}
-
-    	get start() {
-    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set start(value) {
-    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get end() {
-    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set end(value) {
-    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get stroke() {
-    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set stroke(value) {
-    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get strokeWidth() {
-    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set strokeWidth(value) {
-    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get markerEnd() {
-    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set markerEnd(value) {
-    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get elementAvoidRadius() {
-    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set elementAvoidRadius(value) {
-    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    /* src/twoD/SVGCayleyArrows.svelte generated by Svelte v3.46.4 */
-    const file$8 = "src/twoD/SVGCayleyArrows.svelte";
-
-    function get_each_context$1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[7] = list[i];
-    	return child_ctx;
-    }
-
-    function get_each_context_1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[10] = list[i];
-    	child_ctx[12] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_2(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[13] = list[i];
-    	child_ctx[12] = i;
-    	return child_ctx;
-    }
-
-    // (69:6) {#if drawEyesOnArrows}
-    function create_if_block_2$2(ctx) {
-    	let ellipse0;
-    	let ellipse1;
-    	let ellipse2;
-    	let ellipse3;
-
-    	const block = {
-    		c: function create() {
-    			ellipse0 = svg_element("ellipse");
-    			ellipse1 = svg_element("ellipse");
-    			ellipse2 = svg_element("ellipse");
-    			ellipse3 = svg_element("ellipse");
-    			attr_dev(ellipse0, "rx", "1");
-    			attr_dev(ellipse0, "ry", "0.6");
-    			attr_dev(ellipse0, "cy", "2.5");
-    			attr_dev(ellipse0, "cx", "1.5");
-    			attr_dev(ellipse0, "fill", "#fff");
-    			attr_dev(ellipse0, "stroke", "#000");
-    			attr_dev(ellipse0, "stroke-width", "0.1");
-    			add_location(ellipse0, file$8, 69, 10, 2531);
-    			attr_dev(ellipse1, "rx", "1");
-    			attr_dev(ellipse1, "ry", "0.6");
-    			attr_dev(ellipse1, "cy", "1.5");
-    			attr_dev(ellipse1, "cx", "1.5");
-    			attr_dev(ellipse1, "fill", "#fff");
-    			attr_dev(ellipse1, "stroke", "#000");
-    			attr_dev(ellipse1, "stroke-width", "0.1");
-    			add_location(ellipse1, file$8, 71, 10, 2641);
-    			attr_dev(ellipse2, "rx", "0.6");
-    			attr_dev(ellipse2, "ry", "0.35");
-    			attr_dev(ellipse2, "cy", "2.5");
-    			attr_dev(ellipse2, "cx", "1.85");
-    			attr_dev(ellipse2, "fill", "#000000");
-    			add_location(ellipse2, file$8, 73, 10, 2751);
-    			attr_dev(ellipse3, "rx", "0.6");
-    			attr_dev(ellipse3, "ry", "0.35");
-    			attr_dev(ellipse3, "cy", "1.5");
-    			attr_dev(ellipse3, "cx", "1.85");
-    			attr_dev(ellipse3, "fill", "#000000");
-    			add_location(ellipse3, file$8, 75, 10, 2837);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, ellipse0, anchor);
-    			insert_dev(target, ellipse1, anchor);
-    			insert_dev(target, ellipse2, anchor);
-    			insert_dev(target, ellipse3, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(ellipse0);
-    			if (detaching) detach_dev(ellipse1);
-    			if (detaching) detach_dev(ellipse2);
-    			if (detaching) detach_dev(ellipse3);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_2$2.name,
-    		type: "if",
-    		source: "(69:6) {#if drawEyesOnArrows}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (65:4) {#each generatorColors as color, i}
-    function create_each_block_2(ctx) {
-    	let marker;
-    	let polygon;
-    	let if_block = create_if_block_2$2(ctx);
-
-    	const block = {
-    		c: function create() {
-    			marker = svg_element("marker");
-    			polygon = svg_element("polygon");
-    			if (if_block) if_block.c();
-    			attr_dev(polygon, "points", "0 0, 4 2, 0 4");
-    			attr_dev(polygon, "fill", /*color*/ ctx[13]);
-    			add_location(polygon, file$8, 67, 6, 2445);
-    			attr_dev(marker, "class", "arrowhead svelte-11kt62b");
-    			attr_dev(marker, "id", "arrowhead-" + /*i*/ ctx[12]);
-    			attr_dev(marker, "markerWidth", "4");
-    			attr_dev(marker, "markerHeight", "4");
-    			attr_dev(marker, "refX", "2");
-    			attr_dev(marker, "refY", "2");
-    			attr_dev(marker, "orient", "auto");
-    			add_location(marker, file$8, 65, 4, 2259);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, marker, anchor);
-    			append_dev(marker, polygon);
-    			if (if_block) if_block.m(marker, null);
-    		},
-    		p: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(marker);
-    			if (if_block) if_block.d();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_2.name,
-    		type: "each",
-    		source: "(65:4) {#each generatorColors as color, i}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (95:12) {#if isArrowVisibleMap[startElement.name][i]}
-    function create_if_block$3(ctx) {
-    	let if_block_anchor;
-    	let svgarrowline;
-    	let current;
-    	let if_block = drawGeneratorsWithOutlines ;
-
-    	svgarrowline = new SVGArrowLine({
-    			props: {
-    				start: /*positionsPerElementMap*/ ctx[1].get(/*startElement*/ ctx[7]),
-    				end: /*positionsPerElementMap*/ ctx[1].get(/*targetElement*/ ctx[10]),
-    				stroke: generatorColors[/*i*/ ctx[12]],
-    				markerEnd: "url(#arrowhead-" + /*i*/ ctx[12] + ")",
-    				strokeWidth: "0.2em"
-    			},
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			if_block_anchor = empty();
-    			create_component(svgarrowline.$$.fragment);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, if_block_anchor, anchor);
-    			mount_component(svgarrowline, target, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const svgarrowline_changes = {};
-    			if (dirty & /*positionsPerElementMap, group*/ 3) svgarrowline_changes.start = /*positionsPerElementMap*/ ctx[1].get(/*startElement*/ ctx[7]);
-    			if (dirty & /*positionsPerElementMap, group*/ 3) svgarrowline_changes.end = /*positionsPerElementMap*/ ctx[1].get(/*targetElement*/ ctx[10]);
-    			svgarrowline.$set(svgarrowline_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(if_block);
-    			transition_in(svgarrowline.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(if_block);
-    			transition_out(svgarrowline.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(if_block_anchor);
-    			destroy_component(svgarrowline, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block$3.name,
-    		type: "if",
-    		source: "(95:12) {#if isArrowVisibleMap[startElement.name][i]}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (94:8) {#each elementTimesGenerators.get(startElement) as targetElement, i}
-    function create_each_block_1(ctx) {
-    	let if_block_anchor;
-    	let current;
-    	let if_block = /*isArrowVisibleMap*/ ctx[2][/*startElement*/ ctx[7].name][/*i*/ ctx[12]] && create_if_block$3(ctx);
-
-    	const block = {
-    		c: function create() {
-    			if (if_block) if_block.c();
-    			if_block_anchor = empty();
-    		},
-    		m: function mount(target, anchor) {
-    			if (if_block) if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			if (/*isArrowVisibleMap*/ ctx[2][/*startElement*/ ctx[7].name][/*i*/ ctx[12]]) {
-    				if (if_block) {
-    					if_block.p(ctx, dirty);
-
-    					if (dirty & /*isArrowVisibleMap, group*/ 5) {
-    						transition_in(if_block, 1);
-    					}
-    				} else {
-    					if_block = create_if_block$3(ctx);
-    					if_block.c();
-    					transition_in(if_block, 1);
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-    				}
-    			} else if (if_block) {
-    				group_outros();
-
-    				transition_out(if_block, 1, 1, () => {
-    					if_block = null;
-    				});
-
-    				check_outros();
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(if_block);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(if_block);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (if_block) if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_1.name,
-    		type: "each",
-    		source: "(94:8) {#each elementTimesGenerators.get(startElement) as targetElement, i}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (93:4) {#each group.elements as startElement}
-    function create_each_block$1(ctx) {
-    	let each_1_anchor;
-    	let current;
-    	let each_value_1 = /*elementTimesGenerators*/ ctx[3].get(/*startElement*/ ctx[7]);
-    	validate_each_argument(each_value_1);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
-    	}
-
-    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-    		each_blocks[i] = null;
-    	});
-
-    	const block = {
-    		c: function create() {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			each_1_anchor = empty();
-    		},
-    		m: function mount(target, anchor) {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(target, anchor);
-    			}
-
-    			insert_dev(target, each_1_anchor, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*positionsPerElementMap, group, elementTimesGenerators, generatorColors, drawGeneratorsWithOutlines, isArrowVisibleMap*/ 15) {
-    				each_value_1 = /*elementTimesGenerators*/ ctx[3].get(/*startElement*/ ctx[7]);
-    				validate_each_argument(each_value_1);
-    				let i;
-
-    				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    						transition_in(each_blocks[i], 1);
-    					} else {
-    						each_blocks[i] = create_each_block_1(child_ctx);
-    						each_blocks[i].c();
-    						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
-    				group_outros();
-
-    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
-    					out(i);
-    				}
-
-    				check_outros();
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-
-    			for (let i = 0; i < each_value_1.length; i += 1) {
-    				transition_in(each_blocks[i]);
-    			}
-
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			each_blocks = each_blocks.filter(Boolean);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				transition_out(each_blocks[i]);
-    			}
-
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(each_1_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block$1.name,
-    		type: "each",
-    		source: "(93:4) {#each group.elements as startElement}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$8(ctx) {
-    	let svg;
-    	let defs;
-    	let filter;
-    	let feMorphology;
-    	let feColorMatrix;
-    	let feBlend;
-    	let current;
-    	let each_value_2 = generatorColors;
-    	validate_each_argument(each_value_2);
-    	let each_blocks_1 = [];
-
-    	for (let i = 0; i < each_value_2.length; i += 1) {
-    		each_blocks_1[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
-    	}
-
-    	let each_value = /*group*/ ctx[0].elements;
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
-    	}
-
-    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-    		each_blocks[i] = null;
-    	});
-
-    	const block = {
-    		c: function create() {
-    			svg = svg_element("svg");
-    			defs = svg_element("defs");
-
-    			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].c();
-    			}
-
-    			filter = svg_element("filter");
-    			feMorphology = svg_element("feMorphology");
-    			feColorMatrix = svg_element("feColorMatrix");
-    			feBlend = svg_element("feBlend");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			attr_dev(feMorphology, "result", "outline");
-    			attr_dev(feMorphology, "in", "SourceGraphic");
-    			attr_dev(feMorphology, "operator", "dilate");
-    			attr_dev(feMorphology, "radius", "1");
-    			add_location(feMorphology, file$8, 82, 6, 3151);
-    			attr_dev(feColorMatrix, "type", "matrix");
-    			attr_dev(feColorMatrix, "in", "outline");
-    			attr_dev(feColorMatrix, "result", "black-outline");
-    			attr_dev(feColorMatrix, "values", "0 0 0 0 0  \n                        0 0 0 0 0  \n                        0 0 0 0 0  \n                        0 0 0 1 0");
-    			add_location(feColorMatrix, file$8, 83, 6, 3252);
-    			attr_dev(feBlend, "in", "SourceGraphic");
-    			attr_dev(feBlend, "in2", "black-outline");
-    			attr_dev(feBlend, "mode", "normal");
-    			add_location(feBlend, file$8, 87, 6, 3467);
-    			attr_dev(filter, "id", "outline");
-    			attr_dev(filter, "x", "-100%");
-    			attr_dev(filter, "y", "-100%");
-    			attr_dev(filter, "width", "300%");
-    			attr_dev(filter, "height", "300%");
-    			add_location(filter, file$8, 80, 4, 2955);
-    			add_location(defs, file$8, 63, 2, 2208);
-    			attr_dev(svg, "class", "arrowsvg svelte-11kt62b");
-    			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
-    			attr_dev(svg, "width", /*width*/ ctx[4]);
-    			attr_dev(svg, "height", /*height*/ ctx[5]);
-    			attr_dev(svg, "viewBox", "0 0 " + /*width*/ ctx[4] + " " + /*height*/ ctx[5]);
-    			add_location(svg, file$8, 62, 0, 2087);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, svg, anchor);
-    			append_dev(svg, defs);
-
-    			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].m(defs, null);
-    			}
-
-    			append_dev(defs, filter);
-    			append_dev(filter, feMorphology);
-    			append_dev(filter, feColorMatrix);
-    			append_dev(filter, feBlend);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(svg, null);
-    			}
-
-    			current = true;
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*drawEyesOnArrows, generatorColors*/ 0) {
-    				each_value_2 = generatorColors;
-    				validate_each_argument(each_value_2);
-    				let i;
-
-    				for (i = 0; i < each_value_2.length; i += 1) {
-    					const child_ctx = get_each_context_2(ctx, each_value_2, i);
-
-    					if (each_blocks_1[i]) {
-    						each_blocks_1[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks_1[i] = create_each_block_2(child_ctx);
-    						each_blocks_1[i].c();
-    						each_blocks_1[i].m(defs, filter);
-    					}
-    				}
-
-    				for (; i < each_blocks_1.length; i += 1) {
-    					each_blocks_1[i].d(1);
-    				}
-
-    				each_blocks_1.length = each_value_2.length;
-    			}
-
-    			if (dirty & /*elementTimesGenerators, group, positionsPerElementMap, generatorColors, drawGeneratorsWithOutlines, isArrowVisibleMap*/ 15) {
-    				each_value = /*group*/ ctx[0].elements;
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$1(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    						transition_in(each_blocks[i], 1);
-    					} else {
-    						each_blocks[i] = create_each_block$1(child_ctx);
-    						each_blocks[i].c();
-    						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(svg, null);
-    					}
-    				}
-
-    				group_outros();
-
-    				for (i = each_value.length; i < each_blocks.length; i += 1) {
-    					out(i);
-    				}
-
-    				check_outros();
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-
-    			for (let i = 0; i < each_value.length; i += 1) {
-    				transition_in(each_blocks[i]);
-    			}
-
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			each_blocks = each_blocks.filter(Boolean);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				transition_out(each_blocks[i]);
-    			}
-
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(svg);
-    			destroy_each(each_blocks_1, detaching);
-    			destroy_each(each_blocks, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$8.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$8($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('SVGCayleyArrows', slots, []);
-    	let { group = { elements: [] } } = $$props;
-    	let { positionsPerElementMap } = $$props;
-    	let defaultShowArray = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
-
-    	group.elements.forEach(startElement => {
-    		defaultShowArray[startElement.name] = group.generators.map(generator => true); //show every arrow
-    	});
-
-    	let { isArrowVisibleMap = defaultShowArray } = $$props;
-    	let elementTimesGenerators = new Map(); //elementTimesGenerators[x.name] is [x*a, x*b] where a,b are the generators of the group
-
-    	// resize the svg with the arrows to match
-    	/*
-    let width = 1000;
-    let height = 300;
-    function recalcPageSize(){
-        width = window.innerWidth;
-        height = window.innerHeight;
-    }
-    window.addEventListener("resize", recalcPageSize);
-    onMount(recalcPageSize) */
-    	let width = 50;
-
-    	let height = 50; //The above code means that if this svg isn't positioned exactly at the top left of the screen, it creates scrollbars on the page. This small size means the svg won't create scrollbars, while overflow:visible ensures all the elements will still be there
-    	const writable_props = ['group', 'positionsPerElementMap', 'isArrowVisibleMap'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<SVGCayleyArrows> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('group' in $$props) $$invalidate(0, group = $$props.group);
-    		if ('positionsPerElementMap' in $$props) $$invalidate(1, positionsPerElementMap = $$props.positionsPerElementMap);
-    		if ('isArrowVisibleMap' in $$props) $$invalidate(2, isArrowVisibleMap = $$props.isArrowVisibleMap);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		group,
-    		positionsPerElementMap,
-    		generatorColors,
-    		drawGeneratorsWithOutlines,
-    		drawEyesOnArrows,
-    		onMount,
-    		SVGArrowLine,
-    		defaultShowArray,
-    		isArrowVisibleMap,
-    		elementTimesGenerators,
-    		width,
-    		height
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('group' in $$props) $$invalidate(0, group = $$props.group);
-    		if ('positionsPerElementMap' in $$props) $$invalidate(1, positionsPerElementMap = $$props.positionsPerElementMap);
-    		if ('defaultShowArray' in $$props) defaultShowArray = $$props.defaultShowArray;
-    		if ('isArrowVisibleMap' in $$props) $$invalidate(2, isArrowVisibleMap = $$props.isArrowVisibleMap);
-    		if ('elementTimesGenerators' in $$props) $$invalidate(3, elementTimesGenerators = $$props.elementTimesGenerators);
-    		if ('width' in $$props) $$invalidate(4, width = $$props.width);
-    		if ('height' in $$props) $$invalidate(5, height = $$props.height);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*group*/ 1) {
-    			{
-    				group.elements.forEach(startElement => {
-    					//construct an array with one element per generator, consisting of startElement multiplied by every generator
-    					//these will be the targets of arrows leaving startElement
-    					elementTimesGenerators.set(startElement, group.generators.map(generator => group.multiply(startElement, generator)));
-    				});
-    			}
-    		}
-    	};
-
-    	return [
-    		group,
-    		positionsPerElementMap,
-    		isArrowVisibleMap,
-    		elementTimesGenerators,
-    		width,
-    		height
-    	];
-    }
-
-    class SVGCayleyArrows extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-
-    		init(this, options, instance$8, create_fragment$8, safe_not_equal, {
-    			group: 0,
-    			positionsPerElementMap: 1,
-    			isArrowVisibleMap: 2
-    		});
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "SVGCayleyArrows",
-    			options,
-    			id: create_fragment$8.name
-    		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*positionsPerElementMap*/ ctx[1] === undefined && !('positionsPerElementMap' in props)) {
-    			console.warn("<SVGCayleyArrows> was created without expected prop 'positionsPerElementMap'");
-    		}
-    	}
-
-    	get group() {
-    		throw new Error("<SVGCayleyArrows>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set group(value) {
-    		throw new Error("<SVGCayleyArrows>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get positionsPerElementMap() {
-    		throw new Error("<SVGCayleyArrows>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set positionsPerElementMap(value) {
-    		throw new Error("<SVGCayleyArrows>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get isArrowVisibleMap() {
-    		throw new Error("<SVGCayleyArrows>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set isArrowVisibleMap(value) {
-    		throw new Error("<SVGCayleyArrows>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    function rotate2D(degrees, x,y){
-        let rad = degrees * Math.PI / 180;
-        return [x * Math.cos(rad) - y * Math.sin(rad),
-                x * Math.sin(rad) + y * Math.cos(rad)]
-    }
-
-    const triangleShadowColor = "#555555";
-    const triangleColor = "#bbbbbb";
-    const D6TextColor = "#000";
-
-    const triangleStrokeStyle = "hsla(0,0%,0%,0)";
-    const arrowColor = "hsl(240, 90%, 70%)";
-
-
-    const canvasSize$1 = 3; //in em
-
-    //30 should really be "em to px"
-    const canvasSizePixels = canvasSize$1 * 30; //is this the right calculation? 
-
-    const triangleRadius = 0.4*canvasSizePixels;
-    const arrowCenterDistance = 0.43*canvasSizePixels; //how far from the center should the arced arrow that shows a rotation be?
-    const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
-    const num_dashes = 5;
-    const dash_radius = canvasSize$1/2; //how far from the center should dashed lines for mirroring go
-    const D6_text_size_multiplier = 0.35;
-    const lineWidth = 2;
-    let NUM_DEGREES_IN_ONE_ROTATION = 120;
-
-
-
-
-    function drawTrianglePath(ctx, centerX, centerY, oneVertexVectorFromCenter){
-        ctx.translate(centerX, centerY);
-        ctx.beginPath();
-        ctx.moveTo(...oneVertexVectorFromCenter);
-        ctx.lineTo(...rotate2D(120, ...oneVertexVectorFromCenter));
-        ctx.lineTo(...rotate2D(240, ...oneVertexVectorFromCenter));
-        ctx.lineTo(...oneVertexVectorFromCenter);
-        ctx.closePath();
-        ctx.stroke();
-
-        ctx.translate(-centerX, -centerY);
-    }
-
-
-    function isAllRs(string){
-        for(let i=0;i<string.length;i++){
-            if(string[i] != 'r')return false;
-        }
-        return true;
-    }
-
-
-    function drawStaticElements(ctx, element){
-        //draw things like arcs or dotted lines to represent transformations. these don't move
-        ctx.strokeStyle = arrowColor;
-        if(isAllRs(element.name)){
-            //this is a pure rotation. draw a rotation arrow
-            //handles both "r" and "rr"!
-            let rotationDegrees = NUM_DEGREES_IN_ONE_ROTATION * element.name.length; //increase arc distance if needed
-
-            let arrowLineVec = [0,-arrowCenterDistance];
-
-            ctx.beginPath();
-            ctx.moveTo(...arrowLineVec);
-            for(let i=0;i<rotationDegrees - offsetDegrees;i+=1){
-                ctx.lineTo(...rotate2D(i, ...arrowLineVec));
-            }             
-            ctx.stroke();
-
-            //arrowhead triangle
-            
-            let arrowheadSize = 6;
-            let finalPoint = rotate2D(rotationDegrees - offsetDegrees, ...arrowLineVec);
-            let finalDirection = rotate2D(90 + rotationDegrees - offsetDegrees, ...[0, -arrowheadSize]);
-
-            drawTrianglePath(ctx, finalPoint[0],finalPoint[1], finalDirection);
-            ctx.fillStyle = arrowColor;
-            ctx.fill();
-        }
-        else if(element.name.search("f") != -1){//todo: add check for only "r"s being in there
-            //draw a dotted flip line.
-            //any Rs there will rotate the flip line.g
-            let flipStartPos = [0, dash_radius];
-            for(let i=element.name.length-1;i>=0;i--){ //traverse name from right to left, backwards, because that's how function notation works
-                if(element.name[i] == 'r'){
-                    flipStartPos = rotate2D(NUM_DEGREES_IN_ONE_ROTATION, ...flipStartPos);
-                }
-                if(element.name[i] == 'f'){ //flip horizontally
-                    flipStartPos[0] = -flipStartPos[0];
-                }
-            }
-
-            //now draw a dotted line from flipStartPos to -flipStartPos
-            ctx.beginPath();
-            for(let i=0;i<num_dashes*2;i++){
-                let lerpFactor = i / (num_dashes*2);
-                let posX = lerpFactor * flipStartPos[0]  + (1-lerpFactor) * (-flipStartPos[0]);
-                let posY = lerpFactor * flipStartPos[1]  + (1-lerpFactor) * (-flipStartPos[1]);
-                if(i%2 == 0){
-                    ctx.moveTo(posX, posY);
-                }else {
-                    ctx.lineTo(posX, posY);
-                }
-            }
-            ctx.stroke();
-        }
-    }
-
-
-
-    function easing(t){
-        //cosine ease
-        return (1-Math.cos(t * Math.PI))/2
-    }
-
-    /* src/twoD/D6ElementCanvas.svelte generated by Svelte v3.46.4 */
-
-    const file$7 = "src/twoD/D6ElementCanvas.svelte";
-
-    function create_fragment$7(ctx) {
-    	let canvas_1;
-
-    	const block = {
-    		c: function create() {
-    			canvas_1 = element("canvas");
-    			attr_dev(canvas_1, "class", "elementcanvas");
-    			attr_dev(canvas_1, "id", /*canvasName*/ ctx[0]);
-    			attr_dev(canvas_1, "width", canvasSize$1);
-    			attr_dev(canvas_1, "height", canvasSize$1);
-    			set_style(canvas_1, "width", canvasSize$1 + "em", false);
-    			set_style(canvas_1, "height", canvasSize$1 + "em", false);
-    			add_location(canvas_1, file$7, 135, 0, 5338);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, canvas_1, anchor);
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*canvasName*/ 1) {
-    				attr_dev(canvas_1, "id", /*canvasName*/ ctx[0]);
-    			}
-    		},
-    		i: noop,
-    		o: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(canvas_1);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$7.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$7($$self, $$props, $$invalidate) {
-    	let canvasName;
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('D6ElementCanvas', slots, []);
-    	let { element = new GroupElement("", "(3)") } = $$props;
-    	let canvas = null, ctx = null;
-    	let { NUM_DEGREES_IN_ONE_ROTATION = 120 } = $$props;
-    	let startVertex = [0, -triangleRadius]; //one vertex of the triangle
-    	let lastTime = 0;
-
-    	function draw(currentTime) {
-    		let delta = (currentTime - lastTime) / 1000;
-    		canvas.width = canvasSizePixels;
-    		canvas.height = canvasSizePixels;
-    		ctx.save();
-    		ctx.translate(canvas.width / 2, canvas.height / 2); //make all transformations start from center of canvas
-    		ctx.lineWidth = lineWidth;
-    		ctx.strokeStyle = triangleStrokeStyle;
-
-    		//draw triangle shadow
-    		ctx.save();
-
-    		ctx.fillStyle = triangleShadowColor;
-    		drawTrianglePath(ctx, 0, 0, startVertex);
-    		ctx.fill();
-
-    		//draw triangle, rotated or scaled by the animation
-    		updateCurrentAnimation(ctx, delta);
-
-    		applyCurrentAnimation(ctx, delta);
-    		ctx.fillStyle = triangleColor;
-    		drawTrianglePath(ctx, 0, 0, startVertex);
-    		ctx.fill();
-    		ctx.fillStyle = D6TextColor;
-    		ctx.font = D6_text_size_multiplier * canvasSize$1 + "em serif";
-    		ctx.fillText("D6", -0.4 * D6_text_size_multiplier * canvasSizePixels, -0.1 * D6_text_size_multiplier * canvasSizePixels);
-    		ctx.restore();
-
-    		//finally, draw stuff like mirror lines which go on top of the triangle and don't rotate with it
-    		drawStaticElements(ctx, element);
-
-    		ctx.restore();
-    		lastTime = currentTime;
-    		window.requestAnimationFrame(draw);
-    	}
-
-    	//janky animation system time!
-    	let animationProgress = 0; //goes from 0 to 1 over the course of the animation
-
-    	async function animationLoop() {
-    		//this one controls the animation of each element
-    		while (true) {
-    			//todo: stop looping when there's an onUnmount
-    			await oneFullAnimation();
-
-    			await explanariaBundle.delay(2000);
-    		}
-    	}
-
-    	async function oneFullAnimation(duration = 2) {
-    		animationProgress = 0;
-
-    		return new Promise(resolve => {
-    				if (isAllRs(element.name)) {
-    					//element is a pure rotation, named "r" or "rr"
-    					let rotationDegrees = NUM_DEGREES_IN_ONE_ROTATION * element.name.length;
-
-    					let rotationRadians = rotationDegrees * Math.PI / 180;
-
-    					//animation, rotation version
-    					applyCurrentAnimation = function (ctx, deltatime) {
-    						ctx.rotate(rotationRadians * easing(animationProgress));
-    					};
-    				} else if (element.name.search("f") != -1) {
-    					//element is a flip. It's assumed there's only Rs in the rest of the name.
-    					//to create a flip around something that's not the x-axis, we'll rotate the canvas 
-    					let axisBeingFlipped = [1, 0];
-
-    					for (let i = element.name.length - 1; i >= 0; i--) {
-    						//traverse name from right to left, backwards, because that's how function notation works
-    						if (element.name[i] == 'r') {
-    							axisBeingFlipped = rotate2D(NUM_DEGREES_IN_ONE_ROTATION, ...axisBeingFlipped);
-    						}
-
-    						if (element.name[i] == 'f') {
-    							//flip horizontally
-    							axisBeingFlipped[0] = -axisBeingFlipped[0];
-    						}
-    					}
-
-    					//now, to create a flip about that axis, we'll rotate the canvas so that axis is [0,1], flip about [0,1] using scale(-1,1), then unrotate.
-    					let angle = Math.atan2(axisBeingFlipped[1], axisBeingFlipped[0]);
-
-    					applyCurrentAnimation = function (ctx, deltatime) {
-    						let xScale = 1 - 2 * easing(animationProgress); //as animationProgress goes from 0 to 1, this goes from 1 to -1
-    						ctx.rotate(angle);
-    						ctx.scale(xScale, 1);
-    						ctx.rotate(-angle);
-    					};
-    				}
-
-    				//update function, common to all
-    				updateCurrentAnimation = function (ctx, deltatime) {
-    					animationProgress += deltatime / duration;
-
-    					if (animationProgress >= 1) {
-    						//animation done
-    						//applyCurrentAnimation = ()=>{}; //don't reset this, leave the animation paused on the final frame
-    						updateCurrentAnimation = () => {
-    							
-    						};
-
-    						animationProgress = 1;
-    						resolve();
-    					}
-    				};
-    			});
-    	}
-
-    	//will be overwritten by oneFullAnimation
-    	function updateCurrentAnimation(ctx, deltatime) {
-    		
-    	}
-
-    	function applyCurrentAnimation(ctx, deltatime) {
-    		
-    	}
-
-    	onMount(async () => {
-    		canvas = document.getElementById(canvasName);
-    		ctx = canvas.getContext("2d");
-    		draw(0);
-    		await animationLoop();
-    	});
-
-    	const writable_props = ['element', 'NUM_DEGREES_IN_ONE_ROTATION'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<D6ElementCanvas> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('element' in $$props) $$invalidate(1, element = $$props.element);
-    		if ('NUM_DEGREES_IN_ONE_ROTATION' in $$props) $$invalidate(2, NUM_DEGREES_IN_ONE_ROTATION = $$props.NUM_DEGREES_IN_ONE_ROTATION);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		rotate2D,
-    		onMount,
-    		GroupElement,
-    		EXP: EXP$1,
-    		easing,
-    		drawTrianglePath,
-    		drawStaticElements,
-    		isAllRs,
-    		canvasSize: canvasSize$1,
-    		canvasSizePixels,
-    		triangleRadius,
-    		lineWidth,
-    		D6_text_size_multiplier,
-    		triangleStrokeStyle,
-    		triangleShadowColor,
-    		triangleColor,
-    		D6TextColor,
-    		element,
-    		canvas,
-    		ctx,
-    		NUM_DEGREES_IN_ONE_ROTATION,
-    		startVertex,
-    		lastTime,
-    		draw,
-    		animationProgress,
-    		animationLoop,
-    		oneFullAnimation,
-    		updateCurrentAnimation,
-    		applyCurrentAnimation,
-    		canvasName
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('element' in $$props) $$invalidate(1, element = $$props.element);
-    		if ('canvas' in $$props) canvas = $$props.canvas;
-    		if ('ctx' in $$props) ctx = $$props.ctx;
-    		if ('NUM_DEGREES_IN_ONE_ROTATION' in $$props) $$invalidate(2, NUM_DEGREES_IN_ONE_ROTATION = $$props.NUM_DEGREES_IN_ONE_ROTATION);
-    		if ('startVertex' in $$props) startVertex = $$props.startVertex;
-    		if ('lastTime' in $$props) lastTime = $$props.lastTime;
-    		if ('animationProgress' in $$props) animationProgress = $$props.animationProgress;
-    		if ('canvasName' in $$props) $$invalidate(0, canvasName = $$props.canvasName);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*element*/ 2) {
-    			$$invalidate(0, canvasName = "canvas-" + element.name);
-    		}
-    	};
-
-    	return [canvasName, element, NUM_DEGREES_IN_ONE_ROTATION];
-    }
-
-    class D6ElementCanvas extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-
-    		init(this, options, instance$7, create_fragment$7, safe_not_equal, {
-    			element: 1,
-    			NUM_DEGREES_IN_ONE_ROTATION: 2
-    		});
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "D6ElementCanvas",
-    			options,
-    			id: create_fragment$7.name
-    		});
-    	}
-
-    	get element() {
-    		throw new Error("<D6ElementCanvas>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set element(value) {
-    		throw new Error("<D6ElementCanvas>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get NUM_DEGREES_IN_ONE_ROTATION() {
-    		throw new Error("<D6ElementCanvas>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set NUM_DEGREES_IN_ONE_ROTATION(value) {
-    		throw new Error("<D6ElementCanvas>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    /* src/twoD/D6Group.svelte generated by Svelte v3.46.4 */
-
-    const file$6 = "src/twoD/D6Group.svelte";
-
-    function get_each_context(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[15] = list[i];
-    	child_ctx[17] = i;
-    	return child_ctx;
-    }
-
-    // (82:8) {#if isElementVisible[i]}
-    function create_if_block$2(ctx) {
-    	let groupelementdisplay;
-    	let current;
-
-    	groupelementdisplay = new GroupElementDisplay({
-    			props: {
-    				element: /*element*/ ctx[15],
-    				borderColor: /*chooseBorderColor*/ ctx[4](/*element*/ ctx[15]),
-    				top: /*positions*/ ctx[2].get(/*element*/ ctx[15])[1],
-    				left: /*positions*/ ctx[2].get(/*element*/ ctx[15])[0],
-    				$$slots: { default: [create_default_slot] },
-    				$$scope: { ctx }
-    			},
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			create_component(groupelementdisplay.$$.fragment);
-    		},
-    		m: function mount(target, anchor) {
-    			mount_component(groupelementdisplay, target, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const groupelementdisplay_changes = {};
-    			if (dirty & /*d6group*/ 1) groupelementdisplay_changes.element = /*element*/ ctx[15];
-    			if (dirty & /*d6group*/ 1) groupelementdisplay_changes.borderColor = /*chooseBorderColor*/ ctx[4](/*element*/ ctx[15]);
-    			if (dirty & /*positions, d6group*/ 5) groupelementdisplay_changes.top = /*positions*/ ctx[2].get(/*element*/ ctx[15])[1];
-    			if (dirty & /*positions, d6group*/ 5) groupelementdisplay_changes.left = /*positions*/ ctx[2].get(/*element*/ ctx[15])[0];
-
-    			if (dirty & /*$$scope, d6group*/ 262145) {
-    				groupelementdisplay_changes.$$scope = { dirty, ctx };
-    			}
-
-    			groupelementdisplay.$set(groupelementdisplay_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(groupelementdisplay.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(groupelementdisplay.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			destroy_component(groupelementdisplay, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block$2.name,
-    		type: "if",
-    		source: "(82:8) {#if isElementVisible[i]}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (83:12) <GroupElementDisplay element={element}             borderColor={chooseBorderColor(element)}             top={positions.get(element)[1]} left={positions.get(element)[0]}             >
-    function create_default_slot(ctx) {
-    	let d6elementcanvas;
-    	let current;
-
-    	d6elementcanvas = new D6ElementCanvas({
-    			props: { element: /*element*/ ctx[15] },
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			create_component(d6elementcanvas.$$.fragment);
-    		},
-    		m: function mount(target, anchor) {
-    			mount_component(d6elementcanvas, target, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const d6elementcanvas_changes = {};
-    			if (dirty & /*d6group*/ 1) d6elementcanvas_changes.element = /*element*/ ctx[15];
-    			d6elementcanvas.$set(d6elementcanvas_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(d6elementcanvas.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(d6elementcanvas.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			destroy_component(d6elementcanvas, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_default_slot.name,
-    		type: "slot",
-    		source: "(83:12) <GroupElementDisplay element={element}             borderColor={chooseBorderColor(element)}             top={positions.get(element)[1]} left={positions.get(element)[0]}             >",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (81:4) {#each d6group.elements as element, i}
-    function create_each_block(ctx) {
-    	let if_block_anchor;
-    	let current;
-    	let if_block = /*isElementVisible*/ ctx[1][/*i*/ ctx[17]] && create_if_block$2(ctx);
-
-    	const block = {
-    		c: function create() {
-    			if (if_block) if_block.c();
-    			if_block_anchor = empty();
-    		},
-    		m: function mount(target, anchor) {
-    			if (if_block) if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			if (/*isElementVisible*/ ctx[1][/*i*/ ctx[17]]) {
-    				if (if_block) {
-    					if_block.p(ctx, dirty);
-
-    					if (dirty & /*isElementVisible*/ 2) {
-    						transition_in(if_block, 1);
-    					}
-    				} else {
-    					if_block = create_if_block$2(ctx);
-    					if_block.c();
-    					transition_in(if_block, 1);
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-    				}
-    			} else if (if_block) {
-    				group_outros();
-
-    				transition_out(if_block, 1, 1, () => {
-    					if_block = null;
-    				});
-
-    				check_outros();
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(if_block);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(if_block);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (if_block) if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block.name,
-    		type: "each",
-    		source: "(81:4) {#each d6group.elements as element, i}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$6(ctx) {
-    	let div;
-    	let t;
-    	let svgcayleyarrows;
-    	let current;
-    	let each_value = /*d6group*/ ctx[0].elements;
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
-    	}
-
-    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-    		each_blocks[i] = null;
-    	});
-
-    	svgcayleyarrows = new SVGCayleyArrows({
-    			props: {
-    				group: /*d6group*/ ctx[0],
-    				positionsPerElementMap: /*positions*/ ctx[2],
-    				isArrowVisibleMap: /*isArrowVisibleMap*/ ctx[3]
-    			},
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			create_component(svgcayleyarrows.$$.fragment);
-    			attr_dev(div, "class", "groupdisplay");
-    			add_location(div, file$6, 79, 0, 2979);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    			mount_component(svgcayleyarrows, div, null);
-    			current = true;
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*d6group, chooseBorderColor, positions, isElementVisible*/ 23) {
-    				each_value = /*d6group*/ ctx[0].elements;
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    						transition_in(each_blocks[i], 1);
-    					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
-    						each_blocks[i].c();
-    						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(div, t);
-    					}
-    				}
-
-    				group_outros();
-
-    				for (i = each_value.length; i < each_blocks.length; i += 1) {
-    					out(i);
-    				}
-
-    				check_outros();
-    			}
-
-    			const svgcayleyarrows_changes = {};
-    			if (dirty & /*d6group*/ 1) svgcayleyarrows_changes.group = /*d6group*/ ctx[0];
-    			if (dirty & /*positions*/ 4) svgcayleyarrows_changes.positionsPerElementMap = /*positions*/ ctx[2];
-    			if (dirty & /*isArrowVisibleMap*/ 8) svgcayleyarrows_changes.isArrowVisibleMap = /*isArrowVisibleMap*/ ctx[3];
-    			svgcayleyarrows.$set(svgcayleyarrows_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-
-    			for (let i = 0; i < each_value.length; i += 1) {
-    				transition_in(each_blocks[i]);
-    			}
-
-    			transition_in(svgcayleyarrows.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			each_blocks = each_blocks.filter(Boolean);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				transition_out(each_blocks[i]);
-    			}
-
-    			transition_out(svgcayleyarrows.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_each(each_blocks, detaching);
-    			destroy_component(svgcayleyarrows);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$6.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$6($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('D6Group', slots, []);
-    	let r = new GroupElement("r", "(123)");
-    	let f = new GroupElement("f", "(23)");
-    	let { d6group = new Group([r, f], { "rfr": "f", "rrr": "", "ff": "" }) } = $$props;
-    	let { isElementVisible = d6group.elements.map(element => true) } = $$props;
-    	let generators = ["r", "f"];
-    	let { positions = new Map() } = $$props;
-
-    	d6group.elements.forEach(element => {
-    		positions.set(element, [0, 0]);
-    	}); //fill this dict with one position per element
-
-    	let startPos = [12, 12];
-    	let outerRadius = 11;
-    	let innerRadius = 4.5;
-    	let rotationRadians = 120 * Math.PI / 180;
-    	let startRadians = -Math.PI / 2; //start upwards
-    	let currentElem = d6group.getElemByName("e");
-
-    	for (let i = 0; i < 3; i++) {
-    		//place rotation elements on the outside of the circle.
-    		let position = [
-    			startPos[0] + outerRadius * Math.cos(rotationRadians * i + startRadians),
-    			startPos[1] + outerRadius * Math.sin(rotationRadians * i + startRadians)
-    		];
-
-    		positions.set(currentElem, position);
-
-    		//place flip elements on the inside of the circle
-    		let flipElem = d6group.multiply(d6group.getElemByName("f"), currentElem);
-
-    		let flipPosition = [
-    			startPos[0] + innerRadius * Math.cos(-rotationRadians * i + startRadians),
-    			startPos[1] + innerRadius * Math.sin(-rotationRadians * i + startRadians)
-    		]; //rotation reversed
-
-    		positions.set(flipElem, flipPosition);
-
-    		//move to next element
-    		currentElem = d6group.multiply(d6group.getElemByName("r"), currentElem);
-    	}
-
-    	function chooseBorderColor(element) {
-    		if (element.name == "e") {
-    			return identityColor;
-    		}
-
-    		if (d6group.generators.indexOf(element) !== -1) {
-    			//if the element is a generator, color it appropriately
-    			return generatorColors[d6group.generators.indexOf(element)];
-    		}
-
-    		return defaultGroupElementBorderColor;
-    	}
-
-    	let defaultArrowVisibility = {};
-
-    	d6group.elements.forEach(startElement => {
-    		defaultArrowVisibility[startElement.name] = d6group.generators.map(generator => false); //every generator starts false
-    	});
-
-    	defaultArrowVisibility["e"] = [true, true];
-    	let { isArrowVisibleMap = defaultArrowVisibility } = $$props;
-    	const writable_props = ['d6group', 'isElementVisible', 'positions', 'isArrowVisibleMap'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<D6Group> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('d6group' in $$props) $$invalidate(0, d6group = $$props.d6group);
-    		if ('isElementVisible' in $$props) $$invalidate(1, isElementVisible = $$props.isElementVisible);
-    		if ('positions' in $$props) $$invalidate(2, positions = $$props.positions);
-    		if ('isArrowVisibleMap' in $$props) $$invalidate(3, isArrowVisibleMap = $$props.isArrowVisibleMap);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		onMount,
-    		GroupElement,
-    		Group,
-    		GroupElementDisplay,
-    		SVGCayleyArrows,
-    		D6ElementCanvas,
-    		defaultGroupElementBorderColor,
-    		generatorColors,
-    		identityColor,
-    		r,
-    		f,
-    		d6group,
-    		isElementVisible,
-    		generators,
-    		positions,
-    		startPos,
-    		outerRadius,
-    		innerRadius,
-    		rotationRadians,
-    		startRadians,
-    		currentElem,
-    		chooseBorderColor,
-    		defaultArrowVisibility,
-    		isArrowVisibleMap
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('r' in $$props) r = $$props.r;
-    		if ('f' in $$props) f = $$props.f;
-    		if ('d6group' in $$props) $$invalidate(0, d6group = $$props.d6group);
-    		if ('isElementVisible' in $$props) $$invalidate(1, isElementVisible = $$props.isElementVisible);
-    		if ('generators' in $$props) generators = $$props.generators;
-    		if ('positions' in $$props) $$invalidate(2, positions = $$props.positions);
-    		if ('startPos' in $$props) startPos = $$props.startPos;
-    		if ('outerRadius' in $$props) outerRadius = $$props.outerRadius;
-    		if ('innerRadius' in $$props) innerRadius = $$props.innerRadius;
-    		if ('rotationRadians' in $$props) rotationRadians = $$props.rotationRadians;
-    		if ('startRadians' in $$props) startRadians = $$props.startRadians;
-    		if ('currentElem' in $$props) currentElem = $$props.currentElem;
-    		if ('defaultArrowVisibility' in $$props) defaultArrowVisibility = $$props.defaultArrowVisibility;
-    		if ('isArrowVisibleMap' in $$props) $$invalidate(3, isArrowVisibleMap = $$props.isArrowVisibleMap);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [d6group, isElementVisible, positions, isArrowVisibleMap, chooseBorderColor];
-    }
-
-    class D6Group extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-
-    		init(this, options, instance$6, create_fragment$6, safe_not_equal, {
-    			d6group: 0,
-    			isElementVisible: 1,
-    			positions: 2,
-    			isArrowVisibleMap: 3
-    		});
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "D6Group",
-    			options,
-    			id: create_fragment$6.name
-    		});
-    	}
-
-    	get d6group() {
-    		throw new Error("<D6Group>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set d6group(value) {
-    		throw new Error("<D6Group>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get isElementVisible() {
-    		throw new Error("<D6Group>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set isElementVisible(value) {
-    		throw new Error("<D6Group>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get positions() {
-    		throw new Error("<D6Group>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set positions(value) {
-    		throw new Error("<D6Group>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get isArrowVisibleMap() {
-    		throw new Error("<D6Group>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set isArrowVisibleMap(value) {
-    		throw new Error("<D6Group>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    /* src/twoD/InteractiveD6Creator.svelte generated by Svelte v3.46.4 */
-    const file$5 = "src/twoD/InteractiveD6Creator.svelte";
-    const get_textpart_slot_changes = dirty => ({});
-    const get_textpart_slot_context = ctx => ({});
-    const get_toppart_slot_changes = dirty => ({});
-    const get_toppart_slot_context = ctx => ({});
-
-    // (208:16) {#if data.showInfo}
-    function create_if_block_2$1(ctx) {
-    	let br0;
-    	let t0;
-    	let t1_value = /*data*/ ctx[0].isElementVisible.reduce(func, 0) + "";
-    	let t1;
-    	let t2;
-    	let br1;
-    	let t3;
-    	let t4_value = /*d6group*/ ctx[5].elements.reduce(/*func_1*/ ctx[8], 0) + "";
-    	let t4;
-    	let t5;
-    	let t6_value = /*d6group*/ ctx[5].elements.length * /*d6group*/ ctx[5].generators.length + "";
-    	let t6;
-
-    	const block = {
-    		c: function create() {
-    			br0 = element("br");
-    			t0 = text("Orientations found: ");
-    			t1 = text(t1_value);
-    			t2 = space();
-    			br1 = element("br");
-    			t3 = text("Arrows found: ");
-    			t4 = text(t4_value);
-    			t5 = text("/");
-    			t6 = text(t6_value);
-    			add_location(br0, file$5, 208, 16, 6733);
-    			add_location(br1, file$5, 209, 16, 6851);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, br0, anchor);
-    			insert_dev(target, t0, anchor);
-    			insert_dev(target, t1, anchor);
-    			insert_dev(target, t2, anchor);
-    			insert_dev(target, br1, anchor);
-    			insert_dev(target, t3, anchor);
-    			insert_dev(target, t4, anchor);
-    			insert_dev(target, t5, anchor);
-    			insert_dev(target, t6, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*data*/ 1 && t1_value !== (t1_value = /*data*/ ctx[0].isElementVisible.reduce(func, 0) + "")) set_data_dev(t1, t1_value);
-    			if (dirty[0] & /*data*/ 1 && t4_value !== (t4_value = /*d6group*/ ctx[5].elements.reduce(/*func_1*/ ctx[8], 0) + "")) set_data_dev(t4, t4_value);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(br0);
-    			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(t1);
-    			if (detaching) detach_dev(t2);
-    			if (detaching) detach_dev(br1);
-    			if (detaching) detach_dev(t3);
-    			if (detaching) detach_dev(t4);
-    			if (detaching) detach_dev(t5);
-    			if (detaching) detach_dev(t6);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_2$1.name,
-    		type: "if",
-    		source: "(208:16) {#if data.showInfo}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (206:29)              
-    function fallback_block_1(ctx) {
-    	let div;
-    	let if_block = /*data*/ ctx[0].showInfo && create_if_block_2$1(ctx);
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			if (if_block) if_block.c();
-    			attr_dev(div, "class", "top");
-    			add_location(div, file$5, 206, 12, 6663);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			if (if_block) if_block.m(div, null);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (/*data*/ ctx[0].showInfo) {
-    				if (if_block) {
-    					if_block.p(ctx, dirty);
-    				} else {
-    					if_block = create_if_block_2$1(ctx);
-    					if_block.c();
-    					if_block.m(div, null);
-    				}
-    			} else if (if_block) {
-    				if_block.d(1);
-    				if_block = null;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			if (if_block) if_block.d();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: fallback_block_1.name,
-    		type: "fallback",
-    		source: "(206:29)              ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (224:20) {#if data.showbuttons}
-    function create_if_block_1$1(ctx) {
-    	let button0;
-    	let t1;
-    	let button1;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			button0 = element("button");
-    			button0.textContent = "Rotate by 120 degrees";
-    			t1 = space();
-    			button1 = element("button");
-    			button1.textContent = "Flip horizontally";
-    			attr_dev(button0, "class", "button svelte-1c4mdm5");
-    			set_style(button0, "border-color", generatorColors[0], false);
-    			add_location(button0, file$5, 224, 20, 7581);
-    			attr_dev(button1, "class", "button svelte-1c4mdm5");
-    			set_style(button1, "border-color", generatorColors[1], false);
-    			add_location(button1, file$5, 225, 20, 7715);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, button0, anchor);
-    			insert_dev(target, t1, anchor);
-    			insert_dev(target, button1, anchor);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(button0, "click", /*onRotate*/ ctx[1], false, false, false),
-    					listen_dev(button1, "click", /*onFlip*/ ctx[2], false, false, false)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(button0);
-    			if (detaching) detach_dev(t1);
-    			if (detaching) detach_dev(button1);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_1$1.name,
-    		type: "if",
-    		source: "(224:20) {#if data.showbuttons}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (234:16) {#if data.showgroup}
-    function create_if_block$1(ctx) {
-    	let div;
-    	let t;
-    	let d6group_1;
-    	let updating_positions;
-    	let current;
-    	const d6group_1_spread_levels = [/*data*/ ctx[0]];
-
-    	function d6group_1_positions_binding(value) {
-    		/*d6group_1_positions_binding*/ ctx[10](value);
-    	}
-
-    	let d6group_1_props = {};
-
-    	for (let i = 0; i < d6group_1_spread_levels.length; i += 1) {
-    		d6group_1_props = assign(d6group_1_props, d6group_1_spread_levels[i]);
-    	}
-
-    	if (/*elemPositions*/ ctx[3] !== void 0) {
-    		d6group_1_props.positions = /*elemPositions*/ ctx[3];
-    	}
-
-    	d6group_1 = new D6Group({ props: d6group_1_props, $$inline: true });
-    	binding_callbacks.push(() => bind(d6group_1, 'positions', d6group_1_positions_binding));
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			t = space();
-    			create_component(d6group_1.$$.fragment);
-    			attr_dev(div, "class", "highlight svelte-1c4mdm5");
-
-    			set_style(
-    				div,
-    				"left",
-    				/*elemPositions*/ ctx[3] !== undefined
-    				? /*elemPositions*/ ctx[3].get(/*data*/ ctx[0].currentOrientation)[0] + "em"
-    				: "",
-    				false
-    			);
-
-    			set_style(
-    				div,
-    				"top",
-    				/*elemPositions*/ ctx[3] !== undefined
-    				? /*elemPositions*/ ctx[3].get(/*data*/ ctx[0].currentOrientation)[1] + "em"
-    				: "",
-    				false
-    			);
-
-    			add_location(div, file$5, 234, 16, 8059);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			insert_dev(target, t, anchor);
-    			mount_component(d6group_1, target, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*elemPositions, data*/ 9) {
-    				set_style(
-    					div,
-    					"left",
-    					/*elemPositions*/ ctx[3] !== undefined
-    					? /*elemPositions*/ ctx[3].get(/*data*/ ctx[0].currentOrientation)[0] + "em"
-    					: "",
-    					false
-    				);
-    			}
-
-    			if (dirty[0] & /*elemPositions, data*/ 9) {
-    				set_style(
-    					div,
-    					"top",
-    					/*elemPositions*/ ctx[3] !== undefined
-    					? /*elemPositions*/ ctx[3].get(/*data*/ ctx[0].currentOrientation)[1] + "em"
-    					: "",
-    					false
-    				);
-    			}
-
-    			const d6group_1_changes = (dirty[0] & /*data*/ 1)
-    			? get_spread_update(d6group_1_spread_levels, [get_spread_object(/*data*/ ctx[0])])
-    			: {};
-
-    			if (!updating_positions && dirty[0] & /*elemPositions*/ 8) {
-    				updating_positions = true;
-    				d6group_1_changes.positions = /*elemPositions*/ ctx[3];
-    				add_flush_callback(() => updating_positions = false);
-    			}
-
-    			d6group_1.$set(d6group_1_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(d6group_1.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(d6group_1.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			if (detaching) detach_dev(t);
-    			destroy_component(d6group_1, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block$1.name,
-    		type: "if",
-    		source: "(234:16) {#if data.showgroup}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (242:30)              
-    function fallback_block(ctx) {
-    	let div;
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			div.textContent = "How many ways are there to fit an equilateral triangle into an equilateral triangle shaped hole? Use these buttons to find out!";
-    			attr_dev(div, "class", "textpart");
-    			set_style(div, "background-color", `red`, false);
-    			add_location(div, file$5, 242, 12, 8491);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: fallback_block.name,
-    		type: "fallback",
-    		source: "(242:30)              ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$5(ctx) {
-    	let div5;
-    	let div4;
-    	let t0;
-    	let div3;
-    	let div1;
-    	let canvas_1;
-    	let t1;
-    	let br;
-    	let t2;
-    	let div0;
-    	let t3;
-    	let div2;
-    	let t4;
-    	let current;
-    	const toppart_slot_template = /*#slots*/ ctx[7].toppart;
-    	const toppart_slot = create_slot(toppart_slot_template, ctx, /*$$scope*/ ctx[6], get_toppart_slot_context);
-    	const toppart_slot_or_fallback = toppart_slot || fallback_block_1(ctx);
-    	let if_block0 = /*data*/ ctx[0].showbuttons && create_if_block_1$1(ctx);
-    	let if_block1 = /*data*/ ctx[0].showgroup && create_if_block$1(ctx);
-    	const textpart_slot_template = /*#slots*/ ctx[7].textpart;
-    	const textpart_slot = create_slot(textpart_slot_template, ctx, /*$$scope*/ ctx[6], get_textpart_slot_context);
-    	const textpart_slot_or_fallback = textpart_slot || fallback_block(ctx);
-
-    	const block = {
-    		c: function create() {
-    			div5 = element("div");
-    			div4 = element("div");
-    			if (toppart_slot_or_fallback) toppart_slot_or_fallback.c();
-    			t0 = space();
-    			div3 = element("div");
-    			div1 = element("div");
-    			canvas_1 = element("canvas");
-    			t1 = space();
-    			br = element("br");
-    			t2 = space();
-    			div0 = element("div");
-    			if (if_block0) if_block0.c();
-    			t3 = space();
-    			div2 = element("div");
-    			if (if_block1) if_block1.c();
-    			t4 = space();
-    			if (textpart_slot_or_fallback) textpart_slot_or_fallback.c();
-    			set_style(canvas_1, "width", canvasSize + "em", false);
-    			set_style(canvas_1, "height", canvasSize + "em", false);
-    			add_location(canvas_1, file$5, 220, 16, 7364);
-    			add_location(br, file$5, 221, 16, 7472);
-    			attr_dev(div0, "class", "twocolumns");
-    			add_location(div0, file$5, 222, 16, 7493);
-    			attr_dev(div1, "class", "column");
-    			add_location(div1, file$5, 219, 12, 7327);
-    			attr_dev(div2, "class", "grouppart svelte-1c4mdm5");
-    			add_location(div2, file$5, 232, 12, 7982);
-    			attr_dev(div3, "class", "twocolumns interactivepart");
-    			add_location(div3, file$5, 218, 8, 7274);
-    			attr_dev(div4, "class", "mainlayout svelte-1c4mdm5");
-    			add_location(div4, file$5, 204, 4, 6596);
-    			add_location(div5, file$5, 202, 0, 6585);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div5, anchor);
-    			append_dev(div5, div4);
-
-    			if (toppart_slot_or_fallback) {
-    				toppart_slot_or_fallback.m(div4, null);
-    			}
-
-    			append_dev(div4, t0);
-    			append_dev(div4, div3);
-    			append_dev(div3, div1);
-    			append_dev(div1, canvas_1);
-    			/*canvas_1_binding*/ ctx[9](canvas_1);
-    			append_dev(div1, t1);
-    			append_dev(div1, br);
-    			append_dev(div1, t2);
-    			append_dev(div1, div0);
-    			if (if_block0) if_block0.m(div0, null);
-    			append_dev(div3, t3);
-    			append_dev(div3, div2);
-    			if (if_block1) if_block1.m(div2, null);
-    			append_dev(div4, t4);
-
-    			if (textpart_slot_or_fallback) {
-    				textpart_slot_or_fallback.m(div4, null);
-    			}
-
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			if (toppart_slot) {
-    				if (toppart_slot.p && (!current || dirty[0] & /*$$scope*/ 64)) {
-    					update_slot_base(
-    						toppart_slot,
-    						toppart_slot_template,
-    						ctx,
-    						/*$$scope*/ ctx[6],
-    						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[6])
-    						: get_slot_changes(toppart_slot_template, /*$$scope*/ ctx[6], dirty, get_toppart_slot_changes),
-    						get_toppart_slot_context
-    					);
-    				}
-    			} else {
-    				if (toppart_slot_or_fallback && toppart_slot_or_fallback.p && (!current || dirty[0] & /*data*/ 1)) {
-    					toppart_slot_or_fallback.p(ctx, !current ? [-1, -1] : dirty);
-    				}
-    			}
-
-    			if (/*data*/ ctx[0].showbuttons) {
-    				if (if_block0) {
-    					if_block0.p(ctx, dirty);
-    				} else {
-    					if_block0 = create_if_block_1$1(ctx);
-    					if_block0.c();
-    					if_block0.m(div0, null);
-    				}
-    			} else if (if_block0) {
-    				if_block0.d(1);
-    				if_block0 = null;
-    			}
-
-    			if (/*data*/ ctx[0].showgroup) {
-    				if (if_block1) {
-    					if_block1.p(ctx, dirty);
-
-    					if (dirty[0] & /*data*/ 1) {
-    						transition_in(if_block1, 1);
-    					}
-    				} else {
-    					if_block1 = create_if_block$1(ctx);
-    					if_block1.c();
-    					transition_in(if_block1, 1);
-    					if_block1.m(div2, null);
-    				}
-    			} else if (if_block1) {
-    				group_outros();
-
-    				transition_out(if_block1, 1, 1, () => {
-    					if_block1 = null;
-    				});
-
-    				check_outros();
-    			}
-
-    			if (textpart_slot) {
-    				if (textpart_slot.p && (!current || dirty[0] & /*$$scope*/ 64)) {
-    					update_slot_base(
-    						textpart_slot,
-    						textpart_slot_template,
-    						ctx,
-    						/*$$scope*/ ctx[6],
-    						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[6])
-    						: get_slot_changes(textpart_slot_template, /*$$scope*/ ctx[6], dirty, get_textpart_slot_changes),
-    						get_textpart_slot_context
-    					);
-    				}
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(toppart_slot_or_fallback, local);
-    			transition_in(if_block1);
-    			transition_in(textpart_slot_or_fallback, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(toppart_slot_or_fallback, local);
-    			transition_out(if_block1);
-    			transition_out(textpart_slot_or_fallback, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div5);
-    			if (toppart_slot_or_fallback) toppart_slot_or_fallback.d(detaching);
-    			/*canvas_1_binding*/ ctx[9](null);
-    			if (if_block0) if_block0.d();
-    			if (if_block1) if_block1.d();
-    			if (textpart_slot_or_fallback) textpart_slot_or_fallback.d(detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$5.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    const canvasSize = 15; // a bit bigger
-    const func = (prev, current) => current ? prev + 1 : prev;
-
-    function instance$5($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('InteractiveD6Creator', slots, ['toppart','textpart']);
-    	const dispatch = createEventDispatcher();
-
-    	//group stuff
-    	let r = new GroupElement("r", "(123)");
-
-    	let f = new GroupElement("f", "(23)");
-    	let d6group = new Group([r, f], { "rfr": "f", "rrr": "", "ff": "" });
-    	let isArrowVisibleMap = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
-
-    	d6group.elements.forEach(startElement => {
-    		isArrowVisibleMap[startElement.name] = d6group.generators.map(generator => false); //every generator starts false
-    	});
-
-    	let { data = {
-    		d6group,
-    		isElementVisible: d6group.elements.map(element => //d6group.isGenerator(element) || 
-    		element.name == "e"), //only e visible to start
-    		isArrowVisibleMap,
-    		showgroup: true,
-    		showbuttons: true,
-    		showInfo: true,
-    		d6textOpacity: 1,
-    		currentOrientation: d6group.getElemByName("e"),
-    		recordNewOrientations: true
-    	} } = $$props;
-
-    	//controlling the orientation of the triangle
-    	let prevOrientation = d6group.getElemByName("e");
-
-    	function onRotate() {
-    		//terrible hack time.
-    		rotationTarget += 120 * flipScaleTarget;
-
-    		prevOrientation = data.currentOrientation;
-
-    		if (data.recordNewOrientations) {
-    			$$invalidate(0, data.currentOrientation = d6group.multiply(data.currentOrientation, d6group.generators[0]), data);
-    			$$invalidate(0, data.isArrowVisibleMap[prevOrientation.name][0] = true, data);
-    		}
-
-    		showNewGroupElements();
-    	}
-
-    	function onFlip() {
-    		//terrible hack time.
-    		flipScaleTarget *= -1;
-
-    		prevOrientation = data.currentOrientation;
-
-    		if (data.recordNewOrientations) {
-    			$$invalidate(0, data.currentOrientation = d6group.multiply(data.currentOrientation, d6group.generators[1]), data);
-    			$$invalidate(0, data.isArrowVisibleMap[prevOrientation.name][1] = true, data);
-    		}
-
-    		showNewGroupElements();
-    	}
-
-    	function showNewGroupElements() {
-    		//moveTriangleToNewOrientation();
-    		let elementIndex = d6group.elements.indexOf(data.currentOrientation);
-
-    		$$invalidate(0, data.isElementVisible[elementIndex] = true, data); //unhide the current orientation
-    		$$invalidate(0, data);
-
-    		//if all elements found, send a message
-    		//note: this will keep sending a message every time a button is clicked once the criterion has been reached
-    		let allFound = true;
-
-    		for (let i = 0; i < d6group.elements.length; i++) {
-    			let element = d6group.elements[i];
-
-    			//if element isn't visible, or an arrow from it hasn't been found yet
-    			if (!data.isElementVisible[i] || data.isArrowVisibleMap[element.name].indexOf(false) !== -1) {
-    				allFound = false;
-    				break;
-    			}
-    		}
-
-    		if (allFound) {
-    			dispatch("allFound", {});
-    		}
-    	}
-
-    	let elemPositions; //filled in by svelte bind:positions={positions} from D6group.svelte
-    	const canvasSizePixels = canvasSize * 30;
-    	const triangleRadius = 0.4 * canvasSizePixels;
-    	let startVertex = [0, -triangleRadius];
-    	let canvas, ctx;
-    	let lastTime = 0;
-    	let drawLoopEnabled = true;
-
-    	function draw(currentTime) {
-    		if (!drawLoopEnabled) return;
-    		let delta = (currentTime - lastTime) / 1000;
-    		ctx = canvas.getContext("2d");
-    		$$invalidate(4, canvas.width = canvasSizePixels, canvas);
-    		$$invalidate(4, canvas.height = canvasSizePixels, canvas);
-    		ctx.translate(canvas.width / 2, canvas.height / 2); //make all transformations start from center of canvas
-    		ctx.lineWidth = lineWidth;
-    		ctx.strokeStyle = triangleStrokeStyle;
-
-    		//draw triangle shadow
-    		ctx.save();
-
-    		ctx.fillStyle = triangleShadowColor;
-    		drawTrianglePath(ctx, 0, 0, startVertex);
-    		ctx.fill();
-    		updateCurrentAnimation(ctx, delta);
-    		applyCurrentAnimation(ctx);
-    		ctx.fillStyle = triangleColor;
-    		drawTrianglePath(ctx, 0, 0, startVertex);
-    		ctx.fill();
-    		ctx.fillStyle = D6TextColor;
-    		ctx.font = D6_text_size_multiplier * canvasSize + "em serif";
-    		ctx.globalAlpha = data.d6textOpacity;
-    		ctx.fillText("D6", -0.4 * D6_text_size_multiplier * canvasSizePixels, -0.1 * D6_text_size_multiplier * canvasSizePixels);
-    		ctx.globalAlpha = 1;
-    		lastTime = currentTime;
-    		window.requestAnimationFrame(draw);
-    	}
-
-    	onMount(() => {
-    		drawLoopEnabled = true;
-    		draw(0);
-    	});
-
-    	onDestroy(() => {
-    		drawLoopEnabled = false;
-    	});
-
-    	let flipScaleTarget = 1;
-    	let flipScaleAmount = 1;
-    	let rotationTarget = 0;
-    	let rotationAmount = 0;
-    	let rotationSpeed = 3; //1 = one second, 3 = 1/3 of a second
-    	let flipSpeed = 3;
-
-    	function updateCurrentAnimation(ctx, delta) {
-    		if (flipScaleAmount != flipScaleTarget) {
-    			flipScaleAmount += delta * 2 * flipSpeed * Math.sign(flipScaleTarget - flipScaleAmount);
-    		}
-
-    		if (Math.abs(flipScaleAmount - flipScaleTarget) < rotationSpeed * 2 / 60) {
-    			flipScaleAmount = flipScaleTarget;
-    		}
-
-    		if (rotationAmount != rotationTarget) {
-    			rotationAmount += delta * 120 * rotationSpeed * Math.sign(rotationTarget - rotationAmount);
-    		}
-
-    		if (Math.abs(rotationAmount - rotationTarget) < 2) {
-    			rotationAmount = rotationTarget;
-    		}
-    	}
-
-    	function applyCurrentAnimation(ctx, delta) {
-    		ctx.scale(flipScaleAmount, 1);
-    		ctx.rotate(rotationAmount * Math.PI / 180);
-    	}
-
-    	window.data = data;
-    	const writable_props = ['data'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<InteractiveD6Creator> was created with unknown prop '${key}'`);
-    	});
-
-    	const func_1 = (prev, groupElem) => {
-    		let sum = prev;
-
-    		data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {
-    			if (arrowVisible) {
-    				sum++;
-    			}
-    		});
-
-    		return sum;
-    	};
-
-    	function canvas_1_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			canvas = $$value;
-    			$$invalidate(4, canvas);
-    		});
-    	}
-
-    	function d6group_1_positions_binding(value) {
-    		elemPositions = value;
-    		$$invalidate(3, elemPositions);
-    	}
-
-    	$$self.$$set = $$props => {
-    		if ('data' in $$props) $$invalidate(0, data = $$props.data);
-    		if ('$$scope' in $$props) $$invalidate(6, $$scope = $$props.$$scope);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		D6Group,
-    		GroupElement,
-    		Group,
-    		generatorColors,
-    		drawTrianglePath,
-    		lineWidth,
-    		D6_text_size_multiplier,
-    		triangleStrokeStyle,
-    		triangleShadowColor,
-    		triangleColor,
-    		D6TextColor,
-    		createEventDispatcher,
-    		dispatch,
-    		onMount,
-    		onDestroy,
-    		r,
-    		f,
-    		d6group,
-    		isArrowVisibleMap,
-    		data,
-    		prevOrientation,
-    		onRotate,
-    		onFlip,
-    		showNewGroupElements,
-    		elemPositions,
-    		canvasSize,
-    		canvasSizePixels,
-    		triangleRadius,
-    		startVertex,
-    		canvas,
-    		ctx,
-    		lastTime,
-    		drawLoopEnabled,
-    		draw,
-    		flipScaleTarget,
-    		flipScaleAmount,
-    		rotationTarget,
-    		rotationAmount,
-    		rotationSpeed,
-    		flipSpeed,
-    		updateCurrentAnimation,
-    		applyCurrentAnimation
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('r' in $$props) r = $$props.r;
-    		if ('f' in $$props) f = $$props.f;
-    		if ('d6group' in $$props) $$invalidate(5, d6group = $$props.d6group);
-    		if ('isArrowVisibleMap' in $$props) isArrowVisibleMap = $$props.isArrowVisibleMap;
-    		if ('data' in $$props) $$invalidate(0, data = $$props.data);
-    		if ('prevOrientation' in $$props) prevOrientation = $$props.prevOrientation;
-    		if ('elemPositions' in $$props) $$invalidate(3, elemPositions = $$props.elemPositions);
-    		if ('startVertex' in $$props) startVertex = $$props.startVertex;
-    		if ('canvas' in $$props) $$invalidate(4, canvas = $$props.canvas);
-    		if ('ctx' in $$props) ctx = $$props.ctx;
-    		if ('lastTime' in $$props) lastTime = $$props.lastTime;
-    		if ('drawLoopEnabled' in $$props) drawLoopEnabled = $$props.drawLoopEnabled;
-    		if ('flipScaleTarget' in $$props) flipScaleTarget = $$props.flipScaleTarget;
-    		if ('flipScaleAmount' in $$props) flipScaleAmount = $$props.flipScaleAmount;
-    		if ('rotationTarget' in $$props) rotationTarget = $$props.rotationTarget;
-    		if ('rotationAmount' in $$props) rotationAmount = $$props.rotationAmount;
-    		if ('rotationSpeed' in $$props) rotationSpeed = $$props.rotationSpeed;
-    		if ('flipSpeed' in $$props) flipSpeed = $$props.flipSpeed;
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [
-    		data,
-    		onRotate,
-    		onFlip,
-    		elemPositions,
-    		canvas,
-    		d6group,
-    		$$scope,
-    		slots,
-    		func_1,
-    		canvas_1_binding,
-    		d6group_1_positions_binding
-    	];
-    }
-
-    class InteractiveD6Creator extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { data: 0, onRotate: 1, onFlip: 2 }, null, [-1, -1]);
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "InteractiveD6Creator",
-    			options,
-    			id: create_fragment$5.name
-    		});
-    	}
-
-    	get data() {
-    		throw new Error("<InteractiveD6Creator>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set data(value) {
-    		throw new Error("<InteractiveD6Creator>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get onRotate() {
-    		return this.$$.ctx[1];
-    	}
-
-    	set onRotate(value) {
-    		throw new Error("<InteractiveD6Creator>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get onFlip() {
-    		return this.$$.ctx[2];
-    	}
-
-    	set onFlip(value) {
-    		throw new Error("<InteractiveD6Creator>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    //there's only ever one 3D canvas. but each time svelte switches chapters, destroying and recreates all the DOM, it gets removed from one set of DOM, and attached in a different place
-
-    let canvas = document.createElement("canvas");
-
-    let three = explanariaBundle.setupThree(canvas);
-
-    function attachCanvas(newparent, classToGive){
-        if(typeof(newparent) == "string"){
-            newparent = document.getElementById(newparent);
-        }
-        removeCanvas();
-        newparent.appendChild(canvas);
-        canvas.className = classToGive;
-        three.resizeCanvasIfNecessary();
-        return canvas;
-    }
-    function removeCanvas(){
-        let parent = canvas.parentElement;
-        if(parent){
-            parent.removeChild(canvas);
-        }
-    }
-
-
-    const cleanMaterial = material => {
-        material.dispose();
-        // dispose textures
-        for (const key of Object.keys(material)) {
-    	    const value = material[key];
-    	    if (value && typeof value === 'object' && 'minFilter' in value) {
-    		    //disposing texture
-    		    value.dispose();
-    	    }
-        }
-    };
-
-    function clearThreeScene(){
-
-        three.scene.traverse(object => {
-    	    if (!object.isMesh) return;
-
-    	    object.geometry.dispose();
-
-    	    if (object.material.isMaterial) {
-    		    cleanMaterial(object.material);
-    	    } else {
-    		    // an array of materials
-    		    for (const material of object.material) cleanMaterial(material);
-    	    }
-        });
-        three.scene.clear();
-        three.camera.position.set(0,0,5);
-        three.camera.zoom = 1;
-        three.camera.rotation.set(0,0,0);
-        three.camera.updateMatrix();
-    }
-
-    /* src/chapters/CayleyGraphIntroPart.svelte generated by Svelte v3.46.4 */
-    const file$4 = "src/chapters/CayleyGraphIntroPart.svelte";
-
-    // (110:4) 
-    function create_textpart_slot(ctx) {
-    	let div11;
-    	let div0;
-    	let t0;
-    	let br0;
-    	let t1;
-    	let div1;
-    	let t3;
-    	let div2;
-    	let t5;
-    	let div3;
-    	let t7;
-    	let div4;
-    	let t9;
-    	let div5;
-    	let t11;
-    	let div6;
-    	let t12;
-    	let span0;
-    	let t14;
-    	let span1;
-    	let t16;
-    	let br1;
-    	let t17;
-    	let t18;
-    	let div7;
-    	let t19;
-    	let br2;
-    	let t20;
-    	let br3;
-    	let t21;
-    	let div8;
-    	let t22;
-    	let b0;
-    	let t24;
-    	let b1;
-    	let t26;
-    	let t27;
-    	let div9;
-    	let t28;
-    	let b2;
-    	let t30;
-    	let b3;
-    	let t32;
-    	let div10;
-
-    	const block = {
-    		c: function create() {
-    			div11 = element("div");
-    			div0 = element("div");
-    			t0 = text("Symmetry groups are pretty cool, so let's look at a simpler example: the symmetry group of an equilateral triangle.\n            ");
-    			br0 = element("br");
-    			t1 = space();
-    			div1 = element("div");
-    			div1.textContent = "What's the symmetry group of this triangle? To find out, we'll need to find some actions which leave this triangle looking the same before and after.";
-    			t3 = space();
-    			div2 = element("div");
-    			div2.textContent = "One action which leaves the triangle looking unchanged is a rotation by 120 degrees.";
-    			t5 = space();
-    			div3 = element("div");
-    			div3.textContent = "And another action which leaves the triangle looking unchanged is a horizontal flip.";
-    			t7 = space();
-    			div4 = element("div");
-    			div4.textContent = "To help keep track of what each action does to the triangle, I'll doodle some letters on it.";
-    			t9 = space();
-    			div5 = element("div");
-    			div5.textContent = "Finally, on the right, I'll keep track of the actions you discover.";
-    			t11 = space();
-    			div6 = element("div");
-    			t12 = text("Each circle represents an action you can perform to the triangle which leaves it unchanged, and arrows will show you what happens if you ");
-    			span0 = element("span");
-    			span0.textContent = "rotate";
-    			t14 = text(" and ");
-    			span1 = element("span");
-    			span1.textContent = "flip";
-    			t16 = text(" the triangle.\n            ");
-    			br1 = element("br");
-    			t17 = text("Can you find the triangle's entire symmetry group? Use these buttons to find out!");
-    			t18 = space();
-    			div7 = element("div");
-    			t19 = text("Alright! Looks like we found everything! ");
-    			br2 = element("br");
-    			t20 = text("\n            Take a look at the cayley graph you filled out. Doesn't it look somewhat triangular? That's no coincidence. Somehow, the symmetry group is capturing info about the original shape we started with.\n            ");
-    			br3 = element("br");
-    			t21 = space();
-    			div8 = element("div");
-    			t22 = text("Even more interesting, the resulting group doesn't depend on the actions we choose to build the graph with. For example, we built this graph using a  ");
-    			b0 = element("b");
-    			b0.textContent = "rotation";
-    			t24 = text(" and ");
-    			b1 = element("b");
-    			b1.textContent = "flip";
-    			t26 = text(". But what if we chose other actions?");
-    			t27 = space();
-    			div9 = element("div");
-    			t28 = text("I'll draw a ");
-    			b2 = element("b");
-    			b2.textContent = "purple";
-    			t30 = text(" arrow to represent this action right here. What happens if we try building a cayley graph out of this action and a ");
-    			b3 = element("b");
-    			b3.textContent = "flip?";
-    			t32 = space();
-    			div10 = element("div");
-    			div10.textContent = "It's the same graph.";
-    			add_location(br0, file$4, 112, 12, 4137);
-    			attr_dev(div0, "class", "exp-slide");
-    			add_location(div0, file$4, 110, 8, 3973);
-    			attr_dev(div1, "class", "exp-slide");
-    			add_location(div1, file$4, 114, 8, 4165);
-    			attr_dev(div2, "class", "exp-slide");
-    			add_location(div2, file$4, 117, 8, 4374);
-    			attr_dev(div3, "class", "exp-slide");
-    			add_location(div3, file$4, 120, 8, 4518);
-    			attr_dev(div4, "class", "exp-slide");
-    			add_location(div4, file$4, 123, 8, 4662);
-    			attr_dev(div5, "class", "exp-slide");
-    			add_location(div5, file$4, 126, 8, 4814);
-    			add_location(span0, file$4, 130, 149, 5114);
-    			add_location(span1, file$4, 130, 173, 5138);
-    			add_location(br1, file$4, 131, 12, 5182);
-    			attr_dev(div6, "class", "exp-slide");
-    			add_location(div6, file$4, 129, 8, 4941);
-    			add_location(br2, file$4, 134, 53, 5368);
-    			add_location(br3, file$4, 136, 12, 5593);
-    			attr_dev(div7, "class", "exp-slide");
-    			add_location(div7, file$4, 133, 8, 5291);
-    			set_style(b0, "color", generatorColors[0], false);
-    			add_location(b0, file$4, 139, 175, 5820);
-    			set_style(b1, "color", generatorColors[1], false);
-    			add_location(b1, file$4, 139, 228, 5873);
-    			attr_dev(div8, "class", "exp-slide");
-    			add_location(div8, file$4, 138, 8, 5621);
-    			set_style(b2, "color", generatorColors[2], false);
-    			add_location(b2, file$4, 142, 24, 6026);
-    			set_style(b3, "color", generatorColors[1], false);
-    			add_location(b3, file$4, 142, 186, 6188);
-    			attr_dev(div9, "class", "exp-slide");
-    			add_location(div9, file$4, 141, 8, 5978);
-    			attr_dev(div10, "class", "exp-slide");
-    			add_location(div10, file$4, 144, 8, 6257);
-    			attr_dev(div11, "slot", "textpart");
-    			attr_dev(div11, "class", "overlappingItemContainer textpart");
-    			add_location(div11, file$4, 109, 4, 3901);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div11, anchor);
-    			append_dev(div11, div0);
-    			append_dev(div0, t0);
-    			append_dev(div0, br0);
-    			append_dev(div11, t1);
-    			append_dev(div11, div1);
-    			append_dev(div11, t3);
-    			append_dev(div11, div2);
-    			append_dev(div11, t5);
-    			append_dev(div11, div3);
-    			append_dev(div11, t7);
-    			append_dev(div11, div4);
-    			append_dev(div11, t9);
-    			append_dev(div11, div5);
-    			append_dev(div11, t11);
-    			append_dev(div11, div6);
-    			append_dev(div6, t12);
-    			append_dev(div6, span0);
-    			append_dev(div6, t14);
-    			append_dev(div6, span1);
-    			append_dev(div6, t16);
-    			append_dev(div6, br1);
-    			append_dev(div6, t17);
-    			append_dev(div11, t18);
-    			append_dev(div11, div7);
-    			append_dev(div7, t19);
-    			append_dev(div7, br2);
-    			append_dev(div7, t20);
-    			append_dev(div7, br3);
-    			append_dev(div11, t21);
-    			append_dev(div11, div8);
-    			append_dev(div8, t22);
-    			append_dev(div8, b0);
-    			append_dev(div8, t24);
-    			append_dev(div8, b1);
-    			append_dev(div8, t26);
-    			append_dev(div11, t27);
-    			append_dev(div11, div9);
-    			append_dev(div9, t28);
-    			append_dev(div9, b2);
-    			append_dev(div9, t30);
-    			append_dev(div9, b3);
-    			append_dev(div11, t32);
-    			append_dev(div11, div10);
-    		},
-    		p: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div11);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_textpart_slot.name,
-    		type: "slot",
-    		source: "(110:4) ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$4(ctx) {
-    	let interactived6creator;
-    	let updating_data;
-    	let current;
-
-    	function interactived6creator_data_binding(value) {
-    		/*interactived6creator_data_binding*/ ctx[3](value);
-    	}
-
-    	let interactived6creator_props = {
-    		$$slots: { textpart: [create_textpart_slot] },
-    		$$scope: { ctx }
-    	};
-
-    	if (/*data*/ ctx[0] !== void 0) {
-    		interactived6creator_props.data = /*data*/ ctx[0];
-    	}
-
-    	interactived6creator = new InteractiveD6Creator({
-    			props: interactived6creator_props,
-    			$$inline: true
-    		});
-
-    	binding_callbacks.push(() => bind(interactived6creator, 'data', interactived6creator_data_binding));
-    	/*interactived6creator_binding*/ ctx[4](interactived6creator);
-    	interactived6creator.$on("allFound", /*allFound*/ ctx[2]);
-
-    	const block = {
-    		c: function create() {
-    			create_component(interactived6creator.$$.fragment);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			mount_component(interactived6creator, target, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, [dirty]) {
-    			const interactived6creator_changes = {};
-
-    			if (dirty & /*$$scope*/ 1024) {
-    				interactived6creator_changes.$$scope = { dirty, ctx };
-    			}
-
-    			if (!updating_data && dirty & /*data*/ 1) {
-    				updating_data = true;
-    				interactived6creator_changes.data = /*data*/ ctx[0];
-    				add_flush_callback(() => updating_data = false);
-    			}
-
-    			interactived6creator.$set(interactived6creator_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(interactived6creator.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(interactived6creator.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			/*interactived6creator_binding*/ ctx[4](null);
-    			destroy_component(interactived6creator, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$4.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$4($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('CayleyGraphIntroPart', slots, []);
-    	const dispatch = createEventDispatcher();
-    	let data;
-    	let d6creator;
-
-    	async function animate() {
-    		//EXP.setupThree() is required first, but it's called in sharedthreejscanvas.js
-    		$$invalidate(0, data.showgroup = false, data);
-
-    		$$invalidate(0, data.showbuttons = false, data);
-    		$$invalidate(0, data.d6textOpacity = 0, data);
-    		$$invalidate(0, data.recordNewOrientations = false, data);
-    		$$invalidate(0, data.showInfo = false, data);
-    		await presentation.begin();
-    		await presentation.nextSlide();
-    		await presentation.nextSlide();
-    		if (d6creator) d6creator.onRotate();
-    		await presentation.nextSlide();
-    		if (d6creator) d6creator.onFlip();
-    		await presentation.nextSlide();
-
-    		//show the word D6 on the triangle, sneakily erasing the previous flip and rotate
-    		if (d6creator) d6creator.onRotate();
-
-    		if (d6creator) d6creator.onFlip();
-    		await presentation.delay(500);
-    		presentation.TransitionTo(data, { d6textOpacity: 1 }, 1000);
-    		await presentation.nextSlide();
-    		await presentation.TransitionTo(data, { showgroup: true }, 1000);
-    		await presentation.nextSlide();
-
-    		await presentation.TransitionInstantly(data, {
-    			showbuttons: true,
-    			showInfo: true,
-    			recordNewOrientations: true
-    		});
-
-    		//player clicks  abunch of buttons
-    		//wait for user to discover all of the cayley graph
-    		await new Promise((resolve, reject) => {
-    				resolveAllFound = resolve;
-
-    				//type "debug" to automatically clear
-    				let debugCode = 0;
-
-    				window.addEventListener("keydown", event => {
-    					if (event.key == ('debug')[debugCode]) {
-    						debugCode += 1;
-    						if (debugCode == ('debug').length) allFound();
-    					}
-    				});
-    			});
-
-    		await presentation.nextSlide();
-    		await presentation.nextSlide();
-    		await presentation.nextSlide();
-
-    		//now, we're going to add the purple arrow rf as a generator
-    		let newgenerator = data.d6group.getElemByName("rf");
-
-    		data.d6group.generators.push(newgenerator);
-
-    		//todo: hide "orientations found" and "arrows found"
-    		data.d6group.elements.forEach(element => $$invalidate(0, data.isArrowVisibleMap[element.name] = [true, true, true], data));
-
-    		$$invalidate(0, data);
-    		data.isArrowVisibleMap[groupElem.name].push(false);
-    		data.d6group.elements.forEach(element => data.isArrowVisibleMap[element.name].push(true));
-    		$$invalidate(0, data.isArrowVisibleMap["e"][2] = true, data); //show one arrow
-    		$$invalidate(0, data);
-    		$$invalidate(0, data);
-    		await presentation.nextSlide();
-    		await presentation.nextSlide();
-
-    		if (!alreadyEnding) {
-    			dispatch("chapterEnd");
-    		}
-    	}
-
-    	//used to let the InteractiveD6Creator notify us that it's finished finding all the elements
-    	let resolveAllFound = undefined;
-
-    	function allFound(event) {
-    		if (resolveAllFound) {
-    			resolveAllFound();
-    			resolveAllFound = undefined;
-    		}
-    	}
-
-    	let presentation, alreadyEnding = false;
-
-    	onMount(async () => {
-    		presentation = new explanariaBundle.UndoCapableDirector();
-    		animate();
-    	});
-
-    	onDestroy(() => {
-    		alreadyEnding = true;
-    		presentation.rushThroughRestOfPresentation();
-    	});
-
-    	const writable_props = [];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CayleyGraphIntroPart> was created with unknown prop '${key}'`);
-    	});
-
-    	function interactived6creator_data_binding(value) {
-    		data = value;
-    		$$invalidate(0, data);
-    	}
-
-    	function interactived6creator_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			d6creator = $$value;
-    			$$invalidate(1, d6creator);
-    		});
-    	}
-
-    	$$self.$capture_state = () => ({
-    		InteractiveD6Creator,
-    		GroupElement,
-    		Group,
-    		EXP: EXP$1,
-    		onMount,
-    		onDestroy,
-    		attachCanvas,
-    		three,
-    		generatorColors,
-    		createEventDispatcher,
-    		dispatch,
-    		data,
-    		d6creator,
-    		animate,
-    		resolveAllFound,
-    		allFound,
-    		presentation,
-    		alreadyEnding
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('data' in $$props) $$invalidate(0, data = $$props.data);
-    		if ('d6creator' in $$props) $$invalidate(1, d6creator = $$props.d6creator);
-    		if ('resolveAllFound' in $$props) resolveAllFound = $$props.resolveAllFound;
-    		if ('presentation' in $$props) presentation = $$props.presentation;
-    		if ('alreadyEnding' in $$props) alreadyEnding = $$props.alreadyEnding;
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [
-    		data,
-    		d6creator,
-    		allFound,
-    		interactived6creator_data_binding,
-    		interactived6creator_binding
-    	];
-    }
-
-    class CayleyGraphIntroPart extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$4, create_fragment$4, safe_not_equal, {});
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "CayleyGraphIntroPart",
-    			options,
-    			id: create_fragment$4.name
-    		});
-    	}
-    }
-
     function parseCIFString(cifString){
         //parses CIF, crystal information file, into a JS object
         //extremely janky and definitely not spec compliant
@@ -61597,11 +57942,96 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
 
 `);
 
+    //there's only ever one 3D canvas. but each time svelte switches chapters, destroying and recreates all the DOM, it gets removed from one set of DOM, and attached in a different place
+
+    let canvas = document.createElement("canvas");
+
+    let three = explanariaBundle.setupThree(canvas);
+
+    function attachCanvas(newparent, classToGive){
+        if(typeof(newparent) == "string"){
+            newparent = document.getElementById(newparent);
+        }
+        removeCanvas();
+        newparent.appendChild(canvas);
+        canvas.className = classToGive;
+        three.resizeCanvasIfNecessary();
+        return canvas;
+    }
+    function removeCanvas(){
+        let parent = canvas.parentElement;
+        if(parent){
+            parent.removeChild(canvas);
+        }
+    }
+
+
+    const cleanMaterial = material => {
+        material.dispose();
+        // dispose textures
+        for (const key of Object.keys(material)) {
+    	    const value = material[key];
+    	    if (value && typeof value === 'object' && 'minFilter' in value) {
+    		    //disposing texture
+    		    value.dispose();
+    	    }
+        }
+    };
+
+    function clearThreeScene(){
+
+        three.scene.traverse(object => {
+    	    if (!object.isMesh) return;
+
+    	    object.geometry.dispose();
+
+    	    if (object.material.isMaterial) {
+    		    cleanMaterial(object.material);
+    	    } else {
+    		    // an array of materials
+    		    for (const material of object.material) cleanMaterial(material);
+    	    }
+        });
+        three.scene.clear();
+        three.camera.position.set(0,0,5);
+        three.camera.zoom = 1;
+        three.camera.rotation.set(0,0,0);
+        three.camera.updateMatrix();
+    }
+
+    const lightblue = "hsla(240, 90%, 70%, 1)";
+
+
+    const green = "hsla(120, 90%, 70%, 1)";
+    const red = "hsla(0, 90%, 70%, 1)";
+
+    const purple = "hsla(320, 90%, 70%, 1)";
+
+    //chapters 0,1
+    function getAtomColor(atomName){
+        if(atomName == "O")return "red";
+        if(atomName == "Al")return "grey";
+        if(atomName == "Si")return "blue";
+        return "green";
+    }
+
+    const chapter2linecolor = lightblue;
+    const chapter2linecolor2 = purple;
+    const chapter2linecolor3 = green;
+    const drawGeneratorsWithOutlines = false;
+    const drawEyesOnArrows = true;
+
+    const identityColor = "hsla(240, 0%, 70%, 1)";
+
+    const generatorColors = [green, red, purple, lightblue]; //subtle bug here: this will error if we use a group with more generator than there are colors here
+
+    let defaultGroupElementBorderColor = lightblue;
+
     let THREE$1 = explanariaBundle.THREE;
 
 
     const atomRadius = 0.5;
-    const widthSegments = 32;
+    const widthSegments = 20;
     const heightSegments = widthSegments/2;
 
     let spheregeo = new THREE$1.SphereGeometry(atomRadius, widthSegments, heightSegments);
@@ -61739,9 +58169,9 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     /* src/threeD/MoleculeCanvas.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1$1 } = globals;
-    const file$3 = "src/threeD/MoleculeCanvas.svelte";
+    const file$a = "src/threeD/MoleculeCanvas.svelte";
 
-    function create_fragment$3(ctx) {
+    function create_fragment$a(ctx) {
     	let div0;
     	let t0;
     	let t1;
@@ -61758,10 +58188,10 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			set_style(div0, "position", `absolute`, false);
     			set_style(div0, "top", `0%`, false);
     			set_style(div0, "text-align", `right`, false);
-    			add_location(div0, file$3, 53, 0, 1496);
+    			add_location(div0, file$a, 53, 0, 1496);
     			attr_dev(div1, "class", "threecanvascontainer");
     			attr_dev(div1, "id", "threecanvas");
-    			add_location(div1, file$3, 54, 0, 1584);
+    			add_location(div1, file$a, 54, 0, 1584);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -61787,7 +58217,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$3.name,
+    		id: create_fragment$a.name,
     		type: "component",
     		source: "",
     		ctx
@@ -61796,7 +58226,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     	return block;
     }
 
-    function instance$3($$self, $$props, $$invalidate) {
+    function instance$a($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('MoleculeCanvas', slots, []);
     	let controls, fps = 0;
@@ -61870,21 +58300,21 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     class MoleculeCanvas extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {});
+    		init(this, options, instance$a, create_fragment$a, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "MoleculeCanvas",
     			options,
-    			id: create_fragment$3.name
+    			id: create_fragment$a.name
     		});
     	}
     }
 
     /* src/chapters/CrystalIntroPart.svelte generated by Svelte v3.46.4 */
-    const file$2 = "src/chapters/CrystalIntroPart.svelte";
+    const file$9 = "src/chapters/CrystalIntroPart.svelte";
 
-    function create_fragment$2(ctx) {
+    function create_fragment$9(ctx) {
     	let div21;
     	let moleculecanvas;
     	let t0;
@@ -62137,115 +58567,115 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			attr_dev(div0, "id", "whitebg");
     			set_style(div0, "opacity", "0");
     			attr_dev(div0, "class", "svelte-trsbuu");
-    			add_location(div0, file$2, 60, 4, 1761);
-    			add_location(br0, file$2, 63, 12, 1901);
-    			add_location(br1, file$2, 63, 16, 1905);
-    			add_location(br2, file$2, 63, 20, 1909);
-    			add_location(h1, file$2, 66, 20, 2015);
-    			add_location(br3, file$2, 67, 20, 2068);
-    			add_location(aside0, file$2, 68, 20, 2093);
+    			add_location(div0, file$9, 60, 4, 1761);
+    			add_location(br0, file$9, 63, 12, 1901);
+    			add_location(br1, file$9, 63, 16, 1905);
+    			add_location(br2, file$9, 63, 20, 1909);
+    			add_location(h1, file$9, 66, 20, 2015);
+    			add_location(br3, file$9, 67, 20, 2068);
+    			add_location(aside0, file$9, 68, 20, 2093);
     			attr_dev(div1, "class", "frostedbg");
     			set_style(div1, "width", "15em");
-    			add_location(div1, file$2, 65, 16, 1951);
-    			add_location(center, file$2, 64, 12, 1926);
+    			add_location(div1, file$9, 65, 16, 1951);
+    			add_location(center, file$9, 64, 12, 1926);
     			attr_dev(div2, "class", "exp-slide");
-    			add_location(div2, file$2, 62, 8, 1865);
-    			add_location(br4, file$2, 75, 20, 2343);
-    			add_location(br5, file$2, 75, 24, 2347);
-    			add_location(br6, file$2, 77, 20, 2422);
-    			add_location(br7, file$2, 77, 24, 2426);
+    			add_location(div2, file$9, 62, 8, 1865);
+    			add_location(br4, file$9, 75, 20, 2343);
+    			add_location(br5, file$9, 75, 24, 2347);
+    			add_location(br6, file$9, 77, 20, 2422);
+    			add_location(br7, file$9, 77, 24, 2426);
     			attr_dev(img0, "class", "materialimage svelte-trsbuu");
     			attr_dev(img0, "alt", "Long, sharp, blue crystals of kyanite poking out of a white rock");
     			if (!src_url_equal(img0.src, img0_src_value = "./img/Kyanite-265746.jpg")) attr_dev(img0, "src", img0_src_value);
-    			add_location(img0, file$2, 78, 20, 2455);
-    			add_location(br8, file$2, 79, 20, 2606);
+    			add_location(img0, file$9, 78, 20, 2455);
+    			add_location(br8, file$9, 79, 20, 2606);
     			attr_dev(a0, "href", "https://commons.wikimedia.org/wiki/File:Kyanite-265746.jpg");
-    			add_location(a0, file$2, 81, 24, 2673);
-    			add_location(aside1, file$2, 80, 20, 2631);
+    			add_location(a0, file$9, 81, 24, 2673);
+    			add_location(aside1, file$9, 80, 20, 2631);
     			attr_dev(div3, "class", "column");
     			set_style(div3, "height", "50%", false);
-    			add_location(div3, file$2, 74, 16, 2281);
-    			add_location(br9, file$2, 85, 20, 2900);
-    			add_location(br10, file$2, 85, 24, 2904);
-    			add_location(br11, file$2, 87, 20, 2986);
-    			add_location(br12, file$2, 87, 24, 2990);
+    			add_location(div3, file$9, 74, 16, 2281);
+    			add_location(br9, file$9, 85, 20, 2900);
+    			add_location(br10, file$9, 85, 24, 2904);
+    			add_location(br11, file$9, 87, 20, 2986);
+    			add_location(br12, file$9, 87, 24, 2990);
     			attr_dev(img1, "class", "materialimage svelte-trsbuu");
     			attr_dev(img1, "alt", "A orange-gray crystal of andalusite, opaque and with long columns");
     			if (!src_url_equal(img1.src, img1_src_value = "./img/Andalusite_-_Al2SiO5_locality_-_Dolní_Bory,_Czech_Republic_(50426489511).jpg")) attr_dev(img1, "src", img1_src_value);
-    			add_location(img1, file$2, 88, 20, 3015);
-    			add_location(br13, file$2, 89, 20, 3225);
+    			add_location(img1, file$9, 88, 20, 3015);
+    			add_location(br13, file$9, 89, 20, 3225);
     			attr_dev(a1, "href", "https://commons.wikimedia.org/wiki/File:Andalusite_-_Al2SiO5_locality_-_Doln%C3%AD_Bory,_Czech_Republic_(50426489511).jpg");
-    			add_location(a1, file$2, 91, 24, 3292);
-    			add_location(aside2, file$2, 90, 20, 3250);
+    			add_location(a1, file$9, 91, 24, 3292);
+    			add_location(aside2, file$9, 90, 20, 3250);
     			attr_dev(div4, "class", "column");
     			set_style(div4, "height", "50%", false);
-    			add_location(div4, file$2, 84, 16, 2838);
+    			add_location(div4, file$9, 84, 16, 2838);
     			attr_dev(div5, "class", "twocolumns");
-    			add_location(div5, file$2, 73, 12, 2240);
-    			add_location(br14, file$2, 95, 12, 3536);
-    			add_location(br15, file$2, 95, 16, 3540);
-    			add_location(p, file$2, 96, 12, 3557);
+    			add_location(div5, file$9, 73, 12, 2240);
+    			add_location(br14, file$9, 95, 12, 3536);
+    			add_location(br15, file$9, 95, 16, 3540);
+    			add_location(p, file$9, 96, 12, 3557);
     			attr_dev(div6, "class", "exp-slide");
-    			add_location(div6, file$2, 72, 8, 2204);
+    			add_location(div6, file$9, 72, 8, 2204);
     			set_style(span0, "color", getAtomColor("Al"), false);
-    			add_location(span0, file$2, 106, 55, 4340);
+    			add_location(span0, file$9, 106, 55, 4340);
     			set_style(span1, "color", getAtomColor("Si"), false);
-    			add_location(span1, file$2, 106, 111, 4396);
+    			add_location(span1, file$9, 106, 111, 4396);
     			set_style(span2, "color", getAtomColor("O"), false);
-    			add_location(span2, file$2, 106, 170, 4455);
+    			add_location(span2, file$9, 106, 170, 4455);
     			attr_dev(div7, "class", "column");
-    			add_location(div7, file$2, 108, 20, 4575);
+    			add_location(div7, file$9, 108, 20, 4575);
     			attr_dev(div8, "class", "column");
-    			add_location(div8, file$2, 111, 20, 4697);
+    			add_location(div8, file$9, 111, 20, 4697);
     			attr_dev(div9, "class", "twocolumns");
-    			add_location(div9, file$2, 107, 16, 4530);
+    			add_location(div9, file$9, 107, 16, 4530);
     			attr_dev(div10, "class", "frostedbg");
-    			add_location(div10, file$2, 105, 12, 4261);
+    			add_location(div10, file$9, 105, 12, 4261);
     			attr_dev(div11, "class", "exp-slide");
-    			add_location(div11, file$2, 104, 8, 4225);
-    			add_location(br16, file$2, 120, 12, 5081);
-    			add_location(u, file$2, 121, 55, 5141);
-    			add_location(br17, file$2, 122, 12, 5312);
+    			add_location(div11, file$9, 104, 8, 4225);
+    			add_location(br16, file$9, 120, 12, 5081);
+    			add_location(u, file$9, 121, 55, 5141);
+    			add_location(br17, file$9, 122, 12, 5312);
     			attr_dev(div12, "class", "frostedbg");
-    			add_location(div12, file$2, 118, 12, 4907);
+    			add_location(div12, file$9, 118, 12, 4907);
     			attr_dev(div13, "class", "exp-slide");
-    			add_location(div13, file$2, 117, 8, 4871);
-    			add_location(br18, file$2, 129, 16, 5621);
-    			add_location(br19, file$2, 131, 16, 5748);
+    			add_location(div13, file$9, 117, 8, 4871);
+    			add_location(br18, file$9, 129, 16, 5621);
+    			add_location(br19, file$9, 131, 16, 5748);
     			set_style(span3, "color", getAtomColor("Al"), false);
-    			add_location(span3, file$2, 131, 100, 5832);
+    			add_location(span3, file$9, 131, 100, 5832);
     			set_style(span4, "color", getAtomColor("Si"), false);
-    			add_location(span4, file$2, 131, 193, 5925);
-    			add_location(br20, file$2, 132, 16, 6037);
+    			add_location(span4, file$9, 131, 193, 5925);
+    			add_location(br20, file$9, 132, 16, 6037);
     			attr_dev(div14, "class", "frostedbg");
-    			add_location(div14, file$2, 126, 12, 5395);
+    			add_location(div14, file$9, 126, 12, 5395);
     			attr_dev(div15, "class", "exp-slide");
-    			add_location(div15, file$2, 125, 8, 5359);
-    			add_location(br21, file$2, 137, 89, 6233);
-    			add_location(br22, file$2, 138, 16, 6306);
-    			add_location(b, file$2, 140, 150, 6462);
+    			add_location(div15, file$9, 125, 8, 5359);
+    			add_location(br21, file$9, 137, 89, 6233);
+    			add_location(br22, file$9, 138, 16, 6306);
+    			add_location(b, file$9, 140, 150, 6462);
     			attr_dev(div16, "class", "frostedbg");
-    			add_location(div16, file$2, 136, 12, 6120);
+    			add_location(div16, file$9, 136, 12, 6120);
     			attr_dev(div17, "class", "exp-slide");
-    			add_location(div17, file$2, 135, 8, 6084);
-    			add_location(br23, file$2, 146, 16, 6972);
+    			add_location(div17, file$9, 135, 8, 6084);
+    			add_location(br23, file$9, 146, 16, 6972);
     			attr_dev(div18, "class", "frostedbg");
-    			add_location(div18, file$2, 144, 12, 6562);
+    			add_location(div18, file$9, 144, 12, 6562);
     			attr_dev(div19, "class", "exp-slide");
-    			add_location(div19, file$2, 143, 8, 6526);
+    			add_location(div19, file$9, 143, 8, 6526);
     			attr_dev(div20, "id", "overlays");
     			attr_dev(div20, "class", "overlappingItemContainer svelte-trsbuu");
-    			add_location(div20, file$2, 61, 4, 1804);
+    			add_location(div20, file$9, 61, 4, 1804);
     			attr_dev(div21, "class", "overlappingItemContainer exp-text");
-    			add_location(div21, file$2, 58, 0, 1686);
+    			add_location(div21, file$9, 58, 0, 1686);
     			attr_dev(div22, "class", "exp-slide");
-    			add_location(div22, file$2, 168, 4, 8346);
+    			add_location(div22, file$9, 168, 4, 8346);
     			attr_dev(div23, "class", "exp-slide");
-    			add_location(div23, file$2, 169, 4, 8376);
+    			add_location(div23, file$9, 169, 4, 8376);
     			attr_dev(div24, "class", "exp-slide");
-    			add_location(div24, file$2, 170, 4, 8406);
+    			add_location(div24, file$9, 170, 4, 8406);
     			attr_dev(div25, "class", "overlappingItemContainer textpart");
-    			add_location(div25, file$2, 167, 0, 8294);
+    			add_location(div25, file$9, 167, 0, 8294);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -62387,7 +58817,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$2.name,
+    		id: create_fragment$9.name,
     		type: "component",
     		source: "",
     		ctx
@@ -62396,7 +58826,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     	return block;
     }
 
-    function instance$2($$self, $$props, $$invalidate) {
+    function instance$9($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('CrystalIntroPart', slots, []);
     	const dispatch = createEventDispatcher();
@@ -62470,21 +58900,21 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     class CrystalIntroPart extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+    		init(this, options, instance$9, create_fragment$9, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "CrystalIntroPart",
     			options,
-    			id: create_fragment$2.name
+    			id: create_fragment$9.name
     		});
     	}
     }
 
     /* src/chapters/HolesInCrystalPart.svelte generated by Svelte v3.46.4 */
-    const file$1 = "src/chapters/HolesInCrystalPart.svelte";
+    const file$8 = "src/chapters/HolesInCrystalPart.svelte";
 
-    function create_fragment$1(ctx) {
+    function create_fragment$8(ctx) {
     	let div3;
     	let div0;
     	let t0;
@@ -62492,7 +58922,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     	let t1;
     	let div2;
     	let t2;
-    	let div47;
+    	let div52;
     	let div5;
     	let div4;
     	let t4;
@@ -62522,59 +58952,88 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     	let t20;
     	let div23;
     	let div22;
-    	let t22;
+    	let t21;
+    	let span0;
+    	let t23;
+    	let t24;
     	let div25;
     	let div24;
-    	let t24;
+    	let t26;
     	let div27;
     	let div26;
-    	let t26;
+    	let t28;
     	let div29;
     	let div28;
-    	let t27;
-    	let b0;
     	let t29;
-    	let t30;
+    	let b0;
+    	let t31;
+    	let t32;
     	let div31;
     	let div30;
-    	let t32;
+    	let t34;
     	let div33;
     	let div32;
-    	let t33;
-    	let b1;
     	let t35;
-    	let b2;
+    	let b1;
     	let t37;
-    	let t38;
+    	let b2;
+    	let t39;
+    	let t40;
     	let div35;
     	let div34;
-    	let t40;
+    	let t42;
     	let div37;
     	let div36;
-    	let t41;
-    	let b3;
     	let t43;
-    	let t44;
+    	let b3;
+    	let t45;
+    	let t46;
     	let div39;
     	let div38;
-    	let t46;
+    	let t48;
     	let div41;
     	let div40;
-    	let t47;
-    	let b4;
     	let t49;
-    	let t50;
+    	let b4;
+    	let t51;
+    	let t52;
     	let div43;
     	let div42;
-    	let t51;
-    	let b5;
     	let t53;
-    	let t54;
-    	let div44;
+    	let b5;
+    	let t55;
+    	let br0;
     	let t56;
-    	let div45;
+    	let b6;
     	let t58;
+    	let t59;
+    	let div45;
+    	let div44;
+    	let t60;
+    	let br1;
+    	let t61;
+    	let t62;
+    	let div47;
     	let div46;
+    	let t63;
+    	let span1;
+    	let t65;
+    	let span2;
+    	let t67;
+    	let span3;
+    	let t69;
+    	let t70;
+    	let div49;
+    	let div48;
+    	let t72;
+    	let div51;
+    	let div50;
+    	let t73;
+    	let ul;
+    	let li0;
+    	let t75;
+    	let li1;
+    	let t77;
 
     	const block = {
     		c: function create() {
@@ -62585,7 +59044,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			t1 = space();
     			div2 = element("div");
     			t2 = space();
-    			div47 = element("div");
+    			div52 = element("div");
     			div5 = element("div");
     			div4 = element("div");
     			div4.textContent = "Let's start by examining the structure of just andalusite for now. Click and drag to rotate the crystal.";
@@ -62624,180 +59083,237 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			t20 = space();
     			div23 = element("div");
     			div22 = element("div");
-    			div22.textContent = "When we see the see-through effect, the atoms almost seem to make lines, radiating outwards from the center point, like a tunnel.";
-    			t22 = space();
+    			t21 = text("When we see the see-through effect, the atoms almost seem to make ");
+    			span0 = element("span");
+    			span0.textContent = "lines";
+    			t23 = text(", radiating outwards from the center point, like a tunnel.");
+    			t24 = space();
     			div25 = element("div");
     			div24 = element("div");
     			div24.textContent = "But if we look from another angle, those lines are actually all parallel, moving in the same direction.";
-    			t24 = space();
+    			t26 = space();
     			div27 = element("div");
     			div26 = element("div");
     			div26.textContent = "This helps us see what's going on: when there's a see-through effect, it means that in the direction we're looking, every atom lines up with another atom along that direction. Great!";
-    			t26 = space();
+    			t28 = space();
     			div29 = element("div");
     			div28 = element("div");
-    			t27 = text("But we can be even more precise than that. It's hard to keep track of millions of atoms, but the same thing happens to all of them: lining up in a given direction. One of the key lessons of group theory is that instead of thinking about objects, it can sometimes be simpler to think about ");
+    			t29 = text("But we can be even more precise than that. It's hard to keep track of millions of atoms, but the same thing happens to all of them: lining up in a given direction. One of the key lessons of group theory is that instead of thinking about objects, it can sometimes be simpler to think about ");
     			b0 = element("b");
     			b0.textContent = "actions";
-    			t29 = text(".");
-    			t30 = space();
+    			t31 = text(".");
+    			t32 = space();
     			div31 = element("div");
     			div30 = element("div");
     			div30.textContent = "Let me clear up some of this clutter really quick and I'll show you what I mean.";
-    			t32 = space();
+    			t34 = space();
     			div33 = element("div");
     			div32 = element("div");
-    			t33 = text("We can be more precise if we talk about ");
+    			t35 = text("We can be more precise if we talk about ");
     			b1 = element("b");
     			b1.textContent = "moving";
-    			t35 = text(". The \"see-through\" effect happens in a certain direction if, when we take the entire crystal and ");
+    			t37 = text(". The \"see-through\" effect happens in a certain direction if, when we take the entire crystal and ");
     			b2 = element("b");
     			b2.textContent = "move";
-    			t37 = text(" it in the direction we were looking, every moved atom would line up with another atom in the original crystal.");
-    			t38 = space();
+    			t39 = text(" it in the direction we were looking, every moved atom would line up with another atom in the original crystal.");
+    			t40 = space();
     			div35 = element("div");
     			div34 = element("div");
     			div34.textContent = "What about this other direction where we saw a see-through effect?";
-    			t40 = space();
+    			t42 = space();
     			div37 = element("div");
     			div36 = element("div");
-    			t41 = text("Same thing: a see-through effect shows us that ");
+    			t43 = text("Same thing: a see-through effect shows us that ");
     			b3 = element("b");
     			b3.textContent = "moving";
-    			t43 = text(" the crystal in this direction will keep the atoms in places where other atoms are.");
-    			t44 = space();
+    			t45 = text(" the crystal in this other direction will also realign the moved atoms with the original crystal.");
+    			t46 = space();
     			div39 = element("div");
     			div38 = element("div");
     			div38.textContent = "And the third see-through effect we saw?";
-    			t46 = space();
+    			t48 = space();
     			div41 = element("div");
     			div40 = element("div");
-    			t47 = text("Yup. It also happens because of an ");
+    			t49 = text("Yup. That also happens because ");
     			b4 = element("b");
-    			b4.textContent = "action which moves the crystal but leaves the structure unchanged";
-    			t49 = text(".");
-    			t50 = space();
+    			b4.textContent = "moving";
+    			t51 = text(" the atoms this way will realign them with the crystal.");
+    			t52 = space();
     			div43 = element("div");
     			div42 = element("div");
-    			t51 = text("So, to recap: every time we see a see-through effect, we know that ");
+    			t53 = text("So, to recap: every time we see a see-through effect, we know that ");
     			b5 = element("b");
     			b5.textContent = "moving";
-    			t53 = text("the crystal in that direction will send every atom to another atom of the same type in the crystal. We've found 3 of these movements so far.");
-    			t54 = space();
-    			div44 = element("div");
-    			div44.textContent = "but interestingly, this translation is the same as translatoin 1 then translation 2";
-    			t56 = space();
+    			t55 = text("the crystal in that direction will eventually realign with itself. We've found 3 of these movements so far.\n                ");
+    			br0 = element("br");
+    			t56 = text("Takeaway 1: you can learn a lot about an object by studying ");
+    			b6 = element("b");
+    			b6.textContent = "actions which eventually realign an object with itself";
+    			t58 = text(", like these movements in various directions.");
+    			t59 = space();
     			div45 = element("div");
-    			div45.textContent = "so:\n                    - we can understand crystals by looking at \"the actions which leave it unchanged\"\n                    - combining two of those actions gives you another action\n                these are two of the four tenets of group theory!";
-    			t58 = space();
+    			div44 = element("div");
+    			t60 = text("Mathematicians call the collection of all possible actions which realign a crystal with itself a special name: the crystal's \"symmetry group\".\n                ");
+    			br1 = element("br");
+    			t61 = text("But there's more to the story than that, because actions can combine.");
+    			t62 = space();
+    			div47 = element("div");
     			div46 = element("div");
-    			div46.textContent = "to illustrate this, let's take a break from crystals, and move to a simpler example.";
+    			t63 = text("We can combine actions: If we do the ");
+    			span1 = element("span");
+    			span1.textContent = "first";
+    			t65 = text(" action we found, then the ");
+    			span2 = element("span");
+    			span2.textContent = "third";
+    			t67 = text(" action, it's the same as doing the ");
+    			span3 = element("span");
+    			span3.textContent = "second";
+    			t69 = text(" action we found.");
+    			t70 = space();
+    			div49 = element("div");
+    			div48 = element("div");
+    			div48.textContent = "That means we might not even need to understand every single possible action - we can construct them out of simpler actions.";
+    			t72 = space();
+    			div51 = element("div");
+    			div50 = element("div");
+    			t73 = text("In summary:\n                ");
+    			ul = element("ul");
+    			li0 = element("li");
+    			li0.textContent = "we can understand crystals by looking at \"the actions which leave it unchanged\"";
+    			t75 = space();
+    			li1 = element("li");
+    			li1.textContent = "combining two actions gives you another action";
+    			t77 = text("\n                these are two of the four rules of group theory!");
     			attr_dev(div0, "class", "threecanvascontainer");
     			attr_dev(div0, "id", "threecanvas");
-    			add_location(div0, file$1, 278, 4, 12405);
+    			add_location(div0, file$8, 390, 4, 19199);
     			attr_dev(div1, "id", "whitebg");
     			set_style(div1, "opacity", "0");
     			attr_dev(div1, "class", "svelte-1gks0fr");
-    			add_location(div1, file$1, 279, 4, 12463);
+    			add_location(div1, file$8, 391, 4, 19257);
     			attr_dev(div2, "id", "overlays");
     			attr_dev(div2, "class", "overlappingItemContainer svelte-1gks0fr");
-    			add_location(div2, file$1, 280, 4, 12506);
+    			add_location(div2, file$8, 392, 4, 19300);
     			attr_dev(div3, "class", "overlappingItemContainer exp-text topThing svelte-1gks0fr");
-    			add_location(div3, file$1, 277, 0, 12344);
+    			add_location(div3, file$8, 389, 0, 19138);
     			attr_dev(div4, "class", "frostedbg");
-    			add_location(div4, file$1, 294, 12, 12827);
+    			add_location(div4, file$8, 406, 12, 19621);
     			attr_dev(div5, "class", "exp-slide");
-    			add_location(div5, file$1, 293, 4, 12791);
+    			add_location(div5, file$8, 405, 4, 19585);
     			attr_dev(div6, "class", "frostedbg");
-    			add_location(div6, file$1, 299, 12, 13042);
+    			add_location(div6, file$8, 411, 12, 19836);
     			attr_dev(div7, "class", "exp-slide");
-    			add_location(div7, file$1, 298, 4, 13006);
+    			add_location(div7, file$8, 410, 4, 19800);
     			attr_dev(div8, "class", "frostedbg");
-    			add_location(div8, file$1, 305, 12, 13351);
+    			add_location(div8, file$8, 417, 12, 20145);
     			attr_dev(div9, "class", "exp-slide");
-    			add_location(div9, file$1, 304, 4, 13315);
+    			add_location(div9, file$8, 416, 4, 20109);
     			attr_dev(div10, "class", "frostedbg");
-    			add_location(div10, file$1, 310, 12, 13510);
+    			add_location(div10, file$8, 422, 12, 20304);
     			attr_dev(div11, "class", "exp-slide");
-    			add_location(div11, file$1, 309, 4, 13474);
+    			add_location(div11, file$8, 421, 4, 20268);
     			attr_dev(div12, "class", "frostedbg");
-    			add_location(div12, file$1, 315, 12, 13712);
+    			add_location(div12, file$8, 427, 12, 20506);
     			attr_dev(div13, "class", "exp-slide");
-    			add_location(div13, file$1, 314, 4, 13676);
+    			add_location(div13, file$8, 426, 4, 20470);
     			attr_dev(div14, "class", "frostedbg");
-    			add_location(div14, file$1, 320, 12, 13847);
+    			add_location(div14, file$8, 432, 12, 20641);
     			attr_dev(div15, "class", "exp-slide");
-    			add_location(div15, file$1, 319, 4, 13811);
+    			add_location(div15, file$8, 431, 4, 20605);
     			attr_dev(div16, "class", "frostedbg");
-    			add_location(div16, file$1, 325, 12, 13967);
+    			add_location(div16, file$8, 437, 12, 20761);
     			attr_dev(div17, "class", "exp-slide");
-    			add_location(div17, file$1, 324, 4, 13931);
+    			add_location(div17, file$8, 436, 4, 20725);
     			attr_dev(div18, "class", "frostedbg");
-    			add_location(div18, file$1, 330, 12, 14090);
+    			add_location(div18, file$8, 442, 12, 20884);
     			attr_dev(div19, "class", "exp-slide");
-    			add_location(div19, file$1, 329, 4, 14054);
+    			add_location(div19, file$8, 441, 4, 20848);
     			attr_dev(div20, "class", "frostedbg");
-    			add_location(div20, file$1, 335, 12, 14291);
+    			add_location(div20, file$8, 447, 12, 21085);
     			attr_dev(div21, "class", "exp-slide");
-    			add_location(div21, file$1, 334, 4, 14255);
+    			add_location(div21, file$8, 446, 4, 21049);
+    			set_style(span0, "color", chapter2linecolor, false);
+    			add_location(span0, file$8, 453, 82, 21389);
     			attr_dev(div22, "class", "frostedbg");
-    			add_location(div22, file$1, 340, 12, 14489);
+    			add_location(div22, file$8, 452, 12, 21283);
     			attr_dev(div23, "class", "exp-slide");
-    			add_location(div23, file$1, 339, 4, 14453);
+    			add_location(div23, file$8, 451, 4, 21247);
     			attr_dev(div24, "class", "frostedbg");
-    			add_location(div24, file$1, 345, 12, 14729);
+    			add_location(div24, file$8, 457, 12, 21568);
     			attr_dev(div25, "class", "exp-slide");
-    			add_location(div25, file$1, 344, 4, 14693);
+    			add_location(div25, file$8, 456, 4, 21532);
     			attr_dev(div26, "class", "frostedbg");
-    			add_location(div26, file$1, 350, 12, 14943);
+    			add_location(div26, file$8, 462, 12, 21782);
     			attr_dev(div27, "class", "exp-slide");
-    			add_location(div27, file$1, 349, 4, 14907);
-    			add_location(b0, file$1, 356, 305, 15565);
+    			add_location(div27, file$8, 461, 4, 21746);
+    			add_location(b0, file$8, 468, 305, 22404);
     			attr_dev(div28, "class", "frostedbg");
-    			add_location(div28, file$1, 355, 12, 15236);
+    			add_location(div28, file$8, 467, 12, 22075);
     			attr_dev(div29, "class", "exp-slide");
-    			add_location(div29, file$1, 354, 4, 15200);
+    			add_location(div29, file$8, 466, 4, 22039);
     			attr_dev(div30, "class", "frostedbg");
-    			add_location(div30, file$1, 360, 12, 15651);
+    			add_location(div30, file$8, 472, 12, 22490);
     			attr_dev(div31, "class", "exp-slide");
-    			add_location(div31, file$1, 359, 4, 15615);
-    			add_location(b1, file$1, 366, 55, 15921);
-    			add_location(b2, file$1, 366, 166, 16032);
+    			add_location(div31, file$8, 471, 4, 22454);
+    			add_location(b1, file$8, 478, 55, 22760);
+    			add_location(b2, file$8, 478, 166, 22871);
     			attr_dev(div32, "class", "frostedbg");
-    			add_location(div32, file$1, 365, 12, 15842);
+    			add_location(div32, file$8, 477, 12, 22681);
     			attr_dev(div33, "class", "exp-slide");
-    			add_location(div33, file$1, 364, 4, 15806);
+    			add_location(div33, file$8, 476, 4, 22645);
     			attr_dev(div34, "class", "frostedbg");
-    			add_location(div34, file$1, 371, 12, 16230);
+    			add_location(div34, file$8, 483, 12, 23069);
     			attr_dev(div35, "class", "exp-slide");
-    			add_location(div35, file$1, 370, 4, 16194);
-    			add_location(b3, file$1, 377, 63, 16494);
+    			add_location(div35, file$8, 482, 4, 23033);
+    			add_location(b3, file$8, 489, 63, 23333);
     			attr_dev(div36, "class", "frostedbg");
-    			add_location(div36, file$1, 376, 12, 16407);
+    			add_location(div36, file$8, 488, 12, 23246);
     			attr_dev(div37, "class", "exp-slide");
-    			add_location(div37, file$1, 375, 4, 16371);
+    			add_location(div37, file$8, 487, 4, 23210);
     			attr_dev(div38, "class", "frostedbg");
-    			add_location(div38, file$1, 382, 12, 16662);
+    			add_location(div38, file$8, 494, 12, 23515);
     			attr_dev(div39, "class", "exp-slide");
-    			add_location(div39, file$1, 381, 4, 16626);
-    			add_location(b4, file$1, 388, 51, 16889);
+    			add_location(div39, file$8, 493, 4, 23479);
+    			add_location(b4, file$8, 500, 47, 23738);
     			attr_dev(div40, "class", "frostedbg");
-    			add_location(div40, file$1, 387, 12, 16814);
+    			add_location(div40, file$8, 499, 12, 23667);
     			attr_dev(div41, "class", "exp-slide");
-    			add_location(div41, file$1, 386, 4, 16778);
-    			add_location(b5, file$1, 393, 83, 17154);
+    			add_location(div41, file$8, 498, 4, 23631);
+    			add_location(b5, file$8, 505, 83, 23984);
+    			add_location(br0, file$8, 506, 16, 24121);
+    			add_location(b6, file$8, 506, 80, 24185);
     			attr_dev(div42, "class", "frostedbg");
-    			add_location(div42, file$1, 392, 12, 17047);
+    			add_location(div42, file$8, 504, 12, 23877);
     			attr_dev(div43, "class", "exp-slide");
-    			add_location(div43, file$1, 391, 4, 17011);
-    			attr_dev(div44, "class", "exp-slide");
-    			add_location(div44, file$1, 396, 4, 17342);
+    			add_location(div43, file$8, 503, 4, 23841);
+    			add_location(br1, file$8, 513, 16, 24566);
+    			attr_dev(div44, "class", "frostedbg");
+    			add_location(div44, file$8, 511, 12, 24367);
     			attr_dev(div45, "class", "exp-slide");
-    			add_location(div45, file$1, 399, 4, 17480);
-    			attr_dev(div46, "class", "exp-slide");
-    			add_location(div46, file$1, 405, 4, 17785);
-    			attr_dev(div47, "class", "overlappingItemContainer bottomThing svelte-1gks0fr");
-    			add_location(div47, file$1, 292, 0, 12736);
+    			add_location(div45, file$8, 510, 4, 24331);
+    			set_style(span1, "color", chapter2linecolor, false);
+    			add_location(span1, file$8, 518, 52, 24786);
+    			set_style(span2, "color", chapter2linecolor3, false);
+    			add_location(span2, file$8, 518, 129, 24863);
+    			set_style(span3, "color", chapter2linecolor2, false);
+    			add_location(span3, file$8, 518, 216, 24950);
+    			attr_dev(div46, "class", "frostedbg");
+    			add_location(div46, file$8, 517, 12, 24710);
+    			attr_dev(div47, "class", "exp-slide");
+    			add_location(div47, file$8, 516, 4, 24674);
+    			attr_dev(div48, "class", "frostedbg");
+    			add_location(div48, file$8, 522, 12, 25090);
+    			attr_dev(div49, "class", "exp-slide");
+    			add_location(div49, file$8, 521, 4, 25054);
+    			add_location(li0, file$8, 530, 20, 25416);
+    			add_location(li1, file$8, 531, 20, 25525);
+    			add_location(ul, file$8, 529, 16, 25391);
+    			attr_dev(div50, "class", "frostedbg");
+    			add_location(div50, file$8, 527, 12, 25323);
+    			attr_dev(div51, "class", "exp-slide");
+    			add_location(div51, file$8, 526, 4, 25287);
+    			attr_dev(div52, "class", "overlappingItemContainer bottomThing svelte-1gks0fr");
+    			add_location(div52, file$8, 404, 0, 19530);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -62810,89 +59326,118 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			append_dev(div3, t1);
     			append_dev(div3, div2);
     			insert_dev(target, t2, anchor);
-    			insert_dev(target, div47, anchor);
-    			append_dev(div47, div5);
+    			insert_dev(target, div52, anchor);
+    			append_dev(div52, div5);
     			append_dev(div5, div4);
-    			append_dev(div47, t4);
-    			append_dev(div47, div7);
+    			append_dev(div52, t4);
+    			append_dev(div52, div7);
     			append_dev(div7, div6);
-    			append_dev(div47, t6);
-    			append_dev(div47, div9);
+    			append_dev(div52, t6);
+    			append_dev(div52, div9);
     			append_dev(div9, div8);
-    			append_dev(div47, t8);
-    			append_dev(div47, div11);
+    			append_dev(div52, t8);
+    			append_dev(div52, div11);
     			append_dev(div11, div10);
-    			append_dev(div47, t10);
-    			append_dev(div47, div13);
+    			append_dev(div52, t10);
+    			append_dev(div52, div13);
     			append_dev(div13, div12);
-    			append_dev(div47, t12);
-    			append_dev(div47, div15);
+    			append_dev(div52, t12);
+    			append_dev(div52, div15);
     			append_dev(div15, div14);
-    			append_dev(div47, t14);
-    			append_dev(div47, div17);
+    			append_dev(div52, t14);
+    			append_dev(div52, div17);
     			append_dev(div17, div16);
-    			append_dev(div47, t16);
-    			append_dev(div47, div19);
+    			append_dev(div52, t16);
+    			append_dev(div52, div19);
     			append_dev(div19, div18);
-    			append_dev(div47, t18);
-    			append_dev(div47, div21);
+    			append_dev(div52, t18);
+    			append_dev(div52, div21);
     			append_dev(div21, div20);
-    			append_dev(div47, t20);
-    			append_dev(div47, div23);
+    			append_dev(div52, t20);
+    			append_dev(div52, div23);
     			append_dev(div23, div22);
-    			append_dev(div47, t22);
-    			append_dev(div47, div25);
+    			append_dev(div22, t21);
+    			append_dev(div22, span0);
+    			append_dev(div22, t23);
+    			append_dev(div52, t24);
+    			append_dev(div52, div25);
     			append_dev(div25, div24);
-    			append_dev(div47, t24);
-    			append_dev(div47, div27);
+    			append_dev(div52, t26);
+    			append_dev(div52, div27);
     			append_dev(div27, div26);
-    			append_dev(div47, t26);
-    			append_dev(div47, div29);
+    			append_dev(div52, t28);
+    			append_dev(div52, div29);
     			append_dev(div29, div28);
-    			append_dev(div28, t27);
-    			append_dev(div28, b0);
     			append_dev(div28, t29);
-    			append_dev(div47, t30);
-    			append_dev(div47, div31);
+    			append_dev(div28, b0);
+    			append_dev(div28, t31);
+    			append_dev(div52, t32);
+    			append_dev(div52, div31);
     			append_dev(div31, div30);
-    			append_dev(div47, t32);
-    			append_dev(div47, div33);
+    			append_dev(div52, t34);
+    			append_dev(div52, div33);
     			append_dev(div33, div32);
-    			append_dev(div32, t33);
-    			append_dev(div32, b1);
     			append_dev(div32, t35);
-    			append_dev(div32, b2);
+    			append_dev(div32, b1);
     			append_dev(div32, t37);
-    			append_dev(div47, t38);
-    			append_dev(div47, div35);
+    			append_dev(div32, b2);
+    			append_dev(div32, t39);
+    			append_dev(div52, t40);
+    			append_dev(div52, div35);
     			append_dev(div35, div34);
-    			append_dev(div47, t40);
-    			append_dev(div47, div37);
+    			append_dev(div52, t42);
+    			append_dev(div52, div37);
     			append_dev(div37, div36);
-    			append_dev(div36, t41);
-    			append_dev(div36, b3);
     			append_dev(div36, t43);
-    			append_dev(div47, t44);
-    			append_dev(div47, div39);
+    			append_dev(div36, b3);
+    			append_dev(div36, t45);
+    			append_dev(div52, t46);
+    			append_dev(div52, div39);
     			append_dev(div39, div38);
-    			append_dev(div47, t46);
-    			append_dev(div47, div41);
+    			append_dev(div52, t48);
+    			append_dev(div52, div41);
     			append_dev(div41, div40);
-    			append_dev(div40, t47);
-    			append_dev(div40, b4);
     			append_dev(div40, t49);
-    			append_dev(div47, t50);
-    			append_dev(div47, div43);
+    			append_dev(div40, b4);
+    			append_dev(div40, t51);
+    			append_dev(div52, t52);
+    			append_dev(div52, div43);
     			append_dev(div43, div42);
-    			append_dev(div42, t51);
-    			append_dev(div42, b5);
     			append_dev(div42, t53);
-    			append_dev(div47, t54);
-    			append_dev(div47, div44);
-    			append_dev(div47, t56);
-    			append_dev(div47, div45);
-    			append_dev(div47, t58);
+    			append_dev(div42, b5);
+    			append_dev(div42, t55);
+    			append_dev(div42, br0);
+    			append_dev(div42, t56);
+    			append_dev(div42, b6);
+    			append_dev(div42, t58);
+    			append_dev(div52, t59);
+    			append_dev(div52, div45);
+    			append_dev(div45, div44);
+    			append_dev(div44, t60);
+    			append_dev(div44, br1);
+    			append_dev(div44, t61);
+    			append_dev(div52, t62);
+    			append_dev(div52, div47);
     			append_dev(div47, div46);
+    			append_dev(div46, t63);
+    			append_dev(div46, span1);
+    			append_dev(div46, t65);
+    			append_dev(div46, span2);
+    			append_dev(div46, t67);
+    			append_dev(div46, span3);
+    			append_dev(div46, t69);
+    			append_dev(div52, t70);
+    			append_dev(div52, div49);
+    			append_dev(div49, div48);
+    			append_dev(div52, t72);
+    			append_dev(div52, div51);
+    			append_dev(div51, div50);
+    			append_dev(div50, t73);
+    			append_dev(div50, ul);
+    			append_dev(ul, li0);
+    			append_dev(ul, t75);
+    			append_dev(ul, li1);
+    			append_dev(div50, t77);
     		},
     		p: noop,
     		i: noop,
@@ -62900,13 +59445,13 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div3);
     			if (detaching) detach_dev(t2);
-    			if (detaching) detach_dev(div47);
+    			if (detaching) detach_dev(div52);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$1.name,
+    		id: create_fragment$8.name,
     		type: "component",
     		source: "",
     		ctx
@@ -62915,7 +59460,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     	return block;
     }
 
-    function instance$1($$self, $$props, $$invalidate) {
+    function instance$8($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('HolesInCrystalPart', slots, []);
     	const dispatch = createEventDispatcher();
@@ -62938,17 +59483,24 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		window.andalusiteData = andalusiteData;
     		window.presentation = presentation;
     		let [andalusite, expandalusitebonds] = makeBallStickDiagram(andalusiteData, 2, 2, 2); //static one
-    		let [movingAndalusite, expandalusitebonds2] = makeBallStickDiagram(andalusiteData, 1, 1, 0); //copy which moves to illustrate translations
-    		let [movingAndalusite2, expandalusitebonds22] = makeBallStickDiagram(andalusiteData, 1, 1, 0); //copy which moves to illustrate translations
+    		let [movingAndalusite, expandalusitebonds2] = makeBallStickDiagram(andalusiteData, 0, 0, 0); //copy which moves to illustrate translations
+    		let [movingAndalusiteGhostCopy, movingAndalusiteGhostCopyBonds] = makeBallStickDiagram(andalusiteData, 0, 0, 0); //copy which stays still and transparent
+    		let [movingAndalusiteTarget, movingAndalusiteTargetBonds] = makeBallStickDiagram(andalusiteData, 0, 0, 0); //copy which moves to illustrate translations
     		movingAndalusite.children[0].material.transparent = true;
     		movingAndalusite.children[0].material.needsUpdate = true;
     		presentation.TransitionInstantly(movingAndalusite.children[0].material, { opacity: 0 });
-    		movingAndalusite2.children[0].material.transparent = true;
-    		movingAndalusite2.children[0].material.needsUpdate = true;
-    		presentation.TransitionInstantly(movingAndalusite2.children[0].material, { opacity: 0 });
-    		movingAndalusite2.position.copy(new THREE.Vector3(...andalusiteData.cVec)).multiply(andalusite.scale);
+    		movingAndalusiteTarget.children[0].material.transparent = true;
+    		movingAndalusiteTarget.children[0].material.needsUpdate = true;
+    		presentation.TransitionInstantly(movingAndalusiteTarget.children[0].material, { opacity: 0 });
+    		presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], { opacity: 0 }, 250);
+    		movingAndalusiteGhostCopy.children[0].material.transparent = true;
+    		movingAndalusiteGhostCopy.children[0].material.needsUpdate = true;
+    		movingAndalusiteGhostCopyBonds.opacity = 0.2;
+    		presentation.TransitionInstantly(movingAndalusiteGhostCopy.children[0].material, { opacity: 0 });
+    		movingAndalusiteTarget.position.copy(new THREE.Vector3(...andalusiteData.cVec)).multiply(andalusite.scale);
     		window.andalusite = andalusite;
-    		window.movingAndalusite2 = movingAndalusite2;
+    		window.movingAndalusiteTarget = movingAndalusiteTarget;
+    		window.movingAndalusiteGhostCopy = movingAndalusiteGhostCopy;
 
     		//lines pointing in a direction
     		let atomsWithLines = andalusiteData.atoms["Si"]; //allAtoms(andalusiteData); //todo: just oxygens?
@@ -62984,7 +59536,51 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		three.on("update", updateCameraIfNeeded); //todo: remove event listener on onDestroy
     		three.scene.add(andalusite);
     		three.scene.add(movingAndalusite);
-    		three.scene.add(movingAndalusite2);
+    		three.scene.add(movingAndalusiteTarget);
+    		three.scene.add(movingAndalusiteGhostCopy);
+
+    		//the translations which belong to see-through effects
+    		let firstSeeThroughVec = andalusiteData.cVec;
+
+    		let secondSeeThroughVec = explanariaBundle.Math.vectorAdd(andalusiteData.aVec, andalusiteData.cVec);
+    		let thirdSeeThroughVec = andalusiteData.aVec;
+
+    		//show 3 vectors representing each movement
+    		let atomStartPos = andalusiteData.atoms["Al"][5]; //[0,0,0]
+
+    		let vec1 = new explanariaBundle.Array({ data: [atomStartPos, atomStartPos] });
+
+    		let scaleWithMainCrystal = new explanariaBundle.Transformation({
+    				expr: (i, t, x, y, z) => [x * andalusite.scale.x, y * andalusite.scale.y, z * andalusite.scale.z]
+    			});
+
+    		let translationRepresentation1 = new explanariaBundle.VectorOutput({ color: chapter2linecolor, opacity: 0 });
+
+    		//vec1.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], firstSeeThroughVec)}))
+    		vec1.add(new explanariaBundle.Transformation({ expr: (i, t, x, y, z) => [x, y, z] })).add(scaleWithMainCrystal.makeLink()).add(translationRepresentation1);
+
+    		let vec2 = new explanariaBundle.Array({ data: [atomStartPos, atomStartPos] });
+    		let translationRepresentation2 = new explanariaBundle.VectorOutput({ color: chapter2linecolor2, opacity: 0 });
+
+    		vec2.add(new explanariaBundle.Transformation({
+    				expr: (i, t, x, y, z) => i == 0
+    				? [x, y, z]
+    				: explanariaBundle.Math.vectorAdd([x, y, z], secondSeeThroughVec)
+    			})).add(scaleWithMainCrystal.makeLink()).add(translationRepresentation2);
+
+    		let vec3 = new explanariaBundle.Array({ data: [atomStartPos, atomStartPos] });
+    		let translationRepresentation3 = new explanariaBundle.VectorOutput({ color: chapter2linecolor3, opacity: 0 });
+
+    		vec3.add(new explanariaBundle.Transformation({
+    				expr: (i, t, x, y, z) => i == 0
+    				? [x, y, z]
+    				: explanariaBundle.Math.vectorAdd([x, y, z], thirdSeeThroughVec)
+    			})).add(scaleWithMainCrystal.makeLink()).add(translationRepresentation3);
+
+    		window.vec1 = vec1;
+    		window.vec2 = vec2;
+    		window.vec3 = vec3;
+    		objects = objects.concat(vec1, vec2, vec3);
     		let cameraRadius = 40;
     		await presentation.begin();
     		await presentation.nextSlide();
@@ -63003,9 +59599,7 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		presentation.ResetTo(three.camera.rotation, { x: 0, y: 0.4, z: 0 });
     		await presentation.nextSlide();
 
-    		//yup, effect here
-    		let secondSeeThroughVec = explanariaBundle.Math.vectorAdd(andalusiteData.aVec, andalusiteData.cVec);
-
+    		//yup, effect here. line up camera according to secondSeeThroughVec
     		let diagonalCameraPos = explanariaBundle.Math.vectorScale(explanariaBundle.Math.normalize(secondSeeThroughVec), cameraRadius);
 
     		presentation.ResetTo(three.camera.position, {
@@ -63016,7 +59610,8 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
 
     		presentation.ResetTo(three.camera.rotation, { x: 0, y: Math.PI / 4 + 0.2, z: 0 });
     		await presentation.nextSlide();
-    		let thirdSeeThroughVec = andalusiteData.aVec;
+
+    		//translate for thirdSeeThroughVec
     		let aVecCameraPos = explanariaBundle.Math.vectorScale(explanariaBundle.Math.normalize(thirdSeeThroughVec), cameraRadius);
 
     		presentation.ResetTo(three.camera.position, {
@@ -63056,33 +59651,54 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		await presentation.nextSlide();
     		await presentation.nextSlide();
     		await presentation.nextSlide();
+
+    		//show moving andalusite copies
     		presentation.TransitionTo(andalusite.position, { y: 100 }, 2000);
+
     		presentation.TransitionTo(movingAndalusite.children[0].material, { opacity: 1 }, 250);
-    		presentation.TransitionTo(movingAndalusite2.children[0].material, { opacity: 1 }, 250);
+    		presentation.TransitionTo(movingAndalusiteTarget.children[0].material, { opacity: 1 }, 250);
+    		presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], { opacity: 0.2 }, 250);
+    		presentation.TransitionTo(movingAndalusiteGhostCopy.children[0].material, { opacity: 0.1 }, 250);
+    		presentation.TransitionTo(movingAndalusiteGhostCopyBonds, { opacity: 0.1 }, 250);
+    		presentation.TransitionTo(atomLinesOutput, { opacity: 0 }, 250);
     		await presentation.nextSlide();
+    		await presentation.delay(500);
 
-    		//translate
-    		let firstMovingVector = andalusiteData.cVec;
+    		//show an arrow representing the movement
+    		presentation.TransitionTo(vec1.children[0], {
+    			expr: (i, t, x, y, z) => i == 0
+    			? [x, y, z]
+    			: explanariaBundle.Math.vectorAdd([x, y, z], firstSeeThroughVec)
+    		});
 
+    		presentation.TransitionInstantly(vec1.getDeepestChildren()[0], { opacity: 1 });
+    		await presentation.delay(1000);
+
+    		//translate with firstSeeThroughVec
     		presentation.TransitionTo(
     			movingAndalusite.position,
     			{
-    				x: firstMovingVector[0] * andalusite.scale.x,
-    				y: firstMovingVector[1] * andalusite.scale.y,
-    				z: firstMovingVector[2] * andalusite.scale.z
+    				x: firstSeeThroughVec[0] * andalusite.scale.x,
+    				y: firstSeeThroughVec[1] * andalusite.scale.y,
+    				z: firstSeeThroughVec[2] * andalusite.scale.z
     			},
     			2000
     		);
 
-    		window.firstMovingVector = firstMovingVector;
+    		window.firstSeeThroughVec = firstSeeThroughVec;
     		window.movingAndalusite = movingAndalusite;
     		await presentation.nextSlide();
-    		presentation.TransitionTo(movingAndalusite2.children[0].material, { opacity: 0 }, 250);
-    		presentation.TransitionTo(expandalusitebonds22.getDeepestChildren()[0], { opacity: 0 }, 250);
-    		presentation.TransitionTo(atomLinesOutput, { opacity: 0 }, 500);
+
+    		//hide all the stuff from translation #1 and re-show the crystal
+    		presentation.TransitionTo(movingAndalusiteTarget.children[0].material, { opacity: 0 }, 250);
+
+    		presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], { opacity: 0 }, 250);
+    		presentation.TransitionTo(vec1.getDeepestChildren()[0], { opacity: 0 });
     		presentation.TransitionTo(andalusite.position, { y: 0 }, 1000); //return from the heavens
+    		presentation.TransitionInstantly(andalusite.children[0].material, { opacity: 1 });
     		await presentation.delay(1000);
 
+    		//show see through effect #2
     		presentation.ResetTo(three.camera.position, {
     			x: diagonalCameraPos[0] + 1,
     			y: diagonalCameraPos[1],
@@ -63090,22 +59706,55 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		});
 
     		presentation.ResetTo(three.camera.rotation, { x: 0, y: Math.PI / 4 + 0.2, z: 0 });
-    		presentation.TransitionTo(lineData, { direction: secondSeeThroughVec });
-    		await presentation.nextSlide();
+
+    		//show lines, this time in another color
+    		presentation.TransitionInstantly(lineData, { direction: secondSeeThroughVec });
+
     		presentation.TransitionInstantly(atomLinesOutput, { color: chapter2linecolor2 });
     		presentation.TransitionTo(atomLinesOutput, { opacity: 0.9 });
-    		let secondMovePos = explanariaBundle.Math.vectorAdd(firstMovingVector, explanariaBundle.Math.vectorScale(secondSeeThroughVec, -1));
+    		await presentation.nextSlide();
 
+    		//hide the lines and the andalusite
+    		presentation.TransitionTo(atomLinesOutput, { opacity: 0 });
+
+    		//fly into the air and hide
+    		presentation.TransitionTo(andalusite.position, { y: 100 }, 1000); //fly to the heavens
+
+    		presentation.TransitionTo(andalusite.children[0].material, { opacity: 0 }, 500);
+    		presentation.TransitionTo(expandalusitebonds.getDeepestChildren()[0], { opacity: 0 }, 500);
+
+    		//set up moving andalusites to be visible
+    		presentation.TransitionInstantly(movingAndalusite.position, { x: 0, y: 0, z: 0 });
+
+    		movingAndalusiteTarget.position.copy(new THREE.Vector3(...secondSeeThroughVec)).multiply(andalusite.scale);
+    		presentation.TransitionTo(movingAndalusite.children[0].material, { opacity: 1 }, 250);
+    		presentation.TransitionTo(movingAndalusiteTarget.children[0].material, { opacity: 1 }, 250);
+    		presentation.TransitionTo(movingAndalusiteGhostCopy.children[0].material, { opacity: 0.2 }, 250);
+    		presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], { opacity: 0.2 }, 250);
+    		presentation.TransitionTo(movingAndalusiteGhostCopyBonds, { opacity: 0.1 }, 250);
+    		presentation.ResetTo(three.camera.position, { x: 5, y: 2, z: 30 });
+    		presentation.ResetTo(three.camera.rotation, { x: 0, y: 0, z: 0 });
+    		await presentation.delay(1000);
+
+    		//aand translate
     		presentation.TransitionTo(
     			movingAndalusite.position,
     			{
-    				x: secondMovePos[0] * andalusite.scale.x,
-    				y: secondMovePos[1] * andalusite.scale.y,
-    				z: secondMovePos[2] * andalusite.scale.z
+    				x: secondSeeThroughVec[0] * andalusite.scale.x,
+    				y: secondSeeThroughVec[1] * andalusite.scale.y,
+    				z: secondSeeThroughVec[2] * andalusite.scale.z
     			},
     			2000
     		);
 
+    		//show the arrow too
+    		presentation.TransitionTo(vec2.children[0], {
+    			expr: (i, t, x, y, z) => i == 0
+    			? [x, y, z]
+    			: explanariaBundle.Math.vectorAdd([x, y, z], secondSeeThroughVec)
+    		});
+
+    		presentation.TransitionTo(vec2.getDeepestChildren()[0], { opacity: 1 });
     		await presentation.nextSlide();
 
     		//move to third see through hole
@@ -63116,66 +59765,86 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     		});
 
     		presentation.ResetTo(three.camera.rotation, { x: 0, y: Math.PI / 2, z: 0 });
-    		presentation.TransitionTo(atomLinesOutput, { opacity: 0 });
-
-    		//aand move crystal!
-    		await presentation.nextSlide();
-
+    		presentation.TransitionTo(atomLinesOutput, { opacity: 0 }, 250);
+    		await presentation.delay(750);
     		presentation.TransitionInstantly(lineData, { direction: thirdSeeThroughVec });
     		presentation.TransitionInstantly(atomLinesOutput, { color: chapter2linecolor3 });
-    		presentation.TransitionTo(atomLinesOutput, { opacity: 0.9 });
-    		let thirdMovePos = explanariaBundle.Math.vectorAdd(secondMovePos, thirdSeeThroughVec);
+    		presentation.TransitionTo(atomLinesOutput, { opacity: 0.9 }, 250);
 
+    		//set up for translation #3
+    		presentation.TransitionTo(movingAndalusiteTarget.children[0].material, { opacity: 0 }, 250);
+
+    		presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], { opacity: 0 }, 250);
+    		presentation.TransitionTo(vec2.getDeepestChildren()[0], { opacity: 0 });
+    		presentation.TransitionTo(andalusite.position, { y: 0 }, 1000); //return from the heavens
+    		presentation.TransitionInstantly(andalusite.children[0].material, { opacity: 1 });
+    		await presentation.nextSlide();
+
+    		//third translation time. move to another camera angle
+    		presentation.ResetTo(three.camera.position, { x: 0, y: 0, z: 40 });
+
+    		presentation.ResetTo(three.camera.rotation, { x: 0, y: 0, z: 0 });
+
+    		//hide the lines and the andalusite
+    		presentation.TransitionTo(atomLinesOutput, { opacity: 0 });
+
+    		//fly into the air and hide
+    		presentation.TransitionTo(andalusite.position, { y: 100 }, 1000); //fly to the heavens
+
+    		presentation.TransitionTo(andalusite.children[0].material, { opacity: 0 }, 500);
+    		presentation.TransitionTo(expandalusitebonds.getDeepestChildren()[0], { opacity: 0 }, 500);
+
+    		//set up moving andalusites to be visible
+    		presentation.TransitionInstantly(movingAndalusite.position, { x: 0, y: 0, z: 0 });
+
+    		movingAndalusiteTarget.position.copy(new THREE.Vector3(...thirdSeeThroughVec)).multiply(andalusite.scale);
+    		presentation.TransitionTo(movingAndalusite.children[0].material, { opacity: 1 }, 250);
+    		presentation.TransitionTo(movingAndalusiteTarget.children[0].material, { opacity: 1 }, 250);
+    		presentation.TransitionTo(movingAndalusiteGhostCopy.children[0].material, { opacity: 0.2 }, 250);
+    		presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], { opacity: 0.2 }, 250);
+    		presentation.TransitionTo(movingAndalusiteGhostCopyBonds, { opacity: 0.1 }, 250);
+    		await presentation.delay(1000);
+
+    		//translate #3
     		presentation.TransitionTo(
     			movingAndalusite.position,
     			{
-    				x: thirdMovePos[0] * andalusite.scale.x,
-    				y: thirdMovePos[1] * andalusite.scale.y,
-    				z: thirdMovePos[2] * andalusite.scale.z
+    				x: thirdSeeThroughVec[0] * andalusite.scale.x,
+    				y: thirdSeeThroughVec[1] * andalusite.scale.y,
+    				z: thirdSeeThroughVec[2] * andalusite.scale.z
     			},
     			2000
     		);
 
+    		//show the arrow too
+    		presentation.TransitionTo(vec3.children[0], {
+    			expr: (i, t, x, y, z) => i == 0
+    			? [x, y, z]
+    			: explanariaBundle.Math.vectorAdd([x, y, z], thirdSeeThroughVec)
+    		});
+
+    		presentation.TransitionTo(vec3.getDeepestChildren()[0], { opacity: 1 });
     		await presentation.nextSlide();
 
     		//'we now have 3 movements'
     		presentation.TransitionTo(atomLinesOutput, { opacity: 0 });
 
-    		presentation.TransitionTo(movingAndalusite2.children[0].material, { opacity: 0 }, 250);
-    		presentation.TransitionTo(expandalusitebonds22.getDeepestChildren()[0], { opacity: 0 }, 250);
+    		presentation.TransitionTo(movingAndalusiteTarget.children[0].material, { opacity: 0 }, 250);
+    		presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], { opacity: 0 }, 250);
     		presentation.TransitionTo(movingAndalusite.children[0].material, { opacity: 0 }, 250);
     		presentation.TransitionTo(expandalusitebonds2.getDeepestChildren()[0], { opacity: 0 }, 250);
 
-    		//show 3 vectors representing each movement
-    		let atomStartPos = [0, 0, 0];
+    		//ok show those arrows
+    		[vec1, vec2, vec3].forEach(item => presentation.TransitionTo(item.getDeepestChildren()[0], { opacity: 1 }));
 
-    		let vec1 = new explanariaBundle.Array({ data: [atomStartPos, atomStartPos] });
-    		let translationRepresentation1 = new explanariaBundle.VectorOutput({ color: chapter2linecolor, opacity: 1 });
-
-    		vec1.add(new explanariaBundle.Transformation({
-    				expr: (i, t, x, y, z) => i == 0
-    				? [x, y, z]
-    				: explanariaBundle.Math.vectorAdd([x, y, z], firstMovingVector)
-    			})).add(translationRepresentation1);
-
-    		let vec2 = vec1.clone();
-
-    		vec2.children[0].expr = (i, t, x, y, z) => i == 0
-    		? [x, y, z]
-    		: explanariaBundle.Math.vectorAdd([x, y, z], secondSeeThroughVec);
-
-    		vec2.getDeepestChildren()[0].color = chapter2linecolor2;
-    		let vec3 = vec1.clone();
+    		await presentation.nextSlide();
 
     		vec3.children[0].expr = (i, t, x, y, z) => i == 0
     		? [x, y, z]
     		: explanariaBundle.Math.vectorAdd([x, y, z], thirdSeeThroughVec);
 
-    		vec3.getDeepestChildren()[0].color = chapter2linecolor3;
-    		window.vec1 = vec1;
-    		window.vec2 = vec2;
-    		window.vec3 = vec3;
-    		objects = objects.concat(vec1, vec2, vec3);
+    		await presentation.nextSlide();
+    		await presentation.nextSlide();
     	}
 
     	let objects = [];
@@ -63254,11 +59923,3581 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     class HolesInCrystalPart extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+    		init(this, options, instance$8, create_fragment$8, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "HolesInCrystalPart",
+    			options,
+    			id: create_fragment$8.name
+    		});
+    	}
+    }
+
+    class GroupElement{
+        constructor(name, permutation){
+            this.name = name;
+            this.permutation = permutation; //permutation is an object like {1:3,2:4}
+            if(permutation.constructor === String){
+                this.permutation = this.parsePermutationNotation(permutation);
+            }
+        }
+        parsePermutationNotation(string){
+            if(string[0] !== '(' && string[string.length-1] !== ')'){
+                throw new ValueError("permutations must start with ( and end with )")
+            }
+            string = string.substring(1, string.length-1); //remove leading ( and trailing )
+
+            let permutationMap = {};
+            let biggestNumber = 1;
+
+            //todo: check for duplicates
+
+            string.split(")(").forEach(orbit => {
+                for(let i=0;i<orbit.length;i++){
+                    biggestNumber = Math.max(biggestNumber, parseInt(orbit[i]));
+                    permutationMap[parseInt(orbit[i])] = parseInt(orbit[(i+1) % orbit.length]); //this would be =orbit[i+1] but it needs to loop around
+                }
+            });
+            //if any numbers weren't mentioned, like a permutation (23) doesn't mention 1, add them
+            for(let i=1;i<biggestNumber;i++){
+                if(permutationMap[i] === undefined){
+                    permutationMap[i] = i;
+                }
+            }
+            return permutationMap
+        }
+    }
+
+    function reduceName(elem, relations){
+        //relations is an object of the form {"rfr":"f", "rrr":"", "ff":""}
+        if(relations === undefined){
+            return elem;
+        }
+        let elname = elem.name;
+
+        for(let i=0;i<5;i++){ //arbitrary 5 iterations
+            Object.keys(relations).forEach( rel => {
+                    elname = elname.replace(rel, relations[rel]);
+            });
+        }
+        return new GroupElement(elname, elem.permutation)
+    }
+
+    function compose(el1, el2){
+        // x * y = xy, which means do y then x
+        let x = el1.permutation;
+        let y = el2.permutation;
+        let composed = {};
+        for (let i in y){
+            composed[i] = x[y[i]];
+        }
+
+        let newName = el1.name + el2.name; // yes i'm representing as contatenation. this doesn't leave room for inverses
+
+        return new GroupElement(newName, composed);
+    }
+
+    function permutationIsInList(elem, alist){
+        let elempermutation = elem.permutation;
+        for(let existingelem of alist){
+            let match = true;
+            //check if elempermutation is the same map as permutation
+            let permutation = existingelem.permutation;
+            for(let value in permutation){
+                if(permutation[value] != elempermutation[value]){
+                    match = false;
+                    break;
+                }
+            }
+            if(match){
+                return true;
+            }
+        }
+        //we checked every element, didn't match any of them
+        return false
+    }
+
+    class Group{
+        //represents a finite group. give it some generators and it'll compute all the elements
+        //assumption: elements have unique names
+        constructor(generators, relations=[], sizeOfUnderlyingPermutationGroup=3){
+            this.generators = generators;
+            this.relations = relations; //mostly just used to simplify names. optional
+            this.elements = this.computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup);
+
+            this.nameLookupTable = {};
+            for(let elem of this.elements){
+                this.nameLookupTable[elem.name] = elem;
+            }
+        }
+        getElemByName(name){
+            if(this.nameLookupTable[name] !== undefined){
+                return this.nameLookupTable[name];
+            }
+            throw new ReferenceError("nothing named" + name + "is in this group!");
+        }
+        getElementByName(name){
+            return this.getElemByName(name)
+        }
+        isGenerator(elem){
+            return this.generators.indexOf(elem) != -1;
+        }
+        multiply(elem1, elem2){
+            if(this.elements.indexOf(elem1) == -1 || this.elements.indexOf(elem2) == -1){
+                throw new ReferenceError(elem1, elem2, "aren't in this group!");
+            }
+            let newelem = compose(elem1, elem2);
+
+            //now figure out which existing element it is. there's gotta be a better way to do this
+            for(let elem of this.elements){
+                let match = true;
+                for(let number in elem.permutation){
+                    if(elem.permutation[number] != newelem.permutation[number]){
+                        match = false;
+                        break
+                    }
+                }
+                if(match){
+                    return elem;
+                }
+            }
+
+            throw new Error("I composed", elem1, elem2, "but got something not in this group!", newelem);
+        }
+        computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup=3){
+
+            let groupelements = [new GroupElement("e", "("+sizeOfUnderlyingPermutationGroup+")")]; //start with identity
+
+            //add generators in the first step.
+            //we keep track of what new elements we find each time through a loop so that once we stop finding new elements,
+            //we stop looping.
+            
+            //also, the identity is placed in groupelements so that e * a generator won't result in a new element with an "e" in the name.
+            let newelements = generators.slice();
+
+            while(newelements.length > 0){
+                groupelements = groupelements.concat(newelements);
+                newelements = [];
+
+                for(let el of groupelements){
+                    // combine each element with all generators
+                    for(let gen of generators){
+                        let newelem = compose(el, gen); 
+                        newelem = reduceName(newelem, relations);
+
+                        if(!permutationIsInList(newelem, groupelements) && !permutationIsInList(newelem, newelements)){
+                            newelements.push(newelem);
+                        }
+                    }
+                }
+            }
+            return groupelements;
+        }
+    }
+
+    /* src/twoD/GroupElementDisplay.svelte generated by Svelte v3.46.4 */
+    const file$7 = "src/twoD/GroupElementDisplay.svelte";
+    const get_default_slot_changes = dirty => ({ element: dirty & /*element*/ 4 });
+    const get_default_slot_context = ctx => ({ element: /*element*/ ctx[2] });
+
+    // (44:32)  
+    function fallback_block$1(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "representation of the element goes here";
+    			add_location(p, file$7, 44, 12, 1245);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: fallback_block$1.name,
+    		type: "fallback",
+    		source: "(44:32)  ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$7(ctx) {
+    	let div1;
+    	let div0;
+    	let t0_value = /*element*/ ctx[2].name + "";
+    	let t0;
+    	let t1;
+    	let current;
+    	const default_slot_template = /*#slots*/ ctx[6].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[5], get_default_slot_context);
+    	const default_slot_or_fallback = default_slot || fallback_block$1(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			div0 = element("div");
+    			t0 = text(t0_value);
+    			t1 = space();
+    			if (default_slot_or_fallback) default_slot_or_fallback.c();
+    			attr_dev(div0, "class", "elementname svelte-1ky49vk");
+    			add_location(div0, file$7, 42, 8, 1092);
+    			attr_dev(div1, "class", "elementcontainer svelte-1ky49vk");
+    			set_style(div1, "top", /*top*/ ctx[0] + "em", false);
+    			set_style(div1, "left", /*left*/ ctx[1] + "em", false);
+    			set_style(div1, "--groupElementBorderColor", /*borderColor*/ ctx[3], false);
+    			add_location(div1, file$7, 39, 0, 962);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, div0);
+    			append_dev(div0, t0);
+    			append_dev(div1, t1);
+
+    			if (default_slot_or_fallback) {
+    				default_slot_or_fallback.m(div1, null);
+    			}
+
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if ((!current || dirty & /*element*/ 4) && t0_value !== (t0_value = /*element*/ ctx[2].name + "")) set_data_dev(t0, t0_value);
+
+    			if (default_slot) {
+    				if (default_slot.p && (!current || dirty & /*$$scope, element*/ 36)) {
+    					update_slot_base(
+    						default_slot,
+    						default_slot_template,
+    						ctx,
+    						/*$$scope*/ ctx[5],
+    						!current
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[5])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[5], dirty, get_default_slot_changes),
+    						get_default_slot_context
+    					);
+    				}
+    			}
+
+    			if (dirty & /*top*/ 1) {
+    				set_style(div1, "top", /*top*/ ctx[0] + "em", false);
+    			}
+
+    			if (dirty & /*left*/ 2) {
+    				set_style(div1, "left", /*left*/ ctx[1] + "em", false);
+    			}
+
+    			if (dirty & /*borderColor*/ 8) {
+    				set_style(div1, "--groupElementBorderColor", /*borderColor*/ ctx[3], false);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(default_slot_or_fallback, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(default_slot_or_fallback, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    			if (default_slot_or_fallback) default_slot_or_fallback.d(detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$7.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$7($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('GroupElementDisplay', slots, ['default']);
+    	let { top = 0 } = $$props;
+    	let { left = 0 } = $$props;
+    	let { element } = $$props;
+    	let { arrows = [] } = $$props;
+    	let { borderColor = defaultGroupElementBorderColor } = $$props;
+    	const writable_props = ['top', 'left', 'element', 'arrows', 'borderColor'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<GroupElementDisplay> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ('top' in $$props) $$invalidate(0, top = $$props.top);
+    		if ('left' in $$props) $$invalidate(1, left = $$props.left);
+    		if ('element' in $$props) $$invalidate(2, element = $$props.element);
+    		if ('arrows' in $$props) $$invalidate(4, arrows = $$props.arrows);
+    		if ('borderColor' in $$props) $$invalidate(3, borderColor = $$props.borderColor);
+    		if ('$$scope' in $$props) $$invalidate(5, $$scope = $$props.$$scope);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		GroupElement,
+    		onMount,
+    		defaultGroupElementBorderColor,
+    		top,
+    		left,
+    		element,
+    		arrows,
+    		borderColor
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('top' in $$props) $$invalidate(0, top = $$props.top);
+    		if ('left' in $$props) $$invalidate(1, left = $$props.left);
+    		if ('element' in $$props) $$invalidate(2, element = $$props.element);
+    		if ('arrows' in $$props) $$invalidate(4, arrows = $$props.arrows);
+    		if ('borderColor' in $$props) $$invalidate(3, borderColor = $$props.borderColor);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [top, left, element, borderColor, arrows, $$scope, slots];
+    }
+
+    class GroupElementDisplay extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(this, options, instance$7, create_fragment$7, safe_not_equal, {
+    			top: 0,
+    			left: 1,
+    			element: 2,
+    			arrows: 4,
+    			borderColor: 3
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "GroupElementDisplay",
+    			options,
+    			id: create_fragment$7.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*element*/ ctx[2] === undefined && !('element' in props)) {
+    			console.warn("<GroupElementDisplay> was created without expected prop 'element'");
+    		}
+    	}
+
+    	get top() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set top(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get left() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set left(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get element() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set element(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get arrows() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set arrows(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get borderColor() {
+    		throw new Error("<GroupElementDisplay>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set borderColor(value) {
+    		throw new Error("<GroupElementDisplay>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/twoD/SVGArrowLine.svelte generated by Svelte v3.46.4 */
+    const file$6 = "src/twoD/SVGArrowLine.svelte";
+
+    function create_fragment$6(ctx) {
+    	let line;
+    	let line_x__value;
+    	let line_y__value;
+    	let line_x__value_1;
+    	let line_y__value_1;
+
+    	const block = {
+    		c: function create() {
+    			line = svg_element("line");
+    			attr_dev(line, "x1", line_x__value = /*movedStartPoint*/ ctx[4][0] + "em");
+    			attr_dev(line, "y1", line_y__value = /*movedStartPoint*/ ctx[4][1] + "em");
+    			attr_dev(line, "x2", line_x__value_1 = /*displayedEndPoint*/ ctx[3][0] + "em");
+    			attr_dev(line, "y2", line_y__value_1 = /*displayedEndPoint*/ ctx[3][1] + "em");
+    			attr_dev(line, "stroke", /*stroke*/ ctx[0]);
+    			attr_dev(line, "marker-end", /*markerEnd*/ ctx[2]);
+    			attr_dev(line, "stroke-width", /*strokeWidth*/ ctx[1]);
+    			add_location(line, file$6, 37, 0, 1428);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, line, anchor);
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*movedStartPoint*/ 16 && line_x__value !== (line_x__value = /*movedStartPoint*/ ctx[4][0] + "em")) {
+    				attr_dev(line, "x1", line_x__value);
+    			}
+
+    			if (dirty & /*movedStartPoint*/ 16 && line_y__value !== (line_y__value = /*movedStartPoint*/ ctx[4][1] + "em")) {
+    				attr_dev(line, "y1", line_y__value);
+    			}
+
+    			if (dirty & /*displayedEndPoint*/ 8 && line_x__value_1 !== (line_x__value_1 = /*displayedEndPoint*/ ctx[3][0] + "em")) {
+    				attr_dev(line, "x2", line_x__value_1);
+    			}
+
+    			if (dirty & /*displayedEndPoint*/ 8 && line_y__value_1 !== (line_y__value_1 = /*displayedEndPoint*/ ctx[3][1] + "em")) {
+    				attr_dev(line, "y2", line_y__value_1);
+    			}
+
+    			if (dirty & /*stroke*/ 1) {
+    				attr_dev(line, "stroke", /*stroke*/ ctx[0]);
+    			}
+
+    			if (dirty & /*markerEnd*/ 4) {
+    				attr_dev(line, "marker-end", /*markerEnd*/ ctx[2]);
+    			}
+
+    			if (dirty & /*strokeWidth*/ 2) {
+    				attr_dev(line, "stroke-width", /*strokeWidth*/ ctx[1]);
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(line);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$6.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function moveBackwardsAConstantDistance(endpoint, pointToMoveTowards, distance) {
+    	let backwardsDirection = [pointToMoveTowards[0] - endpoint[0], pointToMoveTowards[1] - endpoint[1]];
+    	let norm = Math.sqrt(backwardsDirection[0] * backwardsDirection[0] + backwardsDirection[1] * backwardsDirection[1]);
+    	let normalizedBackwards = [backwardsDirection[0] / norm, backwardsDirection[1] / norm];
+
+    	return [
+    		endpoint[0] + normalizedBackwards[0] * distance,
+    		endpoint[1] + normalizedBackwards[1] * distance
+    	];
+    }
+
+    function instance$6($$self, $$props, $$invalidate) {
+    	let movedStartPoint;
+    	let movedEndPoint;
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('SVGArrowLine', slots, []);
+    	let { start = [0, 0] } = $$props;
+    	let { end = [0, 0] } = $$props;
+    	let { stroke = "black" } = $$props;
+    	let { strokeWidth = "0.2em" } = $$props;
+    	let { markerEnd } = $$props;
+    	let { elementAvoidRadius = 2.75 } = $$props;
+
+    	//animation
+    	let displayedEndPoint = end;
+
+    	let animateAppearance = false;
+    	const writable_props = ['start', 'end', 'stroke', 'strokeWidth', 'markerEnd', 'elementAvoidRadius'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<SVGArrowLine> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ('start' in $$props) $$invalidate(5, start = $$props.start);
+    		if ('end' in $$props) $$invalidate(6, end = $$props.end);
+    		if ('stroke' in $$props) $$invalidate(0, stroke = $$props.stroke);
+    		if ('strokeWidth' in $$props) $$invalidate(1, strokeWidth = $$props.strokeWidth);
+    		if ('markerEnd' in $$props) $$invalidate(2, markerEnd = $$props.markerEnd);
+    		if ('elementAvoidRadius' in $$props) $$invalidate(7, elementAvoidRadius = $$props.elementAvoidRadius);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		EXP: EXP$1,
+    		start,
+    		end,
+    		stroke,
+    		strokeWidth,
+    		markerEnd,
+    		elementAvoidRadius,
+    		moveBackwardsAConstantDistance,
+    		displayedEndPoint,
+    		animateAppearance,
+    		movedEndPoint,
+    		movedStartPoint
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('start' in $$props) $$invalidate(5, start = $$props.start);
+    		if ('end' in $$props) $$invalidate(6, end = $$props.end);
+    		if ('stroke' in $$props) $$invalidate(0, stroke = $$props.stroke);
+    		if ('strokeWidth' in $$props) $$invalidate(1, strokeWidth = $$props.strokeWidth);
+    		if ('markerEnd' in $$props) $$invalidate(2, markerEnd = $$props.markerEnd);
+    		if ('elementAvoidRadius' in $$props) $$invalidate(7, elementAvoidRadius = $$props.elementAvoidRadius);
+    		if ('displayedEndPoint' in $$props) $$invalidate(3, displayedEndPoint = $$props.displayedEndPoint);
+    		if ('animateAppearance' in $$props) $$invalidate(9, animateAppearance = $$props.animateAppearance);
+    		if ('movedEndPoint' in $$props) $$invalidate(8, movedEndPoint = $$props.movedEndPoint);
+    		if ('movedStartPoint' in $$props) $$invalidate(4, movedStartPoint = $$props.movedStartPoint);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*start, end, elementAvoidRadius*/ 224) {
+    			$$invalidate(4, movedStartPoint = moveBackwardsAConstantDistance(start, end, elementAvoidRadius));
+    		}
+
+    		if ($$self.$$.dirty & /*end, start, elementAvoidRadius*/ 224) {
+    			$$invalidate(8, movedEndPoint = moveBackwardsAConstantDistance(end, start, elementAvoidRadius));
+    		}
+
+    		if ($$self.$$.dirty & /*movedEndPoint, movedStartPoint, displayedEndPoint*/ 280) {
+    			{
+    				$$invalidate(3, displayedEndPoint = movedEndPoint);
+
+    				if (animateAppearance) {
+    					$$invalidate(3, displayedEndPoint = movedStartPoint);
+    					explanariaBundle.TransitionTo(displayedEndPoint, movedEndPoint, 500); //weird bugs
+    				}
+    			}
+    		}
+    	};
+
+    	return [
+    		stroke,
+    		strokeWidth,
+    		markerEnd,
+    		displayedEndPoint,
+    		movedStartPoint,
+    		start,
+    		end,
+    		elementAvoidRadius,
+    		movedEndPoint
+    	];
+    }
+
+    class SVGArrowLine extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(this, options, instance$6, create_fragment$6, safe_not_equal, {
+    			start: 5,
+    			end: 6,
+    			stroke: 0,
+    			strokeWidth: 1,
+    			markerEnd: 2,
+    			elementAvoidRadius: 7
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "SVGArrowLine",
+    			options,
+    			id: create_fragment$6.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*markerEnd*/ ctx[2] === undefined && !('markerEnd' in props)) {
+    			console.warn("<SVGArrowLine> was created without expected prop 'markerEnd'");
+    		}
+    	}
+
+    	get start() {
+    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set start(value) {
+    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get end() {
+    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set end(value) {
+    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get stroke() {
+    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set stroke(value) {
+    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get strokeWidth() {
+    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set strokeWidth(value) {
+    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get markerEnd() {
+    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set markerEnd(value) {
+    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get elementAvoidRadius() {
+    		throw new Error("<SVGArrowLine>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set elementAvoidRadius(value) {
+    		throw new Error("<SVGArrowLine>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/twoD/SVGCayleyArrows.svelte generated by Svelte v3.46.4 */
+    const file$5 = "src/twoD/SVGCayleyArrows.svelte";
+
+    function get_each_context$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[7] = list[i];
+    	return child_ctx;
+    }
+
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[10] = list[i];
+    	child_ctx[12] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[13] = list[i];
+    	child_ctx[12] = i;
+    	return child_ctx;
+    }
+
+    // (69:6) {#if drawEyesOnArrows}
+    function create_if_block_2$2(ctx) {
+    	let ellipse0;
+    	let ellipse1;
+    	let ellipse2;
+    	let ellipse3;
+
+    	const block = {
+    		c: function create() {
+    			ellipse0 = svg_element("ellipse");
+    			ellipse1 = svg_element("ellipse");
+    			ellipse2 = svg_element("ellipse");
+    			ellipse3 = svg_element("ellipse");
+    			attr_dev(ellipse0, "rx", "1");
+    			attr_dev(ellipse0, "ry", "0.6");
+    			attr_dev(ellipse0, "cy", "2.5");
+    			attr_dev(ellipse0, "cx", "1.5");
+    			attr_dev(ellipse0, "fill", "#fff");
+    			attr_dev(ellipse0, "stroke", "#000");
+    			attr_dev(ellipse0, "stroke-width", "0.1");
+    			add_location(ellipse0, file$5, 69, 10, 2531);
+    			attr_dev(ellipse1, "rx", "1");
+    			attr_dev(ellipse1, "ry", "0.6");
+    			attr_dev(ellipse1, "cy", "1.5");
+    			attr_dev(ellipse1, "cx", "1.5");
+    			attr_dev(ellipse1, "fill", "#fff");
+    			attr_dev(ellipse1, "stroke", "#000");
+    			attr_dev(ellipse1, "stroke-width", "0.1");
+    			add_location(ellipse1, file$5, 71, 10, 2641);
+    			attr_dev(ellipse2, "rx", "0.6");
+    			attr_dev(ellipse2, "ry", "0.35");
+    			attr_dev(ellipse2, "cy", "2.5");
+    			attr_dev(ellipse2, "cx", "1.85");
+    			attr_dev(ellipse2, "fill", "#000000");
+    			add_location(ellipse2, file$5, 73, 10, 2751);
+    			attr_dev(ellipse3, "rx", "0.6");
+    			attr_dev(ellipse3, "ry", "0.35");
+    			attr_dev(ellipse3, "cy", "1.5");
+    			attr_dev(ellipse3, "cx", "1.85");
+    			attr_dev(ellipse3, "fill", "#000000");
+    			add_location(ellipse3, file$5, 75, 10, 2837);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, ellipse0, anchor);
+    			insert_dev(target, ellipse1, anchor);
+    			insert_dev(target, ellipse2, anchor);
+    			insert_dev(target, ellipse3, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(ellipse0);
+    			if (detaching) detach_dev(ellipse1);
+    			if (detaching) detach_dev(ellipse2);
+    			if (detaching) detach_dev(ellipse3);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2$2.name,
+    		type: "if",
+    		source: "(69:6) {#if drawEyesOnArrows}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (65:4) {#each generatorColors as color, i}
+    function create_each_block_2(ctx) {
+    	let marker;
+    	let polygon;
+    	let if_block = create_if_block_2$2(ctx);
+
+    	const block = {
+    		c: function create() {
+    			marker = svg_element("marker");
+    			polygon = svg_element("polygon");
+    			if (if_block) if_block.c();
+    			attr_dev(polygon, "points", "0 0, 4 2, 0 4");
+    			attr_dev(polygon, "fill", /*color*/ ctx[13]);
+    			add_location(polygon, file$5, 67, 6, 2445);
+    			attr_dev(marker, "class", "arrowhead svelte-11kt62b");
+    			attr_dev(marker, "id", "arrowhead-" + /*i*/ ctx[12]);
+    			attr_dev(marker, "markerWidth", "4");
+    			attr_dev(marker, "markerHeight", "4");
+    			attr_dev(marker, "refX", "2");
+    			attr_dev(marker, "refY", "2");
+    			attr_dev(marker, "orient", "auto");
+    			add_location(marker, file$5, 65, 4, 2259);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, marker, anchor);
+    			append_dev(marker, polygon);
+    			if (if_block) if_block.m(marker, null);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(marker);
+    			if (if_block) if_block.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(65:4) {#each generatorColors as color, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (95:12) {#if isArrowVisibleMap[startElement.name][i]}
+    function create_if_block$3(ctx) {
+    	let if_block_anchor;
+    	let svgarrowline;
+    	let current;
+    	let if_block = drawGeneratorsWithOutlines ;
+
+    	svgarrowline = new SVGArrowLine({
+    			props: {
+    				start: /*positionsPerElementMap*/ ctx[1].get(/*startElement*/ ctx[7]),
+    				end: /*positionsPerElementMap*/ ctx[1].get(/*targetElement*/ ctx[10]),
+    				stroke: generatorColors[/*i*/ ctx[12]],
+    				markerEnd: "url(#arrowhead-" + /*i*/ ctx[12] + ")",
+    				strokeWidth: "0.2em"
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			if_block_anchor = empty();
+    			create_component(svgarrowline.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, if_block_anchor, anchor);
+    			mount_component(svgarrowline, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const svgarrowline_changes = {};
+    			if (dirty & /*positionsPerElementMap, group*/ 3) svgarrowline_changes.start = /*positionsPerElementMap*/ ctx[1].get(/*startElement*/ ctx[7]);
+    			if (dirty & /*positionsPerElementMap, group*/ 3) svgarrowline_changes.end = /*positionsPerElementMap*/ ctx[1].get(/*targetElement*/ ctx[10]);
+    			svgarrowline.$set(svgarrowline_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			transition_in(svgarrowline.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			transition_out(svgarrowline.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(if_block_anchor);
+    			destroy_component(svgarrowline, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$3.name,
+    		type: "if",
+    		source: "(95:12) {#if isArrowVisibleMap[startElement.name][i]}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (94:8) {#each elementTimesGenerators.get(startElement) as targetElement, i}
+    function create_each_block_1(ctx) {
+    	let if_block_anchor;
+    	let current;
+    	let if_block = /*isArrowVisibleMap*/ ctx[2][/*startElement*/ ctx[7].name][/*i*/ ctx[12]] && create_if_block$3(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (/*isArrowVisibleMap*/ ctx[2][/*startElement*/ ctx[7].name][/*i*/ ctx[12]]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+
+    					if (dirty & /*isArrowVisibleMap, group*/ 5) {
+    						transition_in(if_block, 1);
+    					}
+    				} else {
+    					if_block = create_if_block$3(ctx);
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			} else if (if_block) {
+    				group_outros();
+
+    				transition_out(if_block, 1, 1, () => {
+    					if_block = null;
+    				});
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(94:8) {#each elementTimesGenerators.get(startElement) as targetElement, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (93:4) {#each group.elements as startElement}
+    function create_each_block$1(ctx) {
+    	let each_1_anchor;
+    	let current;
+    	let each_value_1 = /*elementTimesGenerators*/ ctx[3].get(/*startElement*/ ctx[7]);
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*positionsPerElementMap, group, elementTimesGenerators, generatorColors, drawGeneratorsWithOutlines, isArrowVisibleMap*/ 15) {
+    				each_value_1 = /*elementTimesGenerators*/ ctx[3].get(/*startElement*/ ctx[7]);
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value_1.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$1.name,
+    		type: "each",
+    		source: "(93:4) {#each group.elements as startElement}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$5(ctx) {
+    	let svg;
+    	let defs;
+    	let filter;
+    	let feMorphology;
+    	let feColorMatrix;
+    	let feBlend;
+    	let current;
+    	let each_value_2 = generatorColors;
+    	validate_each_argument(each_value_2);
+    	let each_blocks_1 = [];
+
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		each_blocks_1[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+    	}
+
+    	let each_value = /*group*/ ctx[0].elements;
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
+    	const block = {
+    		c: function create() {
+    			svg = svg_element("svg");
+    			defs = svg_element("defs");
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].c();
+    			}
+
+    			filter = svg_element("filter");
+    			feMorphology = svg_element("feMorphology");
+    			feColorMatrix = svg_element("feColorMatrix");
+    			feBlend = svg_element("feBlend");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(feMorphology, "result", "outline");
+    			attr_dev(feMorphology, "in", "SourceGraphic");
+    			attr_dev(feMorphology, "operator", "dilate");
+    			attr_dev(feMorphology, "radius", "1");
+    			add_location(feMorphology, file$5, 82, 6, 3151);
+    			attr_dev(feColorMatrix, "type", "matrix");
+    			attr_dev(feColorMatrix, "in", "outline");
+    			attr_dev(feColorMatrix, "result", "black-outline");
+    			attr_dev(feColorMatrix, "values", "0 0 0 0 0  \n                        0 0 0 0 0  \n                        0 0 0 0 0  \n                        0 0 0 1 0");
+    			add_location(feColorMatrix, file$5, 83, 6, 3252);
+    			attr_dev(feBlend, "in", "SourceGraphic");
+    			attr_dev(feBlend, "in2", "black-outline");
+    			attr_dev(feBlend, "mode", "normal");
+    			add_location(feBlend, file$5, 87, 6, 3467);
+    			attr_dev(filter, "id", "outline");
+    			attr_dev(filter, "x", "-100%");
+    			attr_dev(filter, "y", "-100%");
+    			attr_dev(filter, "width", "300%");
+    			attr_dev(filter, "height", "300%");
+    			add_location(filter, file$5, 80, 4, 2955);
+    			add_location(defs, file$5, 63, 2, 2208);
+    			attr_dev(svg, "class", "arrowsvg svelte-11kt62b");
+    			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
+    			attr_dev(svg, "width", /*width*/ ctx[4]);
+    			attr_dev(svg, "height", /*height*/ ctx[5]);
+    			attr_dev(svg, "viewBox", "0 0 " + /*width*/ ctx[4] + " " + /*height*/ ctx[5]);
+    			add_location(svg, file$5, 62, 0, 2087);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, svg, anchor);
+    			append_dev(svg, defs);
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].m(defs, null);
+    			}
+
+    			append_dev(defs, filter);
+    			append_dev(filter, feMorphology);
+    			append_dev(filter, feColorMatrix);
+    			append_dev(filter, feBlend);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(svg, null);
+    			}
+
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*drawEyesOnArrows, generatorColors*/ 0) {
+    				each_value_2 = generatorColors;
+    				validate_each_argument(each_value_2);
+    				let i;
+
+    				for (i = 0; i < each_value_2.length; i += 1) {
+    					const child_ctx = get_each_context_2(ctx, each_value_2, i);
+
+    					if (each_blocks_1[i]) {
+    						each_blocks_1[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks_1[i] = create_each_block_2(child_ctx);
+    						each_blocks_1[i].c();
+    						each_blocks_1[i].m(defs, filter);
+    					}
+    				}
+
+    				for (; i < each_blocks_1.length; i += 1) {
+    					each_blocks_1[i].d(1);
+    				}
+
+    				each_blocks_1.length = each_value_2.length;
+    			}
+
+    			if (dirty & /*elementTimesGenerators, group, positionsPerElementMap, generatorColors, drawGeneratorsWithOutlines, isArrowVisibleMap*/ 15) {
+    				each_value = /*group*/ ctx[0].elements;
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$1(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block$1(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(svg, null);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(svg);
+    			destroy_each(each_blocks_1, detaching);
+    			destroy_each(each_blocks, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$5.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$5($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('SVGCayleyArrows', slots, []);
+    	let { group = { elements: [] } } = $$props;
+    	let { positionsPerElementMap } = $$props;
+    	let defaultShowArray = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
+
+    	group.elements.forEach(startElement => {
+    		defaultShowArray[startElement.name] = group.generators.map(generator => true); //show every arrow
+    	});
+
+    	let { isArrowVisibleMap = defaultShowArray } = $$props;
+    	let elementTimesGenerators = new Map(); //elementTimesGenerators[x.name] is [x*a, x*b] where a,b are the generators of the group
+
+    	// resize the svg with the arrows to match
+    	/*
+    let width = 1000;
+    let height = 300;
+    function recalcPageSize(){
+        width = window.innerWidth;
+        height = window.innerHeight;
+    }
+    window.addEventListener("resize", recalcPageSize);
+    onMount(recalcPageSize) */
+    	let width = 50;
+
+    	let height = 50; //The above code means that if this svg isn't positioned exactly at the top left of the screen, it creates scrollbars on the page. This small size means the svg won't create scrollbars, while overflow:visible ensures all the elements will still be there
+    	const writable_props = ['group', 'positionsPerElementMap', 'isArrowVisibleMap'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<SVGCayleyArrows> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ('group' in $$props) $$invalidate(0, group = $$props.group);
+    		if ('positionsPerElementMap' in $$props) $$invalidate(1, positionsPerElementMap = $$props.positionsPerElementMap);
+    		if ('isArrowVisibleMap' in $$props) $$invalidate(2, isArrowVisibleMap = $$props.isArrowVisibleMap);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		group,
+    		positionsPerElementMap,
+    		generatorColors,
+    		drawGeneratorsWithOutlines,
+    		drawEyesOnArrows,
+    		onMount,
+    		SVGArrowLine,
+    		defaultShowArray,
+    		isArrowVisibleMap,
+    		elementTimesGenerators,
+    		width,
+    		height
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('group' in $$props) $$invalidate(0, group = $$props.group);
+    		if ('positionsPerElementMap' in $$props) $$invalidate(1, positionsPerElementMap = $$props.positionsPerElementMap);
+    		if ('defaultShowArray' in $$props) defaultShowArray = $$props.defaultShowArray;
+    		if ('isArrowVisibleMap' in $$props) $$invalidate(2, isArrowVisibleMap = $$props.isArrowVisibleMap);
+    		if ('elementTimesGenerators' in $$props) $$invalidate(3, elementTimesGenerators = $$props.elementTimesGenerators);
+    		if ('width' in $$props) $$invalidate(4, width = $$props.width);
+    		if ('height' in $$props) $$invalidate(5, height = $$props.height);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*group*/ 1) {
+    			{
+    				group.elements.forEach(startElement => {
+    					//construct an array with one element per generator, consisting of startElement multiplied by every generator
+    					//these will be the targets of arrows leaving startElement
+    					elementTimesGenerators.set(startElement, group.generators.map(generator => group.multiply(startElement, generator)));
+    				});
+    			}
+    		}
+    	};
+
+    	return [
+    		group,
+    		positionsPerElementMap,
+    		isArrowVisibleMap,
+    		elementTimesGenerators,
+    		width,
+    		height
+    	];
+    }
+
+    class SVGCayleyArrows extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, {
+    			group: 0,
+    			positionsPerElementMap: 1,
+    			isArrowVisibleMap: 2
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "SVGCayleyArrows",
+    			options,
+    			id: create_fragment$5.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*positionsPerElementMap*/ ctx[1] === undefined && !('positionsPerElementMap' in props)) {
+    			console.warn("<SVGCayleyArrows> was created without expected prop 'positionsPerElementMap'");
+    		}
+    	}
+
+    	get group() {
+    		throw new Error("<SVGCayleyArrows>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set group(value) {
+    		throw new Error("<SVGCayleyArrows>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get positionsPerElementMap() {
+    		throw new Error("<SVGCayleyArrows>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set positionsPerElementMap(value) {
+    		throw new Error("<SVGCayleyArrows>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get isArrowVisibleMap() {
+    		throw new Error("<SVGCayleyArrows>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set isArrowVisibleMap(value) {
+    		throw new Error("<SVGCayleyArrows>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    function rotate2D(degrees, x,y){
+        let rad = degrees * Math.PI / 180;
+        return [x * Math.cos(rad) - y * Math.sin(rad),
+                x * Math.sin(rad) + y * Math.cos(rad)]
+    }
+
+    const triangleShadowColor = "#555555";
+    const triangleColor = "#bbbbbb";
+    const D6TextColor = "#000";
+
+    const triangleStrokeStyle = "hsla(0,0%,0%,0)";
+    const arrowColor = "hsl(240, 90%, 70%)";
+
+
+    const canvasSize$1 = 3; //in em
+
+    //30 should really be "em to px"
+    const canvasSizePixels = canvasSize$1 * 30; //is this the right calculation? 
+
+    const triangleRadius = 0.4*canvasSizePixels;
+    const arrowCenterDistance = 0.43*canvasSizePixels; //how far from the center should the arced arrow that shows a rotation be?
+    const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
+    const num_dashes = 5;
+    const dash_radius = canvasSize$1/2; //how far from the center should dashed lines for mirroring go
+    const D6_text_size_multiplier = 0.35;
+    const lineWidth = 2;
+    let NUM_DEGREES_IN_ONE_ROTATION = 120;
+
+
+
+
+    function drawTrianglePath(ctx, centerX, centerY, oneVertexVectorFromCenter){
+        ctx.translate(centerX, centerY);
+        ctx.beginPath();
+        ctx.moveTo(...oneVertexVectorFromCenter);
+        ctx.lineTo(...rotate2D(120, ...oneVertexVectorFromCenter));
+        ctx.lineTo(...rotate2D(240, ...oneVertexVectorFromCenter));
+        ctx.lineTo(...oneVertexVectorFromCenter);
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.translate(-centerX, -centerY);
+    }
+
+
+    function isAllRs(string){
+        for(let i=0;i<string.length;i++){
+            if(string[i] != 'r')return false;
+        }
+        return true;
+    }
+
+
+    function drawStaticElements(ctx, element){
+        //draw things like arcs or dotted lines to represent transformations. these don't move
+        ctx.strokeStyle = arrowColor;
+        if(isAllRs(element.name)){
+            //this is a pure rotation. draw a rotation arrow
+            //handles both "r" and "rr"!
+            let rotationDegrees = NUM_DEGREES_IN_ONE_ROTATION * element.name.length; //increase arc distance if needed
+
+            let arrowLineVec = [0,-arrowCenterDistance];
+
+            ctx.beginPath();
+            ctx.moveTo(...arrowLineVec);
+            for(let i=0;i<rotationDegrees - offsetDegrees;i+=1){
+                ctx.lineTo(...rotate2D(i, ...arrowLineVec));
+            }             
+            ctx.stroke();
+
+            //arrowhead triangle
+            
+            let arrowheadSize = 6;
+            let finalPoint = rotate2D(rotationDegrees - offsetDegrees, ...arrowLineVec);
+            let finalDirection = rotate2D(90 + rotationDegrees - offsetDegrees, ...[0, -arrowheadSize]);
+
+            drawTrianglePath(ctx, finalPoint[0],finalPoint[1], finalDirection);
+            ctx.fillStyle = arrowColor;
+            ctx.fill();
+        }
+        else if(element.name.search("f") != -1){//todo: add check for only "r"s being in there
+            //draw a dotted flip line.
+            //any Rs there will rotate the flip line.g
+            let flipStartPos = [0, dash_radius];
+            for(let i=element.name.length-1;i>=0;i--){ //traverse name from right to left, backwards, because that's how function notation works
+                if(element.name[i] == 'r'){
+                    flipStartPos = rotate2D(NUM_DEGREES_IN_ONE_ROTATION, ...flipStartPos);
+                }
+                if(element.name[i] == 'f'){ //flip horizontally
+                    flipStartPos[0] = -flipStartPos[0];
+                }
+            }
+
+            //now draw a dotted line from flipStartPos to -flipStartPos
+            ctx.beginPath();
+            for(let i=0;i<num_dashes*2;i++){
+                let lerpFactor = i / (num_dashes*2);
+                let posX = lerpFactor * flipStartPos[0]  + (1-lerpFactor) * (-flipStartPos[0]);
+                let posY = lerpFactor * flipStartPos[1]  + (1-lerpFactor) * (-flipStartPos[1]);
+                if(i%2 == 0){
+                    ctx.moveTo(posX, posY);
+                }else {
+                    ctx.lineTo(posX, posY);
+                }
+            }
+            ctx.stroke();
+        }
+    }
+
+
+
+    function easing(t){
+        //cosine ease
+        return (1-Math.cos(t * Math.PI))/2
+    }
+
+    /* src/twoD/D6ElementCanvas.svelte generated by Svelte v3.46.4 */
+
+    const file$4 = "src/twoD/D6ElementCanvas.svelte";
+
+    function create_fragment$4(ctx) {
+    	let canvas_1;
+
+    	const block = {
+    		c: function create() {
+    			canvas_1 = element("canvas");
+    			attr_dev(canvas_1, "class", "elementcanvas");
+    			attr_dev(canvas_1, "id", /*canvasName*/ ctx[0]);
+    			attr_dev(canvas_1, "width", canvasSize$1);
+    			attr_dev(canvas_1, "height", canvasSize$1);
+    			set_style(canvas_1, "width", canvasSize$1 + "em", false);
+    			set_style(canvas_1, "height", canvasSize$1 + "em", false);
+    			add_location(canvas_1, file$4, 135, 0, 5338);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, canvas_1, anchor);
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*canvasName*/ 1) {
+    				attr_dev(canvas_1, "id", /*canvasName*/ ctx[0]);
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(canvas_1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$4.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$4($$self, $$props, $$invalidate) {
+    	let canvasName;
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('D6ElementCanvas', slots, []);
+    	let { element = new GroupElement("", "(3)") } = $$props;
+    	let canvas = null, ctx = null;
+    	let { NUM_DEGREES_IN_ONE_ROTATION = 120 } = $$props;
+    	let startVertex = [0, -triangleRadius]; //one vertex of the triangle
+    	let lastTime = 0;
+
+    	function draw(currentTime) {
+    		let delta = (currentTime - lastTime) / 1000;
+    		canvas.width = canvasSizePixels;
+    		canvas.height = canvasSizePixels;
+    		ctx.save();
+    		ctx.translate(canvas.width / 2, canvas.height / 2); //make all transformations start from center of canvas
+    		ctx.lineWidth = lineWidth;
+    		ctx.strokeStyle = triangleStrokeStyle;
+
+    		//draw triangle shadow
+    		ctx.save();
+
+    		ctx.fillStyle = triangleShadowColor;
+    		drawTrianglePath(ctx, 0, 0, startVertex);
+    		ctx.fill();
+
+    		//draw triangle, rotated or scaled by the animation
+    		updateCurrentAnimation(ctx, delta);
+
+    		applyCurrentAnimation(ctx, delta);
+    		ctx.fillStyle = triangleColor;
+    		drawTrianglePath(ctx, 0, 0, startVertex);
+    		ctx.fill();
+    		ctx.fillStyle = D6TextColor;
+    		ctx.font = D6_text_size_multiplier * canvasSize$1 + "em serif";
+    		ctx.fillText("D6", -0.4 * D6_text_size_multiplier * canvasSizePixels, -0.1 * D6_text_size_multiplier * canvasSizePixels);
+    		ctx.restore();
+
+    		//finally, draw stuff like mirror lines which go on top of the triangle and don't rotate with it
+    		drawStaticElements(ctx, element);
+
+    		ctx.restore();
+    		lastTime = currentTime;
+    		window.requestAnimationFrame(draw);
+    	}
+
+    	//janky animation system time!
+    	let animationProgress = 0; //goes from 0 to 1 over the course of the animation
+
+    	async function animationLoop() {
+    		//this one controls the animation of each element
+    		while (true) {
+    			//todo: stop looping when there's an onUnmount
+    			await oneFullAnimation();
+
+    			await explanariaBundle.delay(2000);
+    		}
+    	}
+
+    	async function oneFullAnimation(duration = 2) {
+    		animationProgress = 0;
+
+    		return new Promise(resolve => {
+    				if (isAllRs(element.name)) {
+    					//element is a pure rotation, named "r" or "rr"
+    					let rotationDegrees = NUM_DEGREES_IN_ONE_ROTATION * element.name.length;
+
+    					let rotationRadians = rotationDegrees * Math.PI / 180;
+
+    					//animation, rotation version
+    					applyCurrentAnimation = function (ctx, deltatime) {
+    						ctx.rotate(rotationRadians * easing(animationProgress));
+    					};
+    				} else if (element.name.search("f") != -1) {
+    					//element is a flip. It's assumed there's only Rs in the rest of the name.
+    					//to create a flip around something that's not the x-axis, we'll rotate the canvas 
+    					let axisBeingFlipped = [1, 0];
+
+    					for (let i = element.name.length - 1; i >= 0; i--) {
+    						//traverse name from right to left, backwards, because that's how function notation works
+    						if (element.name[i] == 'r') {
+    							axisBeingFlipped = rotate2D(NUM_DEGREES_IN_ONE_ROTATION, ...axisBeingFlipped);
+    						}
+
+    						if (element.name[i] == 'f') {
+    							//flip horizontally
+    							axisBeingFlipped[0] = -axisBeingFlipped[0];
+    						}
+    					}
+
+    					//now, to create a flip about that axis, we'll rotate the canvas so that axis is [0,1], flip about [0,1] using scale(-1,1), then unrotate.
+    					let angle = Math.atan2(axisBeingFlipped[1], axisBeingFlipped[0]);
+
+    					applyCurrentAnimation = function (ctx, deltatime) {
+    						let xScale = 1 - 2 * easing(animationProgress); //as animationProgress goes from 0 to 1, this goes from 1 to -1
+    						ctx.rotate(angle);
+    						ctx.scale(xScale, 1);
+    						ctx.rotate(-angle);
+    					};
+    				}
+
+    				//update function, common to all
+    				updateCurrentAnimation = function (ctx, deltatime) {
+    					animationProgress += deltatime / duration;
+
+    					if (animationProgress >= 1) {
+    						//animation done
+    						//applyCurrentAnimation = ()=>{}; //don't reset this, leave the animation paused on the final frame
+    						updateCurrentAnimation = () => {
+    							
+    						};
+
+    						animationProgress = 1;
+    						resolve();
+    					}
+    				};
+    			});
+    	}
+
+    	//will be overwritten by oneFullAnimation
+    	function updateCurrentAnimation(ctx, deltatime) {
+    		
+    	}
+
+    	function applyCurrentAnimation(ctx, deltatime) {
+    		
+    	}
+
+    	onMount(async () => {
+    		canvas = document.getElementById(canvasName);
+    		ctx = canvas.getContext("2d");
+    		draw(0);
+    		await animationLoop();
+    	});
+
+    	const writable_props = ['element', 'NUM_DEGREES_IN_ONE_ROTATION'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<D6ElementCanvas> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ('element' in $$props) $$invalidate(1, element = $$props.element);
+    		if ('NUM_DEGREES_IN_ONE_ROTATION' in $$props) $$invalidate(2, NUM_DEGREES_IN_ONE_ROTATION = $$props.NUM_DEGREES_IN_ONE_ROTATION);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		rotate2D,
+    		onMount,
+    		GroupElement,
+    		EXP: EXP$1,
+    		easing,
+    		drawTrianglePath,
+    		drawStaticElements,
+    		isAllRs,
+    		canvasSize: canvasSize$1,
+    		canvasSizePixels,
+    		triangleRadius,
+    		lineWidth,
+    		D6_text_size_multiplier,
+    		triangleStrokeStyle,
+    		triangleShadowColor,
+    		triangleColor,
+    		D6TextColor,
+    		element,
+    		canvas,
+    		ctx,
+    		NUM_DEGREES_IN_ONE_ROTATION,
+    		startVertex,
+    		lastTime,
+    		draw,
+    		animationProgress,
+    		animationLoop,
+    		oneFullAnimation,
+    		updateCurrentAnimation,
+    		applyCurrentAnimation,
+    		canvasName
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('element' in $$props) $$invalidate(1, element = $$props.element);
+    		if ('canvas' in $$props) canvas = $$props.canvas;
+    		if ('ctx' in $$props) ctx = $$props.ctx;
+    		if ('NUM_DEGREES_IN_ONE_ROTATION' in $$props) $$invalidate(2, NUM_DEGREES_IN_ONE_ROTATION = $$props.NUM_DEGREES_IN_ONE_ROTATION);
+    		if ('startVertex' in $$props) startVertex = $$props.startVertex;
+    		if ('lastTime' in $$props) lastTime = $$props.lastTime;
+    		if ('animationProgress' in $$props) animationProgress = $$props.animationProgress;
+    		if ('canvasName' in $$props) $$invalidate(0, canvasName = $$props.canvasName);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*element*/ 2) {
+    			$$invalidate(0, canvasName = "canvas-" + element.name);
+    		}
+    	};
+
+    	return [canvasName, element, NUM_DEGREES_IN_ONE_ROTATION];
+    }
+
+    class D6ElementCanvas extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, {
+    			element: 1,
+    			NUM_DEGREES_IN_ONE_ROTATION: 2
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "D6ElementCanvas",
+    			options,
+    			id: create_fragment$4.name
+    		});
+    	}
+
+    	get element() {
+    		throw new Error("<D6ElementCanvas>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set element(value) {
+    		throw new Error("<D6ElementCanvas>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get NUM_DEGREES_IN_ONE_ROTATION() {
+    		throw new Error("<D6ElementCanvas>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set NUM_DEGREES_IN_ONE_ROTATION(value) {
+    		throw new Error("<D6ElementCanvas>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/twoD/D6Group.svelte generated by Svelte v3.46.4 */
+
+    const file$3 = "src/twoD/D6Group.svelte";
+
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[15] = list[i];
+    	child_ctx[17] = i;
+    	return child_ctx;
+    }
+
+    // (82:8) {#if isElementVisible[i]}
+    function create_if_block$2(ctx) {
+    	let groupelementdisplay;
+    	let current;
+
+    	groupelementdisplay = new GroupElementDisplay({
+    			props: {
+    				element: /*element*/ ctx[15],
+    				borderColor: /*chooseBorderColor*/ ctx[4](/*element*/ ctx[15]),
+    				top: /*positions*/ ctx[2].get(/*element*/ ctx[15])[1],
+    				left: /*positions*/ ctx[2].get(/*element*/ ctx[15])[0],
+    				$$slots: { default: [create_default_slot] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(groupelementdisplay.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(groupelementdisplay, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const groupelementdisplay_changes = {};
+    			if (dirty & /*d6group*/ 1) groupelementdisplay_changes.element = /*element*/ ctx[15];
+    			if (dirty & /*d6group*/ 1) groupelementdisplay_changes.borderColor = /*chooseBorderColor*/ ctx[4](/*element*/ ctx[15]);
+    			if (dirty & /*positions, d6group*/ 5) groupelementdisplay_changes.top = /*positions*/ ctx[2].get(/*element*/ ctx[15])[1];
+    			if (dirty & /*positions, d6group*/ 5) groupelementdisplay_changes.left = /*positions*/ ctx[2].get(/*element*/ ctx[15])[0];
+
+    			if (dirty & /*$$scope, d6group*/ 262145) {
+    				groupelementdisplay_changes.$$scope = { dirty, ctx };
+    			}
+
+    			groupelementdisplay.$set(groupelementdisplay_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(groupelementdisplay.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(groupelementdisplay.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(groupelementdisplay, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$2.name,
+    		type: "if",
+    		source: "(82:8) {#if isElementVisible[i]}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (83:12) <GroupElementDisplay element={element}             borderColor={chooseBorderColor(element)}             top={positions.get(element)[1]} left={positions.get(element)[0]}             >
+    function create_default_slot(ctx) {
+    	let d6elementcanvas;
+    	let current;
+
+    	d6elementcanvas = new D6ElementCanvas({
+    			props: { element: /*element*/ ctx[15] },
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(d6elementcanvas.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(d6elementcanvas, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const d6elementcanvas_changes = {};
+    			if (dirty & /*d6group*/ 1) d6elementcanvas_changes.element = /*element*/ ctx[15];
+    			d6elementcanvas.$set(d6elementcanvas_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(d6elementcanvas.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(d6elementcanvas.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(d6elementcanvas, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot.name,
+    		type: "slot",
+    		source: "(83:12) <GroupElementDisplay element={element}             borderColor={chooseBorderColor(element)}             top={positions.get(element)[1]} left={positions.get(element)[0]}             >",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (81:4) {#each d6group.elements as element, i}
+    function create_each_block(ctx) {
+    	let if_block_anchor;
+    	let current;
+    	let if_block = /*isElementVisible*/ ctx[1][/*i*/ ctx[17]] && create_if_block$2(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (/*isElementVisible*/ ctx[1][/*i*/ ctx[17]]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+
+    					if (dirty & /*isElementVisible*/ 2) {
+    						transition_in(if_block, 1);
+    					}
+    				} else {
+    					if_block = create_if_block$2(ctx);
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			} else if (if_block) {
+    				group_outros();
+
+    				transition_out(if_block, 1, 1, () => {
+    					if_block = null;
+    				});
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(81:4) {#each d6group.elements as element, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$3(ctx) {
+    	let div;
+    	let t;
+    	let svgcayleyarrows;
+    	let current;
+    	let each_value = /*d6group*/ ctx[0].elements;
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
+    	svgcayleyarrows = new SVGCayleyArrows({
+    			props: {
+    				group: /*d6group*/ ctx[0],
+    				positionsPerElementMap: /*positions*/ ctx[2],
+    				isArrowVisibleMap: /*isArrowVisibleMap*/ ctx[3]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			create_component(svgcayleyarrows.$$.fragment);
+    			attr_dev(div, "class", "groupdisplay");
+    			add_location(div, file$3, 79, 0, 2979);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    			mount_component(svgcayleyarrows, div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*d6group, chooseBorderColor, positions, isElementVisible*/ 23) {
+    				each_value = /*d6group*/ ctx[0].elements;
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(div, t);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+
+    			const svgcayleyarrows_changes = {};
+    			if (dirty & /*d6group*/ 1) svgcayleyarrows_changes.group = /*d6group*/ ctx[0];
+    			if (dirty & /*positions*/ 4) svgcayleyarrows_changes.positionsPerElementMap = /*positions*/ ctx[2];
+    			if (dirty & /*isArrowVisibleMap*/ 8) svgcayleyarrows_changes.isArrowVisibleMap = /*isArrowVisibleMap*/ ctx[3];
+    			svgcayleyarrows.$set(svgcayleyarrows_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			transition_in(svgcayleyarrows.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			transition_out(svgcayleyarrows.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_each(each_blocks, detaching);
+    			destroy_component(svgcayleyarrows);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$3.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$3($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('D6Group', slots, []);
+    	let r = new GroupElement("r", "(123)");
+    	let f = new GroupElement("f", "(23)");
+    	let { d6group = new Group([r, f], { "rfr": "f", "rrr": "", "ff": "" }) } = $$props;
+    	let { isElementVisible = d6group.elements.map(element => true) } = $$props;
+    	let generators = ["r", "f"];
+    	let { positions = new Map() } = $$props;
+
+    	d6group.elements.forEach(element => {
+    		positions.set(element, [0, 0]);
+    	}); //fill this dict with one position per element
+
+    	let startPos = [12, 12];
+    	let outerRadius = 11;
+    	let innerRadius = 4.5;
+    	let rotationRadians = 120 * Math.PI / 180;
+    	let startRadians = -Math.PI / 2; //start upwards
+    	let currentElem = d6group.getElemByName("e");
+
+    	for (let i = 0; i < 3; i++) {
+    		//place rotation elements on the outside of the circle.
+    		let position = [
+    			startPos[0] + outerRadius * Math.cos(rotationRadians * i + startRadians),
+    			startPos[1] + outerRadius * Math.sin(rotationRadians * i + startRadians)
+    		];
+
+    		positions.set(currentElem, position);
+
+    		//place flip elements on the inside of the circle
+    		let flipElem = d6group.multiply(d6group.getElemByName("f"), currentElem);
+
+    		let flipPosition = [
+    			startPos[0] + innerRadius * Math.cos(-rotationRadians * i + startRadians),
+    			startPos[1] + innerRadius * Math.sin(-rotationRadians * i + startRadians)
+    		]; //rotation reversed
+
+    		positions.set(flipElem, flipPosition);
+
+    		//move to next element
+    		currentElem = d6group.multiply(d6group.getElemByName("r"), currentElem);
+    	}
+
+    	function chooseBorderColor(element) {
+    		if (element.name == "e") {
+    			return identityColor;
+    		}
+
+    		if (d6group.generators.indexOf(element) !== -1) {
+    			//if the element is a generator, color it appropriately
+    			return generatorColors[d6group.generators.indexOf(element)];
+    		}
+
+    		return defaultGroupElementBorderColor;
+    	}
+
+    	let defaultArrowVisibility = {};
+
+    	d6group.elements.forEach(startElement => {
+    		defaultArrowVisibility[startElement.name] = d6group.generators.map(generator => false); //every generator starts false
+    	});
+
+    	defaultArrowVisibility["e"] = [true, true];
+    	let { isArrowVisibleMap = defaultArrowVisibility } = $$props;
+    	const writable_props = ['d6group', 'isElementVisible', 'positions', 'isArrowVisibleMap'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<D6Group> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ('d6group' in $$props) $$invalidate(0, d6group = $$props.d6group);
+    		if ('isElementVisible' in $$props) $$invalidate(1, isElementVisible = $$props.isElementVisible);
+    		if ('positions' in $$props) $$invalidate(2, positions = $$props.positions);
+    		if ('isArrowVisibleMap' in $$props) $$invalidate(3, isArrowVisibleMap = $$props.isArrowVisibleMap);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		onMount,
+    		GroupElement,
+    		Group,
+    		GroupElementDisplay,
+    		SVGCayleyArrows,
+    		D6ElementCanvas,
+    		defaultGroupElementBorderColor,
+    		generatorColors,
+    		identityColor,
+    		r,
+    		f,
+    		d6group,
+    		isElementVisible,
+    		generators,
+    		positions,
+    		startPos,
+    		outerRadius,
+    		innerRadius,
+    		rotationRadians,
+    		startRadians,
+    		currentElem,
+    		chooseBorderColor,
+    		defaultArrowVisibility,
+    		isArrowVisibleMap
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('r' in $$props) r = $$props.r;
+    		if ('f' in $$props) f = $$props.f;
+    		if ('d6group' in $$props) $$invalidate(0, d6group = $$props.d6group);
+    		if ('isElementVisible' in $$props) $$invalidate(1, isElementVisible = $$props.isElementVisible);
+    		if ('generators' in $$props) generators = $$props.generators;
+    		if ('positions' in $$props) $$invalidate(2, positions = $$props.positions);
+    		if ('startPos' in $$props) startPos = $$props.startPos;
+    		if ('outerRadius' in $$props) outerRadius = $$props.outerRadius;
+    		if ('innerRadius' in $$props) innerRadius = $$props.innerRadius;
+    		if ('rotationRadians' in $$props) rotationRadians = $$props.rotationRadians;
+    		if ('startRadians' in $$props) startRadians = $$props.startRadians;
+    		if ('currentElem' in $$props) currentElem = $$props.currentElem;
+    		if ('defaultArrowVisibility' in $$props) defaultArrowVisibility = $$props.defaultArrowVisibility;
+    		if ('isArrowVisibleMap' in $$props) $$invalidate(3, isArrowVisibleMap = $$props.isArrowVisibleMap);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [d6group, isElementVisible, positions, isArrowVisibleMap, chooseBorderColor];
+    }
+
+    class D6Group extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {
+    			d6group: 0,
+    			isElementVisible: 1,
+    			positions: 2,
+    			isArrowVisibleMap: 3
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "D6Group",
+    			options,
+    			id: create_fragment$3.name
+    		});
+    	}
+
+    	get d6group() {
+    		throw new Error("<D6Group>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set d6group(value) {
+    		throw new Error("<D6Group>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get isElementVisible() {
+    		throw new Error("<D6Group>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set isElementVisible(value) {
+    		throw new Error("<D6Group>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get positions() {
+    		throw new Error("<D6Group>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set positions(value) {
+    		throw new Error("<D6Group>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get isArrowVisibleMap() {
+    		throw new Error("<D6Group>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set isArrowVisibleMap(value) {
+    		throw new Error("<D6Group>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/twoD/InteractiveD6Creator.svelte generated by Svelte v3.46.4 */
+    const file$2 = "src/twoD/InteractiveD6Creator.svelte";
+    const get_textpart_slot_changes = dirty => ({});
+    const get_textpart_slot_context = ctx => ({});
+    const get_toppart_slot_changes = dirty => ({});
+    const get_toppart_slot_context = ctx => ({});
+
+    // (208:16) {#if data.showInfo}
+    function create_if_block_2$1(ctx) {
+    	let br0;
+    	let t0;
+    	let t1_value = /*data*/ ctx[0].isElementVisible.reduce(func, 0) + "";
+    	let t1;
+    	let t2;
+    	let br1;
+    	let t3;
+    	let t4_value = /*d6group*/ ctx[5].elements.reduce(/*func_1*/ ctx[8], 0) + "";
+    	let t4;
+    	let t5;
+    	let t6_value = /*d6group*/ ctx[5].elements.length * /*d6group*/ ctx[5].generators.length + "";
+    	let t6;
+
+    	const block = {
+    		c: function create() {
+    			br0 = element("br");
+    			t0 = text("Orientations found: ");
+    			t1 = text(t1_value);
+    			t2 = space();
+    			br1 = element("br");
+    			t3 = text("Arrows found: ");
+    			t4 = text(t4_value);
+    			t5 = text("/");
+    			t6 = text(t6_value);
+    			add_location(br0, file$2, 208, 16, 6733);
+    			add_location(br1, file$2, 209, 16, 6851);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, br0, anchor);
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, t2, anchor);
+    			insert_dev(target, br1, anchor);
+    			insert_dev(target, t3, anchor);
+    			insert_dev(target, t4, anchor);
+    			insert_dev(target, t5, anchor);
+    			insert_dev(target, t6, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*data*/ 1 && t1_value !== (t1_value = /*data*/ ctx[0].isElementVisible.reduce(func, 0) + "")) set_data_dev(t1, t1_value);
+    			if (dirty[0] & /*data*/ 1 && t4_value !== (t4_value = /*d6group*/ ctx[5].elements.reduce(/*func_1*/ ctx[8], 0) + "")) set_data_dev(t4, t4_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(br0);
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(t2);
+    			if (detaching) detach_dev(br1);
+    			if (detaching) detach_dev(t3);
+    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(t5);
+    			if (detaching) detach_dev(t6);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2$1.name,
+    		type: "if",
+    		source: "(208:16) {#if data.showInfo}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (206:29)              
+    function fallback_block_1(ctx) {
+    	let div;
+    	let if_block = /*data*/ ctx[0].showInfo && create_if_block_2$1(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			if (if_block) if_block.c();
+    			attr_dev(div, "class", "top");
+    			add_location(div, file$2, 206, 12, 6663);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			if (if_block) if_block.m(div, null);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (/*data*/ ctx[0].showInfo) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block_2$1(ctx);
+    					if_block.c();
+    					if_block.m(div, null);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (if_block) if_block.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: fallback_block_1.name,
+    		type: "fallback",
+    		source: "(206:29)              ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (224:20) {#if data.showbuttons}
+    function create_if_block_1$1(ctx) {
+    	let button0;
+    	let t1;
+    	let button1;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			button0 = element("button");
+    			button0.textContent = "Rotate by 120 degrees";
+    			t1 = space();
+    			button1 = element("button");
+    			button1.textContent = "Flip horizontally";
+    			attr_dev(button0, "class", "button svelte-1c4mdm5");
+    			set_style(button0, "border-color", generatorColors[0], false);
+    			add_location(button0, file$2, 224, 20, 7581);
+    			attr_dev(button1, "class", "button svelte-1c4mdm5");
+    			set_style(button1, "border-color", generatorColors[1], false);
+    			add_location(button1, file$2, 225, 20, 7715);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, button0, anchor);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, button1, anchor);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(button0, "click", /*onRotate*/ ctx[1], false, false, false),
+    					listen_dev(button1, "click", /*onFlip*/ ctx[2], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(button0);
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(button1);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$1.name,
+    		type: "if",
+    		source: "(224:20) {#if data.showbuttons}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (234:16) {#if data.showgroup}
+    function create_if_block$1(ctx) {
+    	let div;
+    	let t;
+    	let d6group_1;
+    	let updating_positions;
+    	let current;
+    	const d6group_1_spread_levels = [/*data*/ ctx[0]];
+
+    	function d6group_1_positions_binding(value) {
+    		/*d6group_1_positions_binding*/ ctx[10](value);
+    	}
+
+    	let d6group_1_props = {};
+
+    	for (let i = 0; i < d6group_1_spread_levels.length; i += 1) {
+    		d6group_1_props = assign(d6group_1_props, d6group_1_spread_levels[i]);
+    	}
+
+    	if (/*elemPositions*/ ctx[3] !== void 0) {
+    		d6group_1_props.positions = /*elemPositions*/ ctx[3];
+    	}
+
+    	d6group_1 = new D6Group({ props: d6group_1_props, $$inline: true });
+    	binding_callbacks.push(() => bind(d6group_1, 'positions', d6group_1_positions_binding));
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			t = space();
+    			create_component(d6group_1.$$.fragment);
+    			attr_dev(div, "class", "highlight svelte-1c4mdm5");
+
+    			set_style(
+    				div,
+    				"left",
+    				/*elemPositions*/ ctx[3] !== undefined
+    				? /*elemPositions*/ ctx[3].get(/*data*/ ctx[0].currentOrientation)[0] + "em"
+    				: "",
+    				false
+    			);
+
+    			set_style(
+    				div,
+    				"top",
+    				/*elemPositions*/ ctx[3] !== undefined
+    				? /*elemPositions*/ ctx[3].get(/*data*/ ctx[0].currentOrientation)[1] + "em"
+    				: "",
+    				false
+    			);
+
+    			add_location(div, file$2, 234, 16, 8059);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			insert_dev(target, t, anchor);
+    			mount_component(d6group_1, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*elemPositions, data*/ 9) {
+    				set_style(
+    					div,
+    					"left",
+    					/*elemPositions*/ ctx[3] !== undefined
+    					? /*elemPositions*/ ctx[3].get(/*data*/ ctx[0].currentOrientation)[0] + "em"
+    					: "",
+    					false
+    				);
+    			}
+
+    			if (dirty[0] & /*elemPositions, data*/ 9) {
+    				set_style(
+    					div,
+    					"top",
+    					/*elemPositions*/ ctx[3] !== undefined
+    					? /*elemPositions*/ ctx[3].get(/*data*/ ctx[0].currentOrientation)[1] + "em"
+    					: "",
+    					false
+    				);
+    			}
+
+    			const d6group_1_changes = (dirty[0] & /*data*/ 1)
+    			? get_spread_update(d6group_1_spread_levels, [get_spread_object(/*data*/ ctx[0])])
+    			: {};
+
+    			if (!updating_positions && dirty[0] & /*elemPositions*/ 8) {
+    				updating_positions = true;
+    				d6group_1_changes.positions = /*elemPositions*/ ctx[3];
+    				add_flush_callback(() => updating_positions = false);
+    			}
+
+    			d6group_1.$set(d6group_1_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(d6group_1.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(d6group_1.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(t);
+    			destroy_component(d6group_1, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(234:16) {#if data.showgroup}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (242:30)              
+    function fallback_block(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			div.textContent = "How many ways are there to fit an equilateral triangle into an equilateral triangle shaped hole? Use these buttons to find out!";
+    			attr_dev(div, "class", "textpart");
+    			set_style(div, "background-color", `red`, false);
+    			add_location(div, file$2, 242, 12, 8491);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: fallback_block.name,
+    		type: "fallback",
+    		source: "(242:30)              ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$2(ctx) {
+    	let div5;
+    	let div4;
+    	let t0;
+    	let div3;
+    	let div1;
+    	let canvas_1;
+    	let t1;
+    	let br;
+    	let t2;
+    	let div0;
+    	let t3;
+    	let div2;
+    	let t4;
+    	let current;
+    	const toppart_slot_template = /*#slots*/ ctx[7].toppart;
+    	const toppart_slot = create_slot(toppart_slot_template, ctx, /*$$scope*/ ctx[6], get_toppart_slot_context);
+    	const toppart_slot_or_fallback = toppart_slot || fallback_block_1(ctx);
+    	let if_block0 = /*data*/ ctx[0].showbuttons && create_if_block_1$1(ctx);
+    	let if_block1 = /*data*/ ctx[0].showgroup && create_if_block$1(ctx);
+    	const textpart_slot_template = /*#slots*/ ctx[7].textpart;
+    	const textpart_slot = create_slot(textpart_slot_template, ctx, /*$$scope*/ ctx[6], get_textpart_slot_context);
+    	const textpart_slot_or_fallback = textpart_slot || fallback_block(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div5 = element("div");
+    			div4 = element("div");
+    			if (toppart_slot_or_fallback) toppart_slot_or_fallback.c();
+    			t0 = space();
+    			div3 = element("div");
+    			div1 = element("div");
+    			canvas_1 = element("canvas");
+    			t1 = space();
+    			br = element("br");
+    			t2 = space();
+    			div0 = element("div");
+    			if (if_block0) if_block0.c();
+    			t3 = space();
+    			div2 = element("div");
+    			if (if_block1) if_block1.c();
+    			t4 = space();
+    			if (textpart_slot_or_fallback) textpart_slot_or_fallback.c();
+    			set_style(canvas_1, "width", canvasSize + "em", false);
+    			set_style(canvas_1, "height", canvasSize + "em", false);
+    			add_location(canvas_1, file$2, 220, 16, 7364);
+    			add_location(br, file$2, 221, 16, 7472);
+    			attr_dev(div0, "class", "twocolumns");
+    			add_location(div0, file$2, 222, 16, 7493);
+    			attr_dev(div1, "class", "column");
+    			add_location(div1, file$2, 219, 12, 7327);
+    			attr_dev(div2, "class", "grouppart svelte-1c4mdm5");
+    			add_location(div2, file$2, 232, 12, 7982);
+    			attr_dev(div3, "class", "twocolumns interactivepart");
+    			add_location(div3, file$2, 218, 8, 7274);
+    			attr_dev(div4, "class", "mainlayout svelte-1c4mdm5");
+    			add_location(div4, file$2, 204, 4, 6596);
+    			add_location(div5, file$2, 202, 0, 6585);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div5, anchor);
+    			append_dev(div5, div4);
+
+    			if (toppart_slot_or_fallback) {
+    				toppart_slot_or_fallback.m(div4, null);
+    			}
+
+    			append_dev(div4, t0);
+    			append_dev(div4, div3);
+    			append_dev(div3, div1);
+    			append_dev(div1, canvas_1);
+    			/*canvas_1_binding*/ ctx[9](canvas_1);
+    			append_dev(div1, t1);
+    			append_dev(div1, br);
+    			append_dev(div1, t2);
+    			append_dev(div1, div0);
+    			if (if_block0) if_block0.m(div0, null);
+    			append_dev(div3, t3);
+    			append_dev(div3, div2);
+    			if (if_block1) if_block1.m(div2, null);
+    			append_dev(div4, t4);
+
+    			if (textpart_slot_or_fallback) {
+    				textpart_slot_or_fallback.m(div4, null);
+    			}
+
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (toppart_slot) {
+    				if (toppart_slot.p && (!current || dirty[0] & /*$$scope*/ 64)) {
+    					update_slot_base(
+    						toppart_slot,
+    						toppart_slot_template,
+    						ctx,
+    						/*$$scope*/ ctx[6],
+    						!current
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[6])
+    						: get_slot_changes(toppart_slot_template, /*$$scope*/ ctx[6], dirty, get_toppart_slot_changes),
+    						get_toppart_slot_context
+    					);
+    				}
+    			} else {
+    				if (toppart_slot_or_fallback && toppart_slot_or_fallback.p && (!current || dirty[0] & /*data*/ 1)) {
+    					toppart_slot_or_fallback.p(ctx, !current ? [-1, -1] : dirty);
+    				}
+    			}
+
+    			if (/*data*/ ctx[0].showbuttons) {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+    				} else {
+    					if_block0 = create_if_block_1$1(ctx);
+    					if_block0.c();
+    					if_block0.m(div0, null);
+    				}
+    			} else if (if_block0) {
+    				if_block0.d(1);
+    				if_block0 = null;
+    			}
+
+    			if (/*data*/ ctx[0].showgroup) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+
+    					if (dirty[0] & /*data*/ 1) {
+    						transition_in(if_block1, 1);
+    					}
+    				} else {
+    					if_block1 = create_if_block$1(ctx);
+    					if_block1.c();
+    					transition_in(if_block1, 1);
+    					if_block1.m(div2, null);
+    				}
+    			} else if (if_block1) {
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
+    			}
+
+    			if (textpart_slot) {
+    				if (textpart_slot.p && (!current || dirty[0] & /*$$scope*/ 64)) {
+    					update_slot_base(
+    						textpart_slot,
+    						textpart_slot_template,
+    						ctx,
+    						/*$$scope*/ ctx[6],
+    						!current
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[6])
+    						: get_slot_changes(textpart_slot_template, /*$$scope*/ ctx[6], dirty, get_textpart_slot_changes),
+    						get_textpart_slot_context
+    					);
+    				}
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(toppart_slot_or_fallback, local);
+    			transition_in(if_block1);
+    			transition_in(textpart_slot_or_fallback, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(toppart_slot_or_fallback, local);
+    			transition_out(if_block1);
+    			transition_out(textpart_slot_or_fallback, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div5);
+    			if (toppart_slot_or_fallback) toppart_slot_or_fallback.d(detaching);
+    			/*canvas_1_binding*/ ctx[9](null);
+    			if (if_block0) if_block0.d();
+    			if (if_block1) if_block1.d();
+    			if (textpart_slot_or_fallback) textpart_slot_or_fallback.d(detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$2.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    const canvasSize = 15; // a bit bigger
+    const func = (prev, current) => current ? prev + 1 : prev;
+
+    function instance$2($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('InteractiveD6Creator', slots, ['toppart','textpart']);
+    	const dispatch = createEventDispatcher();
+
+    	//group stuff
+    	let r = new GroupElement("r", "(123)");
+
+    	let f = new GroupElement("f", "(23)");
+    	let d6group = new Group([r, f], { "rfr": "f", "rrr": "", "ff": "" });
+    	let isArrowVisibleMap = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
+
+    	d6group.elements.forEach(startElement => {
+    		isArrowVisibleMap[startElement.name] = d6group.generators.map(generator => false); //every generator starts false
+    	});
+
+    	let { data = {
+    		d6group,
+    		isElementVisible: d6group.elements.map(element => //d6group.isGenerator(element) || 
+    		element.name == "e"), //only e visible to start
+    		isArrowVisibleMap,
+    		showgroup: true,
+    		showbuttons: true,
+    		showInfo: true,
+    		d6textOpacity: 1,
+    		currentOrientation: d6group.getElemByName("e"),
+    		recordNewOrientations: true
+    	} } = $$props;
+
+    	//controlling the orientation of the triangle
+    	let prevOrientation = d6group.getElemByName("e");
+
+    	function onRotate() {
+    		//terrible hack time.
+    		rotationTarget += 120 * flipScaleTarget;
+
+    		prevOrientation = data.currentOrientation;
+
+    		if (data.recordNewOrientations) {
+    			$$invalidate(0, data.currentOrientation = d6group.multiply(data.currentOrientation, d6group.generators[0]), data);
+    			$$invalidate(0, data.isArrowVisibleMap[prevOrientation.name][0] = true, data);
+    		}
+
+    		showNewGroupElements();
+    	}
+
+    	function onFlip() {
+    		//terrible hack time.
+    		flipScaleTarget *= -1;
+
+    		prevOrientation = data.currentOrientation;
+
+    		if (data.recordNewOrientations) {
+    			$$invalidate(0, data.currentOrientation = d6group.multiply(data.currentOrientation, d6group.generators[1]), data);
+    			$$invalidate(0, data.isArrowVisibleMap[prevOrientation.name][1] = true, data);
+    		}
+
+    		showNewGroupElements();
+    	}
+
+    	function showNewGroupElements() {
+    		//moveTriangleToNewOrientation();
+    		let elementIndex = d6group.elements.indexOf(data.currentOrientation);
+
+    		$$invalidate(0, data.isElementVisible[elementIndex] = true, data); //unhide the current orientation
+    		$$invalidate(0, data);
+
+    		//if all elements found, send a message
+    		//note: this will keep sending a message every time a button is clicked once the criterion has been reached
+    		let allFound = true;
+
+    		for (let i = 0; i < d6group.elements.length; i++) {
+    			let element = d6group.elements[i];
+
+    			//if element isn't visible, or an arrow from it hasn't been found yet
+    			if (!data.isElementVisible[i] || data.isArrowVisibleMap[element.name].indexOf(false) !== -1) {
+    				allFound = false;
+    				break;
+    			}
+    		}
+
+    		if (allFound) {
+    			dispatch("allFound", {});
+    		}
+    	}
+
+    	let elemPositions; //filled in by svelte bind:positions={positions} from D6group.svelte
+    	const canvasSizePixels = canvasSize * 30;
+    	const triangleRadius = 0.4 * canvasSizePixels;
+    	let startVertex = [0, -triangleRadius];
+    	let canvas, ctx;
+    	let lastTime = 0;
+    	let drawLoopEnabled = true;
+
+    	function draw(currentTime) {
+    		if (!drawLoopEnabled) return;
+    		let delta = (currentTime - lastTime) / 1000;
+    		ctx = canvas.getContext("2d");
+    		$$invalidate(4, canvas.width = canvasSizePixels, canvas);
+    		$$invalidate(4, canvas.height = canvasSizePixels, canvas);
+    		ctx.translate(canvas.width / 2, canvas.height / 2); //make all transformations start from center of canvas
+    		ctx.lineWidth = lineWidth;
+    		ctx.strokeStyle = triangleStrokeStyle;
+
+    		//draw triangle shadow
+    		ctx.save();
+
+    		ctx.fillStyle = triangleShadowColor;
+    		drawTrianglePath(ctx, 0, 0, startVertex);
+    		ctx.fill();
+    		updateCurrentAnimation(ctx, delta);
+    		applyCurrentAnimation(ctx);
+    		ctx.fillStyle = triangleColor;
+    		drawTrianglePath(ctx, 0, 0, startVertex);
+    		ctx.fill();
+    		ctx.fillStyle = D6TextColor;
+    		ctx.font = D6_text_size_multiplier * canvasSize + "em serif";
+    		ctx.globalAlpha = data.d6textOpacity;
+    		ctx.fillText("D6", -0.4 * D6_text_size_multiplier * canvasSizePixels, -0.1 * D6_text_size_multiplier * canvasSizePixels);
+    		ctx.globalAlpha = 1;
+    		lastTime = currentTime;
+    		window.requestAnimationFrame(draw);
+    	}
+
+    	onMount(() => {
+    		drawLoopEnabled = true;
+    		draw(0);
+    	});
+
+    	onDestroy(() => {
+    		drawLoopEnabled = false;
+    	});
+
+    	let flipScaleTarget = 1;
+    	let flipScaleAmount = 1;
+    	let rotationTarget = 0;
+    	let rotationAmount = 0;
+    	let rotationSpeed = 3; //1 = one second, 3 = 1/3 of a second
+    	let flipSpeed = 3;
+
+    	function updateCurrentAnimation(ctx, delta) {
+    		if (flipScaleAmount != flipScaleTarget) {
+    			flipScaleAmount += delta * 2 * flipSpeed * Math.sign(flipScaleTarget - flipScaleAmount);
+    		}
+
+    		if (Math.abs(flipScaleAmount - flipScaleTarget) < rotationSpeed * 2 / 60) {
+    			flipScaleAmount = flipScaleTarget;
+    		}
+
+    		if (rotationAmount != rotationTarget) {
+    			rotationAmount += delta * 120 * rotationSpeed * Math.sign(rotationTarget - rotationAmount);
+    		}
+
+    		if (Math.abs(rotationAmount - rotationTarget) < 2) {
+    			rotationAmount = rotationTarget;
+    		}
+    	}
+
+    	function applyCurrentAnimation(ctx, delta) {
+    		ctx.scale(flipScaleAmount, 1);
+    		ctx.rotate(rotationAmount * Math.PI / 180);
+    	}
+
+    	window.data = data;
+    	const writable_props = ['data'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<InteractiveD6Creator> was created with unknown prop '${key}'`);
+    	});
+
+    	const func_1 = (prev, groupElem) => {
+    		let sum = prev;
+
+    		data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {
+    			if (arrowVisible) {
+    				sum++;
+    			}
+    		});
+
+    		return sum;
+    	};
+
+    	function canvas_1_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			canvas = $$value;
+    			$$invalidate(4, canvas);
+    		});
+    	}
+
+    	function d6group_1_positions_binding(value) {
+    		elemPositions = value;
+    		$$invalidate(3, elemPositions);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('data' in $$props) $$invalidate(0, data = $$props.data);
+    		if ('$$scope' in $$props) $$invalidate(6, $$scope = $$props.$$scope);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		D6Group,
+    		GroupElement,
+    		Group,
+    		generatorColors,
+    		drawTrianglePath,
+    		lineWidth,
+    		D6_text_size_multiplier,
+    		triangleStrokeStyle,
+    		triangleShadowColor,
+    		triangleColor,
+    		D6TextColor,
+    		createEventDispatcher,
+    		dispatch,
+    		onMount,
+    		onDestroy,
+    		r,
+    		f,
+    		d6group,
+    		isArrowVisibleMap,
+    		data,
+    		prevOrientation,
+    		onRotate,
+    		onFlip,
+    		showNewGroupElements,
+    		elemPositions,
+    		canvasSize,
+    		canvasSizePixels,
+    		triangleRadius,
+    		startVertex,
+    		canvas,
+    		ctx,
+    		lastTime,
+    		drawLoopEnabled,
+    		draw,
+    		flipScaleTarget,
+    		flipScaleAmount,
+    		rotationTarget,
+    		rotationAmount,
+    		rotationSpeed,
+    		flipSpeed,
+    		updateCurrentAnimation,
+    		applyCurrentAnimation
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('r' in $$props) r = $$props.r;
+    		if ('f' in $$props) f = $$props.f;
+    		if ('d6group' in $$props) $$invalidate(5, d6group = $$props.d6group);
+    		if ('isArrowVisibleMap' in $$props) isArrowVisibleMap = $$props.isArrowVisibleMap;
+    		if ('data' in $$props) $$invalidate(0, data = $$props.data);
+    		if ('prevOrientation' in $$props) prevOrientation = $$props.prevOrientation;
+    		if ('elemPositions' in $$props) $$invalidate(3, elemPositions = $$props.elemPositions);
+    		if ('startVertex' in $$props) startVertex = $$props.startVertex;
+    		if ('canvas' in $$props) $$invalidate(4, canvas = $$props.canvas);
+    		if ('ctx' in $$props) ctx = $$props.ctx;
+    		if ('lastTime' in $$props) lastTime = $$props.lastTime;
+    		if ('drawLoopEnabled' in $$props) drawLoopEnabled = $$props.drawLoopEnabled;
+    		if ('flipScaleTarget' in $$props) flipScaleTarget = $$props.flipScaleTarget;
+    		if ('flipScaleAmount' in $$props) flipScaleAmount = $$props.flipScaleAmount;
+    		if ('rotationTarget' in $$props) rotationTarget = $$props.rotationTarget;
+    		if ('rotationAmount' in $$props) rotationAmount = $$props.rotationAmount;
+    		if ('rotationSpeed' in $$props) rotationSpeed = $$props.rotationSpeed;
+    		if ('flipSpeed' in $$props) flipSpeed = $$props.flipSpeed;
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		data,
+    		onRotate,
+    		onFlip,
+    		elemPositions,
+    		canvas,
+    		d6group,
+    		$$scope,
+    		slots,
+    		func_1,
+    		canvas_1_binding,
+    		d6group_1_positions_binding
+    	];
+    }
+
+    class InteractiveD6Creator extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { data: 0, onRotate: 1, onFlip: 2 }, null, [-1, -1]);
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "InteractiveD6Creator",
+    			options,
+    			id: create_fragment$2.name
+    		});
+    	}
+
+    	get data() {
+    		throw new Error("<InteractiveD6Creator>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set data(value) {
+    		throw new Error("<InteractiveD6Creator>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get onRotate() {
+    		return this.$$.ctx[1];
+    	}
+
+    	set onRotate(value) {
+    		throw new Error("<InteractiveD6Creator>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get onFlip() {
+    		return this.$$.ctx[2];
+    	}
+
+    	set onFlip(value) {
+    		throw new Error("<InteractiveD6Creator>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/chapters/CayleyGraphChapter.svelte generated by Svelte v3.46.4 */
+    const file$1 = "src/chapters/CayleyGraphChapter.svelte";
+
+    // (110:4) 
+    function create_textpart_slot(ctx) {
+    	let div11;
+    	let div0;
+    	let t0;
+    	let br0;
+    	let t1;
+    	let div1;
+    	let t3;
+    	let div2;
+    	let t5;
+    	let div3;
+    	let t7;
+    	let div4;
+    	let t9;
+    	let div5;
+    	let t11;
+    	let div6;
+    	let t12;
+    	let span0;
+    	let t14;
+    	let span1;
+    	let t16;
+    	let br1;
+    	let t17;
+    	let t18;
+    	let div7;
+    	let t19;
+    	let br2;
+    	let t20;
+    	let br3;
+    	let t21;
+    	let div8;
+    	let t22;
+    	let b0;
+    	let t24;
+    	let b1;
+    	let t26;
+    	let t27;
+    	let div9;
+    	let t28;
+    	let b2;
+    	let t30;
+    	let b3;
+    	let t32;
+    	let div10;
+
+    	const block = {
+    		c: function create() {
+    			div11 = element("div");
+    			div0 = element("div");
+    			t0 = text("Symmetry groups are pretty cool, so let's look at a simpler example: the symmetry group of an equilateral triangle.\n            ");
+    			br0 = element("br");
+    			t1 = space();
+    			div1 = element("div");
+    			div1.textContent = "What's the symmetry group of this triangle? To find out, we'll need to find some actions which leave this triangle looking the same before and after.";
+    			t3 = space();
+    			div2 = element("div");
+    			div2.textContent = "One action which leaves the triangle looking unchanged is a rotation by 120 degrees.";
+    			t5 = space();
+    			div3 = element("div");
+    			div3.textContent = "And another action which leaves the triangle looking unchanged is a horizontal flip.";
+    			t7 = space();
+    			div4 = element("div");
+    			div4.textContent = "To help keep track of what each action does to the triangle, I'll doodle some letters on it.";
+    			t9 = space();
+    			div5 = element("div");
+    			div5.textContent = "Finally, on the right, I'll keep track of the actions you discover.";
+    			t11 = space();
+    			div6 = element("div");
+    			t12 = text("Each circle represents an action you can perform to the triangle which leaves it unchanged, and arrows will show you what happens if you ");
+    			span0 = element("span");
+    			span0.textContent = "rotate";
+    			t14 = text(" and ");
+    			span1 = element("span");
+    			span1.textContent = "flip";
+    			t16 = text(" the triangle.\n            ");
+    			br1 = element("br");
+    			t17 = text("Can you find the triangle's entire symmetry group? Use these buttons to find out!");
+    			t18 = space();
+    			div7 = element("div");
+    			t19 = text("Alright! Looks like we found everything! ");
+    			br2 = element("br");
+    			t20 = text("\n            Take a look at the cayley graph you filled out. Doesn't it look somewhat triangular? That's no coincidence. Somehow, the symmetry group is capturing info about the original shape we started with.\n            ");
+    			br3 = element("br");
+    			t21 = space();
+    			div8 = element("div");
+    			t22 = text("Even more interesting, the resulting group doesn't depend on the actions we choose to build the graph with. For example, we built this graph using a  ");
+    			b0 = element("b");
+    			b0.textContent = "rotation";
+    			t24 = text(" and ");
+    			b1 = element("b");
+    			b1.textContent = "flip";
+    			t26 = text(". But what if we chose other actions?");
+    			t27 = space();
+    			div9 = element("div");
+    			t28 = text("I'll draw a ");
+    			b2 = element("b");
+    			b2.textContent = "purple";
+    			t30 = text(" arrow to represent this action right here. What happens if we try building a cayley graph out of this action and a ");
+    			b3 = element("b");
+    			b3.textContent = "flip?";
+    			t32 = space();
+    			div10 = element("div");
+    			div10.textContent = "It's the same graph.";
+    			add_location(br0, file$1, 112, 12, 4137);
+    			attr_dev(div0, "class", "exp-slide");
+    			add_location(div0, file$1, 110, 8, 3973);
+    			attr_dev(div1, "class", "exp-slide");
+    			add_location(div1, file$1, 114, 8, 4165);
+    			attr_dev(div2, "class", "exp-slide");
+    			add_location(div2, file$1, 117, 8, 4374);
+    			attr_dev(div3, "class", "exp-slide");
+    			add_location(div3, file$1, 120, 8, 4518);
+    			attr_dev(div4, "class", "exp-slide");
+    			add_location(div4, file$1, 123, 8, 4662);
+    			attr_dev(div5, "class", "exp-slide");
+    			add_location(div5, file$1, 126, 8, 4814);
+    			add_location(span0, file$1, 130, 149, 5114);
+    			add_location(span1, file$1, 130, 173, 5138);
+    			add_location(br1, file$1, 131, 12, 5182);
+    			attr_dev(div6, "class", "exp-slide");
+    			add_location(div6, file$1, 129, 8, 4941);
+    			add_location(br2, file$1, 134, 53, 5368);
+    			add_location(br3, file$1, 136, 12, 5593);
+    			attr_dev(div7, "class", "exp-slide");
+    			add_location(div7, file$1, 133, 8, 5291);
+    			set_style(b0, "color", generatorColors[0], false);
+    			add_location(b0, file$1, 139, 175, 5820);
+    			set_style(b1, "color", generatorColors[1], false);
+    			add_location(b1, file$1, 139, 228, 5873);
+    			attr_dev(div8, "class", "exp-slide");
+    			add_location(div8, file$1, 138, 8, 5621);
+    			set_style(b2, "color", generatorColors[2], false);
+    			add_location(b2, file$1, 142, 24, 6026);
+    			set_style(b3, "color", generatorColors[1], false);
+    			add_location(b3, file$1, 142, 186, 6188);
+    			attr_dev(div9, "class", "exp-slide");
+    			add_location(div9, file$1, 141, 8, 5978);
+    			attr_dev(div10, "class", "exp-slide");
+    			add_location(div10, file$1, 144, 8, 6257);
+    			attr_dev(div11, "slot", "textpart");
+    			attr_dev(div11, "class", "overlappingItemContainer textpart");
+    			add_location(div11, file$1, 109, 4, 3901);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div11, anchor);
+    			append_dev(div11, div0);
+    			append_dev(div0, t0);
+    			append_dev(div0, br0);
+    			append_dev(div11, t1);
+    			append_dev(div11, div1);
+    			append_dev(div11, t3);
+    			append_dev(div11, div2);
+    			append_dev(div11, t5);
+    			append_dev(div11, div3);
+    			append_dev(div11, t7);
+    			append_dev(div11, div4);
+    			append_dev(div11, t9);
+    			append_dev(div11, div5);
+    			append_dev(div11, t11);
+    			append_dev(div11, div6);
+    			append_dev(div6, t12);
+    			append_dev(div6, span0);
+    			append_dev(div6, t14);
+    			append_dev(div6, span1);
+    			append_dev(div6, t16);
+    			append_dev(div6, br1);
+    			append_dev(div6, t17);
+    			append_dev(div11, t18);
+    			append_dev(div11, div7);
+    			append_dev(div7, t19);
+    			append_dev(div7, br2);
+    			append_dev(div7, t20);
+    			append_dev(div7, br3);
+    			append_dev(div11, t21);
+    			append_dev(div11, div8);
+    			append_dev(div8, t22);
+    			append_dev(div8, b0);
+    			append_dev(div8, t24);
+    			append_dev(div8, b1);
+    			append_dev(div8, t26);
+    			append_dev(div11, t27);
+    			append_dev(div11, div9);
+    			append_dev(div9, t28);
+    			append_dev(div9, b2);
+    			append_dev(div9, t30);
+    			append_dev(div9, b3);
+    			append_dev(div11, t32);
+    			append_dev(div11, div10);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div11);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_textpart_slot.name,
+    		type: "slot",
+    		source: "(110:4) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$1(ctx) {
+    	let interactived6creator;
+    	let updating_data;
+    	let current;
+
+    	function interactived6creator_data_binding(value) {
+    		/*interactived6creator_data_binding*/ ctx[3](value);
+    	}
+
+    	let interactived6creator_props = {
+    		$$slots: { textpart: [create_textpart_slot] },
+    		$$scope: { ctx }
+    	};
+
+    	if (/*data*/ ctx[0] !== void 0) {
+    		interactived6creator_props.data = /*data*/ ctx[0];
+    	}
+
+    	interactived6creator = new InteractiveD6Creator({
+    			props: interactived6creator_props,
+    			$$inline: true
+    		});
+
+    	binding_callbacks.push(() => bind(interactived6creator, 'data', interactived6creator_data_binding));
+    	/*interactived6creator_binding*/ ctx[4](interactived6creator);
+    	interactived6creator.$on("allFound", /*allFound*/ ctx[2]);
+
+    	const block = {
+    		c: function create() {
+    			create_component(interactived6creator.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(interactived6creator, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const interactived6creator_changes = {};
+
+    			if (dirty & /*$$scope*/ 1024) {
+    				interactived6creator_changes.$$scope = { dirty, ctx };
+    			}
+
+    			if (!updating_data && dirty & /*data*/ 1) {
+    				updating_data = true;
+    				interactived6creator_changes.data = /*data*/ ctx[0];
+    				add_flush_callback(() => updating_data = false);
+    			}
+
+    			interactived6creator.$set(interactived6creator_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(interactived6creator.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(interactived6creator.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			/*interactived6creator_binding*/ ctx[4](null);
+    			destroy_component(interactived6creator, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$1.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$1($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CayleyGraphChapter', slots, []);
+    	const dispatch = createEventDispatcher();
+    	let data;
+    	let d6creator;
+
+    	async function animate() {
+    		//EXP.setupThree() is required first, but it's called in sharedthreejscanvas.js
+    		$$invalidate(0, data.showgroup = false, data);
+
+    		$$invalidate(0, data.showbuttons = false, data);
+    		$$invalidate(0, data.d6textOpacity = 0, data);
+    		$$invalidate(0, data.recordNewOrientations = false, data);
+    		$$invalidate(0, data.showInfo = false, data);
+    		await presentation.begin();
+    		await presentation.nextSlide();
+    		await presentation.nextSlide();
+    		if (d6creator) d6creator.onRotate();
+    		await presentation.nextSlide();
+    		if (d6creator) d6creator.onFlip();
+    		await presentation.nextSlide();
+
+    		//show the word D6 on the triangle, sneakily erasing the previous flip and rotate
+    		if (d6creator) d6creator.onRotate();
+
+    		if (d6creator) d6creator.onFlip();
+    		await presentation.delay(500);
+    		presentation.TransitionTo(data, { d6textOpacity: 1 }, 1000);
+    		await presentation.nextSlide();
+    		await presentation.TransitionTo(data, { showgroup: true }, 1000);
+    		await presentation.nextSlide();
+
+    		await presentation.TransitionInstantly(data, {
+    			showbuttons: true,
+    			showInfo: true,
+    			recordNewOrientations: true
+    		});
+
+    		//player clicks  abunch of buttons
+    		//wait for user to discover all of the cayley graph
+    		await new Promise((resolve, reject) => {
+    				resolveAllFound = resolve;
+
+    				//type "debug" to automatically clear
+    				let debugCode = 0;
+
+    				window.addEventListener("keydown", event => {
+    					if (event.key == ('debug')[debugCode]) {
+    						debugCode += 1;
+    						if (debugCode == ('debug').length) allFound();
+    					}
+    				});
+    			});
+
+    		await presentation.nextSlide();
+    		await presentation.nextSlide();
+    		await presentation.nextSlide();
+
+    		//now, we're going to add the purple arrow rf as a generator
+    		let newgenerator = data.d6group.getElemByName("rf");
+
+    		data.d6group.generators.push(newgenerator);
+
+    		//todo: hide "orientations found" and "arrows found"
+    		data.d6group.elements.forEach(element => $$invalidate(0, data.isArrowVisibleMap[element.name] = [true, true, true], data));
+
+    		$$invalidate(0, data);
+    		data.isArrowVisibleMap[groupElem.name].push(false);
+    		data.d6group.elements.forEach(element => data.isArrowVisibleMap[element.name].push(true));
+    		$$invalidate(0, data.isArrowVisibleMap["e"][2] = true, data); //show one arrow
+    		$$invalidate(0, data);
+    		$$invalidate(0, data);
+    		await presentation.nextSlide();
+    		await presentation.nextSlide();
+
+    		if (!alreadyEnding) {
+    			dispatch("chapterEnd");
+    		}
+    	}
+
+    	//used to let the InteractiveD6Creator notify us that it's finished finding all the elements
+    	let resolveAllFound = undefined;
+
+    	function allFound(event) {
+    		if (resolveAllFound) {
+    			resolveAllFound();
+    			resolveAllFound = undefined;
+    		}
+    	}
+
+    	let presentation, alreadyEnding = false;
+
+    	onMount(async () => {
+    		presentation = new explanariaBundle.UndoCapableDirector();
+    		animate();
+    	});
+
+    	onDestroy(() => {
+    		alreadyEnding = true;
+    		presentation.rushThroughRestOfPresentation();
+    	});
+
+    	const writable_props = [];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CayleyGraphChapter> was created with unknown prop '${key}'`);
+    	});
+
+    	function interactived6creator_data_binding(value) {
+    		data = value;
+    		$$invalidate(0, data);
+    	}
+
+    	function interactived6creator_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			d6creator = $$value;
+    			$$invalidate(1, d6creator);
+    		});
+    	}
+
+    	$$self.$capture_state = () => ({
+    		InteractiveD6Creator,
+    		GroupElement,
+    		Group,
+    		EXP: EXP$1,
+    		onMount,
+    		onDestroy,
+    		attachCanvas,
+    		three,
+    		generatorColors,
+    		createEventDispatcher,
+    		dispatch,
+    		data,
+    		d6creator,
+    		animate,
+    		resolveAllFound,
+    		allFound,
+    		presentation,
+    		alreadyEnding
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('data' in $$props) $$invalidate(0, data = $$props.data);
+    		if ('d6creator' in $$props) $$invalidate(1, d6creator = $$props.d6creator);
+    		if ('resolveAllFound' in $$props) resolveAllFound = $$props.resolveAllFound;
+    		if ('presentation' in $$props) presentation = $$props.presentation;
+    		if ('alreadyEnding' in $$props) alreadyEnding = $$props.alreadyEnding;
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		data,
+    		d6creator,
+    		allFound,
+    		interactived6creator_data_binding,
+    		interactived6creator_binding
+    	];
+    }
+
+    class CayleyGraphChapter extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CayleyGraphChapter",
     			options,
     			id: create_fragment$1.name
     		});
@@ -63354,31 +63593,31 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
 
     // (36:4) {#if chapter == 3}
     function create_if_block(ctx) {
-    	let cayleygraphintropart;
+    	let cayleygraphchapter;
     	let current;
-    	cayleygraphintropart = new CayleyGraphIntroPart({ $$inline: true });
-    	cayleygraphintropart.$on("chapterEnd", /*chapterEnd*/ ctx[2]);
+    	cayleygraphchapter = new CayleyGraphChapter({ $$inline: true });
+    	cayleygraphchapter.$on("chapterEnd", /*chapterEnd*/ ctx[2]);
 
     	const block = {
     		c: function create() {
-    			create_component(cayleygraphintropart.$$.fragment);
+    			create_component(cayleygraphchapter.$$.fragment);
     		},
     		m: function mount(target, anchor) {
-    			mount_component(cayleygraphintropart, target, anchor);
+    			mount_component(cayleygraphchapter, target, anchor);
     			current = true;
     		},
     		p: noop,
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(cayleygraphintropart.$$.fragment, local);
+    			transition_in(cayleygraphchapter.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(cayleygraphintropart.$$.fragment, local);
+    			transition_out(cayleygraphchapter.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(cayleygraphintropart, detaching);
+    			destroy_component(cayleygraphchapter, detaching);
     		}
     	};
 
@@ -63430,15 +63669,15 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     			t7 = space();
     			if (if_block2) if_block2.c();
     			attr_dev(div0, "class", "rotatesign");
-    			add_location(div0, file, 25, 0, 1021);
-    			add_location(button, file, 26, 87, 1174);
+    			add_location(div0, file, 25, 0, 1017);
+    			add_location(button, file, 26, 87, 1170);
     			set_style(span, "position", `absolute`, false);
     			set_style(span, "bottom", `2em`, false);
     			set_style(span, "left", `0em`, false);
-    			add_location(span, file, 26, 0, 1087);
+    			add_location(span, file, 26, 0, 1083);
     			attr_dev(div1, "class", "maincontainer");
     			set_style(div1, "opacity", "1");
-    			add_location(div1, file, 28, 0, 1235);
+    			add_location(div1, file, 28, 0, 1231);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -63615,9 +63854,9 @@ O4 0.00625 0.00747 0.00744 -0.00146 0.00000 0.00000
     	}
 
     	$$self.$capture_state = () => ({
-    		CayleyGraphIntroPart,
     		CrystalIntroPart,
     		HolesInCrystalPart,
+    		CayleyGraphChapter,
     		EXP: EXP$1,
     		chapter,
     		numChapters,

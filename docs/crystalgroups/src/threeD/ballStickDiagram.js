@@ -5,7 +5,7 @@ let THREE = EXP.THREE;
 
 
 const atomRadius = 0.5;
-const widthSegments = 32;
+const widthSegments = 20;
 const heightSegments = widthSegments/2;
 
 let spheregeo = new THREE.SphereGeometry(atomRadius, widthSegments, heightSegments);

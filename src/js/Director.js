@@ -375,6 +375,12 @@ class UndoCapableDirector extends NonDecreasingDirector{
         }, 1000);
     }
 
+    dispose(){
+        this.removeClickables();
+        window.removeEventListener("keydown", keyListener);
+        window.removeEventListener("DOMContentLoaded",resolve);
+    }
+
     moveFurtherIntoPresentation(){
             //if there's nothing to redo, (so we're not in the past of the undo stack), advance further.
             //if there are less HTML slides than calls to director.newSlide(), complain in the console but allow the presentation to proceed

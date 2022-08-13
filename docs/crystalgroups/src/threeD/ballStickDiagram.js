@@ -90,7 +90,6 @@ export function makeBallStickDiagram(crystaldata, extraAdirectionCells=2, extraB
     let parent = new THREE.Object3D();
 
     let numAtoms = numAtomsIncludingSymmetryClones(crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells)
-    console.log(numAtoms)
     let instanceIndex = 0;
 
     let material = new THREE.MeshBasicMaterial({color: "white"}); //tinted by vertex colors

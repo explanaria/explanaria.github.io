@@ -11,25 +11,29 @@
         await presentation.begin();
         await presentation.nextSlide();
         let whitebg = document.getElementById("whitebg");
-        await presentation.TransitionTo(whitebg.style, {opacity: 1}, 1);
+        await presentation.TransitionInstantly(whitebg.style, {opacity: 1});
         await presentation.nextSlide();
-        await presentation.TransitionTo(whitebg.style, {opacity: 0}, 1);
+        await presentation.TransitionInstantly(whitebg.style, {opacity: 0});
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
 
-        dispatch("chapterEnd");
+        if(!alreadyEnding){
+            dispatch("chapterEnd");
+        }
     }
 
-    let presentation;
-    onMount(() => {
+    let presentation, alreadyEnding = false;
+    onMount(async () => {
+        await EXP.delay(1);
         presentation = new EXP.UndoCapableDirector(); 
         animate();
     });
     onDestroy(() => {
-        presentation.removeClickables();
+        alreadyEnding = true;
+        presentation.rushThroughRestOfPresentation();
     });
 
     let slideStart = 1;
@@ -122,10 +126,10 @@
         <div class="exp-slide">
             <div class="frostedbg">
                 <!-- labels: kyanite, andalusite -->
-                Drag to rotate the 3D model yourself and take a look. What can we use to describe how these crystals repeat?
+                Drag to rotate the 3D model yourself and take a look. What can we use to describe how Andalusite and Kyanite repeat?
                 <br>
-                We can't use the number of atoms - Andalusite and Kyanite have the same number (and ratio) of atoms.
-                <br>We can't look at one atom at a time - in both crystals, every <span style:color={getAtomColor("Al")}>aluminum</span> atom always has five bonds, and every <span style:color={getAtomColor("Si")}>silicon</span> atom always connects to four other atoms, for example.
+                The number of atoms won't help - both crystals have the same number (and ratio) of atoms.
+                <br>Looking at one atom at a time won't help - for example, in both crystals, every <span style:color={getAtomColor("Al")}>aluminum</span> atom always has five bonds, and every <span style:color={getAtomColor("Si")}>silicon</span> atom always connects to four other atoms.
                 <br>
             </div>
         </div>

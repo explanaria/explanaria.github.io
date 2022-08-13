@@ -11,6 +11,7 @@ export const darkerred = "hsla(0, 90%, 40%, 1)";
 
 export const purple = "hsla(320, 90%, 70%, 1)";
 
+//chapters 0,1
 export function getAtomColor(atomName){
     if(atomName == "O")return "red";
     if(atomName == "Al")return "grey";
@@ -18,6 +19,11 @@ export function getAtomColor(atomName){
     return "green";
 }
 
+export const chapter2linecolor = lightblue;
+export const chapter2linecolor2 = purple;
+export const chapter2linecolor3 = green;
+
+//chapter 2
 export const generator1color = darkergreen;
 export const generator2color = darkerred;
 export const drawGeneratorsWithOutlines = false;

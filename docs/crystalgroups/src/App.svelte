@@ -1,7 +1,7 @@
 <script>
-	import CayleyGraphIntroPart from "./chapters/CayleyGraphIntroPart.svelte";
     import CrystalIntroPart from "./chapters/CrystalIntroPart.svelte";
     import HolesInCrystalPart from "./chapters/HolesInCrystalPart.svelte";
+	import CayleyGraphChapter from "./chapters/CayleyGraphChapter.svelte";
     import * as EXP from "../../resources/build/explanaria-bundle.js";
 
     let chapter = 1; //one indexed
@@ -34,6 +34,6 @@
         <HolesInCrystalPart on:chapterEnd={chapterEnd} />
     {/if}
     {#if chapter == 3}
-        <CayleyGraphIntroPart on:chapterEnd={chapterEnd} />
+        <CayleyGraphChapter on:chapterEnd={chapterEnd} />
     {/if}
 </div>

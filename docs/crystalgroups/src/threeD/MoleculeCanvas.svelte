@@ -2,7 +2,7 @@
     import {kyaniteData, andalusiteData, sillimaniteData} from "./polymorphdata.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
 
-    import {onMount} from "svelte";
+    import {onMount, onDestroy} from "svelte";
     import {attachCanvas, three, clearThreeScene} from "./sharedthreejscanvas.js";
 
     import {makeBallStickDiagram} from "./ballStickDiagram.js";
@@ -11,6 +11,7 @@
     let controls, fps=0;
 
     onMount(() => {  
+        console.log("starting moleculecanvas")
         let canvas = attachCanvas("threecanvas", "threecanvas")
         clearThreeScene();
 
@@ -43,6 +44,9 @@
         three.scene.fog = new THREE.Fog(color, near, far);*/
     })
     /* todo: onDestroy() */
+    onDestroy(() => {
+        controls.dispose();
+    })
 
 </script>
 

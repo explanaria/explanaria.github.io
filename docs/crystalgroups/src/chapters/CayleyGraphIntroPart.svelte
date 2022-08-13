@@ -1,5 +1,5 @@
 <script>
-    import InteractiveD6Creator from "./InteractiveD6Creator.svelte";
+    import InteractiveD6Creator from "../twoD/InteractiveD6Creator.svelte";
     import { GroupElement, Group } from "../twoD/groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {onMount, onDestroy} from "svelte";
@@ -21,14 +21,14 @@
         await presentation.begin();
         await presentation.nextSlide();
         await presentation.nextSlide();
-        d6creator.onRotate();
+        if(d6creator)d6creator.onRotate();
         await presentation.nextSlide();
-        d6creator.onFlip();
+        if(d6creator)d6creator.onFlip();
         await presentation.nextSlide();
 
         //show the word D6 on the triangle, sneakily erasing the previous flip and rotate
-        d6creator.onRotate();
-        d6creator.onFlip();
+        if(d6creator)d6creator.onRotate();
+        if(d6creator)d6creator.onFlip();
         await presentation.delay(500);
 
         presentation.TransitionTo(data, {d6textOpacity: 1}, 1000);
@@ -54,7 +54,7 @@
 
         await presentation.nextSlide(); 
 
-        
+
 
         await presentation.nextSlide();
         await presentation.nextSlide();
@@ -75,7 +75,10 @@
         data.d6group = data.d6group;
         await presentation.nextSlide();
         await presentation.nextSlide();
-        dispatch("chapterEnd");
+
+        if(!alreadyEnding){
+            dispatch("chapterEnd");
+        }
     }
 
     //used to let the InteractiveD6Creator notify us that it's finished finding all the elements
@@ -87,13 +90,14 @@
         }
     }
 
-    let presentation;
-    onMount(() => {
+    let presentation, alreadyEnding = false;
+    onMount(async () => {
         presentation = new EXP.UndoCapableDirector();
         animate();
     });
     onDestroy(() => {
-        presentation.removeClickables();
+        alreadyEnding = true;
+        presentation.rushThroughRestOfPresentation();
     });
 </script>
 

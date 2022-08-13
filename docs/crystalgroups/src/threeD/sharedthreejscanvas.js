@@ -39,9 +39,8 @@ const cleanMaterial = material => {
 export function clearThreeScene(){
 
     three.scene.traverse(object => {
-	    if (!object.isMesh) return
-	    
-	    console.log('dispose geometry!')
+	    if (!object.isMesh) return;
+
 	    object.geometry.dispose()
 
 	    if (object.material.isMaterial) {
@@ -52,4 +51,8 @@ export function clearThreeScene(){
 	    }
     })
     three.scene.clear();
+    three.camera.position.set(0,0,5);
+    three.camera.zoom = 1;
+    three.camera.rotation.set(0,0,0);
+    three.camera.updateMatrix();
 }

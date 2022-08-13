@@ -86,6 +86,8 @@ class NonDecreasingDirector{
 
         this.nextSlideResolveFunction = null;
         this.initialized = false;
+
+        this.isRushingThroughPresentation = false; //if true, skips all delays and waiting for user input
     }
 
     
@@ -375,10 +377,14 @@ class UndoCapableDirector extends NonDecreasingDirector{
         }, 1000);
     }
 
-    dispose(){
+    rushThroughRestOfPresentation(){
         this.removeClickables();
-        window.removeEventListener("keydown", keyListener);
-        window.removeEventListener("DOMContentLoaded",resolve);
+        this.isRushingThroughPresentation = true;
+        
+        while(!this.isCaughtUpWithNothingToRedo()){
+            this.moveFurtherIntoPresentation();
+        }
+        this.moveFurtherIntoPresentation();
     }
 
     moveFurtherIntoPresentation(){
@@ -591,6 +597,9 @@ class UndoCapableDirector extends NonDecreasingDirector{
 
         //promise is resolved by calling this.nextSlideResolveFunction() when the time comes
         return new Promise(function(resolve, reject){
+            if(self.isRushingThroughPresentation){
+                return resolve();
+            }
             self.nextSlideResolveFunction = function(){ 
                 resolve();
             }
@@ -604,9 +613,13 @@ class UndoCapableDirector extends NonDecreasingDirector{
     async delay(waitTime){
         this.undoStack.push(new DelayUndoItem(waitTime));
         this.undoStackIndex++;
+
+        if(this.isRushingThroughPresentation)return;
+
         //console.log(this.undoStackIndex);
         await this._sleep(waitTime);
         //console.log(this.undoStackIndex);
+
         if(!this.isCaughtUpWithNothingToRedo()){
             //This is a perilous situation. While we were delaying, the user pressed undo, and now we're in the past.
             //we SHOULDN't yield back after this, because the presentation code might start running more transformations after this which conflict with the undoing animations. So we need to wait until we reach the right slide again

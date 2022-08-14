@@ -17,6 +17,7 @@
 
         window.three = three;
 	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
+        controls.enableKeys = false;
 
 
         three.camera.position.z = 40;

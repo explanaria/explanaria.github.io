@@ -2,7 +2,7 @@
     import InteractiveD6Creator from "../twoD/InteractiveD6Creator.svelte";
     import { GroupElement, Group } from "../twoD/groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
-    import {onMount, onDestroy} from "svelte";
+    import {onMount, onDestroy, tick} from "svelte";
     import {attachCanvas, three} from "../threeD/sharedthreejscanvas.js";
     import {generatorColors} from "../colors.js";
 	import { createEventDispatcher } from 'svelte';
@@ -92,6 +92,7 @@
 
     let presentation, alreadyEnding = false;
     onMount(async () => {
+        await tick();
         presentation = new EXP.UndoCapableDirector();
         animate();
     });

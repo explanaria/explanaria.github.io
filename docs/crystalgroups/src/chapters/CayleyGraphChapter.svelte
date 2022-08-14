@@ -33,7 +33,7 @@
 
         presentation.TransitionTo(data, {d6textOpacity: 1}, 1000);
         await presentation.nextSlide();
-        await presentation.TransitionTo(data, {showgroup: true}, 1000);
+        await presentation.TransitionInstantly(data, {showgroup: true});
         await presentation.nextSlide(); 
         await presentation.TransitionInstantly(data, {showbuttons: true, showInfo: true, recordNewOrientations: true});
             //player clicks  abunch of buttons
@@ -55,6 +55,7 @@
         await presentation.nextSlide(); 
 
 
+        presentation.TransitionInstantly(data, {showInfo: false});
 
         await presentation.nextSlide();
         await presentation.nextSlide();
@@ -68,8 +69,9 @@
         data.isArrowVisibleMap = data.isArrowVisibleMap;
         
         data.isArrowVisibleMap[groupElem.name].push(false);
-        data.d6group.elements.forEach(element => data.isArrowVisibleMap[element.name].push(true));
+        //data.d6group.elements.forEach(element => data.isArrowVisibleMap[element.name].push(true));
         data.isArrowVisibleMap["e"][2] = true; //show one arrow
+
 
         data = data;
         data.d6group = data.d6group;
@@ -110,7 +112,7 @@
     -->
     <div slot="textpart" class="overlappingItemContainer textpart">
         <div class="exp-slide">
-            Symmetry groups are pretty cool, so let's look at a simpler example: the symmetry group of an equilateral triangle.
+            Symmetry groups are pretty cool, so let's look at a simple example: the symmetry group of an equilateral triangle.
             <br>
         </div>
         <div class="exp-slide">
@@ -133,15 +135,15 @@
             <br>Can you find the triangle's entire symmetry group? Use these buttons to find out!
         </div>
         <div class="exp-slide">
-            Alright! Looks like we found everything! <br>
-            Take a look at the cayley graph you filled out. Doesn't it look somewhat triangular? That's no coincidence. Somehow, the symmetry group is capturing info about the original shape we started with.
+            Alright! Looks like you found everything! <br>
+            This way of drawing symmetry groups, where we draw one circle per action and arrows to represent <span style:color={generatorColors[0]}>certain</span> <span style:color={generatorColors[1]}>actions</span>, is called a Cayley graph. <br> Doesn't it look somewhat triangular? That's no coincidence. Somehow, the symmetry group is capturing info about the original shape we started with.
             <br>
         </div>
         <div class="exp-slide">
-            Even more interesting, the resulting group doesn't depend on the actions we choose to build the graph with. For example, we built this graph using a <!--color --> <b style:color={generatorColors[0]}>rotation</b> and <b style:color={generatorColors[1]}>flip</b>. But what if we chose other actions?
+            Even more interesting, the resulting group doesn't depend on the actions we choose to build the graph with. For example, we built this Cayley graph using a <!--color --> <b style:color={generatorColors[0]}>rotation</b> and <b style:color={generatorColors[1]}>flip</b>. But what if we chose other actions?
         </div>
         <div class="exp-slide">
-            I'll draw a <b style:color={generatorColors[2]}>purple</b> arrow to represent this action right here. What happens if we try building a cayley graph out of this action and a <b style:color={generatorColors[1]}>flip?</b>
+            For example, what if I choose the action labeled "rf"? I'll draw it in <b style:color={generatorColors[2]}>purple</b>. What happens if we try building a cayley graph out of this action and a <b style:color={generatorColors[1]}>flip?</b>
         </div>
         <div class="exp-slide">
             It's the same graph. 

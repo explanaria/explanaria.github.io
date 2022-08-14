@@ -22,7 +22,7 @@
 </script>
 
 <div class="rotatesign"> <!-- todo: put a message here --> </div>
-<span style:position="absolute" style:bottom="2em" style:left="0em">Chapter {chapter}. <button on:click={chapterEnd} >Swap chapter</button></span>
+<span style:position="absolute" style:top="2em" style:left="0em">Chapter {chapter}. <button on:click={chapterEnd} >Swap chapter</button></span>
 
 <div class="maincontainer" bind:this={mainContainer} style="opacity: 1">
     {#if chapter == 1}

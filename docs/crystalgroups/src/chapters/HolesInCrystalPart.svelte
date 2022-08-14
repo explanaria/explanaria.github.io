@@ -52,6 +52,7 @@
         window.andalusite = andalusite;
         window.movingAndalusiteTarget = movingAndalusiteTarget;
         window.movingAndalusiteGhostCopy = movingAndalusiteGhostCopy;
+        window.expandalusitebonds = expandalusitebonds;
 
         //lines pointing in a direction
         let atomsWithLines = andalusiteData.atoms["Si"]; //allAtoms(andalusiteData); //todo: just oxygens?
@@ -109,13 +110,13 @@
 
         let vec2 = new EXP.Array({data: [atomStartPos, atomStartPos]})
         let translationRepresentation2 = new EXP.VectorOutput({color: chapter2linecolor2, opacity: 0});
-        vec2.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], secondSeeThroughVec)}))
+        vec2.add(new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]}))
             .add(scaleWithMainCrystal.makeLink())
             .add(translationRepresentation2);
 
         let vec3 = new EXP.Array({data: [atomStartPos, atomStartPos]})
         let translationRepresentation3 = new EXP.VectorOutput({color: chapter2linecolor3, opacity: 0});
-        vec3.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], thirdSeeThroughVec)}))
+        vec3.add(new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z]}))
             .add(scaleWithMainCrystal.makeLink())
             .add(translationRepresentation3);
 
@@ -267,7 +268,7 @@
         //aand translate
         presentation.TransitionTo(movingAndalusite.position, {x: secondSeeThroughVec[0] * andalusite.scale.x, y: secondSeeThroughVec[1]* andalusite.scale.y, z: secondSeeThroughVec[2] * andalusite.scale.z}, 2000);
         //show the arrow too
-        presentation.TransitionTo(vec2.children[0], {expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], secondSeeThroughVec)})
+        presentation.TransitionTo(vec2.children[0], {expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], secondSeeThroughVec)}, 2000)
         presentation.TransitionTo(vec2.getDeepestChildren()[0], {opacity: 1});
 
         await presentation.nextSlide();
@@ -278,25 +279,29 @@
         presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
         presentation.TransitionTo(atomLinesOutput, {opacity: 0}, 250);
 
+        presentation.TransitionTo(andalusite.position, {y: 0}, 1000); //return from the heavens
+        presentation.TransitionInstantly(andalusite.children[0].material, {opacity: 1});
+        presentation.TransitionTo(expandalusitebonds.getDeepestChildren()[0], {opacity: 0.2});
+
         await presentation.delay(750);
         presentation.TransitionInstantly(lineData, {direction: thirdSeeThroughVec});
         presentation.TransitionInstantly(atomLinesOutput, {color: chapter2linecolor3});
-        presentation.TransitionTo(atomLinesOutput, {opacity: 0.9}, 250);
+        //im not feeling the lines on #3
+        //presentation.TransitionTo(atomLinesOutput, {opacity: 0.9}, 1000);
 
         //set up for translation #3
         presentation.TransitionTo(movingAndalusiteTarget.children[0].material, {opacity: 0}, 250);
         presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], {opacity: 0}, 250);
         presentation.TransitionTo(vec2.getDeepestChildren()[0], {opacity: 0});
 
-        presentation.TransitionTo(andalusite.position, {y: 0}, 1000); //return from the heavens
-        presentation.TransitionInstantly(andalusite.children[0].material, {opacity: 1});
-
 
         await presentation.nextSlide();
 
         //third translation time. move to another camera angle
-        presentation.ResetTo(three.camera.position, {x: 0, y:0, z: 40});
+        presentation.ResetTo(three.camera.position, {x: 3, y:0, z: 40});
         presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+
+        await presentation.delay(1000);
 
         //hide the lines and the andalusite
         presentation.TransitionTo(atomLinesOutput, {opacity: 0});
@@ -307,7 +312,10 @@
 
         //set up moving andalusites to be visible
         presentation.TransitionInstantly(movingAndalusite.position, {x:0,y:0,z:0});
-        movingAndalusiteTarget.position.copy(new THREE.Vector3(...thirdSeeThroughVec)).multiply(andalusite.scale);
+
+        presentation.TransitionInstantly(movingAndalusite.position, {x:0,y:0,z:0});
+        let thirdTargetPos = new THREE.Vector3(...thirdSeeThroughVec).multiply(andalusite.scale);
+        presentation.TransitionInstantly(movingAndalusiteTarget.position, {x:thirdTargetPos.x,y:thirdTargetPos.y,z:thirdTargetPos.z});
         presentation.TransitionTo(movingAndalusite.children[0].material, {opacity: 1}, 250);
         presentation.TransitionTo(movingAndalusiteTarget.children[0].material, {opacity: 1}, 250);
         presentation.TransitionTo(movingAndalusiteGhostCopy.children[0].material, {opacity: 0.2}, 250);
@@ -319,10 +327,12 @@
         //translate #3
         presentation.TransitionTo(movingAndalusite.position, {x: thirdSeeThroughVec[0] * andalusite.scale.x, y: thirdSeeThroughVec[1]* andalusite.scale.y, z: thirdSeeThroughVec[2] * andalusite.scale.z}, 2000);
         //show the arrow too
-        presentation.TransitionTo(vec3.children[0], {expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], thirdSeeThroughVec)})
+        presentation.TransitionTo(vec3.children[0], {expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], thirdSeeThroughVec)}, 2000)
         presentation.TransitionTo(vec3.getDeepestChildren()[0], {opacity: 1});
 
         await presentation.nextSlide();
+        presentation.ResetTo(three.camera.position, {x: 3, y:15, z: 35});
+        presentation.ResetTo(three.camera.rotation, {x: -Math.PI/8, y:0, z: 0});
 
         //'we now have 3 movements'
         presentation.TransitionTo(atomLinesOutput, {opacity: 0});
@@ -330,20 +340,54 @@
         presentation.TransitionTo(movingAndalusiteTarget.children[0].material, {opacity: 0}, 250);
         presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], {opacity: 0}, 250);
         
-        presentation.TransitionTo(movingAndalusite.children[0].material, {opacity: 0}, 250);
-        presentation.TransitionTo(expandalusitebonds2.getDeepestChildren()[0], {opacity: 0}, 250);
-
+        presentation.TransitionTo(movingAndalusite.position, {x: 0, y:0, z:0 }, 1000);
 
         //ok show those arrows
         [vec1, vec2, vec3].forEach(item => presentation.TransitionTo(item.getDeepestChildren()[0], {opacity: 1}));
 
         await presentation.nextSlide();
-        vec3.children[0].expr = (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], thirdSeeThroughVec);
+
+        presentation.TransitionTo(andalusite.position, {y: 0}, 1000); //return from the heavens
+        presentation.TransitionInstantly(andalusite.children[0].material, {opacity: 0.2});
+        presentation.TransitionTo(expandalusitebonds.getDeepestChildren()[0], {opacity: 0.2});
+        presentation.TransitionTo(movingAndalusite.children[0].material, {opacity: 0}, 250);
+        presentation.TransitionTo(expandalusitebonds2.getDeepestChildren()[0], {opacity: 0}, 250);
+
+        //i'm going to use this later
+        presentation.TransitionTo(movingAndalusite.position, {x: 0, y:0, z:0 }, 1000);
+        presentation.TransitionTo(movingAndalusiteTarget.position, {x: 0, y:0, z:0 }, 1000);
 
         await presentation.nextSlide();
         await presentation.nextSlide();
+
+        presentation.TransitionTo(andalusite.position, {y: 100}, 1000); //see ya
+
+        presentation.TransitionTo(movingAndalusiteTarget.children[0].material, {opacity: 1}, 250);
+        presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], {opacity: 0.2}, 250);
+        presentation.TransitionTo(movingAndalusiteGhostCopy.children[0].material, {opacity: 0.2}, 250);
+        presentation.TransitionTo(movingAndalusiteGhostCopyBonds, {opacity: 0.1}, 250);
+
+        presentation.TransitionTo(movingAndalusite.children[0].material, {opacity: 1}, 250);
+        presentation.TransitionTo(expandalusitebonds2.getDeepestChildren()[0], {opacity: 0.2}, 250);
+
+        await presentation.nextSlide();
+        
+        presentation.TransitionTo(movingAndalusite.position, {x: firstSeeThroughVec[0] * andalusite.scale.x, y: firstSeeThroughVec[1]* andalusite.scale.y, z: firstSeeThroughVec[2] * andalusite.scale.z}, 1000);
+        await presentation.delay(1000);
+        presentation.TransitionTo(movingAndalusite.position, {x: secondSeeThroughVec[0] * andalusite.scale.x, y: secondSeeThroughVec[1]* andalusite.scale.y, z: secondSeeThroughVec[2] * andalusite.scale.z}, 1000);
+
+        await presentation.nextSlide();
+
+        //use the target to illustrate the combined motion
+        presentation.TransitionTo(movingAndalusiteTarget.position, {x: secondSeeThroughVec[0] * andalusite.scale.x, y: secondSeeThroughVec[1]* andalusite.scale.y, z: secondSeeThroughVec[2] * andalusite.scale.z}, 1000);
+
+        await presentation.nextSlide();
+        await presentation.nextSlide();
+        await presentation.nextSlide();
+        await presentation.nextSlide();
+
         if(!alreadyEnding){
-            //dispatch("chapterEnd");
+            dispatch("chapterEnd");
         }
     }
 
@@ -360,7 +404,7 @@
     });
     onDestroy(() => {
         alreadyEnding = true;
-        presentation.rushThroughRestOfPresentation();
+        presentation.dispose();
         controls.dispose();
         three.removeEventListener("update", updateObjects)
     });
@@ -476,7 +520,7 @@
     </div>
     <div class="exp-slide">
             <div class="frostedbg">
-               We can be more precise if we talk about <b>moving</b>. The "see-through" effect happens in a certain direction if, when we take the entire crystal and <b>move</b> it in the direction we were looking, every moved atom would line up with another atom in the original crystal.
+               We can be more precise if we talk about <b>moving</b>. The "see-through" effect happens in a certain direction if, when we take the entire crystal and <span style:color={chapter2linecolor}><b>move it in the direction we were looking</b></span>, after a certain distance, every moved atom would line up with another atom in the original crystal.
             </div>
     </div>
     
@@ -487,7 +531,7 @@
     </div>
     <div class="exp-slide">
             <div class="frostedbg">
-                Same thing: a see-through effect shows us that <b>moving</b> the crystal in this other direction will also realign the moved atoms with the original crystal.
+                Same thing: a see-through effect shows us that <span style:color={chapter2linecolor2}><b>moving the crystal in this other direction</b></span> a certain distance will also realign the moved atoms with the original crystal.
             </div>
     </div>
 
@@ -498,40 +542,61 @@
     </div>
     <div class="exp-slide">
             <div class="frostedbg">
-                Yup. That also happens because <b>moving</b> the atoms this way will realign them with the crystal.
+                Yup. That also happens because <span style:color={chapter2linecolor3}><b>moving the atoms this third way</b></span> will realign them with the crystal.
             </div>
     </div>
     <div class="exp-slide">
             <div class="frostedbg">
-                So, to recap: every time we see a see-through effect, we know that <b>moving</b>the crystal in that direction will eventually realign with itself. We've found 3 of these movements so far.
-                <br>Takeaway 1: you can learn a lot about an object by studying <b>actions which eventually realign an object with itself</b>, like these movements in various directions.
+                So, to recap: every time we see a see-through effect, it's because there's <b>a movement of the crystal in that direction</b> which <b>realigns the crystal's atoms with itself</b>. We've found 3 of these movements so far.
+            </div>
+    </div>
+
+    <div class="exp-slide">
+            <div class="frostedbg">
+                The lesson here: you can learn a lot about an object (like a crystal) by studying <b>actions which realign an object with itself</b>, like the <span style:color={chapter2linecolor}>mov</span><span style:color={chapter2linecolor2}>eme</span><span style:color={chapter2linecolor3}>nts</span> we discovered. The collection of all such actions is called a <b>"symmetry group"</b>, and mathematicians love studying them in group theory.
             </div>
     </div>
     
     <div class="exp-slide">
             <div class="frostedbg">
-                Mathematicians call the collection of all possible actions which realign a crystal with itself a special name: the crystal's "symmetry group".
-                <br>But there's more to the story than that, because actions can combine.
+                But there's more to the story than that, because actions can <b>combine</b> in interesting ways.
             </div>
     </div>
     <div class="exp-slide">
             <div class="frostedbg">
-               We can combine actions: If we do the <span style:color={chapter2linecolor}>first</span> action we found, then the <span style:color={chapter2linecolor3}>third</span> action, it's the same as doing the <span style:color={chapter2linecolor2}>second</span> action we found.
+                For example, let's take another look at the actions we found in the symmetry group. We can combine two actions by performing them in sequence: do one, then another.
             </div>
     </div>
     <div class="exp-slide">
             <div class="frostedbg">
-              That means we might not even need to understand every single possible action - we can construct them out of simpler actions.
+               If we combine the <span style:color={chapter2linecolor}>first</span> action we found, with the <span style:color={chapter2linecolor3}>third</span> action...
+            </div>
+    </div>
+    <div class="exp-slide">
+            <div class="frostedbg">
+               If we combine the <span style:color={chapter2linecolor}>first</span> action we found, with the <span style:color={chapter2linecolor3}>third</span> action... 
+               <br>it's the same as the <span style:color={chapter2linecolor2}>second</span> action.
+            </div>
+    </div>
+    <div class="exp-slide">
+            <div class="frostedbg">
+                In fact, combining <b>any</b> two actions will give you another action. That's one of the key rules of groups. And for many groups, once you know some simple actions and how they combine, you can combine the actions to deduce everything there is to know about a group.
             </div>
     </div>
     <div class="exp-slide">
             <div class="frostedbg">
                 In summary:
+                <br>
                 <ul>
-                    <li>we can understand crystals by looking at "the actions which leave it unchanged"</li>
-                    <li>combining two actions gives you another action</li>
+                    <li>We can understand crystals by looking at "the actions which realign it with itself"</li>
+                    <li>Combining two such actions gives you another action!</li>
                 </ul>
-                these are two of the four rules of group theory!
+            </div>
+    </div>
+    <div class="exp-slide">
+            <div class="frostedbg">
+                In a way, you could say group theory is all about understanding the ways two things combine (and undo, but I'll discuss that later). And that's why mathematicians care about group theory so much.
+                <br>But what does a full symmetry group actually look like? Let's find out.
             </div>
     </div>
 </div>

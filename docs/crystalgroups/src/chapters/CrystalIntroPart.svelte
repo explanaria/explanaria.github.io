@@ -8,9 +8,9 @@
 	const dispatch = createEventDispatcher();
 
     async function animate(){
+        let whitebg = document.getElementById("whitebg");
         await presentation.begin();
         await presentation.nextSlide();
-        let whitebg = document.getElementById("whitebg");
         await presentation.TransitionInstantly(whitebg.style, {opacity: 1});
         await presentation.nextSlide();
         await presentation.TransitionInstantly(whitebg.style, {opacity: 0});
@@ -29,11 +29,12 @@
     onMount(async () => {
         await EXP.delay(1);
         presentation = new EXP.UndoCapableDirector(); 
+        window.firstPresentation = presentation;
         animate();
     });
     onDestroy(() => {
         alreadyEnding = true;
-        presentation.rushThroughRestOfPresentation();
+        presentation.dispose();
     });
 
     let slideStart = 1;

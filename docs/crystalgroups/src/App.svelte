@@ -6,16 +6,14 @@
 
     let chapter = 1; //one indexed
     let numChapters = 3;
-    function rotateChapter(){
+    async function rotateChapter(){
         //todo: move to next chapter, not just loop for debug purposes
         let nextChapter = (chapter % numChapters) + 1;
-        chapter = null; //removing a chapter before the next chapter appears ensures there's no funny race conditions where chapter n-1's cleanup erases things in chapter n
         chapter = nextChapter;
     }
 
     let mainContainer = null;
     async function chapterEnd(){
-        console.log(mainContainer.style)
         mainContainer.style.opacity = 0; //fadeout done via CSS animation
         await EXP.delay(500);
         rotateChapter();

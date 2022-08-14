@@ -172,6 +172,13 @@
     }
 
     window.data = data;
+
+    $: orientationsFound = data.isElementVisible.reduce((prev, current) => current ? prev+1 : prev, 0);
+    $: arrowsFound = d6group.elements.reduce((prev, groupElem) => {
+                            let sum = prev;
+                            data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {if(arrowVisible){sum++}})
+                            return sum;
+                        }, 0)
     
 
 </script>
@@ -206,13 +213,10 @@
         <slot name="toppart">
             <div class="top">
                 {#if data.showInfo}
-                <br>Orientations found: {data.isElementVisible.reduce((prev, current) => current ? prev+1 : prev, 0)}
-                <br>Arrows found: {
-                    d6group.elements.reduce((prev, groupElem) => {
-                        let sum = prev;
-                        data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {if(arrowVisible){sum++}})
-                        return sum;
-                    }, 0)}/{d6group.elements.length * d6group.generators.length}
+                <div class="fadeInImmediately">
+                    <br>Orientations found: {orientationsFound} {orientationsFound == d6group.elements.length ? "🎉" : ""}
+                    <br>Arrows found: {arrowsFound}/{d6group.elements.length * d6group.generators.length} {arrowsFound == d6group.elements.length * d6group.generators.length ? "🎉" : ""}
+                </div>
                 {/if}
             </div>
         </slot>
@@ -222,8 +226,8 @@
                 <br>
                 <div class="twocolumns">
                     {#if data.showbuttons}
-                    <button on:click={onRotate} style:border-color={generatorColors[0]} class="button">Rotate by 120 degrees</button>
-                    <button on:click={onFlip} style:border-color={generatorColors[1]} class="button">Flip horizontally</button>
+                    <button on:click={onRotate} style:border-color={generatorColors[0]} class="button fadeInImmediately">Rotate by 120 degrees</button>
+                    <button on:click={onFlip} style:border-color={generatorColors[1]} class="button fadeInImmediately">Flip horizontally</button>
                     {/if}
                 </div>
                 <!-->Current orientation: {data.currentOrientation.name}<-->
@@ -232,7 +236,7 @@
 
             <div class="grouppart">
                 {#if data.showgroup}
-                <div class="highlight" 
+                <div class="highlight fadeInImmediately" 
                     style:left={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[0] + "em":""} 
                     style:top={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[1]+ "em":""} />
                 <D6Group {...data} bind:positions={elemPositions} />

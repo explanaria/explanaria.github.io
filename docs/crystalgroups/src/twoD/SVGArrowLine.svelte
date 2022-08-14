@@ -53,15 +53,14 @@
 
     //animation
     let displayedEndPoint = end;
-    let animateAppearance = false;
-    $:{
-        displayedEndPoint = movedEndPoint;
-        if(animateAppearance){
-            displayedEndPoint = movedStartPoint;
-            EXP.TransitionTo(displayedEndPoint, movedEndPoint, 500); //weird bugs
-        }
-    }
-
+    $: displayedEndPoint = movedEndPoint;
+    /*
+    let animateAppearance = true;
+    if(animateAppearance){
+        displayedEndPoint = movedStartPoint;
+        EXP.TransitionTo(displayedEndPoint, {0: movedEndPoint[0], 1: movedEndPoint[1]}, 5000); //weird bugs
+    }*/
+    
     $: s = movedStartPoint;
     $: e = displayedEndPoint;
 
@@ -73,15 +72,13 @@
 
 </script>
 
-<!-- 
- -->
 
 {#if isCurved}
 <path d="M {s[0]} {s[1]} C {controlPoint1[0]} {controlPoint1[1]} {controlPoint2[0]} {controlPoint2[1]} {e[0]} {e[1]} "
     stroke={stroke} marker-end={markerEnd} fill="transparent"
-    stroke-width={strokeWidth} />
+    stroke-width={strokeWidth} class="fadeInImmediately"/>
 {:else}
 <line x1={movedStartPoint[0] + "em"} y1={movedStartPoint[1] + "em"} x2={displayedEndPoint[0] + "em"} y2={displayedEndPoint[1] + "em"} 
     stroke={stroke} marker-end={markerEnd}
-    stroke-width={strokeWidth} />
+    stroke-width={strokeWidth} class="fadeInImmediately"/>
 {/if}

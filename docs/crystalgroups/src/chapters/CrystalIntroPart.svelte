@@ -138,8 +138,13 @@
             <div class="frostedbg">
                 So do andalusite and kyanite repeat in the same way? Or a different way? <br>What would "repeating in a different way" even mean?
                 <br>
-
-                We don't really have the words to describe these patterns in everyday language, so mathematicians invented their own: the language of <b>group theory</b>. 
+                <br> 
+            </div>
+        </div>
+        <div class="exp-slide">
+            <div class="frostedbg">
+                So do andalusite and kyanite repeat in the same way? Or a different way? <br>What would "repeating in a different way" even mean?
+                <br>We don't really have the words to describe these patterns in everyday language, so mathematicians invented their own: the language of <b>group theory</b>. 
             </div>
         </div>
         <div class="exp-slide">

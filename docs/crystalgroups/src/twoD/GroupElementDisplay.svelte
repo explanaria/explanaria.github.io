@@ -37,7 +37,7 @@
 </style>
 
 
-<div class="elementcontainer"
+<div class="elementcontainer fadeInImmediately"
 style:top={top+"em"} style:left={left+"em"} style:--groupElementBorderColor={borderColor}>
 
         <div class="elementname">{element.name}</div>

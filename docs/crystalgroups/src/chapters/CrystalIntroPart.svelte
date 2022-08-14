@@ -2,7 +2,7 @@
     import MoleculeCanvas from "../threeD/MoleculeCanvas.svelte";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {getAtomColor} from "../colors.js";
-    import {onMount, onDestroy} from "svelte";
+    import {onMount, onDestroy, tick} from "svelte";
     import {clearThreeScene} from "../threeD/sharedthreejscanvas.js";
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
@@ -27,7 +27,7 @@
 
     let presentation, alreadyEnding = false;
     onMount(async () => {
-        await EXP.delay(1);
+        await tick();
         presentation = new EXP.UndoCapableDirector(); 
         window.firstPresentation = presentation;
         animate();

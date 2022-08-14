@@ -2,7 +2,7 @@
     import MoleculeCanvas from "../threeD/MoleculeCanvas.svelte";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {getAtomColor, chapter2linecolor, chapter2linecolor2, chapter2linecolor3} from "../colors.js";
-    import {onMount, onDestroy} from "svelte";
+    import {onMount, onDestroy, tick} from "svelte";
 
     import {attachCanvas, three, clearThreeScene} from "../threeD/sharedthreejscanvas.js"
     import {makeBallStickDiagram, allAtoms, getSymmetryClones} from "../threeD/ballStickDiagram.js";
@@ -399,6 +399,7 @@
     let presentation, alreadyEnding=false;
     onMount(async () => {
         three.on("update", updateObjects);
+        await tick();
         presentation = new EXP.UndoCapableDirector();
         animate();
     });

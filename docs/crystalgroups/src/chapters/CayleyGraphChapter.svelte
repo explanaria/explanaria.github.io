@@ -97,7 +97,7 @@
     });
     onDestroy(() => {
         alreadyEnding = true;
-        presentation.rushThroughRestOfPresentation();
+        presentation.dispose();
     });
 </script>
 

@@ -51,5 +51,5 @@
 </script>
 
 
-<div style:position="absolute" style:top="0%" style:text-align="right">Fps: {fps}</div>
+<div style:position="absolute" style:top="0%" style:right="0%" style:text-align="right">Fps: {fps}</div>
 <div class="threecanvascontainer" id="threecanvas" /> <!-- three.hs canvas attached here -->

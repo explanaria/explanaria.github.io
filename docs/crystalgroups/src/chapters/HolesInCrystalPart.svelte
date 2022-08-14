@@ -24,6 +24,7 @@
         clearThreeScene();
         let canvas = attachCanvas("threecanvas", "threecanvas");
 	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
+        controls.enableKeys = false;
         window.three = three;
         window.controls = controls;
         window.andalusiteData = andalusiteData;
@@ -570,7 +571,7 @@
     </div>
     <div class="exp-slide">
             <div class="frostedbg">
-               If we combine the <span style:color={chapter2linecolor}>first</span> action we found, with the <span style:color={chapter2linecolor3}>third</span> action...
+               If we combine the <span style:color={chapter2linecolor}>first</span> action we found with the <span style:color={chapter2linecolor3}>third</span> action...
             </div>
     </div>
     <div class="exp-slide">

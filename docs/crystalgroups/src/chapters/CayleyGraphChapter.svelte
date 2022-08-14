@@ -114,13 +114,13 @@
             <br>
         </div>
         <div class="exp-slide">
-            What's the symmetry group of this triangle? To find out, we'll need to find some actions which leave this triangle looking the same before and after.
+            What's the symmetry group of this triangle? To find out, we'll need to find some actions which realign the triangle with itself.
         </div>
         <div class="exp-slide">
-            One action which leaves the triangle looking unchanged is a rotation by 120 degrees.
+            One action which leaves the triangle looking unchanged is a <b style:color={generatorColors[0]}>rotation by 120 degrees</b>.
         </div>
         <div class="exp-slide">
-            And another action which leaves the triangle looking unchanged is a horizontal flip.
+            And another action which leaves the triangle looking unchanged is a <b style:color={generatorColors[1]}>horizontal flip</b>.
         </div>
         <div class="exp-slide">
             To help keep track of what each action does to the triangle, I'll doodle some letters on it.
@@ -129,7 +129,7 @@
             Finally, on the right, I'll keep track of the actions you discover.
         </div>
         <div class="exp-slide">
-            Each circle represents an action you can perform to the triangle which leaves it unchanged, and arrows will show you what happens if you <span>rotate</span> and <span>flip</span> the triangle.
+            Each circle represents an action you can perform to the triangle which leaves it unchanged, and arrows will show you what happens if you <span style:color={generatorColors[0]}>rotate</span> and <span style:color={generatorColors[1]}>flip</span> the triangle.
             <br>Can you find the triangle's entire symmetry group? Use these buttons to find out!
         </div>
         <div class="exp-slide">

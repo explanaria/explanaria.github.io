@@ -1,4 +1,6 @@
 <script>
+    //units of this SVG are in em
+
     export let group = {elements: []};
     export let positionsPerElementMap;
     import {generatorColors, drawGeneratorsWithOutlines, drawEyesOnArrows} from "../colors.js"
@@ -25,23 +27,6 @@
         )
     }
 
-
-
-    // resize the svg with the arrows to match
-
-    /*
-    let width = 1000;
-    let height = 300;
-    function recalcPageSize(){
-        width = window.innerWidth;
-        height = window.innerHeight;
-    }
-    window.addEventListener("resize", recalcPageSize);
-    onMount(recalcPageSize) */
-
-    let width = 50;
-    let height = 50; //The above code means that if this svg isn't positioned exactly at the top left of the screen, it creates scrollbars on the page. This small size means the svg won't create scrollbars, while overflow:visible ensures all the elements will still be there
-
 </script>
 
 <style>
@@ -60,7 +45,8 @@
 
 </style>
 
-<svg class="arrowsvg" xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 {width} {height}">
+<svg class="arrowsvg" xmlns="http://www.w3.org/2000/svg" width={"1em"} height={"1em"} viewBox="0 0 {1} {1}">
+    <!-- this sets the units of the SVG to be in em -->
   <defs>
     {#each generatorColors as color, i}
     <marker class="arrowhead" id={"arrowhead-"+i} markerWidth="4" markerHeight="4" 
@@ -96,11 +82,11 @@
                 {#if drawGeneratorsWithOutlines}
                     <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
                     stroke={generatorColors[i]} markerEnd={"url(#arrowhead-"+i+")"}
-                    strokeWidth="0.25em" />
+                    strokeWidth="0.25" />
                 {/if}
                 <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
                     stroke={generatorColors[i]} markerEnd={"url(#arrowhead-"+i+")"}
-                    strokeWidth="0.2em" />
+                    strokeWidth="0.2" />
             {/if}
         {/each}
     {/each}

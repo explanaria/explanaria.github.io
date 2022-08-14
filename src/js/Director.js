@@ -219,6 +219,7 @@ class NonDecreasingDirector{
 
     switchDisplayedSlideIndex(slideNumber){
         //updates HTML and also sets this.currentSlideIndex to slideNumber
+        if(this.beingDisposed)return;
 
         let prevSlideNumber = this.currentSlideIndex;
         this.currentSlideIndex = slideNumber;
@@ -321,15 +322,19 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.undoStack = [];
         this.undoStackIndex = -1; //increased by one every time either this.TransitionTo is called or this.nextSlide() is called
 
-        let self = this;
-
         this.currentReplayDirection = NO_SLIDE_MOVEMENT; //this variable is used to ensure that if you redo, then undo halfway through the redo, the redo ends up cancelled. 
         this.numArrowPresses = 0;
+
+        this.beingDisposed = false;
 
         //if you press right before the first director.nextSlide(), don't error
         this.nextSlideResolveFunction = function(){} 
 
-        function keyListener(e){
+
+        let self = this;
+        //this is set up this way so that we can call removeEventListener() on it if .dispose() is called
+        //making this a class action would be fine, but I'd need to be able to call .bind(this) on it when adding the event listener
+        this.keyListener = function keyListener(e){
             if(e.repeat)return; //keydown fires multiple times but we only want the first one
             let slideDelta = 0;
             switch (e.keyCode) {
@@ -347,7 +352,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
             }
         }
 
-        window.addEventListener("keydown", keyListener);
+        window.addEventListener("keydown", this.keyListener);
     }
 
     setupClickables(){
@@ -372,19 +377,24 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.rightArrow.hideSelf();
         this.leftArrow.hideSelf();
         window.setTimeout(() => {
-            document.body.removeChild(this.rightArrow.arrowImage)
-            document.body.removeChild(this.leftArrow.arrowImage)
+            if(this.rightArrow.arrowImage.parentElement == document.body)document.body.removeChild(this.rightArrow.arrowImage)
+            if(this.leftArrow.arrowImage.parentElement == document.body)document.body.removeChild(this.leftArrow.arrowImage)
         }, 1000);
     }
 
     rushThroughRestOfPresentation(){
-        this.removeClickables();
-        this.isRushingThroughPresentation = true;
+        this.isRushingThroughPresentation = true; 
         
         while(!this.isCaughtUpWithNothingToRedo()){
-            this.moveFurtherIntoPresentation();
+            this.handleForwardsPress();
         }
-        this.moveFurtherIntoPresentation();
+        this.handleForwardsPress();
+    }
+    dispose(){
+        this.removeClickables();
+        this.beingDisposed = true;
+        window.removeEventListener("keydown", this.keyListener);
+        this.rushThroughRestOfPresentation(); //allow any async functions paused on nextSlide() to finish
     }
 
     moveFurtherIntoPresentation(){
@@ -593,13 +603,15 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.showArrows();
 
 
+        if(this.isRushingThroughPresentation){
+            this.handleForwardsPress()
+            return; //no async waiting whatsoever
+        }
+
         let self = this;
 
         //promise is resolved by calling this.nextSlideResolveFunction() when the time comes
         return new Promise(function(resolve, reject){
-            if(self.isRushingThroughPresentation){
-                return resolve();
-            }
             self.nextSlideResolveFunction = function(){ 
                 resolve();
             }

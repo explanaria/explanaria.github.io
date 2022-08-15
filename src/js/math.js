@@ -5,6 +5,14 @@ function multiplyScalar(c, array){
 	}
 	return array
 }
+function length(array){
+
+    let lengthSquared = 0;
+	for(var i=0;i<array.length;i++){
+		lengthSquared += array[i]*array[i];
+	}
+    return Math.sqrt(lengthSquared)
+}
 function normalize(array){
 
     let lengthSquared = 0;

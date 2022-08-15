@@ -385,8 +385,10 @@ class UndoCapableDirector extends NonDecreasingDirector{
     rushThroughRestOfPresentation(){
         this.isRushingThroughPresentation = true; 
         
-        while(!this.isCaughtUpWithNothingToRedo()){
+        let counter = 0;
+        while(!this.isCaughtUpWithNothingToRedo() && counter < 300){
             this.handleForwardsPress();
+            counter += 1; //time out after 300 repetitions
         }
         this.handleForwardsPress();
     }

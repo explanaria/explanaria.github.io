@@ -76,6 +76,6 @@ function multiplyMatrix(vec, matrix){
 }
 
 //hack
-let EXPMath = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, vectorSub: vectorSub, vectorScale: vectorScale, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix, normalize: normalize};
+let EXPMath = {clone: clone, lerpVectors: lerpVectors, vectorAdd: vectorAdd, vectorSub: vectorSub, vectorScale: vectorScale, multiplyScalar: multiplyScalar, multiplyMatrix: multiplyMatrix, normalize: normalize, length: length};
 
 export {vectorAdd, vectorSub, lerpVectors, clone, multiplyScalar, multiplyMatrix, EXPMath as Math};

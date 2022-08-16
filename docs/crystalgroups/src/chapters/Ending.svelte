@@ -64,7 +64,6 @@
     }
     #overlays{
         z-index: 2;
-        pointer-events: none;
     }
     .grouptime{
         position:absolute;
@@ -73,7 +72,7 @@
         transform: scale(0.5);
     }
     .thinmargin{
-        width: 50vw;
+        width: 22em;
         padding: 0.2em;
         margin: 0 auto;
     }
@@ -84,7 +83,7 @@
         <div class="threecanvascontainer column" id="threecanvas" />
     </div>
 
-    <div id="overlays" class="overlappingItemContainer">
+    <div id="overlays" class="overlappingItemContainer noclick">
         <div class="exp-slide">
 
             <div class="frostedbg thinmargin">
@@ -95,9 +94,9 @@
                 Thanks so much for reading!
             </div>
 
-            <br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br />
 
-            <div class="twocolumns frostedbg">
+            <div class="twocolumns frostedbg yesclick">
                 <div class="column">
                     More Explanaria
                     <aside>

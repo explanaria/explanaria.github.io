@@ -9,10 +9,12 @@
 
     import * as EXP from "../../resources/build/explanaria-bundle.js";
 
+    export let onlyTwo = false;
+
     let currentChapter = 1; //one indexed
     let numChapters = 4;
 
-    //currentChapter = 5; //// DEBUG
+    if(!onlyTwo)currentChapter = 5; //// DEBUG
 
     let mainContainer = null;
     async function changeChapter(chapterNum){
@@ -51,21 +53,26 @@
     <div class="rotatesign">
         <h1>(Please turn your phone sideways! This presentation is designed for landscape mode.)</h1>
     </div>
-    <ChapterSelector on:changeChapter={changeChapterEvent} chapters={[1,2,'F']} currentChapter={currentChapter} />
+    <ChapterSelector on:changeChapter={changeChapterEvent} chapters={onlyTwo ? [1,2,'F'] : [1,2,3,4,'F']} currentChapter={currentChapter} />
     {#if currentChapter == 1}
         <CrystalIntroPart on:chapterEnd={chapterEnd} />
     {/if}
     {#if currentChapter == 2}
-        <HolesInCrystalPart on:chapterEnd={chapterEnd} alludeToChapter3={false}/>
+        <HolesInCrystalPart on:chapterEnd={chapterEnd}/>
     {/if}
-    {#if currentChapter == 3}
-        <!--
-        <CayleyGraphChapter on:chapterEnd={chapterEnd} />
-    {/if}
-    {#if currentChapter == 4}
-        <PointGroupChapter on:chapterEnd={chapterEnd} />
-    {/if}
-    {#if currentChapter == 5} -->
-        <Ending/>
+    {#if onlyTwo}
+        {#if currentChapter == 3}
+            <Ending/>
+        {/if}
+    {:else}
+        {#if currentChapter == 3}
+            <CayleyGraphChapter on:chapterEnd={chapterEnd} />
+        {/if}
+        {#if currentChapter == 4}
+            <PointGroupChapter on:chapterEnd={chapterEnd} />
+        {/if}
+        {#if currentChapter == 5}
+            <Ending/>
+        {/if}
     {/if}
 </div>

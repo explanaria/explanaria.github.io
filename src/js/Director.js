@@ -493,8 +493,8 @@ class UndoCapableDirector extends NonDecreasingDirector{
             case TRANSITIONINSTANTLY:
 
                 //interrupt any other animations
-                if(undoItem.target[ExistingAnimationSymbol] !== undefined){
-                    let existingAnimation = undoItem.target[ExistingAnimationSymbol];
+                if(redoItem.target[ExistingAnimationSymbol] !== undefined){
+                    let existingAnimation = redoItem.target[ExistingAnimationSymbol];
                     existingAnimation.end();
                 }
 

@@ -3,9 +3,20 @@
 
     export let group = {elements: []};
     export let positionsPerElementMap;
-    import {generatorColors, drawGeneratorsWithOutlines, drawEyesOnArrows} from "../colors.js"
+    import {generatorColors, drawGeneratorsWithOutlines, drawEyesOnArrows} from "../colors.js";
 	import { onMount } from 'svelte';
     import SVGArrowLine from "./SVGArrowLine.svelte";
+
+    export let elementAvoidRadius = 2.75;
+
+
+    export let specialGeneratorColors = {};
+
+    function chooseGeneratorColor(i){
+        let generator = group.generators[i];
+        if(specialGeneratorColors[generator.name])return specialGeneratorColors[generator.name];
+        return generatorColors[i]
+    }
 
     let defaultShowArray = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
     group.elements.forEach(startElement => {
@@ -40,7 +51,7 @@
 }
 
 .arrowhead{
-    z-index: 2;
+    z-index: 1;
 }
 
 </style>
@@ -48,10 +59,11 @@
 <svg class="arrowsvg" xmlns="http://www.w3.org/2000/svg" width={"1em"} height={"1em"} viewBox="0 0 {1} {1}">
     <!-- this sets the units of the SVG to be in em -->
   <defs>
-    {#each generatorColors as color, i}
+
+    {#each group.generators as _, i}
     <marker class="arrowhead" id={"arrowhead-"+i} markerWidth="4" markerHeight="4" 
     refX="2" refY="2" orient="auto"> <!-- from https://thenewcode.com/1068/Making-Arrows-in-SVG -->
-      <polygon points="0 0, 4 2, 0 4" fill={color}/>
+      <polygon points="0 0, 4 2, 0 4" fill={chooseGeneratorColor(i)}/>
       {#if drawEyesOnArrows}
           <ellipse rx="1" ry="0.6"
             cy="2.5" cx="1.5" fill="#fff" stroke="#000" stroke-width=0.1/>
@@ -64,6 +76,7 @@
       {/if}
     </marker>
     {/each}
+
     <filter id="outline" x="-100%" y="-100%" width="300%" height="300%">
       <!-- outline filter stolen from redblobgames, http://bl.ocks.org/redblobgames/c0da29c0539c8e7885664e774ffeae57 -->
       <feMorphology result="outline" in="SourceGraphic" operator="dilate" radius="1"></feMorphology>
@@ -77,17 +90,20 @@
 
 
     {#each group.elements as startElement}
-        {#each elementTimesGenerators.get(startElement) as targetElement, i}
-            {#if isArrowVisibleMap[startElement.name][i]}
-                {#if drawGeneratorsWithOutlines}
+        {#if elementTimesGenerators.get(startElement)}
+            {#each elementTimesGenerators.get(startElement) as targetElement, i}
+                {#if isArrowVisibleMap[startElement.name] && isArrowVisibleMap[startElement.name][i]}
+                    {#if drawGeneratorsWithOutlines}
+                        <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
+                        stroke={chooseGeneratorColor(i)} markerEnd={"url(#arrowhead-"+i+")"}
+                        strokeWidth="0.25"/>
+                    {/if}
                     <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
-                    stroke={generatorColors[i]} markerEnd={"url(#arrowhead-"+i+")"}
-                    strokeWidth="0.25" />
+                        stroke={chooseGeneratorColor(i)}
+                         markerEnd={"url(#arrowhead-"+i +")"}
+                        strokeWidth="0.2" elementAvoidRadius={elementAvoidRadius}}/>
                 {/if}
-                <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
-                    stroke={generatorColors[i]} markerEnd={"url(#arrowhead-"+i+")"}
-                    strokeWidth="0.2" />
-            {/if}
-        {/each}
+            {/each}
+        {/if}
     {/each}
 </svg>

@@ -1,37 +1,71 @@
 <script>
-    import CrystalIntroPart from "./chapters/CrystalIntroPart.svelte";
-    import HolesInCrystalPart from "./chapters/HolesInCrystalPart.svelte";
-	import CayleyGraphChapter from "./chapters/CayleyGraphChapter.svelte";
+    import CrystalIntroPart from "./chapters/1-CrystalIntroPart.svelte";
+    import HolesInCrystalPart from "./chapters/2-HolesInCrystalPart.svelte";
+	import CayleyGraphChapter from "./chapters/3-CayleyGraphChapter.svelte";
+	import PointGroupChapter from "./chapters/5-PointGroupChapter.svelte";
+	import Ending from "./chapters/Ending.svelte";
+
+    import ChapterSelector from "./chapters/chapterselector.svelte";
+
     import * as EXP from "../../resources/build/explanaria-bundle.js";
 
-    let chapter = 1; //one indexed
-    let numChapters = 3;
-    async function rotateChapter(){
-        //todo: move to next chapter, not just loop for debug purposes
-        let nextChapter = (chapter % numChapters) + 1;
-        chapter = nextChapter;
-    }
+    let currentChapter = 1; //one indexed
+    let numChapters = 4;
+
+    //currentChapter = 5; //// DEBUG
 
     let mainContainer = null;
-    async function chapterEnd(){
+    async function changeChapter(chapterNum){
+        console.log(chapterNum)
+        chapterNum = ((chapterNum-1)%numChapters) + 1; //round to 1-numChapters
+        window.chapterNum = chapterNum;
+
         mainContainer.style.opacity = 0; //fadeout done via CSS animation
         await EXP.delay(500);
-        rotateChapter();
+        currentChapter = chapterNum;
         mainContainer.style.opacity = 1;
+    }
+
+    function changeChapterEvent(event){
+        changeChapter(event.detail)
+    }
+
+
+    async function rotateChapter(){
+        //todo: move to next chapter, not just loop for debug purposes
+        let nextChapter = (currentChapter % numChapters) + 1;
+        changeChapter(nextChapter)
+    }
+    async function chapterEnd(){
+        rotateChapter();
     }
 </script>
 
-<div class="rotatesign"> <!-- todo: put a message here --> </div>
-<span style:position="absolute" style:top="2em" style:left="0em">Chapter {chapter}. <button on:click={chapterEnd} >Swap chapter</button></span>
+
+
+
+
+<!-- chapter selector -->
 
 <div class="maincontainer" bind:this={mainContainer} style="opacity: 1">
-    {#if chapter == 1}
+    <div class="rotatesign">
+        <h1>(Please turn your phone sideways! This presentation is designed for landscape mode.)</h1>
+    </div>
+    <ChapterSelector on:changeChapter={changeChapterEvent} chapters={[1,2,'F']} currentChapter={currentChapter} />
+    {#if currentChapter == 1}
         <CrystalIntroPart on:chapterEnd={chapterEnd} />
     {/if}
-    {#if chapter == 2}
-        <HolesInCrystalPart on:chapterEnd={chapterEnd} />
+    {#if currentChapter == 2}
+        <HolesInCrystalPart on:chapterEnd={chapterEnd} alludeToChapter3={false}/>
     {/if}
-    {#if chapter == 3}
+    {#if currentChapter == 3}
+        <!--
         <CayleyGraphChapter on:chapterEnd={chapterEnd} />
+    {/if}
+    {#if currentChapter == 4}
+        <PointGroupChapter on:chapterEnd={chapterEnd} />
+    {/if}
+    {#if currentChapter == 5} -->
+        <Ending/>
     {/if}
 </div>

@@ -56,3 +56,14 @@ export function clearThreeScene(){
     three.camera.rotation.set(0,0,0);
     three.camera.updateMatrix();
 }
+
+
+//allow EXP to animate camera zooms
+let lastZoom = 1;
+function updateCameraIfNeeded(){
+    if(three.camera.zoom != lastZoom){
+        three.camera.updateProjectionMatrix();
+        lastZoom = three.camera.zoom;
+    }
+}
+three.on("update", updateCameraIfNeeded) //todo: remove event listener on onDestroy

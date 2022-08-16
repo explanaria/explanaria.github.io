@@ -8,9 +8,11 @@
     export let left = 0;
 
     export let element; //a GroupElement
-    export let arrows = [];  
 
     export let borderColor=defaultGroupElementBorderColor;
+
+    export let showElementName = true;
+    export let smallFont = false;
 
 </script>
 
@@ -40,7 +42,9 @@
 <div class="elementcontainer fadeInImmediately"
 style:top={top+"em"} style:left={left+"em"} style:--groupElementBorderColor={borderColor}>
 
-        <div class="elementname">{element.name}</div>
+        {#if showElementName}
+            <div class="elementname" class:smallFont={smallFont}>{element.name}</div>
+        {/if}
         <slot element={element}> <!-- for the canvas. but this doesn't seem to work?? weird-->
             <p>representation of the element goes here</p>
         </slot>

@@ -51,9 +51,13 @@ export function clearThreeScene(){
 	    }
     })
     three.scene.clear();
-    three.camera.position.set(0,0,5);
+
+    //interrupt any TransitionTos
+    EXP.TransitionInstantly(three.camera.position, {x: 0, y:0, z: 5});
+    EXP.TransitionInstantly(three.camera, {zoom: 1});
+    EXP.TransitionInstantly(three.camera.rotation, {x: 0, y:0, z: 0});
+
     three.camera.zoom = 1;
-    three.camera.rotation.set(0,0,0);
     three.camera.updateMatrix();
 }
 

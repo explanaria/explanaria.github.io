@@ -308,7 +308,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
     <div class="exp-slide">
             <div class="frostedbg">
-                However, <span style:color={aPlusCVecColor}>some actions</span> can be created by combining <span style:color={aVecColor}>two</span> <span style:color={cVecColor}>other</span> actions. We can represent that in the Cayley graph, too.
+                However, <span style={"color: " + aPlusCVecColor}>some actions</span> can be created by combining <span style={"color: " + aVecColor}>two</span> <span style={"color: " + cVecColor}>other</span> actions. We can represent that in the Cayley graph, too.
             </div>
     </div>
 

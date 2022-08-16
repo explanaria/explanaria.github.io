@@ -108,7 +108,7 @@
         </div>
         <div class="exp-slide">
             <div class="frostedbg">
-                If we zoomed in until we could see the <span style:color={getAtomColor("Al")}>aluminum</span>, <span style:color={getAtomColor("Si")}>silicon</span>, and <span style:color={getAtomColor("O")}>oxygen</span> atoms,
+                If we zoomed in until we could see the <span style={"color: " + getAtomColor('Al')}>aluminum</span>, <span style={"color: " + getAtomColor('Si')}>silicon</span>, and <span style={"color: " + getAtomColor('O')}>oxygen</span> atoms,
                 <div class="twocolumns">
                     <div class="column">
                         kyanite would look like this
@@ -133,7 +133,7 @@
                 Drag to rotate the 3D model yourself and take a look. What can we use to describe how andalusite and kyanite repeat?
                 <br>
                 The number of atoms won't help - both crystals have the same number (and ratio) of atoms.
-                <br>Looking at one atom at a time won't help - for example, in both crystals, every <span style:color={getAtomColor("Al")}>aluminum</span> atom always has five bonds, and every <span style:color={getAtomColor("Si")}>silicon</span> atom always connects to four other atoms.
+                <br>Looking at one atom at a time won't help - for example, in both crystals, every <span style={"color: " + getAtomColor('Al')}>aluminum</span> atom always has five bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
                 <br>
             </div>
         </div>

@@ -18,8 +18,15 @@ aside{
     opacity: 0.8;
 }
 
+
+.fullscreen{
+    width: 100%;
+    height: 100svh;
+    overflow: hidden;
+}
+
 .frostedbg{
-    background-color: rgba(255,255,255, 0.8);
+    background-color: rgba(255,255,255, 0.9);
     border-radius: 3em;
     padding: 1em;
 }
@@ -28,8 +35,9 @@ aside{
 .threecanvascontainer{
     width:100%;
     height:100%;
-    border-left: 1px solid gray; /* todo: remove */
-    border-right: 1px solid gray;
+    /*
+    border-left: 1px solid gray; 
+    border-right: 1px solid gray; removed*/
 }
 
 .threecanvas{
@@ -38,6 +46,7 @@ aside{
         height:100%;
         max-width: 100vw;
         max-height: 100vh;
+        max-height: 100svh;
 }
 
 
@@ -45,6 +54,7 @@ aside{
     font-family: Lora, serif;
     aspect-ratio: 16 / 9;
     max-height: 100vh;
+    max-height: 100svh;
     margin: auto;
     text-align: center;
     transition: 0.5s opacity ease-in-out;
@@ -65,6 +75,18 @@ aside{
 .twocolumns{
   display: grid;
   grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+
+.tworows{
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  height: 100%;
+}
+
+.twocolumnsLeftBigger{
+  display: grid;
+  grid-template-columns: 2fr 1fr;
   width: 100%;
 }
 
@@ -141,8 +163,13 @@ aside{
 
 .rotatesign{
     display: none;
-    font-size: 3em;
+    font-size: 0.2em;
+    
     text-align: center;
+
+    position: absolute;
+    left: 0px;
+    top: 0px;
 }
 
 @media only screen and (orientation:portrait) and (max-aspect-ratio: 9/16){
@@ -155,6 +182,17 @@ aside{
     width: 100vh;
     }
   .rotatesign{
-        display: visible;
+        transform: translate(-50%, -50%) rotate(-90deg) translate(-50%, 50%);
+        display: block;
+        align-content: center;
+        width: 100vw;
+        height: 100svh;
+        display: block;
+        z-index: 4;
+        font-size: 14px;
+        background-color: rgba(0,0,0, 0.2)
    }
+    .rotatesign h1{
+        padding:0 1.5em;
+    }
 }

@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-    import {GroupElement, Group} from "./groupmath.js";
+    import {GroupElement, FiniteGroup} from "./groupmath.js";
     import GroupElementDisplay from "./GroupElementDisplay.svelte";
     import SVGCayleyArrows from "./SVGCayleyArrows.svelte";
 
@@ -10,7 +10,7 @@
 
     let r = new GroupElement("r", "(123)");
     let f = new GroupElement("f", "(23)");
-    export let d6group = new Group([r,f], {"rfr":"f", "rrr":"", "ff":""});
+    export let d6group = new FiniteGroup([r,f], {"rfr":"f", "rrr":"", "ff":""});
 
     export let isElementVisible = d6group.elements.map(element => true);
 

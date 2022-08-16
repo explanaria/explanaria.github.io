@@ -84,12 +84,19 @@ export function permutationIsInList(elem, alist){
     return false
 }
 
-export class Group{
+export class FiniteGroup{
     //represents a finite group. give it some generators and it'll compute all the elements
     //assumption: elements have unique names
-    constructor(generators, relations=[], sizeOfUnderlyingPermutationGroup=3){
+    constructor(generators, relations=[]){
         this.generators = generators;
         this.relations = relations; //mostly just used to simplify names. optional
+
+        //biggest number in any permutation
+        let sizeOfUnderlyingPermutationGroup = Math.max(
+            ...this.generators.map(elem => 
+                Math.max(...Object.keys(elem.permutation).map(x => Math.round(x))) //biggest number in the permutation
+        ))
+
         this.elements = this.computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup);
 
         this.nameLookupTable = {};
@@ -159,5 +166,57 @@ export class Group{
             }
         }
         return groupelements;
+    }
+}
+
+
+export class LazyGroup extends FiniteGroup{
+    //represents a possibly infinite group. give it some generators and relations, and it won't compute everything in the group right away.
+    //techincally there's no inverses so it's probably a monoid but eh
+    //useful for infinite groups
+
+    //assumption: elements have unique names
+    constructor(generators, relations=[]){
+        relations["e"] = "";
+        super(generators, relations);
+    }
+    computeAllGroupElements(generators, relations, sizeOfUnderlyingPermutationGroup=3){
+        //lmao i'm lazy i don't want to do this. i could end up with infinite elements
+        let groupelements = [new GroupElement("e", "("+sizeOfUnderlyingPermutationGroup+")")] //start with identity
+        return groupelements.concat(generators)
+    }
+    multiply(elem1, elem2){
+        if(this.elements.indexOf(elem1) == -1 || this.elements.indexOf(elem2) == -1){
+            throw new ReferenceError(elem1, elem2, "aren't in this group!");
+        }
+        let newelem = compose(elem1, elem2);
+        newelem = reduceName(newelem, this.relations)
+
+        /*
+        //now figure out which existing element it is. there's gotta be a better way to do this
+        for(let elem of this.elements){
+            let match = true;
+            for(let number in elem.permutation){
+                if(elem.permutation[number] != newelem.permutation[number]){
+                    match = false;
+                    break
+                }
+            }
+            if(match){
+                return elem;
+            }
+        }*/
+
+
+        for(let elem of this.elements){
+            if(newelem.name == elem.name){
+                return elem;
+            }
+        }
+        if(newelem.name == "")return this.getElemByName("e")
+
+        //couldn't find it. oh well. time to make one
+        this.elements.push(newelem);
+        return newelem
     }
 }

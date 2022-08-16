@@ -1,6 +1,6 @@
 <script>
     import D6Group from "../twoD/D6Group.svelte";
-    import { GroupElement, Group } from "../twoD/groupmath.js";
+    import { GroupElement, FiniteGroup } from "../twoD/groupmath.js";
     import {generatorColors} from "../colors.js";
     import {drawTrianglePath, lineWidth, D6_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "../twoD/d6canvasdrawing.js";
 	import { createEventDispatcher } from 'svelte';
@@ -11,7 +11,7 @@
     //group stuff
     let r = new GroupElement("r", "(123)");
     let f = new GroupElement("f", "(23)");
-    let d6group = new Group([r,f], {"rfr":"f", "rrr":"", "ff":""});
+    let d6group = new FiniteGroup([r,f], {"rfr":"f", "rrr":"", "ff":""});
 
     let isArrowVisibleMap = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
     d6group.elements.forEach(startElement => {

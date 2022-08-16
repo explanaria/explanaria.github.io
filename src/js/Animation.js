@@ -151,7 +151,7 @@ class FallbackDoNothingInterpolator extends Interpolator{
 
 
 
-const ExistingAnimationSymbol = Symbol('CurrentEXPAnimation')
+export const ExistingAnimationSymbol = Symbol('CurrentEXPAnimation')
 
 
 class Animation{

@@ -36,7 +36,7 @@ Any divs with the exp-slide class will also be shown and hidden one by one.
 */
 
 
-import {Animation, Easing} from './Animation.js';
+import {Animation, Easing, ExistingAnimationSymbol} from './Animation.js';
 import explanarianArrowSVG from './DirectorImageConstants.js';
 
 class DirectionArrow{
@@ -491,6 +491,13 @@ class UndoCapableDirector extends NonDecreasingDirector{
                 //like TRANSITIONTO, but onnly redoes, not undoes
                 var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.duration, redoItem.optionalArguments);
             case TRANSITIONINSTANTLY:
+
+                //interrupt any other animations
+                if(undoItem.target[ExistingAnimationSymbol] !== undefined){
+                    let existingAnimation = undoItem.target[ExistingAnimationSymbol];
+                    existingAnimation.end();
+                }
+
                 for(let property in redoItem.toValues){
                     redoItem.target[property] = redoItem.toValues[property]
                 }
@@ -565,6 +572,13 @@ class UndoCapableDirector extends NonDecreasingDirector{
                     //and now undoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
                     break;
                 case TRANSITIONINSTANTLY:
+                    
+                    //interrupt any other animations
+                    if(undoItem.target[ExistingAnimationSymbol] !== undefined){
+                        let existingAnimation = undoItem.target[ExistingAnimationSymbol];
+                        existingAnimation.end();
+                    }
+    
                     for(let property in undoItem.fromValues){
                         undoItem.target[property] = undoItem.fromValues[property]
                     }

@@ -314,4 +314,17 @@ function TransitionTo(target, toValues, durationMS, optionalArguments){
 	var animation = new Animation(target, toValues, durationMS === undefined ? undefined : durationMS/1000, optionalArguments);
 }
 
-export {TransitionTo, Animation, Easing}
+function TransitionInstantly(target, toValues, optionalArguments){
+
+    //interrupt any other animations
+    if(target[ExistingAnimationSymbol] !== undefined){
+        let existingAnimation = target[ExistingAnimationSymbol];
+        existingAnimation.end();
+    }
+
+    for(let property in toValues){
+        target[property] = toValues[property]
+    }
+}
+
+export {TransitionTo, TransitionInstantly, Animation, Easing}

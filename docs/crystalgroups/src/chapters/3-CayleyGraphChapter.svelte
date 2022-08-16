@@ -119,10 +119,10 @@
             What's the symmetry group of this triangle? To find out, we'll need to find some actions which realign the triangle with itself.
         </div>
         <div class="exp-slide">
-            One action which leaves the triangle looking unchanged is a <b style:color={generatorColors[0]}>rotation by 120 degrees</b>.
+            One action which leaves the triangle looking unchanged is a <b style={"color: " + generatorColors[0]}>rotation by 120 degrees</b>.
         </div>
         <div class="exp-slide">
-            And another action which leaves the triangle looking unchanged is a <b style:color={generatorColors[1]}>horizontal flip</b>.
+            And another action which leaves the triangle looking unchanged is a <b style={"color: " + generatorColors[1]}>horizontal flip</b>.
         </div>
         <div class="exp-slide">
             To help keep track of what each action does to the triangle, I'll doodle some letters on it.
@@ -131,19 +131,19 @@
             Finally, on the right, I'll keep track of the actions you discover.
         </div>
         <div class="exp-slide">
-            Each circle represents an action you can perform to the triangle which leaves it unchanged, and arrows will show you what happens if you <span style:color={generatorColors[0]}>rotate</span> and <span style:color={generatorColors[1]}>flip</span> the triangle.
+            Each circle represents an action you can perform to the triangle which leaves it unchanged, and arrows will show you what happens if you <span style={"color: " + generatorColors[0]}>rotate</span> and <span style={"color: " + generatorColors[1]}>flip</span> the triangle.
             <br>Can you find the triangle's entire symmetry group? Use these buttons to find out!
         </div>
         <div class="exp-slide">
             Alright! Looks like you found everything! <br>
-            This way of drawing symmetry groups, where we draw one circle per action and arrows to represent <span style:color={generatorColors[0]}>certain</span> <span style:color={generatorColors[1]}>actions</span>, is called a Cayley graph. <br> Doesn't it look somewhat triangular? That's no coincidence. Somehow, the symmetry group is capturing info about the original shape we started with.
+            This way of drawing symmetry groups, where we draw one circle per action and arrows to represent <span style={"color: " + generatorColors[0]}>certain</span> <span style={"color: " + generatorColors[1]}>actions</span>, is called a Cayley graph. <br> Doesn't it look somewhat triangular? That's no coincidence. Somehow, the symmetry group is capturing info about the original shape we started with.
             <br>
         </div>
         <div class="exp-slide">
-            Even more interesting, the resulting group doesn't depend on the actions we choose to build the graph with. For example, we built this Cayley graph using a <!--color --> <b style:color={generatorColors[0]}>rotation</b> and <b style:color={generatorColors[1]}>flip</b>. But what if we chose other actions?
+            Even more interesting, the resulting group doesn't depend on the actions we choose to build the graph with. For example, we built this Cayley graph using a <!--color --> <b style={"color: " + generatorColors[0]}>rotation</b> and <b style={"color: " + generatorColors[1]}>flip</b>. But what if we chose other actions?
         </div>
         <div class="exp-slide">
-            For example, what if I choose the action labeled "rf"? I'll draw it in <b style:color={generatorColors[2]}>purple</b>. What happens if we try building a cayley graph out of this action and a <b style:color={generatorColors[1]}>flip?</b>
+            For example, what if I choose the action labeled "rf"? I'll draw it in <b style={"color: " + generatorColors[2]}>purple</b>. What happens if we try building a cayley graph out of this action and a <b style={"color: " + generatorColors[1]}>flip?</b>
         </div>
         <div class="exp-slide">
             It's the same graph. 

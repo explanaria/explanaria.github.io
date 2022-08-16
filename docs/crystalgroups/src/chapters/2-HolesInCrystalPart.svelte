@@ -380,6 +380,7 @@
         await presentation.nextSlide();
         await presentation.nextSlide();
 
+
         if(!alreadyEnding){
             dispatch("chapterEnd");
         }
@@ -490,7 +491,7 @@
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                    When we see the see-through effect, the atoms almost seem to make <span style:color={chapter2linecolor}>lines</span>, radiating outwards from the center point, like a tunnel.
+                    When we see the see-through effect, the atoms almost seem to make <span style={"color: " + chapter2linecolor}>lines</span>, radiating outwards from the center point, like a tunnel.
                 </div>
         </div>
         <div class="exp-slide">
@@ -515,7 +516,7 @@
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                   We can be more precise if we talk about <b>moving</b>. The "see-through" effect happens in a certain direction if, when we take the entire crystal and <span style:color={chapter2linecolor}><b>move it in the direction we were looking</b></span>, after a certain distance, every moved atom would line up with another atom in the original crystal.
+                   We can be more precise if we talk about <b>moving</b>. The "see-through" effect happens in a certain direction if, when we take the entire crystal and <span style={"color: " + chapter2linecolor}><b>move it in the direction we were looking</b></span>, after a certain distance, every moved atom would line up with another atom in the original crystal.
                 </div>
         </div>
         
@@ -526,7 +527,7 @@
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                    Same thing: a see-through effect shows us that <span style:color={chapter2linecolor2}><b>moving the crystal in this other direction</b></span> a certain distance will also realign the moved atoms with the original crystal.
+                    Same thing: a see-through effect shows us that <span style={"color: " + chapter2linecolor2}><b>moving the crystal in this other direction</b></span> a certain distance will also realign the moved atoms with the original crystal.
                 </div>
         </div>
 
@@ -537,7 +538,7 @@
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                    Yup. That also happens because <span style:color={chapter2linecolor3}><b>moving the atoms this third way</b></span> will realign them with the crystal.
+                    Yup. That also happens because <span style={"color: " + chapter2linecolor3}><b>moving the atoms this third way</b></span> will realign them with the crystal.
                 </div>
         </div>
         <div class="exp-slide">
@@ -548,7 +549,7 @@
 
         <div class="exp-slide">
                 <div class="frostedbg">
-                    The lesson here: you can learn a lot about an object (like a crystal) by studying <b>actions which realign an object with itself</b>, like the <span style:color={chapter2linecolor}>mov</span><span style:color={chapter2linecolor2}>eme</span><span style:color={chapter2linecolor3}>nts</span> we discovered. The collection of all such actions is called a <b>"symmetry group"</b>, and mathematicians love studying them in group theory.
+                    The lesson here: you can learn a lot about an object (like a crystal) by studying <b>actions which realign an object with itself</b>, like the <span style={"color: " + chapter2linecolor}>mov</span><span style={"color: " + chapter2linecolor2}>eme</span><span style={"color: " + chapter2linecolor3}>nts</span> we discovered. The collection of all such actions is called a <b>"symmetry group"</b>, and mathematicians love studying them in group theory.
                 </div>
         </div>
         
@@ -564,13 +565,13 @@
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                   If we combine the <span style:color={chapter2linecolor}>first</span> action we found with the <span style:color={chapter2linecolor3}>third</span> action...
+                   If we combine the <span style={"color: " + chapter2linecolor}>first</span> action we found with the <span style={"color: " + chapter2linecolor3}>third</span> action...
                 </div>
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                   If we combine the <span style:color={chapter2linecolor}>first</span> action we found, with the <span style:color={chapter2linecolor3}>third</span> action... 
-                   <br>it's the same as the <span style:color={chapter2linecolor2}>second</span> action.
+                   If we combine the <span style={"color: " + chapter2linecolor}>first</span> action we found, with the <span style={"color: " + chapter2linecolor3}>third</span> action... 
+                   <br>it's the same as the <span style={"color: " + chapter2linecolor2}>second</span> action.
                 </div>
         </div>
         <div class="exp-slide">

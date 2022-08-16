@@ -4,6 +4,7 @@
 	import CayleyGraphChapter from "./chapters/3-CayleyGraphChapter.svelte";
 	import PointGroupChapter from "./chapters/5-PointGroupChapter.svelte";
 	import Ending from "./chapters/Ending.svelte";
+    import {tick} from "svelte";
 
     import ChapterSelector from "./chapters/chapterselector.svelte";
 
@@ -24,6 +25,9 @@
 
         mainContainer.style.opacity = 0; //fadeout done via CSS animation
         await EXP.delay(500);
+        currentChapter = null;
+        await EXP.delay(1); //AAARGH i need this to make sure one chapter unloads before the next loads
+        await tick();
         currentChapter = chapterNum;
         mainContainer.style.opacity = 1;
     }

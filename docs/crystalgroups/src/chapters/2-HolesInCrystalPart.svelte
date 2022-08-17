@@ -14,6 +14,7 @@
 
     export let alludeToChapter3 = true;
 
+
     async function animate(){
         clearThreeScene();
         let canvas = attachCanvas("threecanvas", "threecanvas");
@@ -491,7 +492,7 @@
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                    When we see the see-through effect, the atoms almost seem to make <span style={"color: " + chapter2linecolor}>lines</span>, radiating outwards from the center point, like a tunnel.
+                    When we see the see-through effect, the atoms almost seem to make <b style={"color: " + chapter2linecolor}>lines</b>, radiating outwards from the center point, like a tunnel.
                 </div>
         </div>
         <div class="exp-slide">
@@ -549,7 +550,7 @@
 
         <div class="exp-slide">
                 <div class="frostedbg">
-                    The lesson here: you can learn a lot about an object (like a crystal) by studying <b>actions which realign an object with itself</b>, like the <span style={"color: " + chapter2linecolor}>mov</span><span style={"color: " + chapter2linecolor2}>eme</span><span style={"color: " + chapter2linecolor3}>nts</span> we discovered. The collection of all such actions is called a <b>"symmetry group"</b>, and mathematicians love studying them in group theory.
+                    The lesson here: you can learn a lot about an object (like a crystal) by studying <b>actions which realign an object with itself</b>, like the <b style={"color: " + chapter2linecolor}>mov</b><b style={"color: " + chapter2linecolor2}>eme</b><b style={"color: " + chapter2linecolor3}>nts</b> we discovered. The collection of all such actions is called a <b>"symmetry group"</b>, and mathematicians love studying them in group theory.
                 </div>
         </div>
         
@@ -565,13 +566,13 @@
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                   If we combine the <span style={"color: " + chapter2linecolor}>first</span> action we found with the <span style={"color: " + chapter2linecolor3}>third</span> action...
+                   If we combine the <b style={"color: " + chapter2linecolor}>first</b> action we found with the <b style={"color: " + chapter2linecolor3}>third</b> action...
                 </div>
         </div>
         <div class="exp-slide">
                 <div class="frostedbg">
-                   If we combine the <span style={"color: " + chapter2linecolor}>first</span> action we found, with the <span style={"color: " + chapter2linecolor3}>third</span> action... 
-                   <br>it's the same as the <span style={"color: " + chapter2linecolor2}>second</span> action.
+                   If we combine the <b style={"color: " + chapter2linecolor}>first</b> action we found with the <b style={"color: " + chapter2linecolor3}>third</b> action... 
+                   <br>it's the same as the <b style={"color: " + chapter2linecolor2}>second</b> action.
                 </div>
         </div>
         <div class="exp-slide">

@@ -17,7 +17,7 @@
 
     async function animate(){
         clearThreeScene();
-        let canvas = attachCanvas("threecanvas", "threecanvas");
+        let canvas = attachCanvas("threecanvas", "threecanvas topThing");
 	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
         controls.enableKeys = false;
         window.three = three;
@@ -421,13 +421,14 @@
         pointer-events: none;
     }
     .topThing{
-        height:70%;
+        height: 20em;
     }
     .bottomThing{
-        height: 30%;
+        height: 5em;
+        padding-top: 20em;
     }
 </style>
-<div class="fullscreen">
+<div class="overlappingItemContainer">
     <div class="overlappingItemContainer exp-text topThing">
         <div class="threecanvascontainer" id="threecanvas" />
         <div id="whitebg" style="opacity: 0"/>

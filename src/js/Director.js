@@ -159,7 +159,7 @@ class NonDecreasingDirector{
 
     async waitForPageLoad(){
         return new Promise(function(resolve, reject){
-            if(document.readyState == 'complete'){
+            if(document.readyState !== "loading"){
                 resolve();
             }else{
                 window.addEventListener("DOMContentLoaded",resolve, false);

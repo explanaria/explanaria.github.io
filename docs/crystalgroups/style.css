@@ -201,6 +201,7 @@ pointer-events: all
     /* This is the intended viewing experience, width bigger than height. */
     .maincontainer{
         font-size: calc(16 / 9 * 2vh); /* wider than 16/9. so to fit, we letterbox sideways. that means it's limited by height */ 
+        font-size: calc(16 / 9 * 2svh); /* if you support svh, do it */
     }
 }
 @media (orientation:portrait) and (max-aspect-ratio: 9 / 16){
@@ -231,12 +232,14 @@ pointer-events: all
   .maincontainer{
     height: 100vw;
     width: 100vh;
+    width: 100svh;
     }
   .rotatesign{
         transform: translate(-50%, -50%) rotate(-90deg) translate(-50%, 50%);
         display: block;
         align-content: center;
         width: 100vw;
+        height: 100vh;
         height: 100svh;
         display: block;
         z-index: 4;

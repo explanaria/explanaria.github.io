@@ -13,13 +13,13 @@
     export let onlyTwo = false;
 
     let currentChapter = 1; //one indexed
-    let numChapters = 4;
+    let numChapters = 4+1;
 
-    if(!onlyTwo)currentChapter = 5; //// DEBUG
+    if(onlyTwo)numChapters = 2+1;
+    if(!onlyTwo){currentChapter = 4;} //// DEBUG
 
     let mainContainer = null;
     async function changeChapter(chapterNum){
-        console.log(chapterNum)
         chapterNum = ((chapterNum-1)%numChapters) + 1; //round to 1-numChapters
         window.chapterNum = chapterNum;
 

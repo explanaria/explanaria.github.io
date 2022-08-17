@@ -87,7 +87,7 @@
         <div class="exp-slide">
 
             <div class="frostedbg thinmargin">
-                <h2>Crystal Clear Conundrums</h2>
+                <h1>Crystal Clear Conundrums</h1>
                  A Multifaceted Intro to Group Theory
                 <br>August 2022
                 <br><br>

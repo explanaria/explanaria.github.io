@@ -79,7 +79,8 @@
                 <div class="column" style:height={"50%"}>
                     <br><br>
                     <br>
-                    <h4>This is a crystal of kyanite.</h4>
+                    <h1>This is a crystal of kyanite.</h1>
+                    <br>
                     <img class="materialimage" alt="Long, sharp, blue crystals of kyanite poking out of a white rock" src="./img/Kyanite-265746.jpg"/>
                     <br>
                     <aside>(photo by 
@@ -89,7 +90,8 @@
                 <div class="column" style:height={"50%"}>
                     <br><br>
                     <br>
-                    <h4>And this is a crystal of andalusite.</h4>
+                    <h1>And this is a crystal of andalusite.</h1>
+                    <br>
                     <img class="materialimage" alt="A orange-gray crystal of andalusite, opaque and with long columns" src="./img/Andalusite_-_Al2SiO5_locality_-_Dolní_Bory,_Czech_Republic_(50426489511).jpg"/>
                     <br>
                     <aside>(photo by 

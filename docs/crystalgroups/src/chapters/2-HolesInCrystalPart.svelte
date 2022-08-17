@@ -423,14 +423,11 @@
     .topThing{
         height: 20em;
     }
-    .bottomThing{
-        height: 5em;
-        padding-top: 20em;
-    }
 </style>
 <div class="overlappingItemContainer">
     <div class="overlappingItemContainer exp-text topThing">
         <div class="threecanvascontainer" id="threecanvas" />
+        <!--
         <div id="whitebg" style="opacity: 0"/>
         <div id="overlays" class="overlappingItemContainer">
             <!-- 
@@ -439,167 +436,170 @@
                     Andalusite
                 </div>
             </div>
-            -->
+           
         </div>
+        -->
     </div>
 
 
-    <div class="overlappingItemContainer bottomThing ">
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    Let's start by examining the structure of just andalusite for now. Click and drag to rotate the crystal.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    
-                    As you rotate andalusite and examine it from all angles, you might notice something weird: from certain angles, sometimes the atoms align to let you see straight through andalusite.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    Why does that happen? Let's investigate further.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    The see-through effect doesn't happen at all angles. Just a bunch of disordered atoms here.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    But it does happen here.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    And here.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    Up here too.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    So what's causing that see-through effect? What's special about these specific directions?
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    Let's go back to the first example we found of see-through-ness. What's going on here? 
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    When we see the see-through effect, the atoms almost seem to make <b style={"color: " + chapter2linecolor}>lines</b>, radiating outwards from the center point, like a tunnel.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    But if we look from another angle, those lines are actually all parallel, moving in the same direction.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    This helps us see what's going on: when there's a see-through effect, it means that in the direction we're looking, every atom lines up with another atom along that direction. Great!
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    But we can be even more precise than that. It's hard to keep track of millions of atoms, but the same thing happens to all of them: lining up in a given direction. One of the key lessons of group theory is that instead of thinking about objects, it can sometimes be simpler to think about <b>actions</b>.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    Let me clear up some of this clutter really quick and I'll show you what I mean.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                   We can be more precise if we talk about <b>moving</b>. The "see-through" effect happens in a certain direction if, when we take the entire crystal and <span style={"color: " + chapter2linecolor}><b>move it in the direction we were looking</b></span>, after a certain distance, every moved atom would line up with another atom in the original crystal.
-                </div>
-        </div>
-        
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    What about this other direction where we saw a see-through effect?
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    Same thing: a see-through effect shows us that <span style={"color: " + chapter2linecolor2}><b>moving the crystal in this other direction</b></span> a certain distance will also realign the moved atoms with the original crystal.
-                </div>
-        </div>
+    <div class="bottomThing noclick">
+        <div class="overlappingItemContainer yesclick">
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        Let's start by examining the structure of just andalusite for now. Click and drag to rotate the crystal.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        
+                        As you rotate andalusite and examine it from all angles, you might notice something weird: from certain angles, sometimes the atoms align to let you see straight through andalusite.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        Why does that happen? Let's investigate further.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        The see-through effect doesn't happen at all angles. Just a bunch of disordered atoms here.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        But it does happen here.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        And here.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        Up here too.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        So what's causing that see-through effect? What's special about these specific directions?
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        Let's go back to the first example we found of see-through-ness. What's going on here? 
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        When we see the see-through effect, the atoms almost seem to make <b style={"color: " + chapter2linecolor}>lines</b>, radiating outwards from the center point, like a tunnel.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        But if we look from another angle, those lines are actually all parallel, moving in the same direction.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        This helps us see what's going on: when there's a see-through effect, it means that in the direction we're looking, every atom lines up with another atom along that direction. Great!
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        But we can be even more precise than that. It's hard to keep track of millions of atoms, but the same thing happens to all of them: lining up in a given direction. One of the key lessons of group theory is that instead of thinking about objects, it can sometimes be simpler to think about <b>actions</b>.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        Let me clear up some of this clutter really quick and I'll show you what I mean.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                       We can be more precise if we talk about <b>moving</b>. The "see-through" effect happens in a certain direction if, when we take the entire crystal and <span style={"color: " + chapter2linecolor}><b>move it in the direction we were looking</b></span>, after a certain distance, every moved atom would line up with another atom in the original crystal.
+                    </div>
+            </div>
+            
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        What about this other direction where we saw a see-through effect?
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        Same thing: a see-through effect shows us that <span style={"color: " + chapter2linecolor2}><b>moving the crystal in this other direction</b></span> a certain distance will also realign the moved atoms with the original crystal.
+                    </div>
+            </div>
 
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    And the third see-through effect we saw? 
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    Yup. That also happens because <span style={"color: " + chapter2linecolor3}><b>moving the atoms this third way</b></span> will realign them with the crystal.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    So, to recap: every time we see a see-through effect, it's because there's <b>a movement of the crystal in that direction</b> which <b>realigns the crystal's atoms with itself</b>. We've found 3 of these movements so far.
-                </div>
-        </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        And the third see-through effect we saw? 
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        Yup. That also happens because <span style={"color: " + chapter2linecolor3}><b>moving the atoms this third way</b></span> will realign them with the crystal.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        So, to recap: every time we see a see-through effect, it's because there's <b>a movement of the crystal in that direction</b> which <b>realigns the crystal's atoms with itself</b>. We've found 3 of these movements so far.
+                    </div>
+            </div>
 
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    The lesson here: you can learn a lot about an object (like a crystal) by studying <b>actions which realign an object with itself</b>, like the <b style={"color: " + chapter2linecolor}>mov</b><b style={"color: " + chapter2linecolor2}>eme</b><b style={"color: " + chapter2linecolor3}>nts</b> we discovered. The collection of all such actions is called a <b>"symmetry group"</b>, and mathematicians love studying them in group theory.
-                </div>
-        </div>
-        
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    But there's more to the story than that, because actions can <b>combine</b> in interesting ways.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    For example, let's take another look at the actions we found in the symmetry group. We can combine two actions by performing them in sequence: do one, then another.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                   If we combine the <b style={"color: " + chapter2linecolor}>first</b> action we found with the <b style={"color: " + chapter2linecolor3}>third</b> action...
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                   If we combine the <b style={"color: " + chapter2linecolor}>first</b> action we found with the <b style={"color: " + chapter2linecolor3}>third</b> action... 
-                   <br>it's the same as the <b style={"color: " + chapter2linecolor2}>second</b> action.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    In fact, combining <b>any</b> two actions will give you another action. That's one of the key rules of groups. And for many groups, once you know some simple actions and how they combine, you can combine the actions to deduce everything there is to know about a group.
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    In summary:
-                    <br>
-                    <ul>
-                        <li>We can understand crystals by looking at "the actions which realign it with itself"</li>
-                        <li>Combining two such actions gives you another action!</li>
-                    </ul>
-                </div>
-        </div>
-        <div class="exp-slide">
-                <div class="frostedbg">
-                    {#if alludeToChapter3}
-                    In a way, you could say group theory is all about understanding the ways two things combine (and undo, but I'll discuss that later). And that's why mathematicians care about group theory so much.
-                    <br>But what does a full symmetry group actually look like? Let's find out.
-                    {:else}
-                    When I first learned about group theory, it was taught very abstractly. Sure, it was interesting, but I wanted to know: what would make mathematicians think to study "actions which send a shape to itself" in the first place? These crystals, to me, are the answer. I hope they inspire you to learn more about group theory!
-                    {/if}
-                </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        The lesson here: you can learn a lot about an object (like a crystal) by studying <b>actions which realign an object with itself</b>, like the <b style={"color: " + chapter2linecolor}>mov</b><b style={"color: " + chapter2linecolor2}>eme</b><b style={"color: " + chapter2linecolor3}>nts</b> we discovered. The collection of all such actions is called a <b>"symmetry group"</b>, and mathematicians love studying them in group theory.
+                    </div>
+            </div>
+            
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        But there's more to the story than that, because actions can <b>combine</b> in interesting ways.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        For example, let's take another look at the actions we found in the symmetry group. We can combine two actions by performing them in sequence: do one, then another.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                       If we combine the <b style={"color: " + chapter2linecolor}>first</b> action we found with the <b style={"color: " + chapter2linecolor3}>third</b> action...
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                       If we combine the <b style={"color: " + chapter2linecolor}>first</b> action we found with the <b style={"color: " + chapter2linecolor3}>third</b> action... 
+                       <br>it's the same as the <b style={"color: " + chapter2linecolor2}>second</b> action.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        In fact, combining <b>any</b> two actions will give you another action. That's one of the key rules of groups. And for many groups, once you know some simple actions and how they combine, you can combine the actions to deduce everything there is to know about a group.
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        In summary:
+                        <br>
+                        <ul>
+                            <li>We can understand crystals by looking at "the actions which realign it with itself"</li>
+                            <li>Combining two such actions gives you another action!</li>
+                        </ul>
+                    </div>
+            </div>
+            <div class="exp-slide">
+                    <div class="frostedbg">
+                        {#if alludeToChapter3}
+                        In a way, you could say group theory is all about understanding the ways two things combine (and undo, but I'll discuss that later). And that's why mathematicians care about group theory so much.
+                        <br>But what does a full symmetry group actually look like? Let's find out.
+                        {:else}
+                        When I first learned about group theory, it was taught very abstractly. Sure, it was interesting, but I wanted to know: what would make mathematicians think to study "actions which send a shape to itself" in the first place? These crystals, to me, are the answer. I hope they inspire you to learn more about group theory!
+                        {/if}
+                    </div>
+            </div>
         </div>
     </div>
 </div>

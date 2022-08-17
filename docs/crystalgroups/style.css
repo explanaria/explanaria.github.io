@@ -43,8 +43,8 @@ aside{
 
 .threecanvas{
         min-width: 3em;
-        width:100%;
-        height:100%;
+        width:50em;
+        height:28.125em;
         max-width: 100vw;
         max-height: 100vh;
         max-height: 100svh;
@@ -99,6 +99,14 @@ aside{
     /*
     margin: 0 10vw; /* avoids exp arrows
     width: 80vw;*/
+}
+
+.topThing{
+    height: 20em;
+}
+.bottomThing{
+    height: 5em;
+    padding-top: 20em;
 }
 
 

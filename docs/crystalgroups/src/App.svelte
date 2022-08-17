@@ -62,7 +62,7 @@
         <CrystalIntroPart on:chapterEnd={chapterEnd} />
     {/if}
     {#if currentChapter == 2}
-        <HolesInCrystalPart on:chapterEnd={chapterEnd}/>
+        <HolesInCrystalPart on:chapterEnd={chapterEnd} alludeToChapter3={!onlyTwo}/>
     {/if}
     {#if onlyTwo}
         {#if currentChapter == 3}

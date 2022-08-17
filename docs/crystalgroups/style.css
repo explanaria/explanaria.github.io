@@ -22,7 +22,7 @@ aside{
 .fullscreen{
     width: 100%;
     height: 100vh;
-    height: 100svh;
+    height: 100dvh;
     overflow: hidden;
 }
 
@@ -47,7 +47,7 @@ aside{
         height:28.125em;
         max-width: 100vw;
         max-height: 100vh;
-        max-height: 100svh;
+        max-height: 100dvh;
 }
 
 
@@ -55,7 +55,7 @@ aside{
     font-family: Lora, serif;
     aspect-ratio: 16 / 9;
     max-height: 100vh;
-    max-height: 100svh;
+    max-height: 100dvh;
     margin: auto;
     text-align: center;
     transition: 0.5s opacity ease-in-out;
@@ -201,7 +201,7 @@ pointer-events: all
     /* This is the intended viewing experience, width bigger than height. */
     .maincontainer{
         font-size: calc(16 / 9 * 2vh); /* wider than 16/9. so to fit, we letterbox sideways. that means it's limited by height */ 
-        font-size: calc(16 / 9 * 2svh); /* if you support svh, do it */
+        font-size: calc(16 / 9 * 2dvh); /* if you support dvh, do it */
     }
 }
 @media (orientation:portrait) and (max-aspect-ratio: 9 / 16){
@@ -224,7 +224,7 @@ pointer-events: all
     top: 0px;
 }
 
-@media only screen and (orientation:portrait) and (max-aspect-ratio: 9/16){
+@media only screen and (orientation:portrait) and (max-aspect-ratio: 9/12){
   /* if you're on a phone and holding in portrait, rotate site to encourage you to switch to landscape */
   body{
     transform: rotate(90deg);
@@ -232,7 +232,7 @@ pointer-events: all
   .maincontainer{
     height: 100vw;
     width: 100vh;
-    width: 100svh;
+    width: 100dvh;
     }
   .rotatesign{
         transform: translate(-50%, -50%) rotate(-90deg) translate(-50%, 50%);
@@ -240,10 +240,9 @@ pointer-events: all
         align-content: center;
         width: 100vw;
         height: 100vh;
-        height: 100svh;
-        display: block;
+        height: 100dvh;
         z-index: 4;
-        font-size: 14px;
+        font-size: 2dvh;
         background-color: rgba(240,240,255, 0.8)
    }
     .rotatesign h1{

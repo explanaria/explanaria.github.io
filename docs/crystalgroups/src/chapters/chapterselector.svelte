@@ -24,13 +24,11 @@
     }
     .chapterbutton{
         border-radius: 20em;
-        width: 1.5em;
+        width: 1em;
         height: 1em;
         text-align: center;
         border: 1.5px solid #2e2e38;
         background-color: white;
-        padding-top: 0.25em;
-        padding-bottom: 0.25em;
     }
     .chapterbutton:hover{
         background-color: hsla(240, 70%, 70%, 1);

@@ -49,6 +49,11 @@ th {
 
 /* end minireset.css */
 
+h1{
+  font-size: 125%;
+  font-weight: bold;
+}
+
 
 
 body{

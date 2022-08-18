@@ -1,12 +1,13 @@
 <script>
     import D6Group from "../twoD/D6Group.svelte";
     import { GroupElement, FiniteGroup } from "../twoD/groupmath.js";
-    import {generatorColors} from "../colors.js";
+    import {generatorColors as defaultGeneratorColors} from "../colors.js";
     import {drawTrianglePath, lineWidth, D6_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "../twoD/d6canvasdrawing.js";
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
     
 	import { onMount, onDestroy } from 'svelte';
+    import { fade } from 'svelte/transition';
 
     //group stuff
     let r = new GroupElement("r", "(123)");
@@ -19,6 +20,8 @@
             }
     )
     //isArrowVisibleMap["e"] = [true, true];
+
+    export let generatorColors = defaultGeneratorColors;
     
 
     export let data = {
@@ -29,41 +32,64 @@
             element.name == "e")
         ), //only e visible to start
         isArrowVisibleMap: isArrowVisibleMap,
+        generatorColors: generatorColors,
         showgroup: true,
         showbuttons: true,
         showInfo: true,
         d6textOpacity: 1,
         currentOrientation: d6group.getElemByName("e"),
         recordNewOrientations: true,
+        opacity: 0,
     }
+
+    //hack for reactivity
+
+    //copy everything to a _data
+    let _data = {};
+    Object.keys(data).forEach(keyName => {_data[keyName] = data[keyName];})
+
+    //redefine data with a setter that tells svelte to update data
+    Object.keys(_data).forEach(keyName => 
+        Object.defineProperty(data, keyName, {
+          set(x) { _data[keyName] = x; _data = _data;}, //let svelte know about the reactive change
+          get(x) { return _data[keyName]; }
+        })
+    );
 
     //controlling the orientation of the triangle
     let prevOrientation = d6group.getElemByName("e");
 
+    export function onButton(generatorIndex){
+        let generator = data.d6group.generators[generatorIndex];
 
-    export function onRotate(){
+        if(generator.name == "r")playRotation(120);
+        if(generator.name == "rr")playRotation(240);
+        if(generator.name == "f")playFlip();
+        if(generator.name == "rf"){
+            //at same time
+            playRotation(120);
+            playFlip();
 
-        //terrible hack time.
-        rotationTarget += 120 * flipScaleTarget;
+        }
 
         prevOrientation = data.currentOrientation;
         if(data.recordNewOrientations){
-            data.currentOrientation = d6group.multiply(data.currentOrientation, d6group.generators[0])
-            data.isArrowVisibleMap[prevOrientation.name][0] = true;
+            data.currentOrientation = d6group.multiply(data.currentOrientation, generator)
+            data.isArrowVisibleMap[prevOrientation.name][generatorIndex] = true;
         }
         showNewGroupElements()
     }
-    export function onFlip(){
+
+
+    export function playRotation(degrees=120){
+
+        //terrible hack time.
+        rotationTarget += degrees * flipScaleTarget;
+    }
+    export function playFlip(){
 
         //terrible hack time.
         flipScaleTarget *= -1;
-
-        prevOrientation = data.currentOrientation;
-        if(data.recordNewOrientations){
-            data.currentOrientation = d6group.multiply(data.currentOrientation, d6group.generators[1])
-            data.isArrowVisibleMap[prevOrientation.name][1] = true;
-        }
-        showNewGroupElements()
     }
     function showNewGroupElements(){
         //moveTriangleToNewOrientation();
@@ -200,53 +226,67 @@
 
     .mainlayout{
         display: grid;
-        grid-template-rows: 2em 21em 4em;
+        grid-template-rows: 0em 19em;
+        transition: opacity 0.5s ease-in-out;
     }
     .button{
         font-size: 1em;
+        animation: pulse 1s ease-in-out;
+        border-radius: 2em;
+    }
+    @keyframes pulse{
+        0%{
+            transform: scale(1);
+        }
+        50%{
+            transform: scale(1.2);
+        }
+        100%{
+            transform: scale(1);
+        }
     }
 </style>
 
-<div>
-
-    <div class="mainlayout">
-        <slot name="toppart">
-            <div class="top">
-                {#if data.showInfo}
-                <div class="fadeInImmediately">
-                    <br>Orientations found: {orientationsFound} {orientationsFound == d6group.elements.length ? "🎉" : ""}
-                    <br>Arrows found: {arrowsFound}/{d6group.elements.length * d6group.generators.length} {arrowsFound == d6group.elements.length * d6group.generators.length ? "🎉" : ""}
-                </div>
-                {/if}
+<div class="mainlayout" style:opacity={_data.opacity} style:pointer-events={_data.opacity != 0 ? "all" : "none"}>
+    <slot name="toppart">
+        <div class="top">
+            {#if data.showInfo}
+            <div transition:fade="{{ duration: 500 }}">
+                <br>Orientations found: {orientationsFound} {orientationsFound == d6group.elements.length ? "🎉" : ""}
+                <br>Arrows found: {arrowsFound}/{d6group.elements.length * d6group.generators.length} {arrowsFound == d6group.elements.length * d6group.generators.length ? "🎉" : ""}
             </div>
-        </slot>
-        <div class="twocolumns interactivepart">
-            <div class="column">
-                <canvas bind:this={canvas} style:width={canvasSize+"em"} style:height={canvasSize+"em"} /> 
-                <br>
-                <div class="twocolumns">
-                    {#if data.showbuttons}
-                    <button on:click={onRotate} style:border-color={generatorColors[0]} class="button fadeInImmediately">Rotate by 120 degrees</button>
-                    <button on:click={onFlip} style:border-color={generatorColors[1]} class="button fadeInImmediately">Flip horizontally</button>
-                    {/if}
-                </div>
-                <!-->Current orientation: {data.currentOrientation.name}<-->
-
-            </div>
-
-            <div class="grouppart">
-                {#if data.showgroup}
-                <div class="highlight fadeInImmediately" 
-                    style:left={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[0] + "em":""} 
-                    style:top={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[1]+ "em":""} />
-                <D6Group {...data} bind:positions={elemPositions} />
-                {/if}
-            </div>
+            {/if}
         </div>
-        <slot name="textpart">
-            <div class="textpart" style:background-color="red">
-                How many ways are there to fit an equilateral triangle into an equilateral triangle shaped hole? Use these buttons to find out!
+    </slot>
+    <div class="twocolumns interactivepart">
+        <div class="column">
+            <canvas bind:this={canvas} style:width={canvasSize+"em"} style:height={canvasSize+"em"} /> 
+            <br>
+            <div class="twocolumns" style="gap: 1em;">
+                {#if data.showbuttons}
+                <button transition:fade="{{ duration: 500 }}" on:click={() => onButton(0)} style:border-color={_data.generatorColors[0]} class="button">
+                    <slot name="button1text">
+                    Rotate by 120 degrees
+                    </slot>
+                </button>
+                <button transition:fade="{{ duration: 500 }}" on:click={() => onButton(1)} style:border-color={_data.generatorColors[1]} class="button">
+                    <slot name="button2text">
+                    Flip horizontally
+                    </slot>
+                </button>
+                {/if}
             </div>
-        </slot>
+            <!-->Current orientation: {data.currentOrientation.name}<-->
+
+        </div>
+
+        <div class="grouppart">
+            {#if data.showgroup}
+            <div class="highlight fadeInImmediately" 
+                style:left={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[0] + "em":""} 
+                style:top={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[1]+ "em":""} />
+            <D6Group d6group={data.d6group} isElementVisible={data.isElementVisible} isArrowVisibleMap={data.isArrowVisibleMap} bind:positions={elemPositions} />
+            {/if}
+        </div>
     </div>
 </div>

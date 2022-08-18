@@ -4,6 +4,7 @@
     import { GroupElement } from "./groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {easing, drawStaticElements, isPureTranslation, getTranslationVector, canvasSizePixels, canvasSize, dotColor} from "./crystalcanvasdrawing.js";
+    import {tick} from "svelte";
 
     export let element = new GroupElement("", "(3)"); //a GroupElement
 
@@ -133,13 +134,13 @@
 
 
     onMount(async () => {
-        canvas = document.getElementById(canvasName);
+        await tick(); //load canvas
         ctx = canvas.getContext("2d");
         draw(0);
         await animationLoop();
     })
 </script>
 
-<canvas class="elementcanvas" id={canvasName} width={canvasSize} height={canvasSize} style:width={canvasSize + "em"} style:height={canvasSize + "em"}/> 
+<canvas class="elementcanvas" bind:this={canvas} width={canvasSize} height={canvasSize} style:width={canvasSize + "em"} style:height={canvasSize + "em"}/> 
 
 

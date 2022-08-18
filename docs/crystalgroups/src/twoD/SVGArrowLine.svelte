@@ -7,7 +7,7 @@
     export let markerEnd;
 
     export let isCurved = true;
-    export let elementAvoidRadius = 2.75; //in em. if start and end are the centers of elements, end the arrows early to give the group elements a bit of a margin
+    export let elementAvoidRadius = 2.4; //in em. if start and end are the centers of elements, end the arrows early to give the group elements a bit of a margin
     elementAvoidRadius = parseFloat(elementAvoidRadius);
 
     function moveInDirection(point, direction, distance){

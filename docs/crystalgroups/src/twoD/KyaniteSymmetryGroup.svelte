@@ -6,7 +6,7 @@
 
     import D6ElementCanvas from "./D6ElementCanvas.svelte";
 
-    import { defaultGroupElementBorderColor, generatorColors, identityColor} from "../colors.js";
+    import { chooseElementBorderColor} from "../colors.js";
 
     let i = new GroupElement("i", "(12)");
     export let group = new LazyGroup([i], {"ii":"e"});
@@ -24,15 +24,6 @@
     positions.set(group.getElemByName("e"), [3,3])
     positions.set(group.getElemByName("i"), [8,8])
 
-    function chooseBorderColor(element){
-        if(element.name == "e"){
-            return identityColor;
-        }
-        if(group.generators.indexOf(element) !== -1){ //if the element is a generator, color it appropriately
-            return generatorColors[group.generators.indexOf(element)] ;
-        }
-        return defaultGroupElementBorderColor;
-    }
 
     let defaultArrowVisibility = {};
     group.elements.forEach(startElement => {
@@ -54,7 +45,7 @@
     {#each group.elements as element, i}
         {#if isElementVisible[i]}
             <GroupElementDisplay element={element}
-            borderColor={chooseBorderColor(element)}
+            borderColor={chooseElementBorderColor(group, element)}
             top={positions.get(element)[1]} left={positions.get(element)[0]}
             >
                 <D6ElementCanvas element={element}/>

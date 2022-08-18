@@ -3,18 +3,19 @@
 
     export let group = {elements: []};
     export let positionsPerElementMap;
-    import {generatorColors, drawGeneratorsWithOutlines, drawEyesOnArrows} from "../colors.js";
+    import {generatorColors, drawGeneratorsWithOutlines, drawEyesOnArrows, specialGeneratorColors} from "../colors.js";
 	import { onMount } from 'svelte';
     import SVGArrowLine from "./SVGArrowLine.svelte";
 
-    export let elementAvoidRadius = 2.75;
+    export let elementAvoidRadius = 2.4;
 
-
-    export let specialGeneratorColors = {};
+    let thisSVGName = Math.random();
 
     function chooseGeneratorColor(i){
         let generator = group.generators[i];
-        if(specialGeneratorColors[generator.name])return specialGeneratorColors[generator.name];
+        if(specialGeneratorColors[generator.name]){
+            return specialGeneratorColors[generator.name];
+        }
         return generatorColors[i]
     }
 
@@ -61,7 +62,7 @@
   <defs>
 
     {#each group.generators as _, i}
-    <marker class="arrowhead" id={"arrowhead-"+i} markerWidth="4" markerHeight="4" 
+    <marker class="arrowhead" id={"arrowhead-"+thisSVGName+i} markerWidth="4" markerHeight="4" 
     refX="2" refY="2" orient="auto"> <!-- from https://thenewcode.com/1068/Making-Arrows-in-SVG -->
       <polygon points="0 0, 4 2, 0 4" fill={chooseGeneratorColor(i)}/>
       {#if drawEyesOnArrows}
@@ -95,12 +96,12 @@
                 {#if isArrowVisibleMap[startElement.name] && isArrowVisibleMap[startElement.name][i]}
                     {#if drawGeneratorsWithOutlines}
                         <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
-                        stroke={chooseGeneratorColor(i)} markerEnd={"url(#arrowhead-"+i+")"}
+                        stroke={chooseGeneratorColor(i)} markerEnd={"url(#arrowhead-"+thisSVGName+i+")"}
                         strokeWidth="0.25"/>
                     {/if}
                     <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
                         stroke={chooseGeneratorColor(i)}
-                         markerEnd={"url(#arrowhead-"+i +")"}
+                         markerEnd={"url(#arrowhead-"+thisSVGName+i +")"}
                         strokeWidth="0.2" elementAvoidRadius={elementAvoidRadius}}/>
                 {/if}
             {/each}

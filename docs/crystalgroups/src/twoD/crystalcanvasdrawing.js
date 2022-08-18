@@ -8,6 +8,9 @@ export const canvasSize = 2; //in em
 //30 should really be "em to px"
 export const canvasSizePixels = canvasSize * 30; //is this the right calculation? 
 
+const dash_radius = canvasSizePixels * 0.4;
+const num_dashes = 4;
+
 
 export const dotColor = "gray";
 export const dotColor2 = "red";
@@ -49,11 +52,10 @@ function chooseColor(name){
 export function drawStaticElements(ctx, element){
     //draw things like arcs or dotted lines to represent transformations. these don't move
     //ctx.strokeStyle = arrowColor;
+    ctx.fillStyle = ctx.strokeStyle = chooseColor(element.name);
+
     if(isPureTranslation(element.name)){
         //this is a pure translation
-        
-        ctx.fillStyle = ctx.strokeStyle = chooseColor(element.name);
-
         let translationVec = getTranslationVector(element.name)
 
         ctx.beginPath();
@@ -70,18 +72,26 @@ export function drawStaticElements(ctx, element){
         drawTrianglePath(ctx, finalPoint[0],finalPoint[1], finalDirection);
         ctx.fill();
     }
-    else if(element.name.search("f") != -1){//todo: add check for only "r"s being in there
+
+    else if(element.name == "m" || element.name == "m2" || element.name == "g" || element.name == "g1" || element.name == "g2"){//todo: add check for only "r"s being in there
         //draw a dotted flip line.
         //any Rs there will rotate the flip line.g
-        let flipStartPos = [0, dash_radius];
-        for(let i=element.name.length-1;i>=0;i--){ //traverse name from right to left, backwards, because that's how function notation works
-            if(element.name[i] == 'r'){
-                flipStartPos = rotate2D(NUM_DEGREES_IN_ONE_ROTATION, ...flipStartPos);
+
+        let flipStartPos = [dash_radius, 0];
+        if(element.name[0] == 'm'){
+            //no tilt
+            let flipStartPos = [0, dash_radius];
+        }else{
+            //tilt different directions
+            flipStartPos = rotate2D(30, ...flipStartPos);
+            for(let i=element.name.length-1;i>=0;i--){ //traverse name from right to left, backwards, because that's how function notation works
+
+                if(element.name[i] == '2'){
+                    let rotationDegrees = 80;
+                    flipStartPos = rotate2D(rotationDegrees, ...flipStartPos);
+                }
             }
-            if(element.name[i] == 'f'){ //flip horizontally
-                flipStartPos[0] = -flipStartPos[0];
-            }
-        }
+        }   
 
         //now draw a dotted line from flipStartPos to -flipStartPos
         ctx.beginPath()
@@ -96,6 +106,25 @@ export function drawStaticElements(ctx, element){
             }
         }
         ctx.stroke();
+        
+        if(element.name.indexOf("g") !== -1){
+            //glide reflection. draw an arrow
+
+            //arrow to signify translation
+            let arrowStart = [flipStartPos[0] * 0.8, flipStartPos[1] * 0.8];
+            arrowStart[0] += flipStartPos[1] * 0.5;
+            arrowStart[1] -= flipStartPos[0] * 0.5;
+
+            let finalPoint = [arrowStart[0] - 1.8*flipStartPos[0], arrowStart[1] - 1.8*flipStartPos[1]]
+
+            ctx.beginPath()
+            ctx.moveTo(...arrowStart);
+            ctx.lineTo(...finalPoint);
+            ctx.stroke();
+            
+            drawTrianglePath(ctx, arrowStart[0],arrowStart[1], [flipStartPos[0] * 0.3, flipStartPos[1] * 0.3]);
+        }
+        
     }
 }
 

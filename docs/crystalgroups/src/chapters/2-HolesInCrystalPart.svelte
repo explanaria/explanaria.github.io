@@ -409,21 +409,6 @@
     let slideStart = 1;
 </script>
 
-<style>
-    #whitebg{
-        background-color: white;
-        transition: opacity 0.5s ease-in-out;
-        pointer-events: none;
-        z-index: 1;
-    }
-    #overlays{
-        z-index: 2;
-        pointer-events: none;
-    }
-    .topThing{
-        height: 20em;
-    }
-</style>
 <div class="overlappingItemContainer">
     <div class="overlappingItemContainer exp-text topThing">
         <div class="threecanvascontainer" id="threecanvas" />
@@ -443,7 +428,7 @@
 
 
     <div class="bottomThing noclick">
-        <div class="overlappingItemContainer yesclick">
+        <div class="overlappingItemContainer alignBottom">
             <div class="exp-slide">
                     <div class="frostedbg">
                         Let's start by examining the structure of just andalusite for now. Click and drag to rotate the crystal.
@@ -451,7 +436,6 @@
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        
                         As you rotate andalusite and examine it from all angles, you might notice something weird: from certain angles, sometimes the atoms align to let you see straight through andalusite.
                     </div>
             </div>
@@ -512,7 +496,7 @@
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Let me clear up some of this clutter really quick and I'll show you what I mean.
+                        Let me clear up some of this clutter quickly and I'll show you what I mean.
                     </div>
             </div>
             <div class="exp-slide">

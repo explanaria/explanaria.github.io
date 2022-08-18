@@ -6,7 +6,7 @@
 
     import D6ElementCanvas from "./D6ElementCanvas.svelte";
 
-    import { defaultGroupElementBorderColor, generatorColors, identityColor} from "../colors.js";
+    import { chooseElementBorderColor} from "../colors.js";
 
     let r = new GroupElement("r", "(123)");
     let f = new GroupElement("f", "(23)");
@@ -22,8 +22,8 @@
     d6group.elements.forEach(element => {positions.set(element, [0,0])}) //fill this dict with one position per element
 
     let startPos = [12,12];
-    let outerRadius = 11;
-    let innerRadius = 4.5;
+    let outerRadius = 10;
+    let innerRadius = 4;
     let rotationRadians = 120 * Math.PI / 180;
     let startRadians = -Math.PI/2; //start upwards
 
@@ -81,7 +81,7 @@
     {#each d6group.elements as element, i}
         {#if isElementVisible[i]}
             <GroupElementDisplay element={element}
-            borderColor={chooseBorderColor(element)}
+            borderColor={chooseElementBorderColor(d6group, element)}
             top={positions.get(element)[1]} left={positions.get(element)[0]}
             >
                 <D6ElementCanvas element={element}/>

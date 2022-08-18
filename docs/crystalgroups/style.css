@@ -50,7 +50,10 @@ th {
 /* end minireset.css */
 
 h1{
-  font-size: 125%;
+  font-size: 120%;
+  font-weight: bold;
+}
+h2{
   font-weight: bold;
 }
 
@@ -103,7 +106,7 @@ aside{
 
 .threecanvas{
         min-width: 3em;
-        width:50em;
+        width:100%;
         height:28.125em;
         max-width: 100vw;
         max-height: 100vh;
@@ -127,16 +130,26 @@ aside{
   display: grid;
   grid-template-columns: minmax(0, 1fr); /* https://stackoverflow.com/questions/52785750/prevent-grid-area-from-expanding-causing-whole-page-to-scroll */
   width:100%;
+  height:100%;
 }
 .overlappingItemContainer > *{
      grid-row-start: 1;
      grid-column-start: 1;
      width:100%;
 }
+.alignBottom{
+    align-items: flex-end;
+}
 .twocolumns{
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   width: 100%;
+}
+.threecolumns{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  width: 100%;
+  gap: 1em;
 }
 
 .tworows{
@@ -162,11 +175,10 @@ aside{
 }
 
 .topThing{
-    height: 20em;
+    height: 19em;
 }
 .bottomThing{
-    height: 5em;
-    padding-top: 20em;
+    margin-bottom: 2em;
 }
 
 
@@ -181,10 +193,10 @@ aside{
 /* ending */
 
 .noclick{
-pointer-events: none;
+    pointer-events: none;
 }
 .yesclick{
-pointer-events: all
+    pointer-events: all;
 }
 
 .emailbox, .emailbtn{
@@ -249,24 +261,25 @@ pointer-events: all
 	transition: opacity 0.5s ease-in-out;
 	margin: 0 5% 0;
 	width: 90%;
+    pointer-events: all;
 }
 
 
 /* These next two rules help create a font size which fits the 16 / 9 box of .maincontainer, no matter the true size of the viewport */
 .maincontainer{
-    font-size: 2vw; /* Aspect ratio smaller than 16/9. So to fit a 16/9 rectangle as big as possible, we're limited by width */ 
+    font-size: 2.25vw; /* Aspect ratio smaller than 16/9. So to fit a 16/9 rectangle as big as possible, we're limited by width */ 
 }
 
 @media (min-aspect-ratio: 16 / 9){
     /* This is the intended viewing experience, width bigger than height. */
     .maincontainer{
-        font-size: calc(16 / 9 * 2vh); /* wider than 16/9. so to fit, we letterbox sideways. that means it's limited by height */ 
-        font-size: calc(16 / 9 * 2dvh); /* if you support dvh, do it */
+        font-size: calc(16 / 9 * 2.25vh); /* wider than 16/9. so to fit, we letterbox sideways. that means it's limited by height */ 
+        font-size: calc(16 / 9 * 2.25dvh); /* if you support dvh, do it */
     }
 }
 @media (orientation:portrait) and (max-aspect-ratio: 9 / 16){
     .maincontainer{
-        font-size: calc(16 / 9 * 2vw); /*you're holding your phone in portrait. i want to encourage you to switch to landscape, and i've artificially rotated the site sideways. calc font size using width instead of height */
+        font-size: calc(16 / 9 * 2.25vw); /*you're holding your phone in portrait. i want to encourage you to switch to landscape, and i've artificially rotated the site sideways. calc font size using width instead of height */
     }
 }
 

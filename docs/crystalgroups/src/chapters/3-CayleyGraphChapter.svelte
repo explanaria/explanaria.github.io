@@ -253,7 +253,7 @@
         </div>
         {/if}
 
-        <div class="exp-slide-1 nomouse">
+        <div class="exp-slide-1 nomouse newchaptercard">
             <div class="frostedbg">
                 <h1>Chapter 3</h1>
                 <p>Seeing symmetry groups</p>

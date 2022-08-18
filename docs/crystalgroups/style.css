@@ -190,6 +190,12 @@ aside{
     height: 4em;
 }
 
+.newchaptercard{
+	transition: opacity 0.5s ease-in-out;
+    width: 30%;
+    margin: 0 auto;
+}
+
 
 @keyframes show {
   0% { opacity: 0; }

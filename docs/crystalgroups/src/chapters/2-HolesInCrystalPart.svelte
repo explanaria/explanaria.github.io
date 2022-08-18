@@ -420,7 +420,7 @@
         <div class="threecanvascontainer" id="threecanvas" />
 
         <div class="noclick">
-            <div class="exp-slide-1 frostedbg">
+            <div class="exp-slide-1 frostedbg newchaptercard">
                 <h1>Chapter 2</h1>
                 <p>The Clear Conundrum</p>
             </div>

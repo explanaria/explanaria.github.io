@@ -12,6 +12,7 @@
     //group stuff
     let r = new GroupElement("r", "(123)");
     let f = new GroupElement("f", "(23)");
+
     let d6group = new FiniteGroup([r,f], {"rfr":"f", "rrr":"", "ff":""});
 
     let isArrowVisibleMap = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
@@ -55,6 +56,10 @@
           get(x) { return _data[keyName]; }
         })
     );
+    export function updateGroupGenerators(){
+        d6group = data.d6group;       
+        d6group.generators = data.d6group.generators; 
+    }
 
     //controlling the orientation of the triangle
     let prevOrientation = d6group.getElemByName("e");
@@ -251,7 +256,7 @@
     <slot name="toppart">
         <div class="top">
             {#if data.showInfo}
-            <div transition:fade="{{ duration: 500 }}">
+            <div in:fade="{{ duration: 500 }}">
                 <br>Orientations found: {orientationsFound} {orientationsFound == d6group.elements.length ? "🎉" : ""}
                 <br>Arrows found: {arrowsFound}/{d6group.elements.length * d6group.generators.length} {arrowsFound == d6group.elements.length * d6group.generators.length ? "🎉" : ""}
             </div>
@@ -264,12 +269,12 @@
             <br>
             <div class="twocolumns" style="gap: 1em;">
                 {#if data.showbuttons}
-                <button transition:fade="{{ duration: 500 }}" on:click={() => onButton(0)} style:border-color={_data.generatorColors[0]} class="button">
+                <button in:fade="{{ duration: 500 }}" on:click={() => onButton(0)} style:border-color={_data.generatorColors[0]} class="button">
                     <slot name="button1text">
                     Rotate by 120 degrees
                     </slot>
                 </button>
-                <button transition:fade="{{ duration: 500 }}" on:click={() => onButton(1)} style:border-color={_data.generatorColors[1]} class="button">
+                <button in:fade="{{ duration: 500 }}" on:click={() => onButton(1)} style:border-color={_data.generatorColors[1]} class="button">
                     <slot name="button2text">
                     Flip horizontally
                     </slot>

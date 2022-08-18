@@ -11,7 +11,7 @@
 
     let thisSVGName = Math.random();
 
-    function chooseGeneratorColor(i){
+    function chooseGeneratorColor(group, i){
         let generator = group.generators[i];
         if(specialGeneratorColors[generator.name]){
             return specialGeneratorColors[generator.name];
@@ -64,7 +64,7 @@
     {#each group.generators as _, i}
     <marker class="arrowhead" id={"arrowhead-"+thisSVGName+i} markerWidth="4" markerHeight="4" 
     refX="2" refY="2" orient="auto"> <!-- from https://thenewcode.com/1068/Making-Arrows-in-SVG -->
-      <polygon points="0 0, 4 2, 0 4" fill={chooseGeneratorColor(i)}/>
+      <polygon points="0 0, 4 2, 0 4" fill={chooseGeneratorColor(group, i)}/>
       {#if drawEyesOnArrows}
           <ellipse rx="1" ry="0.6"
             cy="2.5" cx="1.5" fill="#fff" stroke="#000" stroke-width=0.1/>
@@ -96,11 +96,11 @@
                 {#if isArrowVisibleMap[startElement.name] && isArrowVisibleMap[startElement.name][i]}
                     {#if drawGeneratorsWithOutlines}
                         <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
-                        stroke={chooseGeneratorColor(i)} markerEnd={"url(#arrowhead-"+thisSVGName+i+")"}
+                        stroke={chooseGeneratorColor(group, i)} markerEnd={"url(#arrowhead-"+thisSVGName+i+")"}
                         strokeWidth="0.25"/>
                     {/if}
                     <SVGArrowLine start={positionsPerElementMap.get(startElement)} end={positionsPerElementMap.get(targetElement)}
-                        stroke={chooseGeneratorColor(i)}
+                        stroke={chooseGeneratorColor(group, i)}
                          markerEnd={"url(#arrowhead-"+thisSVGName+i +")"}
                         strokeWidth="0.2" elementAvoidRadius={elementAvoidRadius}}/>
                 {/if}

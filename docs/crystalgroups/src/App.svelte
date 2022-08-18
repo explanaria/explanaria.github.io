@@ -17,7 +17,7 @@
     let numChapters = 4+1;
 
     if(onlyThree)numChapters = 3+1;
-    if(!onlyThree){currentChapter = 4;} //// DEBUG
+    if(!onlyThree){currentChapter = 3;} //// DEBUG
 
     let mainContainer = null;
     async function changeChapter(chapterNum){
@@ -35,6 +35,7 @@
 
     function changeChapterEvent(event){
         changeChapter(event.detail)
+        window.chapterNum = chapterNum;
     }
 
 
@@ -66,7 +67,7 @@
         <HolesInCrystalPart on:chapterEnd={chapterEnd} alludeToChapter3={true}/>
     {/if}
     {#if currentChapter == 3}
-        <CayleyGraphChapter on:chapterEnd={chapterEnd} endHere={!onlyThree}/>
+        <CayleyGraphChapter on:chapterEnd={chapterEnd} endHere={onlyThree}/>
     {/if}
     {#if onlyThree}
         {#if currentChapter == 4}

@@ -21,8 +21,7 @@
 
     let keylistener = null;
     async function waitForClear(){
-        return;
-    //wait for user to discover all of the second cayley graph
+        //wait for user to discover all of the cayley graph
         return new Promise( (resolve, reject) => {
             if(alreadyEnding)resolve();
             resolveAllFound = resolve;
@@ -42,6 +41,7 @@
 
 
     async function animate(){
+
         //EXP.setupThree() is required first, but it's called in sharedthreejscanvas.js
         window.data2 = data2;
         data2.opacity = 0;
@@ -49,6 +49,7 @@
         data2.generatorColors[0] = rfColor;
         data2.d6group = data2.d6group; //update svelte
         data2.showbuttons = false;
+        if(d6creator2)d6creator2.updateGroupGenerators();
 
         //you're just a measly subgroup
         data3.d6group.elements = [data3.d6group.getElemByName("e"), data3.d6group.getElemByName("r"), data3.d6group.getElemByName("rr")];
@@ -56,7 +57,9 @@
         data3.d6group.generators[1] = data3.d6group.getElemByName("rr");
         data3.generatorColors[1] = rrColor;
         data3.d6group = data3.d6group; //update svelte
+        data3.d6group.generators = data3.d6group.generators; //update svelte
         data3.showbuttons = false;
+        if(d6creator3)d6creator3.updateGroupGenerators();
 
 
         data.showgroup = false;
@@ -152,7 +155,6 @@
         presentation.TransitionInstantly(data3, {opacity: 0});
         presentation.TransitionInstantly(chapterData, {showgroupaxioms: true})
 
-        console.log("show group rules")
         await presentation.nextSlide();
         await presentation.nextSlide(); 
         await presentation.nextSlide(); 
@@ -161,11 +163,8 @@
         presentation.TransitionInstantly(data, {opacity: 1});
 
         await presentation.nextSlide();
-        await presentation.nextSlide(); 
-        if(endHere){
         await presentation.nextSlide();
-        }
-
+        await presentation.nextSlide();
 
         if(!alreadyEnding){
             dispatch("chapterEnd");
@@ -190,19 +189,20 @@
         window.presentation = presentation;
         animate();
     });
-    /*
+    
     onDestroy(async () => {
         alreadyEnding = true;
         allFound();
         presentation.dispose();
         await tick();
-    });*/
+    });
 </script>
 
 <div class="cayleymainlayout">
     <div class="overlappingItemContainer">
         <InteractiveD6Creator bind:data={data} bind:this={d6creator} on:allFound={allFound} />
 
+        
         <InteractiveD6Creator bind:data={data2} bind:this={d6creator2} on:allFound={allFound} generatorColors={[generatorColors[2], generatorColors[1]]}>
             <span slot="button1text">Angled flip</span>
         </InteractiveD6Creator>
@@ -210,6 +210,7 @@
         <InteractiveD6Creator bind:data={data3} bind:this={d6creator3} on:allFound={allFound} generatorColors={[generatorColors[0], generatorColors[0]]}>
             <span slot="button2text">Rotate 240 degrees</span>
         </InteractiveD6Creator>
+        
 
         {#if showgroupaxioms}
         <div id="grouprules" class="frostedbg" transition:fade="{{ duration: 500 }}">
@@ -264,7 +265,7 @@
         </div>
         <div class="exp-slide">
             Each circle represents an action in the group, and arrows will show you what happens if you <span style={"color: " + generatorColors[0]}>rotate</span> and <span style={"color: " + generatorColors[1]}>flip</span> the triangle.
-            <br>Use these buttons to explore the group until you find every action and arrow!
+            <br>Use these two buttons to explore the group until you find every action and arrow!
         </div>
         <div class="exp-slide">
             Alright! Looks like you found everything! <br>
@@ -316,7 +317,7 @@
             All the actions we've seen so far can be undone. In fact, being able to undo anything is so important it's part of the definition of a group: every element is required to have another action which undoes it, called its <b>inverse</b>.
         </div>
         <div class="exp-slide">
-            Speaking of definitions, what are the rules for being a group, anyways? Mathematicians have pruned them down to just four.
+            Speaking of definitions, I've mentioned two of the group rules so far: combining, and undoing. There's only two other rules which define a group.
         </div>
         <div class="exp-slide">
            A group is defined as anything which follows these four rules.

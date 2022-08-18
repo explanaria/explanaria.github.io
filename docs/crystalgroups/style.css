@@ -182,6 +182,15 @@ aside{
 }
 
 
+.cayleymainlayout{
+    display: grid;
+    grid-template-rows: 19em 4em;
+}
+.cayleytextpart{
+    height: 4em;
+}
+
+
 @keyframes show {
   0% { opacity: 0; }
   100% { opacity: 1; }

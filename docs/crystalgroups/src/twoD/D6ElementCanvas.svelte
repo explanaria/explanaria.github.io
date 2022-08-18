@@ -4,10 +4,10 @@
     import { GroupElement } from "./groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {easing, drawTrianglePath, drawStaticElements, isAllRs, canvasSize, canvasSizePixels, triangleRadius, lineWidth, D6_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "./d6canvasdrawing.js";
+    import {tick} from "svelte";
 
     export let element = new GroupElement("", "(3)"); //a GroupElement
 
-    $: canvasName = "canvas-" + element.name;
     let canvas = null, ctx = null;
 
 
@@ -21,37 +21,39 @@
 
     let lastTime = 0;
     function draw(currentTime){
-        let delta = (currentTime - lastTime)/1000;
-        canvas.width = canvasSizePixels;
-        canvas.height = canvasSizePixels;
+        if(canvas){
+            let delta = (currentTime - lastTime)/1000;
+            canvas.width = canvasSizePixels;
+            canvas.height = canvasSizePixels;
 
-        ctx.save();
+            ctx.save();
 
-        ctx.translate(canvas.width/2, canvas.height/2); //make all transformations start from center of canvas
-        ctx.lineWidth = lineWidth;
-        ctx.strokeStyle = triangleStrokeStyle;
+            ctx.translate(canvas.width/2, canvas.height/2); //make all transformations start from center of canvas
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = triangleStrokeStyle;
 
-        //draw triangle shadow
-        ctx.save();
-        ctx.fillStyle = triangleShadowColor;
-        drawTrianglePath(ctx, 0,0, startVertex);
-        ctx.fill();
+            //draw triangle shadow
+            ctx.save();
+            ctx.fillStyle = triangleShadowColor;
+            drawTrianglePath(ctx, 0,0, startVertex);
+            ctx.fill();
 
-        //draw triangle, rotated or scaled by the animation
-        updateCurrentAnimation(ctx, delta);
-        applyCurrentAnimation(ctx, delta);
-        ctx.fillStyle = triangleColor;
-        drawTrianglePath(ctx, 0,0, startVertex);
-        ctx.fill();
+            //draw triangle, rotated or scaled by the animation
+            updateCurrentAnimation(ctx, delta);
+            applyCurrentAnimation(ctx, delta);
+            ctx.fillStyle = triangleColor;
+            drawTrianglePath(ctx, 0,0, startVertex);
+            ctx.fill();
 
-        ctx.fillStyle = D6TextColor;
-        ctx.font = D6_text_size_multiplier * canvasSize+ "em serif"
-        ctx.fillText("D6", -0.4 * D6_text_size_multiplier * canvasSizePixels,-0.1 *D6_text_size_multiplier * canvasSizePixels);
+            ctx.fillStyle = D6TextColor;
+            ctx.font = D6_text_size_multiplier * canvasSize+ "em serif"
+            ctx.fillText("D6", -0.4 * D6_text_size_multiplier * canvasSizePixels,-0.1 *D6_text_size_multiplier * canvasSizePixels);
 
-        ctx.restore();
-        //finally, draw stuff like mirror lines which go on top of the triangle and don't rotate with it
-        drawStaticElements(ctx, element);
-        ctx.restore();
+            ctx.restore();
+            //finally, draw stuff like mirror lines which go on top of the triangle and don't rotate with it
+            drawStaticElements(ctx, element);
+            ctx.restore();
+        }
 
         lastTime = currentTime;
         window.requestAnimationFrame(draw);
@@ -126,13 +128,13 @@
 
 
     onMount(async () => {
-        canvas = document.getElementById(canvasName);
+        await tick(); //load canvas
         ctx = canvas.getContext("2d");
         draw(0);
         await animationLoop();
     })
 </script>
 
-<canvas class="elementcanvas" id={canvasName} width={canvasSize} height={canvasSize} style:width={canvasSize + "em"} style:height={canvasSize + "em"}/> 
+<canvas class="elementcanvas" bind:this={canvas}  width={canvasSize} height={canvasSize} style:width={canvasSize + "em"} style:height={canvasSize + "em"}/> 
 
 

@@ -84,26 +84,29 @@
     </div>
 
     <div id="overlays" class="overlappingItemContainer noclick">
-        <div class="exp-slide">
+        <div style="margin: 0 5% 0; width: 90%;">
 
             <div class="frostedbg thinmargin">
                 <h1>Crystal Clear Conundrums</h1>
                  A Multifaceted Intro to Group Theory
-                <br>August 2022
+                <br>
+                <aside>August 2022</aside>
                 <br><br>
                 Thanks so much for reading!
             </div>
 
-            <br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br />
 
-            <div class="twocolumns frostedbg yesclick">
+            <div class="twocolumnsLeftBigger frostedbg yesclick" style="gap: 1em;">
                 <div class="column">
                     More Explanaria
+                    <br><br>
                     <aside>
-                    <br><a href="https://explanaria.github.io/impossibletriangles/1" data-goatcounter-click="crystalgroups-to-impossibletriangles">The Case of the Impossible Triangles</a>
-                    <br><a href="https://explanaria.github.io/thinking4D/1%20R3.html" data-goatcounter-click="crystalgroups-to-4D">How Mathematicians Think About Four Dimensions</a>
-                    <br><a href="https://explanaria.github.io/sketches/algebraicstructures.html" data-goatcounter-click="crystalgroups-to-algebraicstructures">Algebraic Structures</a>
-                    <br><br><a href="https://explanaria.github.io/" data-goatcounter-click="impossibletriangles-to-home">All Articles</a>
+                        <div class="twocolumns">
+                            <a href="https://explanaria.github.io/impossibletriangles/1" data-goatcounter-click="crystalgroups-to-impossibletriangles">The Case of the Impossible Triangles</a>
+                            <a href="https://explanaria.github.io/thinking4D/1%20R3.html" data-goatcounter-click="crystalgroups-to-4D">How Mathematicians Think About Four Dimensions</a>
+                        </div>
+                        <br><a href="https://explanaria.github.io/" data-goatcounter-click="impossibletriangles-to-home">All Articles</a>
                     </aside>
                 </div>
                 <div class="column" style="text-align: center">

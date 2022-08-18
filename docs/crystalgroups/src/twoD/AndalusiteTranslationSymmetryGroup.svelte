@@ -9,21 +9,15 @@
 
     import { chooseElementBorderColor } from "../colors.js";
 
-    let m = new GroupElement("m", "(12)");
-    let m2 = new GroupElement("m2", "(12)");
+    let i = new GroupElement("i", "(12)");
     let a = new GroupElement("a", "(5)");
     let b = new GroupElement("b", "(6)");
     let c = new GroupElement("c", "(7)");
+    let ca = new GroupElement("ca", "(9)");
 
-    let g1 = new GroupElement("g1", "(9)"); //glide reflection in -y plane reflect, ca translate. stands for 0.5+x,0.5-y.0.5+z
-    let g2 = new GroupElement("g2", "(10)"); //glide reflection in -x plane reflect, bc translate. stands for 0.5-x,0.5+y.0.5+z
-    let gr1 = new GroupElement("gr1", "(1)"); //glide rotation in b direction
-    let gr2 = new GroupElement("gr2", "(1)"); //glide rotation in a direction
-    export let group = new LazyGroup([a,b,c, m, m2, g1, g2], { "mm2":"c", "mm":"e", "m2m2":'e', "m2m": "c", 
-        "ac":"ca", "ab":"ba", "gaga":"a", "gbgb":"b",
-        "g1g1": 'ac',
-        "g2g2": 'bc',
-    });
+    let ga = new GroupElement("ga", "(9)"); //glide reflection in a
+    let gb = new GroupElement("gb", "(1)"); //glide reflection in b
+    export let group = new LazyGroup([a,b,c, ca, i], {"ii":"e", "ac":"ca", "ab":"ba", "gaga":"a", "gbgb":"b"});
 
     let generators = ["i"];
 
@@ -38,15 +32,15 @@
     positions.set(group.getElemByName("e"), startPos)
 
     //set positions of translations
-    let aVec = [7,0];
-    let bVec = [0,-7];
-    let cVec = [-5,5];
+    let aVec = [5,0];
+    let bVec = [0,-5];
+    let cVec = [-3,3];
     positions.set(group.getElemByName("a"), EXP.Math.vectorAdd(startPos, aVec))
     positions.set(group.getElemByName("b"), EXP.Math.vectorAdd(startPos, bVec))
     positions.set(group.getElemByName("c"), EXP.Math.vectorAdd(startPos, cVec))
 
     //translations grid
-    for(let i=0;i<1;i++){
+    for(let i=0;i<3;i++){
         let els = group.elements.slice();
         for(let x of els){
             let newElement = group.multiply(x, a);
@@ -62,15 +56,13 @@
         }
     }
 
-    positions.set(group.getElemByName("m"), EXP.Math.vectorAdd(startPos, [-1.5,4]))
-    positions.set(group.getElemByName("m2"), EXP.Math.vectorAdd(startPos, [-4,1.5]))
+    let caca = group.multiply(ca, ca);
+    positions.set(caca, EXP.Math.vectorAdd(positions.get(ca), EXP.Math.vectorAdd(aVec,cVec)))
 
-    
-    positions.set(group.getElemByName("g1"), EXP.Math.vectorAdd(EXP.Math.vectorScale(EXP.Math.vectorAdd(aVec, cVec), 0.5), startPos))
+    positions.set(group.getElemByName("i"), [8,8])
 
     //set positions for new elements
     group.elements.forEach(element => {if(!positions.get(element))positions.set(element, [0,0])}) //fill this dict with one position per element
-
 
     let defaultArrowVisibility = {};
     group.elements.forEach(startElement => {
@@ -93,7 +85,7 @@
 <div class="groupdisplay">
     {#each group.elements as element, i}
         {#if isElementVisible[i]}
-            <GroupElementDisplay element={element} showElementName={true}
+            <GroupElementDisplay element={element} showElementName={false}
             borderColor={chooseElementBorderColor(group, element)}
             top={positions.get(element)[1]} left={positions.get(element)[0]}
             >

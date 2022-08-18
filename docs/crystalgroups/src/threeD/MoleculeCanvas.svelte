@@ -28,13 +28,13 @@
         let [kyanite, expkyanitebonds] = makeBallStickDiagram(kyaniteData, 2,2,2);
         three.scene.add(kyanite)
         kyanite.position.x -= 4*5;
-        kyanite.position.y -= 5;
+        kyanite.position.y -= 8;
 
 
         let [andalusite, expandalusitebonds] = makeBallStickDiagram(andalusiteData, 2,2,2);
         three.scene.add(andalusite)
         andalusite.position.x += 4*5;
-        andalusite.position.y -= 5;
+        andalusite.position.y -= 8;
 
 
         three.on("update", (data) => {fps = Math.round(1/data.realtimeDelta)})

@@ -86,7 +86,7 @@ export function allAtoms(crystalData){
         return allAtoms;
 }   
 
-export function makeBallStickDiagram(crystaldata, extraAdirectionCells=2, extraBdirectionCells=2, extraCdirectionCells=2){
+export function makeBallStickDiagram(crystaldata, extraAdirectionCells=2, extraBdirectionCells=2, extraCdirectionCells=2, scaleModifier=1){
     let parent = new THREE.Object3D();
 
     let numAtoms = numAtomsIncludingSymmetryClones(crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells)
@@ -106,7 +106,7 @@ export function makeBallStickDiagram(crystaldata, extraAdirectionCells=2, extraB
                 ballMesh.setColorAt(instanceIndex, atomColor)
                 setInstancePositionAndScale(ballMesh, instanceIndex, 
                     atomPos[0], atomPos[1],atomPos[2],
-                    atomScale)
+                    atomScale * scaleModifier)
                 instanceIndex++;
             }
         }
@@ -118,7 +118,7 @@ export function makeBallStickDiagram(crystaldata, extraAdirectionCells=2, extraB
 
     let bondArray = computeBondSymmetryClones(crystaldata.bonds, crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells);
     let expbonds = new EXP.Area({bounds: [[0, bondArray.length-1], [0,1]], numItems: [bondArray.length, 2]});
-    let expbondsoutput = new EXP.LineOutput({color: 0x333333, opacity: 0.3});
+    let expbondsoutput = new EXP.LineOutput({color: 0x333333, opacity: 0.3, lineWidth: 5 * scaleModifier});
     //whichAtom is an index which is always 0,1. bondNum is always an integer.
     //bonds[x] currently hsa extra data in indices 3 and 4 for the colors
     expbonds.add(new EXP.Transformation({expr: 

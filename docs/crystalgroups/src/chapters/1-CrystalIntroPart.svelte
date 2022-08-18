@@ -20,6 +20,7 @@
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
+        await presentation.nextSlide();
 
         if(!alreadyEnding){
             dispatch("chapterEnd");
@@ -76,10 +77,9 @@
         </div>
         <div class="exp-slide">
             <div class="twocolumns">
-                <div class="column" style:height={"50%"}>
-                    <br><br>
+                <div class="column" style="height: 40%;">
                     <br>
-                    <h1>This is a crystal of kyanite.</h1>
+                    <h2>This is a crystal of kyanite.</h2>
                     <br>
                     <img class="materialimage" alt="Long, sharp, blue crystals of kyanite poking out of a white rock" src="./img/Kyanite-265746.jpg"/>
                     <br>
@@ -87,10 +87,9 @@
                         <a href="https://commons.wikimedia.org/wiki/File:Kyanite-265746.jpg">Rob Lavinsky, CC-BY-SA)</a>
                     </aside>
                 </div>
-                <div class="column" style:height={"50%"}>
-                    <br><br>
+                <div class="column" style="height: 40%;">
                     <br>
-                    <h1>And this is a crystal of andalusite.</h1>
+                    <h2>And this is a crystal of andalusite.</h2>
                     <br>
                     <img class="materialimage" alt="A orange-gray crystal of andalusite, opaque and with long columns" src="./img/Andalusite_-_Al2SiO5_locality_-_Dolní_Bory,_Czech_Republic_(50426489511).jpg"/>
                     <br>
@@ -110,7 +109,9 @@
         </div>
         <div class="exp-slide">
             <div class="frostedbg">
-                If we zoomed in until we could see the <span style={"color: " + getAtomColor('Al')}>aluminum</span>, <span style={"color: " + getAtomColor('Si')}>silicon</span>, and <span style={"color: " + getAtomColor('O')}>oxygen</span> atoms,
+                <br>
+                If we zoomed in to see the <span style={"color: " + getAtomColor('Al')}>aluminum</span>, <span style={"color: " + getAtomColor('Si')}>silicon</span>, and <span style={"color: " + getAtomColor('O')}>oxygen</span> atoms,
+                <br>
                 <div class="twocolumns">
                     <div class="column">
                         kyanite would look like this
@@ -123,20 +124,22 @@
         </div>
         <div class="exp-slide">
             <div class="frostedbg">
-            I'm only showing a few thousand atoms here, but these patterns continue for hundreds of millions of atoms. It's quite pretty.
-            <br>
-            But, I want to ask: how would you describe <u>how</u> these atoms repeat? How would you describe what makes kyanite's pattern of repeating atoms  different from andalusite's pattern of repeating atoms?
-            <br>
+                I'm only showing a few thousand atoms here, but these patterns continue for hundreds of millions of atoms. It's quite pretty.
+                <br>
+                But, I want to ask: how would you describe <u>how</u> these atoms repeat? How would you describe what makes kyanite's pattern of repeating atoms different from andalusite's pattern of repeating atoms?
             </div>
         </div>
         <div class="exp-slide">
             <div class="frostedbg">
                 <!-- labels: kyanite, andalusite -->
                 Drag to rotate the 3D model yourself and take a look. What can we use to describe how andalusite and kyanite repeat?
-                <br>
-                The number of atoms won't help - both crystals have the same number (and ratio) of atoms.
+            </div>
+        </div>
+        <div class="exp-slide">
+            <div class="frostedbg">
+                <!-- labels: kyanite, andalusite -->
+                The number of atoms won't help - both crystals have the same number (and ratio) of atoms, and there's billions of them.
                 <br>Looking at one atom at a time won't help - for example, in both crystals, every <span style={"color: " + getAtomColor('Al')}>aluminum</span> atom always has five bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
-                <br>
             </div>
         </div>
         <div class="exp-slide">
@@ -149,14 +152,16 @@
         <div class="exp-slide">
             <div class="frostedbg">
                 So do andalusite and kyanite repeat in the same way? Or a different way? <br>What would "repeating in a different way" even mean?
-                <br>We don't really have the words to describe these patterns in everyday language, so mathematicians invented their own: the language of <b>group theory</b>. 
+                <br>We don't really have the words to describe this in everyday language, so mathematicians invented their own: the language of <b>group theory</b>. 
             </div>
         </div>
         <div class="exp-slide">
             <div class="frostedbg">
-                This explanarian presentation is an introduction to group theory, from the point of view of understanding crystals. When I was first learning group theory, it was taught in a very self-contained way, and I had a hard time understanding why mathematicians cared about it so much. What kind of problems would lead you to think about such specific actions?
+                {#if false}
+                This explanarian presentation is an introduction to group theory, from the point of view of understanding crystals. {/if}
+                When I first learned group theory, it was taught in a very self-contained way, and I had a hard time seeing why mathematicians cared about it so much. Sure, it was a way to define symmetry, but what kind of problems would lead you to think about such specific actions?
                 <br>
-                As it turns out, it's the perfect language for talking about repeating patterns like crystals.
+                <p style="font-size: 0.90em">As it turns out, it's the perfect language for talking about repeating patterns, like crystals.</p>
                 <!-->
                 Group theory is usually said to be the right way to talk about symmetry. But another way to describe group theory is that it's all about things that can be combined and undoed. And there's lots of things in math which can be combined and undone, like adding numbers or applying rotations.
                 -->
@@ -173,11 +178,4 @@
         -->
         
     </div>
-</div>
-
-
-<div class="overlappingItemContainer textpart">
-    <div class="exp-slide" />
-    <div class="exp-slide" />
-    <div class="exp-slide" />
 </div>

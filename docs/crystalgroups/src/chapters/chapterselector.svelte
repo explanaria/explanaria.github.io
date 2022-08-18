@@ -22,6 +22,11 @@
         gap: 0.2em;
         transform: translateX(-50%);
     }
+    @media screen and (max-height: 300px){
+        .chapterselector{
+            bottom: 3vh;
+        }
+    }
     .chapterbutton{
         border-radius: 20em;
         width: 1em;

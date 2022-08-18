@@ -80,7 +80,7 @@ aside{
 .fullscreen{
     width: 100%;
     height: 100vh;
-    height: 100dvh;
+    height: 100svh;
     overflow: hidden;
 }
 
@@ -105,7 +105,7 @@ aside{
         height:28.125em;
         max-width: 100vw;
         max-height: 100vh;
-        max-height: 100dvh;
+        max-height: 100svh;
 }
 
 
@@ -113,7 +113,7 @@ aside{
     font-family: Lora, serif;
     aspect-ratio: 16 / 9;
     max-height: 100vh;
-    max-height: 100dvh;
+    max-height: 100svh;
     margin: auto;
     text-align: center;
     transition: 0.5s opacity ease-in-out;
@@ -290,7 +290,7 @@ pointer-events: all
   .maincontainer{
     height: 100vw;
     width: 100vh;
-    width: 100dvh;
+    width: 100svh;
     }
   .rotatesign{
         transform: translate(-50%, -50%) rotate(-90deg) translate(-50%, 50%);
@@ -298,7 +298,7 @@ pointer-events: all
         align-content: center;
         width: 100vw;
         height: 100vh;
-        height: 100dvh;
+        height: 100svh;
         z-index: 4;
         font-size: 2dvh;
         background-color: rgba(240,240,255, 0.8)

@@ -63,10 +63,10 @@
     <MoleculeCanvas />
     <div id="whitebg" style="opacity: 0"/>
     <div id="overlays" class="overlappingItemContainer">
-        <div class="exp-slide">
+        <div class="">
             <br><br><br>
             <center>
-                <div class="frostedbg" style="width: 27em">
+                <div class="frostedbg exp-slide" style="width: 27em">
                     <h1>Clear Crystal Conundrums</h1>
                     <p>A Multifaceted Intro to Group Theory</p>
 
@@ -75,29 +75,30 @@
                 </div>
             </center>
         </div>
-        <div class="exp-slide">
-            <div class="twocolumns">
-                <div class="column" style="height: 40%;">
-                    <br>
-                    <h2>This is a crystal of kyanite.</h2>
-                    <br>
-                    <img class="materialimage" alt="Long, sharp, blue crystals of kyanite poking out of a white rock" src="./img/Kyanite-265746.jpg"/>
-                    <br>
-                    <aside>(photo by 
-                        <a href="https://commons.wikimedia.org/wiki/File:Kyanite-265746.jpg">Rob Lavinsky, CC-BY-SA)</a>
-                    </aside>
+        <div class="">
+            <div class="exp-slide frostedbg">
+                <div class="twocolumns">
+                    <div class="column" style="height: 40%;">
+                        <br>
+                        <h2>This is a crystal of kyanite.</h2>
+                        <br>
+                        <img class="materialimage" alt="Long, sharp, blue crystals of kyanite poking out of a white rock" src="./img/Kyanite-265746.jpg"/>
+                        <br>
+                        <aside>(photo by 
+                            <a href="https://commons.wikimedia.org/wiki/File:Kyanite-265746.jpg">Rob Lavinsky, CC-BY-SA)</a>
+                        </aside>
+                    </div>
+                    <div class="column" style="height: 40%;">
+                        <br>
+                        <h2>And this is a crystal of andalusite.</h2>
+                        <br>
+                        <img class="materialimage" alt="A orange-gray crystal of andalusite, opaque and with long columns" src="./img/Andalusite_-_Al2SiO5_locality_-_Dolní_Bory,_Czech_Republic_(50426489511).jpg"/>
+                        <br>
+                        <aside>(photo by 
+                            <a href="https://commons.wikimedia.org/wiki/File:Andalusite_-_Al2SiO5_locality_-_Doln%C3%AD_Bory,_Czech_Republic_(50426489511).jpg">Jan Helebrant, CC-BY-SA)</a>
+                        </aside>
+                    </div>
                 </div>
-                <div class="column" style="height: 40%;">
-                    <br>
-                    <h2>And this is a crystal of andalusite.</h2>
-                    <br>
-                    <img class="materialimage" alt="A orange-gray crystal of andalusite, opaque and with long columns" src="./img/Andalusite_-_Al2SiO5_locality_-_Dolní_Bory,_Czech_Republic_(50426489511).jpg"/>
-                    <br>
-                    <aside>(photo by 
-                        <a href="https://commons.wikimedia.org/wiki/File:Andalusite_-_Al2SiO5_locality_-_Doln%C3%AD_Bory,_Czech_Republic_(50426489511).jpg">Jan Helebrant, CC-BY-SA)</a>
-                    </aside>
-                </div>
-            </div>
             <br>
             <p>
             Andalusite and kyanite might look different, but they're actually made of the exact same atoms, in the exact same ratio: just aluminum, silicon, and oxygen. The difference is how they're arranged.
@@ -106,9 +107,10 @@
                 <Dropdown title="andalusite's name has a funny history...">
                     Geologists often name minerals after the places they were first discovered. andalusite got its name from a crystal which was thought to be from Andalusia, Spain... but the crystal was mislabeled, and was actually from Guadalajara, a completely different part of spain.
                 </Dropdown> -->
+            </div>
         </div>
-        <div class="exp-slide">
-            <div class="frostedbg">
+        <div class="">
+            <div class="frostedbg exp-slide">
                 <br>
                 If we zoomed in to see the <span style={"color: " + getAtomColor('Al')}>aluminum</span>, <span style={"color: " + getAtomColor('Si')}>silicon</span>, and <span style={"color: " + getAtomColor('O')}>oxygen</span> atoms,
                 <br><br>
@@ -122,41 +124,41 @@
                 </div>
             </div>
         </div>
-        <div class="exp-slide">
-            <div class="frostedbg">
+        <div class="">
+            <div class="frostedbg exp-slide">
                 I'm only showing a few thousand atoms here, but these patterns continue for hundreds of millions of atoms. It's quite pretty.
                 <br>
                 But, I want to ask: how would you describe <u>the way</u> these atoms repeat? How would you describe what makes kyanite's pattern of repeating atoms different from andalusite's pattern of repeating atoms?
             </div>
         </div>
-        <div class="exp-slide">
-            <div class="frostedbg">
+        <div class="">
+            <div class="frostedbg exp-slide">
                 <!-- labels: kyanite, andalusite -->
                 Drag to rotate the 3D model yourself and take a look. What can we use to describe how andalusite and kyanite repeat?
             </div>
         </div>
-        <div class="exp-slide">
-            <div class="frostedbg">
+        <div class="">
+            <div class="frostedbg exp-slide">
                 <!-- labels: kyanite, andalusite -->
                 The number of atoms won't help - both crystals have the same number (and ratio) of atoms, and there's billions of them.
                 <br>Looking at one atom at a time won't help - each atom behaves similarly to all others. For example, in both crystals, every <span style={"color: " + getAtomColor('Al')}>aluminum</span> atom always has five bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
             </div>
         </div>
-        <div class="exp-slide">
-            <div class="frostedbg">
+        <div class="">
+            <div class="frostedbg exp-slide">
                 So do andalusite and kyanite repeat in the same way? Or a different way? <br>What would "repeating in a different way" even mean?
                 <br>
                 <br> 
             </div>
         </div>
-        <div class="exp-slide">
-            <div class="frostedbg">
+        <div class="">
+            <div class="frostedbg exp-slide">
                 So do andalusite and kyanite repeat in the same way? Or a different way? <br>What would "repeating in a different way" even mean?
                 <br>We don't really have the words to describe this in everyday language, so mathematicians invented their own: the language of <b>group theory</b>. 
             </div>
         </div>
-        <div class="exp-slide">
-            <div class="frostedbg">
+        <div class="">
+            <div class="frostedbg exp-slide">
                 {#if false}
                 This explanarian presentation is an introduction to group theory, from the point of view of understanding crystals. {/if}
                 When I first learned group theory, it was taught in a very self-contained way, and I had a hard time seeing why mathematicians want to use it everywhere. Sure, it was interesting to think about a way to define symmetry, but what kind of problems would lead you to think about such specific actions?
@@ -168,7 +170,7 @@
             </div>
         </div>
         <!-->
-        <div class="exp-slide frostedbg">
+        <div class=" frostedbg exp-slide">
             Group theory usually isn't taught using crystals and pictures. In fact, it's usually taught much more abstractly. Being able to manipulate 
 
  It turns out that having a language to talk about repetition was the right way to talk about symmetry, so they could describe anything that could combine and undo. And because there's lots of things in math involving combining and undoing, the language of group theory snuck its way into 

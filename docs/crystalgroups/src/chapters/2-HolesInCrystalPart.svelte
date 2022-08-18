@@ -74,7 +74,7 @@
         window.atomLinesOutput = atomLinesOutput;
         atomLinesOutput.material.depthTest = false; //appear over the crystal
 
-        presentation.TransitionInstantly(three.camera.position, {x: 0, y:0, z: 40});
+        presentation.TransitionInstantly(three.camera.position, {x: 0, y:5, z: 40});
         presentation.TransitionInstantly(three.camera, {zoom: 1});
         presentation.TransitionInstantly(three.camera.rotation, {x: 0, y:0, z: 0});
 
@@ -176,8 +176,8 @@
 
 
         //show lines
-        await presentation.delay(1000);
-        presentation.TransitionTo(atomLinesOutput, {opacity: 1});
+        await presentation.delay(500);
+        presentation.TransitionTo(atomLinesOutput, {opacity: 0.9});
 
         await presentation.nextSlide();
 
@@ -187,6 +187,9 @@
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
+
+        //take up more of the frame
+        presentation.ResetTo(three.camera.position, {x: 30, y:2, z: 3});
 
         //show moving andalusite copies
         presentation.TransitionTo(andalusite.position, {y: 100}, 2000);
@@ -215,6 +218,8 @@
 
 
         await presentation.nextSlide();
+
+        presentation.ResetTo(three.camera.position, {x: cameraRadius, y:0, z: 0});
         
         //hide all the stuff from translation #1 and re-show the crystal
         presentation.TransitionTo(movingAndalusiteTarget.children[0].material, {opacity: 0}, 250);
@@ -233,7 +238,7 @@
 
         //show lines, this time in another color
         presentation.TransitionInstantly(lineData, {direction: secondSeeThroughVec});
-        presentation.TransitionInstantly(atomLinesOutput, {color: chapter2linecolor2});
+        presentation.TransitionInstantly(atomLinesOutput, {width: 8, color: chapter2linecolor2});
         presentation.TransitionTo(atomLinesOutput, {opacity: 0.9});
 
 
@@ -293,10 +298,11 @@
         await presentation.nextSlide();
 
         //third translation time. move to another camera angle
-        presentation.ResetTo(three.camera.position, {x: 3, y:0, z: 40});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+        //presentation.ResetTo(three.camera.position, {x: 3, y:0, z: 40});
+        presentation.ResetTo(three.camera.position, {x: 27, y:3, z: 27});
+        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/4, z: 0});
 
-        await presentation.delay(1000);
+        await presentation.delay(500);
 
         //hide the lines and the andalusite
         presentation.TransitionTo(atomLinesOutput, {opacity: 0});
@@ -412,6 +418,13 @@
 <div class="overlappingItemContainer">
     <div class="overlappingItemContainer exp-text topThing">
         <div class="threecanvascontainer" id="threecanvas" />
+
+        <div class="noclick">
+            <div class="exp-slide-1 frostedbg">
+                <h1>Chapter 2</h1>
+                <p>The Clear Conundrum</p>
+            </div>
+        </div>
         <!--
         <div id="whitebg" style="opacity: 0"/>
         <div id="overlays" class="overlappingItemContainer">

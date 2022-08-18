@@ -103,6 +103,7 @@
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
+        await presentation.nextSlide();
         //now, we're going to add the purple arrow rf as a generator
         let newgenerator = data.d6group.getElemByName("rf");
         data.d6group.generators.push(newgenerator)
@@ -111,7 +112,7 @@
 
         data.d6group.elements.forEach(element => data.isArrowVisibleMap[element.name] = [true,true,false]);
         data.isArrowVisibleMap = data.isArrowVisibleMap;
-        data.isArrowVisibleMap["e"][2] = true; //show one arrow
+        presentation.TransitionInstantly(data.isArrowVisibleMap["e"], {2: true}); //show arrow from e to rf
 
 
         //data = data;
@@ -126,6 +127,12 @@
 
         await presentation.nextSlide();
         await presentation.nextSlide();
+        await presentation.nextSlide();
+
+        //hide this for the future in group #1
+        presentation.TransitionInstantly(data.isArrowVisibleMap["e"], {2: false});
+        data.isArrowVisibleMap = data.isArrowVisibleMap;
+
 
         presentation.TransitionInstantly(data2, {showInfo: false});
         let newgeneratorR = data2.d6group.getElemByName("r");
@@ -148,11 +155,16 @@
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
+        presentation.TransitionInstantly(data3, {opacity: 0});
+        presentation.TransitionInstantly(data, {opacity: 1});
+        await presentation.nextSlide();
+        await presentation.nextSlide();
+        await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
             //show group rules
 
-        presentation.TransitionInstantly(data3, {opacity: 0});
+        presentation.TransitionInstantly(data, {opacity: 0});
         presentation.TransitionInstantly(chapterData, {showgroupaxioms: true})
 
         await presentation.nextSlide();
@@ -240,6 +252,14 @@
             </ul>
         </div>
         {/if}
+
+        <div class="exp-slide-1 nomouse">
+            <div class="frostedbg">
+                <h1>Chapter 3</h1>
+                <p>Seeing symmetry groups</p>
+            </div>
+        </div>
+
     </div>
 
     <div class="overlappingItemContainer textpart cayleytextpart">
@@ -265,10 +285,13 @@
         </div>
         <div class="exp-slide">
             Each circle represents an action in the group, and arrows will show you what happens if you <span style={"color: " + generatorColors[0]}>rotate</span> and <span style={"color: " + generatorColors[1]}>flip</span> the triangle.
-            <br>Use these two buttons to explore the group until you find every action and arrow!
+            <br>Use these two buttons to explore the group! Find every action and arrow to proceed. 
+        </div>
+
+        <div class="exp-slide">
+            Alright! Looks like you found everything!
         </div>
         <div class="exp-slide">
-            Alright! Looks like you found everything! <br>
             This way of drawing symmetry groups, where we draw one circle per action and arrows to represent <span style={"color: " + generatorColors[0]}>certain</span> <span style={"color: " + generatorColors[1]}>actions</span>, is called a Cayley graph.
             <br>
         </div>
@@ -289,7 +312,10 @@
             What happens if we try building this triangle's Cayley graph out of <b style={"color: " + generatorColors[2]}>this purple flip</b> and a <b style={"color: " + generatorColors[1]}>horizontal flip</b>? Try applying the actions in different orders.
         </div>
         <div class="exp-slide">
-            The arrows are a bit different, but we still reach all the same elements. The symmetry group of a shape is somehow independent of the actions we use to build it.
+            Well done.
+        </div>
+        <div class="exp-slide">
+            The arrows are a bit different, but we still reached all the same elements. It looks like the symmetry group of a shape is somehow independent of the actions we use to build it.
         </div>
         <div class="exp-slide">
             Let's test it one more time. What if we choose <b style={"color: " + generatorColors[0]}>these</b> <b style={"color: " + rrColor}>two</b> elements as our starting actions?
@@ -299,9 +325,12 @@
         </div>
         
         {/if}
+        <div class="exp-slide">
+            Looks like you filled out as much of the cayley graph as you can.
+        </div>
 
         <div class="exp-slide">
-            Huh. This isn't the full symmetry group of our triangle. Why can't we reach any of the flips? I thought the symmetry group of a shape was independent of the actions we started from?
+            Huh. This isn't the full symmetry group of our triangle. Why can't we reach any of the flips? Isn't the symmetry group of a shape independent of the actions we started from?
         </div>
         <div class="exp-slide">
             We couldn't make the full group because <b>groups can have groups inside them</b>, called "subgroups". One of the most important rules of a group is that combining two things in a group gives you another element in that group.
@@ -310,8 +339,16 @@
         <div class="exp-slide">
             Or, to say it another way, you can't escape a group by only combining things in that group. Since both of our <b style={"color: " + rColor}>starting</b> <b style={"color: " + rrColor}>actions</b> were in the same rotations-only subgroup, applying them won't ever let us leave the subgroup.
         </div>
+
         <div class="exp-slide">
-            Also, notice how applying a <b style={"color: " + rColor}>120 degree rotation</b>, then a <b style={"color: " + rrColor}>240 degree rotation</b> gets you back where you started. You could say that 120 degrees and 240 rotations undo one another.
+            If we look at the full group, we see something interesting: D<sub>6</sub> almost looks like it's made of two copies of the <b style={"color: " + rColor}>rotation subgroup</b> we just found: one outer green triangle (the subgroup), and one inner triangle, an identical-looking shape. 
+        </div>
+        <div class="exp-slide">
+            That's no coincidence. Finding subgroups of a big group is very helpful, because for any subgroup, you can always split the big group into multiple shifted copies of that subgroup.
+        </div>
+
+        <div class="exp-slide">
+            Also, notice how applying a <b style={"color: " + rColor}>120 degree rotation</b>, then a <b style={"color: " + rrColor}>240 degree rotation</b> gets you back where you started. You could say that 120 degree rotations and 240 degree rotations undo one another.
         </div>
         <div class="exp-slide">
             All the actions we've seen so far can be undone. In fact, being able to undo anything is so important it's part of the definition of a group: every element is required to have another action which undoes it, called its <b>inverse</b>.

@@ -111,12 +111,12 @@
             <div class="frostedbg">
                 <br>
                 If we zoomed in to see the <span style={"color: " + getAtomColor('Al')}>aluminum</span>, <span style={"color: " + getAtomColor('Si')}>silicon</span>, and <span style={"color: " + getAtomColor('O')}>oxygen</span> atoms,
-                <br>
+                <br><br>
                 <div class="twocolumns">
-                    <div class="column">
+                    <div class="column" style="text-align: left">
                         kyanite would look like this
                     </div>
-                    <div class="column">
+                    <div class="column" style="text-align: right">
                         and andalusite would look like this.
                     </div>
                 </div>
@@ -126,7 +126,7 @@
             <div class="frostedbg">
                 I'm only showing a few thousand atoms here, but these patterns continue for hundreds of millions of atoms. It's quite pretty.
                 <br>
-                But, I want to ask: how would you describe <u>how</u> these atoms repeat? How would you describe what makes kyanite's pattern of repeating atoms different from andalusite's pattern of repeating atoms?
+                But, I want to ask: how would you describe <u>the way</u> these atoms repeat? How would you describe what makes kyanite's pattern of repeating atoms different from andalusite's pattern of repeating atoms?
             </div>
         </div>
         <div class="exp-slide">
@@ -139,7 +139,7 @@
             <div class="frostedbg">
                 <!-- labels: kyanite, andalusite -->
                 The number of atoms won't help - both crystals have the same number (and ratio) of atoms, and there's billions of them.
-                <br>Looking at one atom at a time won't help - for example, in both crystals, every <span style={"color: " + getAtomColor('Al')}>aluminum</span> atom always has five bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
+                <br>Looking at one atom at a time won't help - each atom behaves similarly to all others. For example, in both crystals, every <span style={"color: " + getAtomColor('Al')}>aluminum</span> atom always has five bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
             </div>
         </div>
         <div class="exp-slide">
@@ -159,9 +159,9 @@
             <div class="frostedbg">
                 {#if false}
                 This explanarian presentation is an introduction to group theory, from the point of view of understanding crystals. {/if}
-                When I first learned group theory, it was taught in a very self-contained way, and I had a hard time seeing why mathematicians cared about it so much. Sure, it was a way to define symmetry, but what kind of problems would lead you to think about such specific actions?
+                When I first learned group theory, it was taught in a very self-contained way, and I had a hard time seeing why mathematicians want to use it everywhere. Sure, it was interesting to think about a way to define symmetry, but what kind of problems would lead you to think about such specific actions?
                 <br>
-                <p style="font-size: 0.90em">As it turns out, it's the perfect language for talking about repeating patterns, like crystals.</p>
+                <p style="margin: auto 4em;">As it turns out, it's the perfect language for talking about repeating patterns, like crystals.</p>
                 <!-->
                 Group theory is usually said to be the right way to talk about symmetry. But another way to describe group theory is that it's all about things that can be combined and undoed. And there's lots of things in math which can be combined and undone, like adding numbers or applying rotations.
                 -->

@@ -13,7 +13,7 @@ let spheregeo = new THREE.SphereGeometry(atomRadius, widthSegments, heightSegmen
 //one new material per diagram
 
 export function getSymmetryClones(atomPosition, crystaldata, extraAdirectionCells, extraBdirectionCells, extraCdirectionCells){
-    let positions = [atomPosition]
+    let positions = [];
     for(let i=-extraAdirectionCells;i<=extraAdirectionCells;i++){
         for(let j=-extraBdirectionCells;j<=extraBdirectionCells;j++){
             for(let k=-extraCdirectionCells;k<=extraCdirectionCells;k++){

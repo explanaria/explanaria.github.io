@@ -189,6 +189,16 @@ aside{
 .cayleytextpart{
     height: 4em;
 }
+.groupaxiom{
+    padding: 0.25em;
+}
+
+.groupaxiom:nth-child(2n+1){
+    background-color: hsla(240, 90%, 70%, 0.1);
+}
+.groupaxiom:nth-child(2n){
+    background-color: hsla(240, 90%, 70%, 0.2);
+}
 
 .newchaptercard{
 	transition: opacity 0.5s ease-in-out;

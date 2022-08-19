@@ -228,28 +228,30 @@
         <div id="grouprules" class="frostedbg" transition:fade="{{ duration: 500 }}">
             <h1> The Group Axioms </h1>
             <br>
-            A group is a set of <b>elements</b> and a <b>way to combine them</b> (written *) which obey these rules:
+            A group is a set of "<b>elements</b>" and a <b>way to combine them</b> (written *)<br>which obey these rules:
 
             <br><br>
-            <ul class="twocolumns">
-                <li>Identity: <aside>e exists, e*x = x</aside></li>
-                <p>Doing nothing is always an option</p>
-            </ul>
-            <br>
-            <ul class="twocolumns">
-                <li>Composition: <aside>If x,y in group, so is x*y</aside></li>
-                <p>Group elements can be combined to your heart's content</p>
-            </ul>
-            <br>
-            <ul class="twocolumns">
-                <li>Associativity: <aside>(x*y)*z = x*(y*z)</aside></li>
-                <p>Parentheses work like we expect them to</p>
-            </ul>
-            <br>
-            <ul class="twocolumns">
-                <li>Inverses: <aside>given x, x<sup>-1</sup> exists, and x * x<sup>-1</sup> = e</aside></li>
-                <p>You can always undo things</p>
-            </ul>
+            <div class="">
+                <ul class="twocolumns groupaxiom">
+                    <li>Identity: <aside>e exists, e*x = x</aside></li>
+                    <p>Doing nothing is always an option</p>
+                    <br>
+                </ul>
+                <ul class="twocolumns groupaxiom">
+                    <li>Composition: <aside>If x,y in group, so is x*y</aside></li>
+                    <p>Group elements can be combined to your heart's content</p>
+                 <br>
+                </ul>
+                <ul class="twocolumns groupaxiom">
+                    <li>Associativity: <aside>(x*y)*z = x*(y*z)</aside></li>
+                    <p>Parentheses work like we expect them to</p>
+                    <br>
+                </ul>
+                <ul class="twocolumns groupaxiom">
+                    <li>Inverses: <aside>given x, x<sup>-1</sup> exists, and x * x<sup>-1</sup> = e</aside></li>
+                    <p>You can always undo</p>
+                </ul>
+            </div>
         </div>
         {/if}
 
@@ -360,7 +362,7 @@
            A group is defined as anything which follows these four rules.
         </div>
         <div class="exp-slide">
-           Notice how the rules doesn't say <b>how</b> elements of a group combine. That's on purpose: different groups can combine in different ways. Numbers can combine using addition. Actions can combine by doing one thing after another. They're all groups.
+           Notice how the rules don't say <b>how</b> elements of a group combine. That's on purpose: different groups can combine in different ways. Numbers can combine using addition. Actions can combine by doing one thing after another. They're all groups.
         </div>
         <div class="exp-slide">
            I like to think of a group as "things which can combine and undo". And there's lots of things in math which combine and undo. From numbers to rotating triangles to moving crystals, groups allow us to study them all at the same time.

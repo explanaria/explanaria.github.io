@@ -122,14 +122,14 @@
         let mirrorCenterZ = andalusiteData.cVec[2]/2;
 
         let mirror1 = new EXP.Area({bounds: [[-1,1],[-1,1]], numItems: [2,2]})
-        mirror1.add(new EXP.Transformation({expr: (i,t,x,y) => [x*10,y*10, mirrorCenterZ]}))
+        mirror1.add(new EXP.Transformation({expr: (i,t,x,y) => [x*15,y*15, mirrorCenterZ]}))
         .add(new EXP.SurfaceOutput({gridSquares: 4, color: mirrorColor, showSolid: false, opacity: 0.0}))
         objects.push(mirror1)
 
         let mirrorCenterZ2 = -andalusiteData.cVec[2]/2;
 
         let mirror2 = new EXP.Area({bounds: [[-1,1],[-1,1]], numItems: [2,2]})
-        mirror2.add(new EXP.Transformation({expr: (i,t,x,y) => [x*10,y*10, mirrorCenterZ2]}))
+        mirror2.add(new EXP.Transformation({expr: (i,t,x,y) => [x*15,y*15, mirrorCenterZ2]}))
         .add(new EXP.SurfaceOutput({gridSquares: 4, color: mirrorColor2, showSolid: false, opacity: 0.0}))
         objects.push(mirror2)
 
@@ -169,19 +169,24 @@
 
 aVecColor, bVecColor, cVecColor, aPlusCVecColor
         let translationRepresentation1 = new EXP.VectorOutput({color: aVecColor, opacity: 0});
-        aVecArrow.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], andalusiteData.aVec)}))
+
+        let displayedAVec = EXP.Math.vectorScale(andalusiteData.aVec,0.95); //go slightly behind atom circle
+        aVecArrow.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], displayedAVec)}))
             .add(scaleWithMainCrystal.makeLink())
             .add(translationRepresentation1);
 
         let aPlusCVecArrow = new EXP.Array({data: [atomStartPos, atomStartPos]})
         let aPlusCVecArrowDir = EXP.Math.vectorAdd(andalusiteData.aVec,andalusiteData.cVec);
+
+        let displayedAPlusCVecArrowDir = EXP.Math.vectorScale(aPlusCVecArrowDir,0.97);//go slightly behind atom
         let translationRepresentation2 = new EXP.VectorOutput({color: aPlusCVecColor, opacity: 0});
-        aPlusCVecArrow.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], aPlusCVecArrowDir)}))
+        aPlusCVecArrow.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], displayedAPlusCVecArrowDir)}))
             .add(scaleWithMainCrystal.makeLink())
             .add(translationRepresentation2);
 
         let cVecArrow = new EXP.Array({data: [atomStartPos, atomStartPos]})
-        cVecArrow.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], andalusiteData.cVec)}))
+        let displayedCVec = EXP.Math.vectorScale(andalusiteData.cVec,0.95);
+        cVecArrow.add(new EXP.Transformation({expr: (i,t,x,y,z) => i == 0 ? [x,y,z] : EXP.Math.vectorAdd([x,y,z], displayedCVec)}))
             .add(scaleWithMainCrystal.makeLink())
             .add(new EXP.VectorOutput({color: cVecColor, opacity: 0}));
 
@@ -210,8 +215,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         await presentation.nextSlide();
 
         //dolly in, so the lines seem more parallel
-        presentation.ResetTo(three.camera.position, {x: 4, y:4, z: cameraRadius});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+        presentation.ResetTo(three.camera.position, {x: 9, y:11, z: cameraRadius});
+        presentation.ResetTo(three.camera.rotation, {x: -0.2, y:0, z: 0});
         presentation.TransitionTo(three.camera, {zoom: 4});
 
         //show translation arrows
@@ -296,9 +301,11 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         }
 
 
+        [aVecArrow, bVecArrow, aPlusCVecArrow, cVecArrow].map(item => presentation.TransitionTo(item.getDeepestChildren()[0], {opacity: 0}))
+
         //non-movements time
 
-        presentation.TransitionInstantly(movingAndalusite.children[0].material, {opacity: 1});
+        presentation.TransitionTo(movingAndalusite.children[0].material, {opacity: 1});
         presentation.TransitionTo(movingAndalusiteBonds.getDeepestChildren()[0], {opacity: 0.2}, 250);
 
         presentation.TransitionTo(andalusite.children[0].material, {opacity: 0.3});
@@ -537,7 +544,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        On the right, I'll draw the Cayley graph of andalusite. There's a few different types of movement actions we discovered, so I'll plot those too.
+                        On the right, I'll draw a Cayley graph of andalusite. There's a few different types of movement actions we discovered, so I'll plot those too.
                     </div>
             </div>
 
@@ -549,18 +556,18 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        In all, if we keep combining movements, a Cayley graph of all the actions which involve moving forms a kind of grid-like structure. You can follow any arrow to perform an action, or follow the arrow backwards to undo that action.
+                        What happens if we take these actions and kept combining them? Since combining two movements creates another movement, we'd get a subgroup of andalusite's symmetry group consisting of only movements. This subgroup forms a kind of grid-like structure. You can follow any arrow to perform an action, or follow the arrow backwards to undo that action.
                     </div>
             </div>
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        As it turns out, looking at just the movements-only part of a crystal's symmetry group will always form this cube-like Cayley graph. The movement actions themselves might vary (in kyanite, they don't form 90 degree angles), but the Cayley graph will always look like this infinite 3D grid. Geologists call a crystal's only-translations pattern its "Bravais lattice".
+                        As it turns out, for any crystal, the Cayley graph of the movements-only subgroup will always form this cube-like structure. The movement actions themselves might vary (in kyanite, they don't form 90 degree angles), but this subgroup's Cayley graph will always look like an infinite 3D grid. Geologists call a crystal's movements-only subgroup its "Bravais lattice".
                     </div>
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        In fact, for a long time, we thought materials couldn't exist without some type of movements in their symmetry group. Despite hundreds of years of geology, it took until the 1980s to discover repeating patterns of atoms which didn't have {#if false}translation symmetry{:else}them{/if}, buried in a fallen meteorite. They're called "quasicrystals", and scientists are very interested in them.
+                        In fact, for a long time, we thought every single material on earth had a Bravais lattice. Despite hundreds of years of geology, it took until the 1980s to discover repeating patterns of atoms whose symmetry group didn't have any movement actions at all. Those patterns, now called "quasicrystals", earned their discoverer a Nobel Prize.
                     </div>
             </div>
 

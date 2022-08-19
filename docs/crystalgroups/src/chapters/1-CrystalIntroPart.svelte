@@ -141,7 +141,7 @@
             <div class="frostedbg exp-slide">
                 <!-- labels: kyanite, andalusite -->
                 The number of atoms won't help - both crystals have the same number (and ratio) of atoms, and there's billions of them.
-                <br>Looking at one atom at a time won't help - each atom behaves similarly to all others. For example, in both crystals, every <span style={"color: " + getAtomColor('Al')}>aluminum</span> atom always has five bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
+                <br>Looking at one atom at a time won't help - each atom behaves similarly to all others. For example, in both crystals, there are <span style={"color: " + getAtomColor('Al')}>aluminum</span> atoms with both five bonds and six bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
             </div>
         </div>
         <div class="">

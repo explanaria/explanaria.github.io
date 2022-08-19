@@ -10,8 +10,12 @@ export const darkergreen = "hsla(120, 90%, 40%, 1)";
 export const darkerred = "hsla(0, 90%, 40%, 1)";
 
 export const pink = "hsla(320, 90%, 80%, 1)";
-export const purple = "hsla(260, 90%, 75%, 1)";
+export const bluishpurple = "hsla(260, 90%, 75%, 1)";
 export const teal = "hsla(200, 90%, 70%, 1)";
+
+export const yellow = "hsla(60, 80%, 60%, 1)";
+export const coolGreen = "hsla(90, 80%, 50%, 1)";
+export const greenishTeal = "hsla(140, 80%, 80%, 1)";
 
 //chapters 0,1
 export function getAtomColor(atomName){
@@ -21,14 +25,14 @@ export function getAtomColor(atomName){
     return "green";
 }
 
-export const chapter2linecolor = purple; //aVec
-export const chapter2linecolor2 = pink; //a + c
-export const chapter2linecolor3 = teal; //c
-
+//orange to green
+export const chapter2linecolor = teal; //aVec
+export const chapter2linecolor2 = coolGreen; //a + c
+export const chapter2linecolor3 = yellow; //c
 
 export const aVecColor = chapter2linecolor; //aVec
+export const bVecColor = "hsla(140, 80%, 80%, 1)"; //bVec
 export const cVecColor = chapter2linecolor3; //c
-export const bVecColor = darkerred; //bVec
 export const aPlusCVecColor = chapter2linecolor2;
 
 //chapter 3
@@ -39,10 +43,10 @@ export const drawEyesOnArrows = true;
 
 export const identityColor = "hsla(240, 0%, 70%, 1)";
 
-export const rfColor = purple;
+export const rfColor = bluishpurple;
 export const rColor = green;
 export const rrColor = darkergreen;
-export const generatorColors = [green, red, purple, lightblue]; //subtle bug here: this will error if we use a group with more generator than there are colors here
+export const generatorColors = [green, red, bluishpurple, lightblue]; //subtle bug here: this will error if we use a group with more generator than there are colors here
 
 export let defaultGroupElementBorderColor = lightblue;
 
@@ -60,8 +64,8 @@ export function chooseElementBorderColor(group, element){
 }
 
 //chapter 5
-export const mirrorColor = "hsla(180, 85%, 50%, 1)";
-export const mirrorColor2 = "hsla(170, 60%, 50%, 1)";
+export const mirrorColor = "hsla(40, 60%, 50%, 1)";
+export const mirrorColor2 = "hsla(70, 60%, 50%, 1)";
 export const glidePlaneColor1 = "navy";
 export const glidePlaneColor2 = "cyan";
 

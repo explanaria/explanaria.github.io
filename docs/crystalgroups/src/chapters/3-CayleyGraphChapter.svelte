@@ -346,7 +346,7 @@
             If we look at the full group, we see something interesting: D<sub>6</sub> almost looks like it's made of two copies of the <b style={"color: " + rColor}>rotation subgroup</b> we just found: one outer green triangle (the subgroup), and one inner triangle, an identical-looking shape. 
         </div>
         <div class="exp-slide">
-            ThatD<sub>6</sub>'s no coincidence. Finding subgroups of a big group is very helpful, because for any subgroup, you can always split the big group into multiple shifted copies of that subgroup.
+            That's no coincidence. Finding subgroups of a big group is very helpful, because for any subgroup, you can always split the big group into multiple shifted copies of that subgroup.
         </div>
 
         <div class="exp-slide">
@@ -372,7 +372,7 @@
         </div>
 
         <div class="exp-slide">
-           Once you have a group, there's lots of questions you can ask about it: given a group, how many subgroups are there, and what are they? Are there any other groups with only 6 actions? Given two groups, is there a copy of one hiding inside the other?
+           Once you have a group, there's lots of questions you can ask: given a group, how many subgroups are there, and what are they? Are there any other groups with only 6 elements? Given two groups, is there a copy of one hiding inside the other?
         </div>
         {#if endHere}
         <div class="exp-slide">

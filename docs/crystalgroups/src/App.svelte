@@ -16,9 +16,6 @@
     window.currentChapter = currentChapter;
     let numChapters = 4+1;
 
-    if(onlyThree)numChapters = 3+1;
-    if(!onlyThree){currentChapter = 4;} //// DEBUG
-
     let mainContainer = null;
     async function changeChapter(chapterNum){
         chapterNum = ((chapterNum-1)%numChapters) + 1; //round to 1-numChapters

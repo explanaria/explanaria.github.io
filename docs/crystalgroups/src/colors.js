@@ -13,7 +13,7 @@ export const pink = "hsla(320, 90%, 80%, 1)";
 export const bluishpurple = "hsla(260, 90%, 75%, 1)";
 export const teal = "hsla(200, 90%, 70%, 1)";
 
-export const yellow = "hsla(60, 80%, 50%, 1)";
+export const yellow = "hsla(60, 80%, 40%, 1)";
 export const coolGreen = "hsla(90, 80%, 50%, 1)";
 export const greenishTeal = "hsla(140, 80%, 80%, 1)";
 

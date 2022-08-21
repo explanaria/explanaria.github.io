@@ -991,7 +991,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        What happens if we take these actions and kept combining them? We're starting with movement actions, and combining two movements creates another movement, so we'd get a subgroup of andalusite's symmetry group consisting of only movements
+                        What happens if we took these actions and kept combining them? We're starting with movement actions, and combining two movements creates another movement, so we'd get a subgroup of andalusite's symmetry group consisting of only movements.
                     </div>
             </div>
           <div class="exp-slide">
@@ -1287,7 +1287,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        By looking at symmetry groups, you can uncover lots of info that isn't necessarily clear at first glance - such as why we could see clearly through our crystals.
+                        Looking at symmetry groups can uncover lots of info that isn't necessarily clear at first glance - such as why we could see clearly through our crystals.
                         <br>And that's why mathematicians care about group theory.
                     </div>
             </div>

@@ -95,7 +95,7 @@
                 Thanks so much for reading!
             </div>
 
-            <br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br />
 
             <div class="twocolumnsLeftBigger frostedbg yesclick" style="gap: 1em;">
                 <div class="column">

@@ -1,6 +1,6 @@
 <script>
     import { rotate2D } from "./utils.js";
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
     import { GroupElement } from "./groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {easing, drawStaticElements, isPureTranslation, getTranslationVector, canvasSizePixels, canvasSize, dotColor} from "./crystalcanvasdrawing.js";
@@ -36,32 +36,36 @@
     let lastTime = 0;
     function draw(currentTime){
         let delta = (currentTime - lastTime)/1000;
-        canvas.width = canvasSizePixels;
-        canvas.height = canvasSizePixels;
-        ctx.lineWidth = lineWidth;
 
-        ctx.save();
+        if(canvas){
 
-        ctx.translate(canvas.width/2, canvas.height/2); //make all transformations start from center of canvas
+            canvas.width = canvasSizePixels;
+            canvas.height = canvasSizePixels;
+            ctx.lineWidth = lineWidth;
 
-        //draw triangle shadow
-        ctx.save();
-        ctx.fillStyle = dotColor;
-        drawDots();
+            ctx.save();
 
-        //draw triangle, rotated or scaled by the animation
-        updateCurrentAnimation(ctx, delta);
-        applyCurrentAnimation(ctx, delta);
-        ctx.fillStyle = dotColor;
-        drawDots();
+            ctx.translate(canvas.width/2, canvas.height/2); //make all transformations start from center of canvas
 
-        ctx.restore();
-        //finally, draw stuff like mirror lines which go on top of the triangle and don't rotate with it
-        drawStaticElements(ctx, element);
-        ctx.restore();
+            //draw triangle shadow
+            ctx.save();
+            ctx.fillStyle = dotColor;
+            drawDots();
+
+            //draw triangle, rotated or scaled by the animation
+            updateCurrentAnimation(ctx, delta);
+            applyCurrentAnimation(ctx, delta);
+            ctx.fillStyle = dotColor;
+            drawDots();
+
+            ctx.restore();
+            //finally, draw stuff like mirror lines which go on top of the triangle and don't rotate with it
+            drawStaticElements(ctx, element);
+            ctx.restore();
+        }
 
         lastTime = currentTime;
-        window.requestAnimationFrame(draw);
+        if(active)window.requestAnimationFrame(draw);
     }
 
     //janky animation system time!
@@ -69,7 +73,7 @@
 
     async function animationLoop(){
         //this one controls the animation of each element
-        while(true){ //todo: stop looping when there's an onUnmount
+        while(active){ //todo: stop looping when there's an onUnmount
             await oneFullAnimation();
             await EXP.delay(2000);
         }
@@ -132,12 +136,15 @@
     function updateCurrentAnimation(ctx, deltatime){} 
     function applyCurrentAnimation(ctx, deltatime){}
 
-
+    let active = true;
     onMount(async () => {
         await tick(); //load canvas
         ctx = canvas.getContext("2d");
         draw(0);
         await animationLoop();
+    })
+    onDestroy(() => {
+        animationLoop = () => {active = false;}
     })
 </script>
 

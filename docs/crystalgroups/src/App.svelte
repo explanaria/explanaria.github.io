@@ -17,7 +17,7 @@
     let numChapters = 4+1;
 
     if(onlyThree)numChapters = 3+1;
-    if(!onlyThree){currentChapter = 3;} //// DEBUG
+    if(!onlyThree){currentChapter = 4;} //// DEBUG
 
     let mainContainer = null;
     async function changeChapter(chapterNum){

@@ -238,7 +238,7 @@
                     <br>
                 </ul>
                 <ul class="twocolumns groupaxiom">
-                    <li>Composition: <aside>If x,y in group, so is x*y</aside></li>
+                    <li>Composition: <aside>If x and y in group, so is x*y</aside></li>
                     <p>Group elements can be combined to your heart's content</p>
                  <br>
                 </ul>
@@ -286,7 +286,7 @@
             Finally, on the right, I'll keep track of the actions you discover.
         </div>
         <div class="exp-slide">
-            Each circle represents an action in the group, and arrows will show you what happens if you <span style={"color: " + generatorColors[0]}>rotate</span> and <span style={"color: " + generatorColors[1]}>flip</span> the triangle.
+            On the right, each circular shape represents an action in the group, and arrows will show you what happens if you <span style={"color: " + generatorColors[0]}>rotate</span> and <span style={"color: " + generatorColors[1]}>flip</span> the triangle.
             <br>Use these two buttons to explore the group! Find every action and arrow to proceed. 
         </div>
 
@@ -335,7 +335,7 @@
             Huh. This isn't the full symmetry group of our triangle. Why can't we reach any of the flips? Isn't the symmetry group of a shape independent of the actions we started from?
         </div>
         <div class="exp-slide">
-            We couldn't make the full group because <b>groups can have groups inside them</b>, called "subgroups". One of the most important rules of a group is that combining two things in a group gives you another element in that group.
+            We couldn't make the full group D<sub>6</sub> because <b>groups can have groups inside them</b>, called "subgroups". One of the most important rules of a group is that combining two things in a group gives you another element in that group.
         </div>
 
         <div class="exp-slide">
@@ -346,7 +346,7 @@
             If we look at the full group, we see something interesting: D<sub>6</sub> almost looks like it's made of two copies of the <b style={"color: " + rColor}>rotation subgroup</b> we just found: one outer green triangle (the subgroup), and one inner triangle, an identical-looking shape. 
         </div>
         <div class="exp-slide">
-            That's no coincidence. Finding subgroups of a big group is very helpful, because for any subgroup, you can always split the big group into multiple shifted copies of that subgroup.
+            ThatD<sub>6</sub>'s no coincidence. Finding subgroups of a big group is very helpful, because for any subgroup, you can always split the big group into multiple shifted copies of that subgroup.
         </div>
 
         <div class="exp-slide">

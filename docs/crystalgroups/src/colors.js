@@ -13,7 +13,7 @@ export const pink = "hsla(320, 90%, 80%, 1)";
 export const bluishpurple = "hsla(260, 90%, 75%, 1)";
 export const teal = "hsla(200, 90%, 70%, 1)";
 
-export const yellow = "hsla(60, 80%, 60%, 1)";
+export const yellow = "hsla(60, 80%, 50%, 1)";
 export const coolGreen = "hsla(90, 80%, 50%, 1)";
 export const greenishTeal = "hsla(140, 80%, 80%, 1)";
 
@@ -68,5 +68,12 @@ export const mirrorColor = "hsla(40, 60%, 50%, 1)";
 export const mirrorColor2 = "hsla(70, 60%, 50%, 1)";
 export const glidePlaneColor1 = "navy";
 export const glidePlaneColor2 = "cyan";
+export const rotationColor = rColor;
 
-export const specialGeneratorColors = {"r": rColor, "rf":rfColor, "rr":rrColor, "a": aVecColor, "b": bVecColor, "c": cVecColor, "ca": aPlusCVecColor, "m": mirrorColor, "m2": mirrorColor2, "g1": glidePlaneColor1, "g2": glidePlaneColor2};
+export const inversionColor = defaultGroupElementBorderColor;
+
+export const glideRotationColor1 = defaultGroupElementBorderColor;
+export const glideRotationColor2 = defaultGroupElementBorderColor;
+export const glideRotationColor3 = defaultGroupElementBorderColor;
+
+export const specialGeneratorColors = {"r": rColor, "rf":rfColor, "rr":rrColor, "a": aVecColor, "b": bVecColor, "c": cVecColor, "c⁻¹": cVecColor, "ca": aPlusCVecColor, "m": mirrorColor, "m2": mirrorColor2, "g": glidePlaneColor1};

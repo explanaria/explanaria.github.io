@@ -28,7 +28,7 @@
 
     //set positions of this two-element group
     let e = group.getElemByName("e");
-    let startPos = [4, 10];
+    let startPos = [4, 8];
     positions.set(group.getElemByName("e"), startPos)
 
     //set positions of translations

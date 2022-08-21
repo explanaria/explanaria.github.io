@@ -217,6 +217,7 @@ export class LazyGroup extends FiniteGroup{
 
         //couldn't find it. oh well. time to make one
         this.elements.push(newelem);
+        this.nameLookupTable[newelem.name] = newelem;
         return newelem
     }
 }

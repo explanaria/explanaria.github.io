@@ -32,6 +32,7 @@
         let [andalusite, expandalusitebonds] = makeBallStickDiagram(andalusiteData, 1,1,1); //static one
         bigandalusite = andalusite;
         three.scene.add(andalusite)
+        bigandalusite.rotation.y += 0.3;
     }
 
     let objects = [];

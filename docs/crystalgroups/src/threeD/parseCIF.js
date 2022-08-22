@@ -244,7 +244,7 @@ function shouldBond(cartesianAtomPos1, cartesianAtomPos2, maxBondLength=2.3){
     return false;
 }
 
-function shouldBondWraparound(fractionalAtomPos1, fractionalAtomPos2, aVec, bVec, cVec, maxBondLength=2){
+function shouldBondWraparound(fractionalAtomPos1, fractionalAtomPos2, aVec, bVec, cVec, maxBondLength=2.3){
     //decides on whether to draw a bond between two atoms based on their positions
     //I want to measure M * v1 - M * v2
     //which is equal to M * (v1 - v2)
@@ -320,14 +320,19 @@ function computeBonds(cartesianAtomPositions, aVec, bVec, cVec, includePeriodicB
 
 function atomCopiesInSurroundingUnitCells(atomPos, aVec, bVec, cVec){
     //return copies of atomPos either in this unit cell or in neighboring unit cells
-    return [
-        [0,1,2].map((i) => atomPos[i] + aVec[i]), //vector addition
-        [0,1,2].map((i) => atomPos[i] + bVec[i]),
-        [0,1,2].map((i) => atomPos[i] + cVec[i]),
-        [0,1,2].map((i) => atomPos[i] - aVec[i]),
-        [0,1,2].map((i) => atomPos[i] - bVec[i]),
-        [0,1,2].map((i) => atomPos[i] - cVec[i]),
-    ]
+
+    let atomCopies = [];
+
+    for(let i=-1;i<=1;i++){
+        for(let j=-1;j<=1;j++){
+            for(let k=-1;k<=1;k++){
+                if(i == 0 && j == 0 && k == 0)continue; //don't include THIS unit cell
+                let translatedAtomCopy = [0,1,2].map((n) => atomPos[n] + i * aVec[n] + j * bVec[n] + k * cVec[n]);
+                atomCopies.push(translatedAtomCopy);
+            }
+        }
+    }
+    return atomCopies;
 }
 
 

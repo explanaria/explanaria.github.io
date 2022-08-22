@@ -37,7 +37,7 @@
         translationGroupOffset: "",
         andalusiteTranslationGroupOpacity: 1,
 
-        andalusiteGroupOffset: "",
+        andalusiteGroupOffset: "translate(2.5em, 0)",
         andalusiteGroupOpacity: "0",
 
         kyaniteGroupOpacity: 0,
@@ -54,7 +54,6 @@
           get(x) { return _data[keyName]; }
         })
     );
-    let andalusiteGroupOffset = "0";
     
 
     async function animate(){
@@ -478,10 +477,6 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
         //todo: hide arrow
 
-        presentation.ResetTo(three.camera.position, {x: 0, y:0, z: cameraRadius});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
-
-
         presentation.TransitionTo(movingAndalusite.position, {z: 0}, 500);
         presentation.TransitionTo(cVecArrow.getDeepestChildren()[0], {opacity: 0}, 500)
 
@@ -549,6 +544,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
         presentation.ResetTo(three.camera.position, {x: 0, y:0, z: 50});
         presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+        presentation.TransitionTo(three.camera, {zoom: 4});
 
         await presentation.delay(1000);
 
@@ -575,13 +571,12 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         presentation.TransitionTo(mirror1.getDeepestChildren()[0], {opacity: 0});
         presentation.TransitionTo(mirror2.getDeepestChildren()[0], {opacity: 0});
 
-        presentation.ResetTo(three.camera.position, {x: cameraRadius, y:-1, z: 0});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
-        presentation.TransitionTo(three.camera, {zoom: 4});
 
         presentation.TransitionTo(mirror3.getDeepestChildren()[0], {opacity: 0.9});
 
         await presentation.nextSlide();
+
+        await presentation.delay(1000);
 
         let glideReflectionAmount = andalusiteData.aVec[0]/2;
 
@@ -633,8 +628,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         //demonstrate glide reflection #2
     
         //show glide plane #2
-        presentation.TransitionTo(movingAndalusite.scale, {y: 1}, 1000);
-        presentation.TransitionTo(movingAndalusite.position, {x: 0, y: 0, z: 0 }, 1000);
+        presentation.TransitionTo(movingAndalusite.scale, {y: 1}, 500);
+        presentation.TransitionTo(movingAndalusite.position, {x: 0, y: 0, z: 0 }, 500);
         presentation.TransitionTo(mirror3.getDeepestChildren()[0], {opacity: 0});
         presentation.TransitionTo(mirror4.getDeepestChildren()[0], {opacity: 0.9});
 
@@ -654,8 +649,12 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
         await presentation.nextSlide();
 
+        //prepare camera for new things
+
+        //hey if you glire rotate twice you get a normal thing
+
         presentation.TransitionTo(movingAndalusite.scale, {x: 1}, 1000);
-        presentation.TransitionTo(movingAndalusite.position, {x: mirrorCenterX * 2, y: andalusiteData.bVec[1], z: andalusiteData.cVec[2]}, 1000);
+        presentation.TransitionTo(movingAndalusite.position, {x: 0, y: andalusiteData.bVec[1], z: andalusiteData.cVec[2]}, 1000);
 
         changeArrow("e", "rg", true);
         changeArrow("rg", "rg", true);
@@ -686,10 +685,6 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         await presentation.nextSlide();
         await presentation.nextSlide();
 
-
-        presentation.TransitionTo(movingAndalusite.scale, {x:1, y: 1, z:1}, 1000);
-        presentation.TransitionTo(movingAndalusite.position, {x: 0, y: 0, z: 0 }, 1000);
-
         hideElement("ba");
         hideElement("a");
         hideElement("b");
@@ -713,11 +708,19 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
         await presentation.nextSlide();
 
+        //Anyway, let's keep combining.
+
+        presentation.TransitionTo(movingAndalusite.scale, {x:1, y: 1, z:1}, 1000);
+        presentation.TransitionTo(movingAndalusite.position, {x: 0, y: 0, z: 0 }, 1000);
+
+        presentation.ResetTo(three.camera.position, {x: cameraRadius, y:-1, z: 0});
+        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
+
         presentation.TransitionTo(movingAndalusite.rotation, {x: 0, y: 0, z: 0 }, 1000);
         presentation.TransitionTo(movingAndalusite.position, {x: 0, y: 0, z: 0 }, 1000);
         presentation.TransitionTo(movingAndalusite.scale, {x: 1, y: 1, z: 1 }, 1000);
 
-        presentation.TransitionInstantly(data, {andalusiteGroupOffset: "translate(5.5em, 0)"});
+        presentation.TransitionInstantly(data, {andalusiteGroupOffset: "translate(7em, 0)"});
 
         await presentation.nextSlide();
 
@@ -840,8 +843,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         changeKyaniteArrow("i", "i", true)
 
         var twiceCenterVec = EXP.Math.vectorAdd(EXP.Math.vectorAdd(kyaniteData.aVec, kyaniteData.bVec), kyaniteData.cVec)
-        presentation.TransitionTo(movingKyanite.scale, {x: -1, y: -1, z: -1 }, 1000);
-        presentation.TransitionTo(movingKyanite.position, {x: twiceCenterVec[0], y: twiceCenterVec[1], z: twiceCenterVec[2] }, 1000);
+        presentation.TransitionTo(movingKyanite.scale, {x: -1, y: -1, z: -1 }, 2000);
+        presentation.TransitionTo(movingKyanite.position, {x: twiceCenterVec[0], y: twiceCenterVec[1], z: twiceCenterVec[2] }, 2000);
 
         await presentation.nextSlide();
 
@@ -849,6 +852,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
         presentation.TransitionTo(three.camera, {zoom: 1});
         presentation.ResetTo(three.camera.position, {x: 0, y:-5, z: 80});
+        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
 
         presentation.TransitionTo(movingAndalusite.children[0].material, {opacity: 1}, 500);
         presentation.TransitionTo(movingAndalusiteBonds.getDeepestChildren()[0], {opacity: 0.2}, 500);
@@ -859,12 +863,13 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
         //kyanite go down 
         presentation.TransitionTo(kyanite.position, {x: 3, y: -15, z: 0 }, 1000);
+        //different position because of the inversion. scale is still -1 here
         presentation.TransitionTo(movingKyanite.position, {x: twiceCenterVec[0]+3, y: twiceCenterVec[1] -15, z: twiceCenterVec[2] }, 1000);
 
 
         presentation.TransitionInstantly(data, {kyaniteGroupOpacity: 1, andalusiteGroupOpacity: 1});
 
-        presentation.TransitionInstantly(data, {andalusiteGroupOffset: "scale(0.7) translate(5.5em, 0)", kyaniteGroupOffset: "scale(0.7) translate(4em, 12em)"});
+        presentation.TransitionInstantly(data, {andalusiteGroupOffset: "scale(0.7) translate(7em, 0)", kyaniteGroupOffset: "scale(0.7) translate(4em, 12em)"});
 
 
         await presentation.nextSlide();
@@ -1007,7 +1012,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        In fact, for decades we thought every single material on earth had a Bravais lattice. Despite years of geology, it took until the 1980s to discover repeating patterns of atoms whose symmetry group didn't have any movement actions at all. The discoverer of these "quasicrystals" was awarded a Nobel Prize.
+                        In fact, for decades we thought every single material on earth had a Bravais lattice. Despite years of geology, it took until the 1980s to discover repeating patterns of atoms whose symmetry group didn't have any movement actions at all. The discoverer of those "quasicrystals" was awarded a Nobel Prize.
                     </div>
             </div>
 
@@ -1135,7 +1140,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Unfortunately, andalusite is only mirror symmetric using <b style={"color: " + mirrorColor}>that one plane</b> we saw. Although it might look like the atoms line up, a mirror will leave them slightly misaligned. Look at the checkerboard pattern of red <b style={"color:" + getAtomColor("O")}>oxygen</b> atoms and their lighter red original places.
+                        Unfortunately, andalusite is only mirror symmetric using <b style={"color: " + mirrorColor}>that one plane</b> we saw. This mirror will leave them slightly misaligned. Look at the checkerboard pattern of red <b style={"color:" + getAtomColor("O")}>oxygen</b> atoms and their lighter red original places.
                     </div>
             </div>
             <div class="exp-slide">
@@ -1168,7 +1173,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        This glide reflection both reflects and moves around different planes and axes than our first one.
+                        Here's what the combined glide reflection looks like. It reflects and moves around different planes and axes than <b style={"color: " + glidePlaneColor1}>our first one</b>.
                     </div>
             </div>
 
@@ -1202,7 +1207,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Combining a <b style={"color: " + rotationColor}>180 degree rotation</b> with a <b style={"color: " + mirrorColor}>mirror along the rotation plane</b> creates an "inversion". If you see a geologist putting lines on top of numbers when naming groups, like P<span style="text-decoration:overline;">nm2</span>, it means there's inversion symmetry.
+                        Combining a <b style={"color: " + rotationColor}>180 degree rotation</b> with a <b style={"color: " + mirrorColor}>mirror along the rotation plane</b> creates an "<b style={"color: " + inversionColor}>inversion</b>". If you see a geologist putting lines on top of numbers when naming groups, like P<span style="text-decoration:overline;">nm2</span>, it means there's inversion symmetry.
                     </div>
             </div>
             <div class="exp-slide">
@@ -1213,7 +1218,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Finally, <b style={"color: " + mirrorColor}>mirroring</b> before doing a <b style={"color: " + glidePlaneColor1}>glide reflection</b> will give you a <b style={"color: " + glideRotationColor1}>glide rotation</b>: a combination of a rotation, then movement.
+                        Finally, <b style={"color: " + mirrorColor}>mirroring</b> before doing a <b style={"color: " + glidePlaneColor1}>glide reflection</b> will give you a <b style={"color: " + glideRotationColor1}>glide rotation</b>: a combination of a rotation, then movement along the same axis. It's the same action a screw makes when you tighten one.
                     </div>
             </div>
 

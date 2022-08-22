@@ -54,6 +54,7 @@
 
 <div class="maincontainer" bind:this={mainContainer} style="opacity: 1">
     <div class="rotatesign">
+        <br><br>
         <h1>(Please turn your phone sideways! This presentation is designed for landscape mode.)</h1>
     </div>
     <ChapterSelector on:changeChapter={changeChapterEvent} chapters={onlyThree ? [1,2,3,'F'] : [1,2,3,4,'F']} currentChapter={currentChapter} />

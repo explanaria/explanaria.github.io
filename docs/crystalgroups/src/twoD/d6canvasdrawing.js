@@ -18,9 +18,9 @@ export const triangleRadius = 0.4*canvasSizePixels;
 export const arrowCenterDistance = 0.43*canvasSizePixels; //how far from the center should the arced arrow that shows a rotation be?
 export const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
 export const num_dashes = 5;
-export const dash_radius = canvasSize/2; //how far from the center should dashed lines for mirroring go
-export const D6_text_size_multiplier = 0.35;
-export const lineWidth = 2;
+export const dash_radius = canvasSizePixels/2; //how far from the center should dashed lines for mirroring go
+export const D6_text_size_multiplier = 0.08 * canvasSizePixels;
+export const lineWidth = 3;
 export let NUM_DEGREES_IN_ONE_ROTATION = 120;
 
 

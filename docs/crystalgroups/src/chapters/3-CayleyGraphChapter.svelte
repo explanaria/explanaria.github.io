@@ -281,7 +281,7 @@
             And another action which leaves the triangle looking unchanged is a <b style={"color: " + generatorColors[1]}>horizontal flip</b>.
         </div>
         <div class="exp-slide">
-            To help keep track of what each action does to the triangle, I'll doodle some letters on it.
+            To help us keep track of what each action does to the triangle, I'll doodle some letters on it.
         </div>
         <div class="exp-slide">
             Finally, on the right, I'll keep track of the actions you discover.

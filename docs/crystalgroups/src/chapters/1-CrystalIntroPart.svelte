@@ -1,5 +1,6 @@
 <script>
     import MoleculeCanvas from "../threeD/MoleculeCanvas.svelte";
+    import D6Group from "../twoD/D6Group.svelte";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {getAtomColor} from "../colors.js";
     import {onMount, onDestroy, tick} from "svelte";
@@ -134,7 +135,7 @@
         <div class="">
             <div class="frostedbg exp-slide">
                 <!-- labels: kyanite, andalusite -->
-                Drag to rotate the 3D model yourself and take a look. What can we use to describe how andalusite and kyanite repeat?
+                Drag to rotate the 3D model yourself and take a look. What can we use to describe how andalusite and kyanite repeat? It's not easy.
             </div>
         </div>
         <div class="">

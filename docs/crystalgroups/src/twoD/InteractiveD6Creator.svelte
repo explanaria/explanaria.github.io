@@ -162,11 +162,11 @@
         ctx.fill();
 
         ctx.fillStyle = D6TextColor;
-        ctx.font = D6_text_size_multiplier * canvasSize+ "em serif";
+        ctx.font = D6_text_size_multiplier * canvasSize+ "px serif";
         ctx.globalAlpha = data.d6textOpacity;
-        ctx.fillText("D", -0.35 * D6_text_size_multiplier * canvasSizePixels,-0.1 *D6_text_size_multiplier * canvasSizePixels);
-        ctx.font = D6_text_size_multiplier * 0.7 * canvasSize+ "em serif";
-        ctx.fillText("6", 0.15 * D6_text_size_multiplier * canvasSizePixels, 0.06 *D6_text_size_multiplier * canvasSizePixels);
+        ctx.fillText("D", -0.11 * canvasSizePixels,-0.06 * canvasSizePixels);
+        ctx.font = D6_text_size_multiplier * 0.7 * canvasSize+ "px serif";
+        ctx.fillText("6", 0.05 * canvasSizePixels, -0.00 * canvasSizePixels);
         ctx.globalAlpha = 1;
         
         lastTime = currentTime;

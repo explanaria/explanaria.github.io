@@ -417,9 +417,9 @@
 
 <div class="overlappingItemContainer">
     <div class="overlappingItemContainer exp-text topThing">
-        <div class="threecanvascontainer" id="threecanvas" />
+        <div class="threecanvascontainer" id="threecanvas" style="z-index: 0" />
 
-        <div class="noclick">
+        <div class="noclick" style="z-index: 1">
             <div class="exp-slide-1 frostedbg newchaptercard">
                 <h1>Chapter 2</h1>
                 <p>The Clear Conundrum</p>
@@ -440,7 +440,7 @@
     </div>
 
 
-    <div class="bottomThing noclick">
+    <div class="bottomThing noclick"  style="z-index: 1">
         <div class="overlappingItemContainer alignBottom">
             <div class="exp-slide">
                     <div class="frostedbg">

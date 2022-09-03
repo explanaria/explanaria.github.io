@@ -7,6 +7,8 @@
 
     import {makeBallStickDiagram} from "./ballStickDiagram.js";
 
+    export let style="";
+
 
     let controls, fps=0;
 
@@ -53,4 +55,4 @@
 
 
 <!-- <div style:position="absolute" style:top="0%" style:right="0%" style:text-align="right">Fps: {fps}</div> -->
-<div class="threecanvascontainer" id="threecanvas" /> <!-- three.hs canvas attached here -->
+<div class="threecanvascontainer" id="threecanvas" style={style}/> <!-- three.hs canvas attached here -->

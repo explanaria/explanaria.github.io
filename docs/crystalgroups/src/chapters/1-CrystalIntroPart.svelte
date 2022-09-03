@@ -61,9 +61,9 @@
 </style>
 
 <div class="overlappingItemContainer exp-text fullscreen">
-    <MoleculeCanvas />
-    <div id="whitebg" style="opacity: 0"/>
-    <div id="overlays" class="overlappingItemContainer">
+    <MoleculeCanvas style="z-index: 0"/>
+    <div id="whitebg" style="opacity: 0; z-index: 1"/>
+    <div id="overlays" class="overlappingItemContainer" style="z-index: 2">
         <div class="">
             <br><br><br>
             <center>

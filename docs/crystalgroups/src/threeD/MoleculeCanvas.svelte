@@ -7,7 +7,7 @@
 
     import {makeBallStickDiagram} from "./ballStickDiagram.js";
 
-    export let style="";
+    export let style="z-index: 0";
 
 
     let controls, fps=0;

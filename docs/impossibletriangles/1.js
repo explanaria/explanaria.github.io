@@ -200,6 +200,8 @@ await presentation.begin();
 setupGoat(presentation);
 await presentation.nextSlide();
 await presentation.nextSlide();
+await presentation.nextSlide();
+await presentation.nextSlide();
 
 let introCount = 0;
 introObjects.forEach(object => object.getDeepestChildren().forEach( async (output) => {

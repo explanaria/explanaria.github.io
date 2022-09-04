@@ -952,18 +952,21 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
     </div>
 
     {#if groupEquationProgress > 0}
-    <div id="equations" style:opacity={Math.max(0, Math.min(1, groupEquationProgress))}>
-        <div class="frostedbg" style="width: 15em;  margin: 0 auto;">
-            <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress))}>
-                <b style={"color: " + mirrorColor}>m</b> * <b style={"color: " + mirrorColor2}>m2</b> = <b style={"color: " + cVecColor}>c</b>
-            </p>
-            <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress-1))}>
-                <b style={"color: " + mirrorColor}>m</b> * <b style={"color: " + mirrorColor2}>m2</b> * <b style={"color: " + mirrorColor2}>m2</b> = <b style={"color: " + cVecColor}>c</b>* <b style={"color: " + mirrorColor2}>m2</b></p>
-            <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress-2))}><b style={"color: " + mirrorColor}>m</b> * (<b style={"color: " + mirrorColor2}>m2</b>* <b style={"color: " + mirrorColor2}>m2</b>) = <b style={"color: " + cVecColor}>c</b>* <b style={"color: " + mirrorColor2}>m2</b></p>
-            <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress-3))}><b style={"color: " + mirrorColor}>m</b> * (e) = <b style={"color: " + cVecColor}>c</b>* <b style={"color: " + mirrorColor2}>m2</b></p>
-            <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress-3))}><b style={"color: " + mirrorColor}>m</b> = <b style={"color: " + cVecColor}>c</b>* <b style={"color: " + mirrorColor2}>m2</b>
-            </p>
+    <div class="twocolumnsLeftBigger">
+        <div id="equations" style:opacity={Math.max(0, Math.min(1, groupEquationProgress))}>
+            <div class="frostedbg" style="width: 15em;  margin: 0 auto;">
+                <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress))}>
+                    <b style={"color: " + mirrorColor}>m</b> * <b style={"color: " + mirrorColor2}>m2</b> = <b style={"color: " + cVecColor}>c</b>
+                </p>
+                <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress-1))}>
+                    <b style={"color: " + mirrorColor}>m</b> * <b style={"color: " + mirrorColor2}>m2</b> * <b style={"color: " + mirrorColor2}>m2</b> = <b style={"color: " + cVecColor}>c</b>* <b style={"color: " + mirrorColor2}>m2</b></p>
+                <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress-2))}><b style={"color: " + mirrorColor}>m</b> * (<b style={"color: " + mirrorColor2}>m2</b>* <b style={"color: " + mirrorColor2}>m2</b>) = <b style={"color: " + cVecColor}>c</b>* <b style={"color: " + mirrorColor2}>m2</b></p>
+                <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress-3))}><b style={"color: " + mirrorColor}>m</b> * (e) = <b style={"color: " + cVecColor}>c</b>* <b style={"color: " + mirrorColor2}>m2</b></p>
+                <p style:opacity={Math.max(0, Math.min(1, groupEquationProgress-3))}><b style={"color: " + mirrorColor}>m</b> = <b style={"color: " + cVecColor}>c</b>* <b style={"color: " + mirrorColor2}>m2</b>
+                </p>
+            </div>
         </div>
+        <p class="nomouse"></p> <!-- dummy to shove the equation to the left> -->
     </div>
     {/if}
 

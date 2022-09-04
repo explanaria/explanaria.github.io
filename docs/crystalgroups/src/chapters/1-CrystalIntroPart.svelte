@@ -117,7 +117,7 @@
                 <br><br>
                 <div class="twocolumns">
                     <div class="column" style="text-align: left">
-                        kyanite would look like this
+                        kyanite would look like this...
                     </div>
                     <div class="column" style="text-align: right">
                         and andalusite would look like this.

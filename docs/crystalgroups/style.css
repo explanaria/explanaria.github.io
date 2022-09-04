@@ -115,9 +115,12 @@ aside{
 
 
 .maincontainer{
-    font-family: Lora, serif;
+    font-family: "Poppins",Arial,Helvetica,sans-serif;
+    line-height: 1.25;
+
     aspect-ratio: 16 / 9;
     max-height: 100vh;
+    
     max-height: 100dvh;
     margin: auto;
     text-align: center;
@@ -331,7 +334,7 @@ aside{
     height: 100vw;
     width: 100vh;
     width: 100dvh;
-    }
+  }
   .rotatesign{
         transform: translate(-50%, -50%) rotate(-90deg) translate(-50%, 50%);
         display: block;

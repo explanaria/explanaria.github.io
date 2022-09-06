@@ -287,7 +287,7 @@
             Finally, on the right, I'll keep track of the actions you discover.
         </div>
         <div class="exp-slide">
-            On the right, each circular shape represents an action in the group, and arrows will show you what happens if you <span style={"color: " + generatorColors[0]}>rotate</span> and <span style={"color: " + generatorColors[1]}>flip</span> the triangle.
+            On the right, each circular shape represents an action in the group, and arrows will show you what happens if you <span style={"color: " + generatorColors[0]}>rotate</span> and <span style={"color: " + generatorColors[1]}>flip</span> the triangle starting from every action.
             <br>Use these two buttons to explore the group! Find every action and arrow to proceed. 
         </div>
 
@@ -318,13 +318,13 @@
             Well done.
         </div>
         <div class="exp-slide">
-            The arrows are a bit different, but we still reached all the same elements. It looks like the symmetry group of a shape is somehow independent of the actions we use to build it.
+            The arrows are a bit different, but we still reached all the same actions. It looks like the symmetry group of a shape is somehow independent of the actions we use to build it.
         </div>
         <div class="exp-slide">
-            Let's test it one more time. What if we choose <b style={"color: " + generatorColors[0]}>these</b> <b style={"color: " + rrColor}>two</b> elements as our starting actions?
+            Let's test it one more time. What if we choose <b style={"color: " + generatorColors[0]}>these</b> <b style={"color: " + rrColor}>two</b> actions as our starting actions?
         </div>
         <div class="exp-slide">
-            Let's try building the triangle's Cayley graph out of <b style={"color: " + rColor}>these</b> <b style={"color: " + rrColor}>two</b> elements.
+            Let's try building the triangle's Cayley graph out of <b style={"color: " + rColor}>these</b> <b style={"color: " + rrColor}>two</b> rotation actions.
         </div>
         
         {/if}

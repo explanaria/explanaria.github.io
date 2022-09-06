@@ -259,7 +259,7 @@
         <div class="top">
             {#if data.showInfo}
             <div in:fade="{{ duration: 500 }}">
-                <br>Orientations found: {orientationsFound} {orientationsFound == d6group.elements.length ? "🎉" : ""}
+                <br>Actions found: {orientationsFound} {orientationsFound == d6group.elements.length ? "🎉" : ""}
                 <br>Arrows found: {arrowsFound}/{d6group.elements.length * d6group.generators.length} {arrowsFound == d6group.elements.length * d6group.generators.length ? "🎉" : ""}
             </div>
             {/if}

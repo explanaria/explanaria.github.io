@@ -281,7 +281,7 @@
             And another action which leaves the triangle looking unchanged is a <b style={"color: " + generatorColors[1]}>horizontal flip</b>.
         </div>
         <div class="exp-slide">
-            To help us keep track of what each action does to the triangle, I'll doodle some letters on it.
+            To help us keep track of what an action does to the triangle, I'll doodle some letters on it.
         </div>
         <div class="exp-slide">
             Finally, on the right, I'll keep track of the actions you discover.
@@ -302,7 +302,7 @@
             Doesn't the triangle's Cayley graph look somewhat triangular? That's no coincidence. Somehow, the symmetry group is capturing info about the original shape we started with.
         </div>
         <div class="exp-slide">
-            This group is called "the dihedral group of order 6". It's usually written "D<sub>6</sub>"; the 6 is because there are only 6 actions in this group.
+            This group is called "the dihedral group of order 6". The group's name is usually written "D<sub>6</sub>"; the 6 is because there are only 6 actions in this group.
             <br><aside>Confusingly, some mathematicians call it D<sub>3</sub> instead, named after the 3-sided triangle we made it from.</aside>
         </div>
         <div class="exp-slide">
@@ -329,14 +329,14 @@
         
         {/if}
         <div class="exp-slide">
-            Looks like you filled out as much of the cayley graph as you can.
+            Looks like you filled out as much of the Cayley graph as you can.
         </div>
 
         <div class="exp-slide">
             Huh. This isn't the full symmetry group of our triangle. Why can't we reach any of the flips? Isn't the symmetry group of a shape independent of the actions we started from?
         </div>
         <div class="exp-slide">
-            We couldn't make the full group D<sub>6</sub> because <b>groups can have groups inside them</b>, called "subgroups". One of the most important rules of a group is that combining two things in a group gives you another element in that group.
+            We couldn't make the full group D<sub>6</sub> because <b>groups can have groups inside them</b>, called "subgroups". One of the most important rules of a group is that combining two things in a group gives you another thing in that group.
         </div>
 
         <div class="exp-slide">
@@ -354,10 +354,10 @@
             Also, notice how applying a <b style={"color: " + rColor}>120 degree rotation</b>, then a <b style={"color: " + rrColor}>240 degree rotation</b> gets you back where you started. You could say that 120 degree rotations and 240 degree rotations undo one another.
         </div>
         <div class="exp-slide">
-            All the actions we've seen so far can be undone. In fact, being able to undo anything is so important it's part of the definition of a group: every element is required to have another action which undoes it, called its <b>inverse</b>.
+            All the actions we've seen so far (moving, rotating, and flipping) can be undone. In fact, being able to undo anything is so important it's part of the definition of a group: every action is required to have another action which undoes it, called its <b>inverse</b>.
         </div>
         <div class="exp-slide">
-            Speaking of definitions, we've seen some examples of groups, like D<sub>6</sub>. But what is a group, anyway?
+            Speaking of definitions, we've seen some examples of groups, like D<sub>6</sub>. <br>But what is a group, anyway?
         </div>
         <div class="exp-slide">
            Here's the official, mathematical definition of a group.

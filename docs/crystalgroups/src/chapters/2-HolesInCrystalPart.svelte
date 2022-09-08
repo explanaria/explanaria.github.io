@@ -444,7 +444,7 @@
         <div class="overlappingItemContainer alignBottom">
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Let's start by examining the structure of just andalusite for now. Click and drag to rotate the crystal.
+                        Let's start by examining the structure of just andalusite for now. <br>Click and drag to rotate the crystal.
                     </div>
             </div>
             <div class="exp-slide">
@@ -459,7 +459,7 @@
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        The see-through effect doesn't happen at all angles. Just a bunch of disordered atoms here.
+                        The see-through effect doesn't happen at all angles. <br> Just a bunch of disordered atoms here.
                     </div>
             </div>
             <div class="exp-slide">
@@ -479,12 +479,12 @@
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        So what's causing that see-through effect? What's special about these specific directions?
+                        So what's causing that see-through effect? <br>What's special about these specific directions?
                     </div>
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Let's go back to the first example we found of see-through-ness. What's going on here? 
+                        Let's go back to the first example we found of see-through-ness.<br>What's going on here? 
                     </div>
             </div>
             <div class="exp-slide">
@@ -525,7 +525,7 @@
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Same thing: a see-through effect shows us that <span style={"color: " + chapter2linecolor2}><b>moving the crystal in this other direction</b></span> a certain distance will also realign the moved atoms with the original crystal.
+                        Same thing: a see-through effect shows us that <span style={"color: " + chapter2linecolor2}><b>moving the crystal in this other direction</b></span> a certain distance also realigns the moved atoms with the original crystal.
                     </div>
             </div>
 
@@ -553,7 +553,9 @@
             
             <div class="exp-slide">
                     <div class="frostedbg">
-                        But there's more to the story than that, because actions can <b>combine</b> in interesting ways.
+
+                <p style="margin: auto 4em;">But there's more to the story than that, because actions can <b>combine</b> in interesting ways.</p>
+                       
                     </div>
             </div>
             <div class="exp-slide">
@@ -564,6 +566,7 @@
             <div class="exp-slide">
                     <div class="frostedbg">
                        If we combine the <b style={"color: " + chapter2linecolor}>first</b> action we found with the <b style={"color: " + chapter2linecolor3}>third</b> action...
+                       <br>
                     </div>
             </div>
             <div class="exp-slide">
@@ -590,7 +593,7 @@
             <div class="exp-slide">
                     <div class="frostedbg">
                         {#if alludeToChapter3}
-                        In a way, you could say group theory is all about understanding the ways two things combine (and undo, but I'll discuss that later). And that's why mathematicians care about group theory so much.
+                        In a way, you could say group theory is all about understanding <b>the ways two things combine</b> (and undo, but I'll discuss that later). And that's why mathematicians care about group theory so much.
                         <br>But what does a full symmetry group actually look like? Let's find out.
                         {:else}
                         When I first learned about group theory, it was taught very abstractly. Sure, it was interesting, but I wanted to know: what would make mathematicians think to study "actions which send a shape to itself" in the first place? These crystals, to me, are the answer. I hope they inspire you to learn more about group theory!

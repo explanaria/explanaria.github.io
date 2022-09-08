@@ -57,12 +57,14 @@
 
     let defaultArrowVisibility = {};
     d6group.elements.forEach(startElement => {
-                defaultArrowVisibility[startElement.name] = d6group.generators.map(generator => false) //every generator starts false
+                defaultArrowVisibility[startElement.name] = d6group.generators.map(generator => true) //every generator starts false
             }
     )
     defaultArrowVisibility["e"] = [true, true];
     export let isArrowVisibleMap = defaultArrowVisibility; //elementTimesGenerators[startElem.name][generator_index] is true if the arrow starting from startElemn and corresponding to the ith generator should show an arrow
     
+
+    export let elementsWhoseNamesNotToShow = [];
 </script>
 
 <style>
@@ -80,7 +82,7 @@
 <div class="groupdisplay">
     {#each d6group.elements as element, i}
         {#if isElementVisible[i]}
-            <GroupElementDisplay element={element}
+            <GroupElementDisplay element={element} showElementName={elementsWhoseNamesNotToShow.indexOf(element.name) == -1}
             borderColor={chooseElementBorderColor(d6group, element)}
             top={positions.get(element)[1]} left={positions.get(element)[0]}
             >

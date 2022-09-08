@@ -8,6 +8,13 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
+    let _d6Opacity = 0;
+
+    let data = {
+      set d6Opacity(x) { _d6Opacity = x; }, //let svelte know about the reactive change
+      get d6Opacity() { return _d6Opacity; }
+    };
+
     async function animate(){
         let whitebg = document.getElementById("whitebg");
         await presentation.begin();
@@ -21,6 +28,16 @@
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
+
+        await presentation.TransitionInstantly(whitebg.style, {opacity: 0.8});
+        await presentation.TransitionTo(data, {d6Opacity: 1}, 500);
+        
+        await presentation.nextSlide();
+        await presentation.nextSlide();
+
+        await presentation.TransitionInstantly(whitebg.style, {opacity: 0});
+        await presentation.TransitionTo(data, {d6Opacity: 0}, 500);
+
         await presentation.nextSlide();
 
         if(!alreadyEnding){
@@ -54,16 +71,19 @@
         pointer-events: none;
         z-index: 1;
     }
-    #overlays{
-        z-index: 2;
-        pointer-events: none;
-    }
 </style>
 
 <div class="overlappingItemContainer exp-text fullscreen">
     <MoleculeCanvas style="z-index: 0"/>
     <div id="whitebg" style="opacity: 0; z-index: 1"/>
-    <div id="overlays" class="overlappingItemContainer" style="z-index: 2">
+
+    <div class="noclick" style="transform: scale(0.8) translate(25%, 6em); z-index: 2" style:opacity={_d6Opacity} >
+        <div class="groupcontainer">
+            <D6Group elementsWhoseNamesNotToShow={["rr","rf","fr","e","r","f"]}/>
+        </div>
+    </div>
+
+    <div id="overlays" class="overlappingItemContainer noclick" style="z-index: 3">
         <div class="">
             <br><br><br>
             <center>
@@ -142,7 +162,7 @@
             <div class="frostedbg exp-slide">
                 <!-- labels: kyanite, andalusite -->
                 The number of atoms won't help - both crystals have the same number (and ratio) of atoms, and there's billions of them.
-                <br>Looking at one atom at a time won't help - each atom behaves similarly to all others. For example, in both crystals, there are <span style={"color: " + getAtomColor('Al')}>aluminum</span> atoms with both five bonds and six bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
+                <br>Looking at one atom at a time won't help - each atom behaves similarly to all others. For example, in both crystals, every <span style={"color: " + getAtomColor('Al')}>aluminum</span> atom has six bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
             </div>
         </div>
         <div class="">
@@ -160,14 +180,22 @@
         </div>
         <div class="">
             <div class="frostedbg exp-slide">
-                {#if false}
-                This explanarian presentation is an introduction to group theory, from the point of view of understanding crystals. {/if}
-                When I first learned group theory, it was taught in a very self-contained way, and I had a hard time seeing why mathematicians want to use it everywhere. Sure, it was interesting to think about a way to define symmetry, but what kind of problems would lead you to think about such specific actions?
-                <br>
-                <p style="margin: auto 4em;">As it turns out, it's the perfect language for talking about repeating patterns, like crystals.</p>
+                Group theory is a powerful way to think about repetition, symmetry, and the way things can combine and undo. In this presentation, we'll try to figure out the difference between andalusite and kyanite, and along the way we'll learn about group theory visually using these colorful graphs.
+            </div>
+        </div>
+        <div class="">
+            <div class="frostedbg exp-slide">
+                When I first learned group theory, it was taught in a very self-contained way, and I had a hard time seeing why mathematicians want to use it everywhere. Sure, it was interesting to think about a way to define symmetry, but what kind of problems would lead someone to think about such specific actions?
                 <!-->
                 Group theory is usually said to be the right way to talk about symmetry. But another way to describe group theory is that it's all about things that can be combined and undoed. And there's lots of things in math which can be combined and undone, like adding numbers or applying rotations.
                 -->
+            </div>
+        </div>
+        <div class="">
+            <div class="frostedbg exp-slide">
+                <p style="margin: auto 7em;">As it turns out, group theory is the perfect language for talking about repeating patterns, like crystals.
+                <br><br>
+                Let's see why.</p>
             </div>
         </div>
         <!-->

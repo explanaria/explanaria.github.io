@@ -185,6 +185,12 @@ aside{
 }
 
 
+.groupcontainer{
+    width: 100%;
+    position: relative;
+}
+
+
 .cayleymainlayout{
     display: grid;
     grid-template-rows: 19em 4em;

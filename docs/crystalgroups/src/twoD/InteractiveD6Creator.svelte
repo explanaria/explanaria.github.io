@@ -226,11 +226,6 @@
         box-shadow: 0px 0px 50px hsl(240, 89.5%, 70%);
         border-radius: 3em;
     }
-    .grouppart{
-        width: 100%;
-        position: relative;
-    }
-
     .mainlayout{
         display: grid;
         grid-template-rows: 0em 19em;
@@ -287,7 +282,7 @@
 
         </div>
 
-        <div class="grouppart">
+        <div class="groupcontainer">
             {#if data.showgroup}
             <div class="highlight fadeInImmediately" 
                 style:left={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[0] + "em":""} 

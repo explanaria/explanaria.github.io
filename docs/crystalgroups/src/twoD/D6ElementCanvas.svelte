@@ -47,7 +47,7 @@
 
             ctx.fillStyle = D6TextColor;
             ctx.font = D6_text_size_multiplier * canvasSize+ "px serif";
-            ctx.globalAlpha = data.d6textOpacity;
+            ctx.globalAlpha = 1;
             ctx.fillText("D", -0.11 * canvasSizePixels,-0.06 * canvasSizePixels);
             ctx.font = D6_text_size_multiplier * 0.7 * canvasSize+ "px serif";
             ctx.fillText("6", 0.05 * canvasSizePixels, -0.00 * canvasSizePixels);

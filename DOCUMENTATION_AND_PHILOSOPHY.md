@@ -396,11 +396,20 @@ You may also wish to increase the resolution or `numItems` of any Domains while 
 If you want to synchronize text-based slides to your animations, use an EXP.Director, such as EXP.NonDecreasingDirector() or EXP.UndoCapableDirector().
 TODO: This section will be expanded later.
 
-* TransitionTo()
+* TransitionTo(target, toValues, durationMS, optionalArguments)
 
-This works like EXP.TransitionTo(target, toValues) but saves the current values at the time of the TransitionTo() call. Then, if you press undo in the presentation, it'll construct an animation from the toValues 
+This works like EXP.TransitionTo(target, toValues) but saves the current values at the time of the TransitionTo() call. Then, if you press undo in the presentation, it'll construct an animation from the toValues.
 
-* TransitionInstantly()
+Parameters:
+
+	* target: an object, such as an EXP.Transformation, or an array, whose properties will be animated. 
+	* toValues: an object consisting of any number of {key: newValue} pairs. For each pair, TransitionTo effectively sets `target[key] = newValue`. If `target` is an array, `toValues` can alternately be an array.
+	* durationMS: number; the duration, in milliseconds (1000 = 1 second) of transition time before the new properties are fully recognized.
+    * optionalArguments: an object which allows one to specify:
+        * staggerFraction: number representing the fraction of time to wait before the last element begins to animate. Default: 0.0. 0 = all points move simulaneously, 1 = everything instantly teleports from beginning to end. Low values tend to make better-looking animations.
+        * easing: one of the values in EXP.Easing. By default, EXP.Easing.EaseInOut. Can also be EXP.Easing.EaseIn, EXP.Easing.EaseOut, or EXP.Easing.Linear.
+
+* TransitionInstantly(target, toValues, optionalArguments)
 
 This works like EXP.TransitionTo() but transitions and undoes instantly. This is useful for strings (such as adjusting CSS) or booleans, or anywhere a smooth animation doesn't quite make sense. The current values of each property are saved, and will be applied if the user presses undo.
 
@@ -410,9 +419,3 @@ Examples:
 let presentation = new EXP.UndoCapableDirector();
 presentation.TransitionInstantly(document.getElementById("some ID").style, {opacity: "1", backgroundColor: "blue"})
 ```
-
-* ResetTo()
-
-Sometimes a value is controlled both by the user and by a presentation, such as the camera, the position of something you can drag and drop, or the rotation of a spinnable 3D model. If you use TransitionTo() on one of these variables, it'll save the current position, and return to it when you undo. Returning to a weird and unintended position when you undo can be very unexpected.
-
-If you use ResetTo(target, {property: value}), then undoing won't affect target.property, but redoing will animate target.property from wherever it is to `value`. 

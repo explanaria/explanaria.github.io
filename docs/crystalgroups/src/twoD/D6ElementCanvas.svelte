@@ -1,6 +1,6 @@
 <script>
     import { rotate2D } from "./utils.js";
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
     import { GroupElement } from "./groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {easing, drawTrianglePath, drawStaticElements, isAllRs, canvasSize, canvasSizePixels, triangleRadius, lineWidth, D6_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "./d6canvasdrawing.js";
@@ -60,7 +60,9 @@
         }
 
         lastTime = currentTime;
-        window.requestAnimationFrame(draw);
+        if(active){
+            window.requestAnimationFrame(draw);
+        }
     }
 
     //janky animation system time!
@@ -68,7 +70,7 @@
 
     async function animationLoop(){
         //this one controls the animation of each element
-        while(true){ //todo: stop looping when there's an onUnmount
+        while(active){ //todo: stop looping when there's an onUnmount
             await oneFullAnimation();
             await EXP.delay(2000);
         }
@@ -130,12 +132,17 @@
     function updateCurrentAnimation(ctx, deltatime){} 
     function applyCurrentAnimation(ctx, deltatime){}
 
+    let active = true;
 
     onMount(async () => {
         await tick(); //load canvas
         ctx = canvas.getContext("2d");
         draw(0);
         await animationLoop();
+    })
+
+    onDestroy(() => {
+        active = false;
     })
 </script>
 

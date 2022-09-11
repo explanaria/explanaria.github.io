@@ -326,6 +326,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
         this.numArrowPresses = 0;
 
         this.beingDisposed = false;
+        this.mostRecentPropsCache = new Map(); //Map of target -> Map(propertyName -> the most recent value that this Director has set target[propertyName] to. used to compute undo values)
 
         //if you press right before the first director.nextSlide(), don't error
         this.nextSlideResolveFunction = function(){} 
@@ -374,6 +375,9 @@ class UndoCapableDirector extends NonDecreasingDirector{
 
     removeClickables(){
         //Remove arrows, stop listening to clicks
+        if(this.rightArrow === undefined || this.leftArrow === undefined){
+            return;
+        }
         this.rightArrow.hideSelf();
         this.leftArrow.hideSelf();
         window.setTimeout(() => {
@@ -487,9 +491,6 @@ class UndoCapableDirector extends NonDecreasingDirector{
                 var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.duration, redoItem.optionalArguments);
               //and now redoAnimation, having been created, goes off and does its own thing I guess. this seems inefficient. todo: fix that and make them all centrally updated by the animation loop orsomething
                 break;
-            case RESETTO:
-                //like TRANSITIONTO, but onnly redoes, not undoes
-                var redoAnimation = new Animation(redoItem.target, redoItem.toValues, redoItem.duration, redoItem.optionalArguments);
             case TRANSITIONINSTANTLY:
 
                 //interrupt any other animations
@@ -584,8 +585,6 @@ class UndoCapableDirector extends NonDecreasingDirector{
                     }
                 case NEWSLIDE:
                     break;
-                case RESETTO: //reset to doesn't undo, only redo
-                    break;
                 default:
                     break;
             }
@@ -662,37 +661,104 @@ class UndoCapableDirector extends NonDecreasingDirector{
             });
         }
     }
-    TransitionTo(target, toValues, durationMS, optionalArguments){
-        //TransitionTo(data, {property: newvalue}, 1000) will smoothly animate data.property from whatever it was to newvalue over the course of 1000 milliseconds.
-        //when this is called, the current value of data.property is saved to create an UndoItem. Then, if you click the undo button, explanaria will animate data.property from newvalue to whatever it was before.
-        let duration = durationMS === undefined ? 1 : durationMS/1000;
-        var animation = new Animation(target, toValues, duration, optionalArguments);
-        let fromValues = animation.fromValues;
-        this.undoStack.push(new UndoItem(target, toValues, fromValues, duration, optionalArguments));
-        this.undoStackIndex++;
-    }
-    TransitionInstantly(target, toValues){
-        //TransitionInstantly(data, {property: newvalue}) instantly sets data.property = newvalue, but saves an undo
+
+    _computeUndoValues(target, toValues, undoToCurrentValues){
+        /* In order to undo a transition, we need to save both the current values AND the target values.
+        But if we simply run `fromValue = target[key]`, there's an annoying bug related to moving a 3D camera that's also user-controllable.
+
+        Say we're using
+        presentation.TransitionTo(target, {key: value1})
+        await presentation.nextSlide(); //end of slide 1, idles here until user clicks next slide button
+        presentation.TransitionTo(target, {key: value2})
+        await presentation.nextSlide();
+
+            When we advance to slide 2, then undo, we expect target[key] to animate back to value1.
+        However, if the user changes target.key before advancing to slide 2 
+        (for example, if `target` is the camera position and the user has clicked and dragged 
+        to change the angle the camera is viewing a model), then the second call to TransitionTo() won't save
+        value1 as the `fromValue`, and undoing won't set target.key = value1. Instead, it'll set target.key to
+        whatever user-edited value it happens to be at the time of the second call to TransitionTo().
+        The solution is to look back in the undo stack to see if any previous call to TransitionTo() has
+        touched target.key before, and if so, use THAT animation's toValue as this animation's fromValue.
+        
+        In other words, if you don't set a variable using TransitionTo() or TransitionInstantly(), 
+        explanaria will clobber it when undoing. To fix it, just use TransitionTo() or TransitionInstantly()
+        to let explanaria remember that you changed a variable, or use TransitionTo(target, toValues, duration, {undoToCurrentValues: true}) */
 
         let fromValues = {};
 
+        let mostRecentlySetProperties = this.mostRecentPropsCache.get(target); //grab the list of values we've set target[property] to for this target
+
+        for(let propertyName in toValues){
+            // first time using TransitionTo() with this target?
+            if(mostRecentlySetProperties === undefined || undoToCurrentValues){
+                //use whatever value is currently on the object as the undo value
+                fromValues[propertyName] = target[propertyName];
+                continue;
+            }
+
+            if(mostRecentlySetProperties.has(propertyName)){
+                //use the last thing explanaria knows it set target[propertyName] to, even if target[propertyName] has changed in the meantime.
+                fromValues[propertyName] = mostRecentlySetProperties.get(propertyName);
+            }else{
+                //we've never touched target[propertyName] before.
+                fromValues[propertyName] = target[propertyName];
+            }
+            //we'll update this.mostRecentPropsCache in this._saveChangedPropertiesInCache(); later.
+        }
+        return fromValues;
+    }
+    _saveChangedPropertiesInCache(target, toValues){
+        let thisTargetPropsCache = this.mostRecentPropsCache.get(target)
+        if(thisTargetPropsCache === undefined){ //first time TransitionTo() has been called with this target
+            thisTargetPropsCache = new Map();
+        }
+        for(let propertyName in toValues){
+            thisTargetPropsCache.set(propertyName, toValues[propertyName]) //update with any newly changed properties
+        }
+        this.mostRecentPropsCache.set(target, thisTargetPropsCache); //update cache for this target
+    }
+
+    TransitionTo(target, toValues, durationMS, optionalArguments){
+        //TransitionTo(data, {property: newvalue}, 1000) will smoothly animate data.property from whatever it was to newvalue over the course of 1000 milliseconds.
+        //when this is called, the current value of data.property is saved to create an UndoItem. Then, if you click the undo button, explanaria will animate data.property from newvalue to whatever it was before.
+
+        //hidden assumption: only call this when you're all caught up with nothing to redo. otherwise you'll mess up the undo stack
+        let duration = durationMS === undefined ? 1 : durationMS/1000;
+
+        //if this animation is undone, what should we animate to?
+        //look back to see if we've changed this property before, and if so grab the last value we're aware of setting it to.
+        let fromValues = this._computeUndoValues(target, toValues, optionalArguments ? optionalArguments.undoToCurrentValues : undefined);
+        this._saveChangedPropertiesInCache(target, toValues); //refresh the cache of the last value we've set each property to
+
+        //this animation starts itself and then runs asynchronously, assuming EXP.setupThree() has been called once
+        var animation = new Animation(target, toValues, duration, optionalArguments);
+
+        //finally, save undo item so if we undo, we have the data to construct an undoing animation
+        if(this.isCaughtUpWithNothingToRedo()){
+            this.undoStack.push(new UndoItem(target, toValues, fromValues, duration, optionalArguments));
+            this.undoStackIndex++;
+        }else{
+            console.warn("You're using TransitionTo()s while in the past and visiting a previous slide! You need to call this when you're not undoing. Not saving any undos.")
+        }
+    }
+    TransitionInstantly(target, toValues, optionalArguments){
+        //TransitionInstantly(data, {property: newvalue}) instantly sets data.property = newvalue, but saves an undo
+
+        let fromValues = this._computeUndoValues(target, toValues, optionalArguments ? optionalArguments.undoToCurrentValues : undefined);
+        this._saveChangedPropertiesInCache(target, toValues);
+        
+        //apply instant transition
         for(let property in toValues){
-            fromValues[property] = target[property]
             target[property] = toValues[property]
         }
 
-        this.undoStack.push(new InstantUndoItem(target, toValues, fromValues));
-        this.undoStackIndex++;
-    }
-    ResetTo(target, toValues, durationMS, optionalArguments){
-        //This is like TransitionTo(), except it doesn't save the previous value. When you undo a ResetTo, it doesn't do anything, and when you redo a ResetTo(), it transitions again.
-        //When using TransitionTo on something an user can also control, such as cursor position or the rotation of a 3D model,
-        // undoing will move it from "whatever's in toValues" to "whatever wacky place the user positioned it". That wacky place usually isn't desirable
-        let duration = durationMS === undefined ? 1 : durationMS/1000;
-        var animation = new Animation(target, toValues, duration, optionalArguments);
-        //no fromValues
-        this.undoStack.push(new ResetToUndoItem(target, toValues, duration, optionalArguments));
-        this.undoStackIndex++;
+        if(this.isCaughtUpWithNothingToRedo()){
+            this.undoStack.push(new InstantUndoItem(target, toValues, fromValues));
+            this.undoStackIndex++;
+        }else{
+            console.warn("You're using TransitionInstantly() while in the past and visiting a previous slide! You need to call this when you're not undoing. Not saving any undos.")
+        }
     }
 }
 
@@ -701,8 +767,7 @@ class UndoCapableDirector extends NonDecreasingDirector{
 const TRANSITIONTO = 0;
 const NEWSLIDE = 1;
 const DELAY=2;
-const RESETTO=3;
-const TRANSITIONINSTANTLY = 4;
+const TRANSITIONINSTANTLY = 3;
 
 //things that can be stored in a UndoCapableDirector's .undoStack[]
 class UndoItem{
@@ -724,14 +789,6 @@ class InstantUndoItem{
         this.type = TRANSITIONINSTANTLY;
     }
 }
-
-class ResetToUndoItem extends UndoItem{
-    constructor(target, toValues, duration, optionalArguments){
-        super(target, toValues, undefined, duration, optionalArguments)
-        this.type = RESETTO;
-    }
-}
-
 class NewSlideUndoItem{
     constructor(slideIndex){
         this.slideIndex = slideIndex;

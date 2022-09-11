@@ -144,7 +144,7 @@
         await animationLoop();
     })
     onDestroy(() => {
-        animationLoop = () => {active = false;}
+        active = false;
     })
 </script>
 

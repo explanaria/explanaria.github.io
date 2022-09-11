@@ -261,8 +261,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         await presentation.nextSlide();
 
         //dolly in, so the lines seem more parallel
-        presentation.ResetTo(three.camera.position, {x: 9, y:11, z: cameraRadius});
-        presentation.ResetTo(three.camera.rotation, {x: -0.2, y:0, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 9, y:11, z: cameraRadius});
+        presentation.TransitionTo(three.camera.rotation, {x: -0.2, y:0, z: 0});
         presentation.TransitionTo(three.camera, {zoom: 4});
 
         //show translation arrows
@@ -435,8 +435,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         //mirror the crystal across it
         await presentation.nextSlide();
 
-        presentation.ResetTo(three.camera.position, {x: cameraRadius, y:2, z: 0});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: cameraRadius, y:2, z: 0});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
         presentation.TransitionTo(three.camera, {zoom: 4});
 
         await presentation.delay(1000);
@@ -542,8 +542,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
         //move camera
 
-        presentation.ResetTo(three.camera.position, {x: 0, y:0, z: 50});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 0, y:0, z: 50});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:0, z: 0});
         presentation.TransitionTo(three.camera, {zoom: 4});
 
         await presentation.delay(1000);
@@ -713,8 +713,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         presentation.TransitionTo(movingAndalusite.scale, {x:1, y: 1, z:1}, 1000);
         presentation.TransitionTo(movingAndalusite.position, {x: 0, y: 0, z: 0 }, 1000);
 
-        presentation.ResetTo(three.camera.position, {x: cameraRadius, y:-1, z: 0});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: cameraRadius, y:-1, z: 0});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
 
         presentation.TransitionTo(movingAndalusite.rotation, {x: 0, y: 0, z: 0 }, 1000);
         presentation.TransitionTo(movingAndalusite.position, {x: 0, y: 0, z: 0 }, 1000);
@@ -851,8 +851,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
         //show both at the same time
 
         presentation.TransitionTo(three.camera, {zoom: 1});
-        presentation.ResetTo(three.camera.position, {x: 0, y:-5, z: 80});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 0, y:-5, z: 80});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:0, z: 0});
 
         presentation.TransitionTo(movingAndalusite.children[0].material, {opacity: 1}, 500);
         presentation.TransitionTo(movingAndalusiteBonds.getDeepestChildren()[0], {opacity: 0.2}, 500);

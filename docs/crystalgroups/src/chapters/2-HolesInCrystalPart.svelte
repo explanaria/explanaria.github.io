@@ -127,45 +127,45 @@
         await presentation.nextSlide();
 
         //dolly in, so the lines seem more parallel
-        presentation.ResetTo(three.camera.position, {x: 0, y:0, z: cameraRadius});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 0, y:0, z: cameraRadius});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:0, z: 0});
         presentation.TransitionTo(three.camera, {zoom: 4});
 
         await presentation.nextSlide();
         await presentation.nextSlide();
 
         //no effect here
-        presentation.ResetTo(three.camera.position, {x: 16, y:0, z: 26});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0.4, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 16, y:0, z: 26});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:0.4, z: 0});
 
         await presentation.nextSlide();
 
         //yup, effect here. line up camera according to secondSeeThroughVec
         let diagonalCameraPos = EXP.Math.vectorScale(EXP.Math.normalize(secondSeeThroughVec), cameraRadius);
-        presentation.ResetTo(three.camera.position, {x: diagonalCameraPos[0]+1, y:diagonalCameraPos[1], z: diagonalCameraPos[2]-1});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/4+0.2, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: diagonalCameraPos[0]+1, y:diagonalCameraPos[1], z: diagonalCameraPos[2]-1});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:Math.PI/4+0.2, z: 0});
 
         await presentation.nextSlide();
 
         //translate for thirdSeeThroughVec
         let aVecCameraPos = EXP.Math.vectorScale(EXP.Math.normalize(thirdSeeThroughVec), cameraRadius);
-        presentation.ResetTo(three.camera.position, {x: aVecCameraPos[0], y:aVecCameraPos[1], z: aVecCameraPos[2]});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: aVecCameraPos[0], y:aVecCameraPos[1], z: aVecCameraPos[2]});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
 
         await presentation.nextSlide();
 
         //third diagonal angle
 
         //made with cameraRadius of 40
-        presentation.ResetTo(three.camera.position, {x: 26.5, y: 25.4, z: 16.3});
-        presentation.ResetTo(three.camera.rotation, {x: -1.0, y:0.77, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 26.5, y: 25.4, z: 16.3});
+        presentation.TransitionTo(three.camera.rotation, {x: -1.0, y:0.77, z: 0});
 
         await presentation.nextSlide();
         await presentation.nextSlide();
 
         //move back to first one
-        presentation.ResetTo(three.camera.position, {x: 0, y:0, z: cameraRadius});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 0, y:0, z: cameraRadius});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:0, z: 0});
 
         await presentation.nextSlide();
 
@@ -181,15 +181,15 @@
 
         await presentation.nextSlide();
 
-        presentation.ResetTo(three.camera.position, {x: cameraRadius, y:0, z: 0});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: cameraRadius, y:0, z: 0});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
 
         await presentation.nextSlide();
         await presentation.nextSlide();
         await presentation.nextSlide();
 
         //take up more of the frame
-        presentation.ResetTo(three.camera.position, {x: 30, y:2, z: 3});
+        presentation.TransitionTo(three.camera.position, {x: 30, y:2, z: 3});
 
         //show moving andalusite copies
         presentation.TransitionTo(andalusite.position, {y: 100}, 2000);
@@ -219,7 +219,7 @@
 
         await presentation.nextSlide();
 
-        presentation.ResetTo(three.camera.position, {x: cameraRadius, y:0, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: cameraRadius, y:0, z: 0});
         
         //hide all the stuff from translation #1 and re-show the crystal
         presentation.TransitionTo(movingAndalusiteTarget.children[0].material, {opacity: 0}, 250);
@@ -233,8 +233,8 @@
         await presentation.delay(1000);
 
         //show see through effect #2
-        presentation.ResetTo(three.camera.position, {x: diagonalCameraPos[0]+1, y:diagonalCameraPos[1], z: diagonalCameraPos[2]-1});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/4+0.2, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: diagonalCameraPos[0]+1, y:diagonalCameraPos[1], z: diagonalCameraPos[2]-1});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:Math.PI/4+0.2, z: 0});
 
         //show lines, this time in another color
         presentation.TransitionInstantly(lineData, {direction: secondSeeThroughVec});
@@ -260,8 +260,8 @@
         presentation.TransitionTo(movingAndalusiteTargetBonds.getDeepestChildren()[0], {opacity: 0.2}, 250);
         presentation.TransitionTo(movingAndalusiteGhostCopyBonds, {opacity: 0.1}, 250);
 
-        presentation.ResetTo(three.camera.position, {x: 5, y:2, z: 30});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:0, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 5, y:2, z: 30});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:0, z: 0});
         
         await presentation.delay(1000);
 
@@ -275,8 +275,8 @@
 
         //move to third see through hole
 
-        presentation.ResetTo(three.camera.position, {x: aVecCameraPos[0], y:aVecCameraPos[1], z: aVecCameraPos[2]});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: aVecCameraPos[0], y:aVecCameraPos[1], z: aVecCameraPos[2]});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:Math.PI/2, z: 0});
         presentation.TransitionTo(atomLinesOutput, {opacity: 0}, 250);
 
         presentation.TransitionTo(andalusite.position, {y: 0}, 1000); //return from the heavens
@@ -298,9 +298,9 @@
         await presentation.nextSlide();
 
         //third translation time. move to another camera angle
-        //presentation.ResetTo(three.camera.position, {x: 3, y:0, z: 40});
-        presentation.ResetTo(three.camera.position, {x: 27, y:3, z: 27});
-        presentation.ResetTo(three.camera.rotation, {x: 0, y:Math.PI/4, z: 0});
+        //presentation.TransitionTo(three.camera.position, {x: 3, y:0, z: 40});
+        presentation.TransitionTo(three.camera.position, {x: 27, y:3, z: 27});
+        presentation.TransitionTo(three.camera.rotation, {x: 0, y:Math.PI/4, z: 0});
 
         await presentation.delay(500);
 
@@ -332,8 +332,8 @@
         presentation.TransitionTo(vec3.getDeepestChildren()[0], {opacity: 1});
 
         await presentation.nextSlide();
-        presentation.ResetTo(three.camera.position, {x: 3, y:15, z: 35});
-        presentation.ResetTo(three.camera.rotation, {x: -Math.PI/8, y:0, z: 0});
+        presentation.TransitionTo(three.camera.position, {x: 3, y:15, z: 35});
+        presentation.TransitionTo(three.camera.rotation, {x: -Math.PI/8, y:0, z: 0});
 
         //'we now have 3 movements'
         presentation.TransitionTo(atomLinesOutput, {opacity: 0});

@@ -1,5 +1,5 @@
 <script>
-    import InteractiveD6Creator from "../twoD/InteractiveD6Creator.svelte";
+    import InteractiveD3Creator from "../twoD/InteractiveD3Creator.svelte";
     import { GroupElement, FiniteGroup } from "../twoD/groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {onMount, onDestroy, tick} from "svelte";
@@ -10,7 +10,7 @@
 	const dispatch = createEventDispatcher();
 
     let data, data2, data3;
-    let d6creator, d6creator2, d6creator3;
+    let D3creator, D3creator2, D3creator3;
 
     export let debugSkipInteractives = false;
 
@@ -45,26 +45,26 @@
         //EXP.setupThree() is required first, but it's called in sharedthreejscanvas.js
         window.data2 = data2;
         data2.opacity = 0;
-        data2.d6group.generators[0] = data2.d6group.getElemByName("rf");
+        data2.D3group.generators[0] = data2.D3group.getElemByName("rf");
         data2.generatorColors[0] = rfColor;
-        data2.d6group = data2.d6group; //update svelte
+        data2.D3group = data2.D3group; //update svelte
         data2.showbuttons = false;
-        if(d6creator2)d6creator2.updateGroupGenerators();
+        if(D3creator2)D3creator2.updateGroupGenerators();
 
         //you're just a measly subgroup
-        data3.d6group.elements = [data3.d6group.getElemByName("e"), data3.d6group.getElemByName("r"), data3.d6group.getElemByName("rr")];
+        data3.D3group.elements = [data3.D3group.getElemByName("e"), data3.D3group.getElemByName("r"), data3.D3group.getElemByName("rr")];
         data3.opacity = 0;
-        data3.d6group.generators[1] = data3.d6group.getElemByName("rr");
+        data3.D3group.generators[1] = data3.D3group.getElemByName("rr");
         data3.generatorColors[1] = rrColor;
-        data3.d6group = data3.d6group; //update svelte
-        data3.d6group.generators = data3.d6group.generators; //update svelte
+        data3.D3group = data3.D3group; //update svelte
+        data3.D3group.generators = data3.D3group.generators; //update svelte
         data3.showbuttons = false;
-        if(d6creator3)d6creator3.updateGroupGenerators();
+        if(D3creator3)D3creator3.updateGroupGenerators();
 
 
         data.showgroup = false;
         data.showbuttons = false;
-        data.d6textOpacity = 0;
+        data.D3textOpacity = 0;
         data.opacity = 1;
         data.recordNewOrientations = false;
         data.showInfo = false;
@@ -74,17 +74,17 @@
 
         await presentation.nextSlide();
         await presentation.nextSlide();
-        if(d6creator)d6creator.onButton(0);
+        if(D3creator)D3creator.onButton(0);
         await presentation.nextSlide();
-        if(d6creator)d6creator.onButton(1);
+        if(D3creator)D3creator.onButton(1);
         await presentation.nextSlide();
 
-        //show the word D6 on the triangle, sneakily erasing the previous flip and rotate
-        if(d6creator)d6creator.onButton(0);
-        if(d6creator)d6creator.onButton(1);
+        //show the word D3 on the triangle, sneakily erasing the previous flip and rotate
+        if(D3creator)D3creator.onButton(0);
+        if(D3creator)D3creator.onButton(1);
         await presentation.delay(500);
 
-        presentation.TransitionTo(data, {d6textOpacity: 1}, 500);
+        presentation.TransitionTo(data, {D3textOpacity: 1}, 500);
         await presentation.nextSlide();
         await presentation.TransitionInstantly(data, {showgroup: true});
         await presentation.nextSlide(); 
@@ -105,18 +105,18 @@
         await presentation.nextSlide();
         await presentation.nextSlide();
         //now, we're going to add the purple arrow rf as a generator
-        let newgenerator = data.d6group.getElemByName("rf");
-        data.d6group.generators.push(newgenerator)
+        let newgenerator = data.D3group.getElemByName("rf");
+        data.D3group.generators.push(newgenerator)
 
         //todo: hide "orientations found" and "arrows found"
 
-        data.d6group.elements.forEach(element => data.isArrowVisibleMap[element.name] = [true,true,false]);
+        data.D3group.elements.forEach(element => data.isArrowVisibleMap[element.name] = [true,true,false]);
         data.isArrowVisibleMap = data.isArrowVisibleMap;
         presentation.TransitionInstantly(data.isArrowVisibleMap["e"], {2: true}); //show arrow from e to rf
 
 
         //data = data;
-        //data.d6group = data.d6group;
+        //data.D3group = data.D3group;
         await presentation.nextSlide();
 
         presentation.TransitionInstantly(data, {opacity: 0});
@@ -135,10 +135,10 @@
 
 
         presentation.TransitionInstantly(data2, {showInfo: false});
-        let newgeneratorR = data2.d6group.getElemByName("r");
-        data2.d6group.generators.push(newgeneratorR)
-        let newgeneratorRR = data2.d6group.getElemByName("rr");
-        data2.d6group.generators.push(newgeneratorRR)
+        let newgeneratorR = data2.D3group.getElemByName("r");
+        data2.D3group.generators.push(newgeneratorR)
+        let newgeneratorRR = data2.D3group.getElemByName("rr");
+        data2.D3group.generators.push(newgeneratorRR)
         data2.isArrowVisibleMap["e"] = [true, true, true, true] //show arrows to r and rr
 
         await presentation.nextSlide();
@@ -184,7 +184,7 @@
         }
     }
 
-    //used to let the InteractiveD6Creator notify us that it's finished finding all the elements
+    //used to let the InteractiveD3Creator notify us that it's finished finding all the elements
     let resolveAllFound = undefined;
     function allFound(event){
         if(resolveAllFound){
@@ -213,23 +213,23 @@
 
 <div class="cayleymainlayout">
     <div class="overlappingItemContainer">
-        <InteractiveD6Creator bind:data={data} bind:this={d6creator} on:allFound={allFound} />
+        <InteractiveD3Creator bind:data={data} bind:this={D3creator} on:allFound={allFound} />
 
         
-        <InteractiveD6Creator bind:data={data2} bind:this={d6creator2} on:allFound={allFound} generatorColors={[generatorColors[2], generatorColors[1]]}>
+        <InteractiveD3Creator bind:data={data2} bind:this={D3creator2} on:allFound={allFound} generatorColors={[generatorColors[2], generatorColors[1]]}>
             <span slot="button1text">Angled flip</span>
-        </InteractiveD6Creator>
+        </InteractiveD3Creator>
 
-        <InteractiveD6Creator bind:data={data3} bind:this={d6creator3} on:allFound={allFound} generatorColors={[generatorColors[0], generatorColors[0]]}>
+        <InteractiveD3Creator bind:data={data3} bind:this={D3creator3} on:allFound={allFound} generatorColors={[generatorColors[0], generatorColors[0]]}>
             <span slot="button2text">Rotate 240 degrees</span>
-        </InteractiveD6Creator>
+        </InteractiveD3Creator>
         
 
         {#if showgroupaxioms}
         <div id="grouprules" class="frostedbg" transition:fade="{{ duration: 500 }}">
             <h1> The Group Axioms </h1>
             <br>
-            A group is a set of "<b>elements</b>" and a <b>way to combine them</b> (written *)<br>which obey these rules:
+            A group is a set of "<b>elements</b>" and a <b>way to combine any two of them</b> (written *)<br>which obey these rules:
 
             <br><br>
             <div class="">
@@ -240,7 +240,7 @@
                 </ul>
                 <ul class="twocolumns groupaxiom">
                     <li>Composition: <aside>If x and y in group, so is x*y</aside></li>
-                    <p>Group elements can be combined to your heart's content</p>
+                    <p>You can combine anything with anything</p>
                  <br>
                 </ul>
                 <ul class="twocolumns groupaxiom">
@@ -249,7 +249,7 @@
                     <br>
                 </ul>
                 <ul class="twocolumns groupaxiom">
-                    <li>Inverses: <aside>given x, x<sup>-1</sup> exists, and x * x<sup>-1</sup> = e</aside></li>
+                    <li>Inverses: <aside>If x in group, x<sup>-1</sup> exists, and x * x<sup>-1</sup> = e</aside></li>
                     <p>You can always undo</p>
                 </ul>
             </div>
@@ -302,8 +302,8 @@
             Doesn't the triangle's Cayley graph look somewhat triangular? That's no coincidence. Somehow, the symmetry group is capturing info about the original shape we started with.
         </div>
         <div class="exp-slide">
-            This group is called "the dihedral group of order 6". The group's name is usually written "D<sub>6</sub>"; the 6 is because there are only 6 actions in this group.
-            <br><aside>Confusingly, some mathematicians call it D<sub>3</sub> instead, named after the 3-sided triangle we made it from.</aside>
+            This group is called "the dihedral group of order 6". Since it's the symmetry group of a 3-sided triangle, the group's name is usually written "D<sub>3</sub>".
+            <br><aside>Confusingly, some mathematicians call it D<sub>6</sub> instead, because there are 6 actions in this group.</aside>
         </div>
         <div class="exp-slide">
             Even more interesting, the resulting group doesn't depend on the actions we choose to build the graph with. For example, we built this Cayley graph using a <!--color --> <b style={"color: " + generatorColors[0]}>rotation</b> and <b style={"color: " + generatorColors[1]}>flip</b>. But what if we chose other actions?
@@ -336,7 +336,7 @@
             Huh. This isn't the full symmetry group of our triangle. Why can't we reach any of the flips? Isn't the symmetry group of a shape independent of the actions we started from?
         </div>
         <div class="exp-slide">
-            We couldn't make the full group D<sub>6</sub> because <b>groups can have groups inside them</b>, called "subgroups". One of the most important rules of a group is that combining two things in a group gives you another thing in that group.
+            We couldn't make the full group D<sub>3</sub> because <b>groups can have groups inside them</b>, called "subgroups". One of the most important rules of a group is that combining two things in a group gives you another thing in that group.
         </div>
 
         <div class="exp-slide">
@@ -344,7 +344,7 @@
         </div>
 
         <div class="exp-slide">
-            If we look at the full group, we see something interesting: D<sub>6</sub> almost looks like it's made of two copies of the <b style={"color: " + rColor}>rotation subgroup</b> we just found: one outer green triangle (the subgroup), and one inner triangle, an identical-looking shape. 
+            If we look at the full group, we see something interesting: D<sub>3</sub> almost looks like it's made of two copies of the <b style={"color: " + rColor}>rotation subgroup</b> we just found: one outer green triangle (the subgroup), and one inner triangle, an identical-looking shape. 
         </div>
         <div class="exp-slide">
             That's no coincidence. Finding subgroups of a big group is very helpful, because for any subgroup, you can always split the big group into multiple shifted copies of that subgroup.
@@ -357,7 +357,7 @@
             All the actions we've seen so far (moving, rotating, and flipping) can be undone. In fact, being able to undo anything is so important it's part of the definition of a group: every action is required to have another action which undoes it, called its <b>inverse</b>.
         </div>
         <div class="exp-slide">
-            Speaking of definitions, we've seen some examples of groups, like D<sub>6</sub>. <br>But what is a group, anyway?
+            Speaking of definitions, we've seen some examples of groups, like D<sub>3</sub>. <br>But what is a group, anyway?
         </div>
         <div class="exp-slide">
            Here's the official, mathematical definition of a group.
@@ -367,7 +367,7 @@
              The group rules are abstract on purpose: it means they can apply to many ways to combine things. Numbers can combine using addition. Actions can combine by doing one thing after another. They're all groups.
         </div>
         <div class="exp-slide">
-            Group theory is an area of math which starts from these group rules and studies their consequences. That way, if you notice any useful concepts, such as subgroups, the concepts apply to numbers, actions, D<sub>6</sub> and every other group at the same time.
+            Group theory is an area of math which starts from these group rules and studies their consequences. That way, if you notice any useful concepts, such as subgroups, the concepts apply to numbers, actions, D<sub>3</sub> and every other group at the same time.
         </div>
         <div class="exp-slide">
            I like to think of a group as "things which can combine and undo". And there's lots of things in math which combine and undo. From numbers to rotating triangles to moving crystals, groups allow us to study them all at the same time.

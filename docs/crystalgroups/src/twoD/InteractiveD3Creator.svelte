@@ -1,8 +1,8 @@
 <script>
-    import D6Group from "../twoD/D6Group.svelte";
+    import D3Group from "../twoD/D3Group.svelte";
     import { GroupElement, FiniteGroup } from "../twoD/groupmath.js";
     import {generatorColors as defaultGeneratorColors} from "../colors.js";
-    import {drawTrianglePath, lineWidth, D6_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "../twoD/d6canvasdrawing.js";
+    import {drawTrianglePath, lineWidth, D3_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D3TextColor} from "../twoD/D3canvasdrawing.js";
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
     
@@ -13,11 +13,11 @@
     let r = new GroupElement("r", "(123)");
     let f = new GroupElement("f", "(23)");
 
-    let d6group = new FiniteGroup([r,f], {"rfr":"f", "rrr":"", "ff":""});
+    let D3group = new FiniteGroup([r,f], {"rfr":"f", "rrr":"", "ff":""});
 
     let isArrowVisibleMap = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
-    d6group.elements.forEach(startElement => {
-                isArrowVisibleMap[startElement.name] = d6group.generators.map(generator => false) //every generator starts false
+    D3group.elements.forEach(startElement => {
+                isArrowVisibleMap[startElement.name] = D3group.generators.map(generator => false) //every generator starts false
             }
     )
     //isArrowVisibleMap["e"] = [true, true];
@@ -26,10 +26,10 @@
     
 
     export let data = {
-        d6group: d6group,
-        isElementVisible: d6group.elements.map(element => 
+        D3group: D3group,
+        isElementVisible: D3group.elements.map(element => 
             (
-            //d6group.isGenerator(element) || 
+            //D3group.isGenerator(element) || 
             element.name == "e")
         ), //only e visible to start
         isArrowVisibleMap: isArrowVisibleMap,
@@ -37,8 +37,8 @@
         showgroup: true,
         showbuttons: true,
         showInfo: true,
-        d6textOpacity: 1,
-        currentOrientation: d6group.getElemByName("e"),
+        D3textOpacity: 1,
+        currentOrientation: D3group.getElemByName("e"),
         recordNewOrientations: true,
         opacity: 0,
     }
@@ -57,15 +57,15 @@
         })
     );
     export function updateGroupGenerators(){
-        d6group = data.d6group;       
-        d6group.generators = data.d6group.generators; 
+        D3group = data.D3group;       
+        D3group.generators = data.D3group.generators; 
     }
 
     //controlling the orientation of the triangle
-    let prevOrientation = d6group.getElemByName("e");
+    let prevOrientation = D3group.getElemByName("e");
 
     export function onButton(generatorIndex){
-        let generator = data.d6group.generators[generatorIndex];
+        let generator = data.D3group.generators[generatorIndex];
 
         if(generator.name == "r")playRotation(120);
         if(generator.name == "rr")playRotation(240);
@@ -79,7 +79,7 @@
 
         prevOrientation = data.currentOrientation;
         if(data.recordNewOrientations){
-            data.currentOrientation = d6group.multiply(data.currentOrientation, generator)
+            data.currentOrientation = D3group.multiply(data.currentOrientation, generator)
             data.isArrowVisibleMap[prevOrientation.name][generatorIndex] = true;
         }
         showNewGroupElements()
@@ -98,15 +98,15 @@
     }
     function showNewGroupElements(){
         //moveTriangleToNewOrientation();
-        let elementIndex = d6group.elements.indexOf(data.currentOrientation)
+        let elementIndex = D3group.elements.indexOf(data.currentOrientation)
         data.isElementVisible[elementIndex] = true; //unhide the current orientation
         data = data; 
 
         //if all elements found, send a message
         //note: this will keep sending a message every time a button is clicked once the criterion has been reached
         let allFound = true;
-        for(let i=0;i<d6group.elements.length;i++){
-            let element = d6group.elements[i];
+        for(let i=0;i<D3group.elements.length;i++){
+            let element = D3group.elements[i];
             //if element isn't visible, or an arrow from it hasn't been found yet
             if(!data.isElementVisible[i] ||
                 data.isArrowVisibleMap[element.name].indexOf(false) !== -1){
@@ -119,10 +119,10 @@
         }
     }
 
-    let elemPositions; //filled in by svelte bind:positions={positions} from D6group.svelte
+    let elemPositions; //filled in by svelte bind:positions={positions} from D3group.svelte
 
 
-    //drawing a triangle like D6ElementCanvas
+    //drawing a triangle like D3ElementCanvas
 
     const canvasSize = 15; // a bit bigger
 
@@ -161,12 +161,12 @@
         drawTrianglePath(ctx, 0,0, startVertex);
         ctx.fill();
 
-        ctx.fillStyle = D6TextColor;
-        ctx.font = D6_text_size_multiplier * canvasSize+ "px serif";
-        ctx.globalAlpha = data.d6textOpacity;
+        ctx.fillStyle = D3TextColor;
+        ctx.font = D3_text_size_multiplier * canvasSize+ "px serif";
+        ctx.globalAlpha = data.D3textOpacity;
         ctx.fillText("D", -0.11 * canvasSizePixels,-0.06 * canvasSizePixels);
-        ctx.font = D6_text_size_multiplier * 0.7 * canvasSize+ "px serif";
-        ctx.fillText("6", 0.05 * canvasSizePixels, -0.00 * canvasSizePixels);
+        ctx.font = D3_text_size_multiplier * 0.7 * canvasSize+ "px serif";
+        ctx.fillText("3", 0.05 * canvasSizePixels, -0.00 * canvasSizePixels);
         ctx.globalAlpha = 1;
         
         lastTime = currentTime;
@@ -194,7 +194,7 @@
         if(rotationAmount != rotationTarget){
             rotationAmount += delta * 120 * rotationSpeed * Math.sign(rotationTarget-rotationAmount)
         }
-        if(Math.abs(rotationAmount - rotationTarget) < 2){
+        if(Math.abs(rotationAmount - rotationTarget) < 5){
             rotationAmount = rotationTarget;
         }
     }
@@ -207,7 +207,7 @@
     window.data = data;
 
     $: orientationsFound = data.isElementVisible.reduce((prev, current) => current ? prev+1 : prev, 0);
-    $: arrowsFound = d6group.elements.reduce((prev, groupElem) => {
+    $: arrowsFound = D3group.elements.reduce((prev, groupElem) => {
                             let sum = prev;
                             data.isArrowVisibleMap[groupElem.name].forEach(arrowVisible => {if(arrowVisible){sum++}})
                             return sum;
@@ -254,8 +254,8 @@
         <div class="top">
             {#if data.showInfo}
             <div in:fade="{{ duration: 500 }}">
-                <br>Actions found: {orientationsFound} {orientationsFound == d6group.elements.length ? "🎉" : ""}
-                <br>Arrows found: {arrowsFound}/{d6group.elements.length * d6group.generators.length} {arrowsFound == d6group.elements.length * d6group.generators.length ? "🎉" : ""}
+                <br>Actions found: {orientationsFound} {orientationsFound == D3group.elements.length ? "🎉" : ""}
+                <br>Arrows found: {arrowsFound}/{D3group.elements.length * D3group.generators.length} {arrowsFound == D3group.elements.length * D3group.generators.length ? "🎉" : ""}
             </div>
             {/if}
         </div>
@@ -287,7 +287,7 @@
             <div class="highlight fadeInImmediately" 
                 style:left={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[0] + "em":""} 
                 style:top={elemPositions !== undefined ? elemPositions.get(data.currentOrientation)[1]+ "em":""} />
-            <D6Group d6group={data.d6group} isElementVisible={data.isElementVisible} isArrowVisibleMap={data.isArrowVisibleMap} bind:positions={elemPositions} />
+            <D3Group D3group={data.D3group} isElementVisible={data.isElementVisible} isArrowVisibleMap={data.isArrowVisibleMap} bind:positions={elemPositions} />
             {/if}
         </div>
     </div>

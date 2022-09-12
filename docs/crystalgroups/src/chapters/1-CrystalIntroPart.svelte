@@ -1,6 +1,6 @@
 <script>
     import MoleculeCanvas from "../threeD/MoleculeCanvas.svelte";
-    import D6Group from "../twoD/D6Group.svelte";
+    import D3Group from "../twoD/D3Group.svelte";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
     import {getAtomColor} from "../colors.js";
     import {onMount, onDestroy, tick} from "svelte";
@@ -8,11 +8,11 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-    let _d6Opacity = 0;
+    let _D3Opacity = 0;
 
     let data = {
-      set d6Opacity(x) { _d6Opacity = x; }, //let svelte know about the reactive change
-      get d6Opacity() { return _d6Opacity; }
+      set D3Opacity(x) { _D3Opacity = x; }, //let svelte know about the reactive change
+      get D3Opacity() { return _D3Opacity; }
     };
 
     async function animate(){
@@ -30,13 +30,13 @@
         await presentation.nextSlide();
 
         await presentation.TransitionInstantly(whitebg.style, {opacity: 0.8});
-        await presentation.TransitionTo(data, {d6Opacity: 1}, 500);
+        await presentation.TransitionTo(data, {D3Opacity: 1}, 500);
         
         await presentation.nextSlide();
         await presentation.nextSlide();
 
         await presentation.TransitionInstantly(whitebg.style, {opacity: 0});
-        await presentation.TransitionTo(data, {d6Opacity: 0}, 500);
+        await presentation.TransitionTo(data, {D3Opacity: 0}, 500);
 
         await presentation.nextSlide();
 
@@ -77,9 +77,9 @@
     <MoleculeCanvas style="z-index: 0"/>
     <div id="whitebg" style="opacity: 0; z-index: 1"/>
 
-    <div class="noclick" style="transform: scale(0.8) translate(25%, 6em); z-index: 2" style:opacity={_d6Opacity} >
+    <div class="noclick" style="transform: scale(0.8) translate(25%, 6em); z-index: 2" style:opacity={_D3Opacity} >
         <div class="groupcontainer">
-            <D6Group elementsWhoseNamesNotToShow={["rr","rf","fr","e","r","f"]}/>
+            <D3Group elementsWhoseNamesNotToShow={["rr","rf","fr","e","r","f"]}/>
         </div>
     </div>
 

@@ -1083,8 +1083,8 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        We can write this as an equation, with * standing for combining actions by doing one after the other:
-                        <br><b style={"color: " + mirrorColor}>m</b> * <b style={"color: " + mirrorColor2}>m2</b> = <b style={"color: " + cVecColor}>c</b>
+                        We can write this as an equation above.
+                        <br>Here, the symbol * means combining two actions by doing one after the other.
                     </div>
             </div>
             <div class="exp-slide">
@@ -1094,7 +1094,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Since this is a group, the group rules allow us to use parentheses, so let's group these two <b style={"color: " + mirrorColor2}>m2</b>s.
+                        Since this is a group, and the group rules allow us to use parentheses, let's group these two <b style={"color: " + mirrorColor2}>m2</b>s.
                     </div>
             </div>
             <div class="exp-slide">
@@ -1120,12 +1120,12 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        For us, this means I can simplify the Cayley graph by only drawing one mirror action, and remembering we can make more by combining other actions.
+                        For us, this means I can simplify the Cayley graph by only drawing <b style={"color: " + mirrorColor}>one mirror action, m,</b>, and remembering we can make <b style={"color: " + mirrorColor2}>more mirror actions</b> by combining.
                     </div>
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Another action in andalusite's symmetry group is a <b style={"color: " + rotationColor}>180 degree rotation</b> around the plane of the <b style={"color: " + mirrorColor}>mirror action</b> we just saw.
+                        Another action in andalusite's symmetry group is a <b style={"color: " + rotationColor}>180 degree rotation</b> around the plane of the <b style={"color: " + mirrorColor}>mirror action m</b> we just saw.
                     </div>
             </div>
 
@@ -1245,7 +1245,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        They're close, at least. You can turn the glide rotations into one another using just a <b style={"color: " + cVecColor}>movement c</b>. But the order you combine these actions seems to matter: <b style={"color: " + glidePlaneColor1}>g</b> * <b style={"color: " + mirrorColor}>m</b> ≠ <b style={"color: " + glidePlaneColor1}>m</b> * <b style={"color: " + mirrorColor}>g</b>. Addition and multiplication aren't like that.
+                        They're close, at least. You can turn the glide rotations into one another using just a <b style={"color: " + cVecColor}>movement c</b>. But the order you combine these actions matters: <b style={"color: " + glidePlaneColor1}>g</b> * <b style={"color: " + mirrorColor}>m</b> ≠ <b style={"color: " + glidePlaneColor1}>m</b> * <b style={"color: " + mirrorColor}>g</b>. Addition and multiplication aren't like that.
                     </div>
             </div>
 
@@ -1256,7 +1256,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        By the way, groups where everything commutes with everything else, so order never matters, are called <b>Abelian groups</b> (named after mathematician Niels Henrik Abel). Adding numbers and andalusite's movement-only subgroup are both Abelian, while D<sub>6</sub> and andalusite's symmetry group aren't Abelian.
+                        By the way, groups where everything commutes with everything else, so order never matters, are called <b>Abelian groups</b> (named after mathematician Niels Henrik Abel). Adding numbers and andalusite's movement-only subgroup are both Abelian, while D<sub>3</sub> and andalusite's symmetry group aren't Abelian.
                     </div>
             </div>
             <div class="exp-slide">
@@ -1289,7 +1289,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
             </div>
             <div class="exp-slide">
                     <div class="frostedbg">
-                        In conclusion, "turn things into groups, then see if the groups are different" is a very useful strategy. Topologists, for example, can study things like surfaces and 4D spaces using "fundamental groups". Physicists can study particle physics using "Lie groups".
+                        In conclusion, "turn things into groups, then see if the groups are different" is a very useful strategy. Topologists, for example, study things like surfaces and 4D spaces using "fundamental groups". Physicists study particle physics using "Lie groups".
                     </div>
             </div>
 

@@ -7,7 +7,7 @@
     import {makeBallStickDiagram, allAtoms, getSymmetryClones} from "../threeD/ballStickDiagram.js";
     import {andalusiteData} from "../threeD/polymorphdata.js";
 
-    import D6Group from "../twoD/D6Group.svelte";
+    import D3Group from "../twoD/D3Group.svelte";
 
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();

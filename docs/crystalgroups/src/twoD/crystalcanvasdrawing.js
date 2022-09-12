@@ -1,7 +1,7 @@
 import { rotate2D } from "./utils.js";
 import * as EXP from "../../../resources/build/explanaria-bundle.js";
 import {defaultGroupElementBorderColor, specialGeneratorColors} from "../colors.js";
-import {drawTrianglePath} from "./d6canvasdrawing.js";
+import {drawTrianglePath} from "./D3canvasdrawing.js";
 
 export const canvasSize = 2; //in em
 

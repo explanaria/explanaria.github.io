@@ -3,7 +3,7 @@
 	import { onMount, onDestroy } from 'svelte';
     import { GroupElement } from "./groupmath.js";
     import * as EXP from "../../../resources/build/explanaria-bundle.js";
-    import {easing, drawTrianglePath, drawStaticElements, isAllRs, canvasSize, canvasSizePixels, triangleRadius, lineWidth, D6_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D6TextColor} from "./d6canvasdrawing.js";
+    import {easing, drawTrianglePath, drawStaticElements, isAllRs, canvasSize, canvasSizePixels, triangleRadius, lineWidth, D3_text_size_multiplier, triangleStrokeStyle, triangleShadowColor, triangleColor, D3TextColor} from "./D3canvasdrawing.js";
     import {tick} from "svelte";
 
     export let element = new GroupElement("", "(3)"); //a GroupElement
@@ -45,12 +45,12 @@
             drawTrianglePath(ctx, 0,0, startVertex);
             ctx.fill();
 
-            ctx.fillStyle = D6TextColor;
-            ctx.font = D6_text_size_multiplier * canvasSize+ "px serif";
+            ctx.fillStyle = D3TextColor;
+            ctx.font = D3_text_size_multiplier * canvasSize+ "px serif";
             ctx.globalAlpha = 1;
             ctx.fillText("D", -0.11 * canvasSizePixels,-0.06 * canvasSizePixels);
-            ctx.font = D6_text_size_multiplier * 0.7 * canvasSize+ "px serif";
-            ctx.fillText("6", 0.05 * canvasSizePixels, -0.00 * canvasSizePixels);
+            ctx.font = D3_text_size_multiplier * 0.7 * canvasSize+ "px serif";
+            ctx.fillText("3", 0.05 * canvasSizePixels, -0.00 * canvasSizePixels);
             ctx.globalAlpha = 1;
 
             ctx.restore();

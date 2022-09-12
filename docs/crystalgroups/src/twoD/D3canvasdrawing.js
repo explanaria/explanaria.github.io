@@ -3,7 +3,7 @@ import { rotate2D } from "./utils.js";
 
 export const triangleShadowColor = "#555555";
 export const triangleColor = "#bbbbbb";
-export const D6TextColor = "#000";
+export const D3TextColor = "#000";
 
 export const triangleStrokeStyle = "hsla(0,0%,0%,0)";
 export const arrowColor = "hsl(240, 90%, 70%)";
@@ -19,7 +19,7 @@ export const arrowCenterDistance = 0.43*canvasSizePixels; //how far from the cen
 export const offsetDegrees = 20; //don't end the arc directly at the end of the rotation, end slightly before to give the arrowhead some space
 export const num_dashes = 5;
 export const dash_radius = canvasSizePixels/2; //how far from the center should dashed lines for mirroring go
-export const D6_text_size_multiplier = 0.08 * canvasSizePixels;
+export const D3_text_size_multiplier = 0.08 * canvasSizePixels;
 export const lineWidth = 3;
 export let NUM_DEGREES_IN_ONE_ROTATION = 120;
 

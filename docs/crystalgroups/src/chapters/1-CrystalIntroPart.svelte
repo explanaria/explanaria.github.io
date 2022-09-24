@@ -88,7 +88,7 @@
             <br><br><br>
             <center>
                 <div class="frostedbg exp-slide" style="width: 27em">
-                    <h1>Clear Crystal Conundrums</h1>
+                    <h1>Crystal Clear Conundrums</h1>
                     <p>A Multifaceted Intro to Group Theory</p>
 
                     <br>

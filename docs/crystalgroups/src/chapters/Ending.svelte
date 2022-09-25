@@ -74,7 +74,6 @@
     }
     .thinmargin{
         width: 22em;
-        padding: 0.2em;
         margin: 0 auto;
     }
 </style>
@@ -88,15 +87,13 @@
         <div style="margin: 0 5% 0; width: 90%;">
             <br />
             <div class="frostedbg thinmargin">
-                <h1>Crystal Clear Conundrums</h1>
+                <h1>Clear Crystal Conundrums</h1>
                  A Multifaceted Intro to Group Theory
                 <br>
                 <aside>August 2022</aside>
-                <br><br>
-                Thanks so much for reading!
             </div>
 
-            <br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br />
 
             <div class="twocolumnsLeftBigger frostedbg yesclick" style="gap: 1em;">
                 <div class="column">

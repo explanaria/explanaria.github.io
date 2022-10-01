@@ -76,6 +76,14 @@
         width: 22em;
         margin: 0 auto;
     }
+    .sociallogo{
+        height: 0.8em;
+        padding-left: 0.1em;
+        
+    }
+    .sociallogo:hover{
+        transform: scale(1.1);
+    }
 </style>
 
 <div class="overlappingItemContainer fullscreen">
@@ -93,7 +101,7 @@
                 <aside>August 2022</aside>
             </div>
 
-            <br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br />
 
             <div class="twocolumnsLeftBigger frostedbg yesclick" style="gap: 1em;">
                 <div class="column">
@@ -105,6 +113,13 @@
                             <a href="https://explanaria.github.io/thinking4D/1%20R3.html" data-goatcounter-click="crystalgroups-to-4D">How Mathematicians Think About Four Dimensions</a>
                         </div>
                         <br><a href="https://explanaria.github.io/" data-goatcounter-click="impossibletriangles-to-home">All Articles</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="https://twitter.com/explanariamath" data-goatcounter-click="crystalgroups-to-twitter">
+                            <img src="img/twitterlogo.svg" class="sociallogo" alt="Twitter" />
+                        </a>
+                        <a href="https://patreon.com/explanaria" data-goatcounter-click="crystalgroups-to-patreon">
+                            <img src="img/Digital-Patreon-Logo_Black.png" class="sociallogo" alt="Patreon" />
+                        </a>
                     </aside>
                 </div>
                 <div class="column" style="text-align: center">

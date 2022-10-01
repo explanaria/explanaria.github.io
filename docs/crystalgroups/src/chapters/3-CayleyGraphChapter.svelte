@@ -284,7 +284,10 @@
             To help us keep track of what an action does to the triangle, I'll doodle some letters on it.
         </div>
         <div class="exp-slide">
-            Finally, on the right, I'll keep track of the actions you discover.
+            Finally, on the right, I'll keep track of the actions you discover. We'll start with "do nothing", which I've labeled "e", and we'll draw more actions as we find them.
+            <br>
+
+            <aside>Why "e"? The first group theory books were in German, they shortened "Einheit" to "e", and the name stuck.</aside>
         </div>
         <div class="exp-slide">
             On the right, each circular shape represents an action in the group, and arrows will show you what happens if you <span style={"color: " + generatorColors[0]}>rotate</span> and <span style={"color: " + generatorColors[1]}>flip</span> the triangle starting from every action.
@@ -367,7 +370,7 @@
              The group rules are abstract on purpose: it means they can apply to many ways to combine things. Numbers can combine using addition. Actions can combine by doing one thing after another. They're all groups.
         </div>
         <div class="exp-slide">
-            Group theory is an area of math which starts from these group rules and studies their consequences. That way, if you notice any useful concepts, such as subgroups, the concepts apply to numbers, actions, D<sub>3</sub> and every other group at the same time.
+            Group theory is an area of math which starts from these group rules and studies their consequences. That way, if you notice any useful concepts, such as subgroups, the concepts apply to numbers, actions, D<sub>3</sub>, and every other group at the same time.
         </div>
         <div class="exp-slide">
            I like to think of a group as "things which can combine and undo". And there's lots of things in math which combine and undo. From numbers to rotating triangles to moving crystals, groups allow us to study them all at the same time.

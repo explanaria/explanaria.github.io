@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="../resources/favicon.ico" sizes="any">
+  <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
+  <title>Explanarian - Synth Creator</title>
+  
+  
+  
+  <script src="../resources/build/explanaria-bundle.js"></script>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+    <script>
+
+    const audioCtx = new AudioContext();
+
+
+    let time = 0;
+      const osc = new OscillatorNode(audioCtx, {
+        frequency: 380,
+        type: "sine",
+      });
+      osc.connect(audioCtx.destination);
+
+
+
+    function play(){
+
+        let customwavebuffer = createCustomWaveBuffer(440);
+
+        let playbackRate = 1; //1x speed
+        const sampleSource = new AudioBufferSourceNode(audioCtx, {
+            buffer: customwavebuffer,
+            playbackRate: 1, //playback rate
+        });
+        sampleSource.connect(audioCtx.destination);
+        sampleSource.start(time);
+        //no need to stop, will automatically start
+
+    }
+
+    function customwave(t, frequency){
+        return Math.sin(t * (frequency + t * 50 + Math.sin(t * 30)) * Math.PI * 2);
+    }
+
+    function compilecode(){
+        let elem = document.getElementById("wavecode");
+        elem.style.border = "";
+
+        try{
+            let functionString = `"use strict";return (t, frequency) => ${elem.innerText.trim()}`;
+            console.log(functionString)
+            let wavefunction_generator = Function(functionString);
+            let wavefunction = wavefunction_generator();
+            if(typeof(wavefunction) !== "function"){
+                throw new Error("something weird is going on. Maybe you misabalanced parentheses?");
+            }
+
+            let output = wavefunction(0, 440);
+            if(typeof(output) !== "number"){
+                throw new Error("This function needs to output a number!");
+            }
+            customwave = wavefunction; //overwrite old one
+        
+        }catch(e){
+            console.warn(e);
+            elem.style.border = "1px solid red";
+        }
+    }
+
+    function createCustomWaveBuffer(frequency){
+        //sample customwave()
+
+        let sampleRate = 44000;
+        let duration = 2;
+        
+        let numSamples = parseInt(sampleRate * duration);
+
+
+        let buff = audioCtx.createBuffer(1, numSamples, sampleRate);
+        
+        for (let channelNum = 0; channelNum < buff.numberOfChannels; channelNum++) {
+            const channel = buff.getChannelData(channelNum);
+
+            for(let i=0; i<numSamples; i++){
+                //sample our function!
+                channel[i] = customwave(i / sampleRate, frequency);
+            }
+        }
+        return buff;
+    }
+
+    window.sin = Math.sin;
+    window.cos = Math.cos;
+    window.PI = Math.PI;
+    window.pow = Math.pow;
+    window.square = (t) => (t % (Math.PI*2) > Math.PI ? 2/PI : -2/PI); //this square wave has period 2pi, like sin(). it's also scaled down to match the same average energy as sin()
+
+
+    </script>
+
+    <style>
+    #wavecode{
+        background-color: rgba(255,255,170,0.8);
+    }
+    .definedfunction{
+        font-family: monospace;
+        padding: 1em;
+        font-size: 1.3em;
+    }
+    </style>
+</head>
+
+<body>
+
+<button onclick="play()">Play!</button>
+
+<div class="definedfunction">
+    function customwave(t, frequency){<br>
+        return 
+    <span id="wavecode" contenteditable="true" oninput="compilecode()"> 
+    sin(t * (frequency + t * 50 + Math.sin(t * 30)) * PI * 2);
+    </span><br>
+    }
+</div>
+
+<aside>
+Available functions: sin(), cos(), square(), PI = 3.14159..., pow(a,b) = a^b
+</aside>
+
+</body>
+
+</html>

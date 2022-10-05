@@ -106,7 +106,7 @@
     </script>
 
     <style>
-    #wavecode{
+    .editregion{
         background-color: rgba(255,255,170,0.8);
     }
     .definedfunction{
@@ -124,14 +124,17 @@
 <div class="definedfunction">
     function customwave(t, frequency){<br>
         return 
-    <span id="wavecode" contenteditable="true" oninput="compilecode()"> 
+    <span id="wavecode" class="editregion" contenteditable="true" oninput="compilecode()"> 
     sin(t * (frequency + t * 50 + Math.sin(t * 30)) * PI * 2);
     </span><br>
     }
 </div>
 
 <aside>
-Available functions: sin(), cos(), square(), PI = 3.14159..., pow(a,b) = a^b
+You can edit <span class="editregion">this code</span>! Click play to hear the sound of the mathematical function you generated. <br>
+
+You can also use these pre-made functions: sin(), cos(), square(), PI = 3.14159..., TWOPI = TAU = 6.28..., pow(a,b) = a^b <br>
+The minimum needed to hear a sound is <span class="definedfunction">sin(t * frequency * TWOPI)</span>. Try messing around with frequency!
 </aside>
 
 </body>

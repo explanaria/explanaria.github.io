@@ -1120,7 +1120,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        For us, this means I can simplify the Cayley graph by only drawing <b style={"color: " + mirrorColor}>one mirror action, m,</b>, and remembering we can make <b style={"color: " + mirrorColor2}>more mirror actions</b> by combining.
+                        For us, this means I can simplify the Cayley graph by only drawing <b style={"color: " + mirrorColor}>one mirror action, m</b>, and remembering we can make <b style={"color: " + mirrorColor2}>more mirror actions</b> by combining.
                     </div>
             </div>
             <div class="exp-slide">
@@ -1143,7 +1143,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        Unfortunately, andalusite is only mirror symmetric using <b style={"color: " + mirrorColor}>that one plane</b> we saw. This mirror will leave them slightly misaligned. Look at the checkerboard pattern of red <b style={"color:" + getAtomColor("O")}>oxygen</b> atoms and their lighter red original places.
+                        Unfortunately, andalusite is only mirror symmetric using <b style={"color: " + mirrorColor}>that one plane</b> we saw. This mirror won't leave the crystal's atoms realigned with the infinitely repeating original pattern. Look at the checkerboard pattern of red <b style={"color:" + getAtomColor("O")}>oxygen</b> atoms and their lighter red original places.
                     </div>
             </div>
             <div class="exp-slide">
@@ -1154,7 +1154,7 @@ aVecColor, bVecColor, cVecColor, aPlusCVecColor
 
             <div class="exp-slide">
                     <div class="frostedbg">
-                        A combination of a mirror and a small movement parallel to that mirror plane is called a "<b style={"color: " + glidePlaneColor1}>glide reflection</b>". (If the movement was perpendicular to the mirror plane, we'd get another mirroring, like we just saw before!)
+                        A combination of a mirror and a small movement parallel to that mirror plane is called a "<b style={"color: " + glidePlaneColor1}>glide reflection</b>". (If the movement was perpendicular to the mirror plane, the combined action would be another mirror action, like we just saw before!)
                     </div>
             </div>
             <div class="exp-slide">

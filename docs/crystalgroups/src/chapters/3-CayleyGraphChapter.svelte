@@ -234,7 +234,7 @@
             <br><br>
             <div class="">
                 <ul class="twocolumns groupaxiom">
-                    <li>Identity: <aside>e exists, e*x = x</aside></li>
+                    <li>Identity: <aside>e exists, e*x = x, x*e = x</aside></li>
                     <p>Doing nothing is always an option</p>
                     <br>
                 </ul>

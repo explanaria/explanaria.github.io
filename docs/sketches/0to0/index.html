@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <title>Explanaria Sketches - 0 to the 0</title>
+
+
+
+    <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+</head>
+    <body>
+
+
+    (You're looking at an Explanaria sketch. This is a rough draft of something that might get turned into something more someday. Don't expect something perfectly polished.
+
+    This one comes with a free, similarly unpolished, interactive experiment <a href="interactive.html">here</a>! )
+        
+
+    <h1> 0<sup>0</sup></h1>
+
+    Nov 2022
+    <br />
+
+    <br /><br /><br />
+
+    <p>I've seen some articles lately talking about how 0<sup>0</sup> is definitely zero, or definitely one. And I don't blame people for being confused! 0<sup>0</sup> is a very tricky concept when you're seeing it for the first time. </p>
+    <p>0<sup>0</sup> involves only two numbers, but try to punch the three symbols "0 ^ 0" into a calculator and the calculator complains "0<sup>0</sup> is undefined". Undefined? Why? Isn't math all about definitions? Are the mathematicians hiding their secrets from us laypeople again? Math can't define this basic three-character symbol? Clearly it's just zero! Or maybe one! It should have some simple answer!</p>
+    <p>What is 0<sup>0</sup>, and why do people keep saying it's "undefined"?</p>
+    <h2 id="the-short-version">The short version</h2>
+    <p>0<sup>0</sup> is undefined because x<sup>y</sup> follows two simple patterns, and we want 0<sup>0</sup> to follow both of them, and 0<sup>0</sup> can't follow both of them.</p>
+    <p>If x is a positive number, then 0<sup>x</sup> = 0, and also x<sup>0</sup> = 1. (More on that below.) When you try to decide what 0<sup>0</sup> should be, one rule says the definition should be 0<sup>0</sup> = 0, and the other rule says the definition should be 0<sup>0</sup> = 1. So you can't DEFINE 0<sup>0</sup> to follow one rule without violating the other. "Any definition of 0<sup>0</sup> would violate at least one of the rules" is a mouthful, so for short we say 0<sup>0</sup> is "undefined".</p>
+    <h2 id="in-more-detail">In more detail</h2>
+    <p>First, a little secret: The "rules" of math are more like different ways to fill in a coloring book. You can choose the rules which make the most sense depending on what you want to do.</p>
+    <p>For example, everyone agrees on what x<sup>y</sup> means when x and y are integers: it's just repeated multiplication. 2<sup>3</sup> means 2 * 2 * 2 = 8. 5<sup>4</sup> means 5 * 5 * 5 * 5 = 625. I'm going to call this the INTEGER RULES: x<sup>y</sup>, when x and y are integers, means multiplying x with itself y times.</p>
+    <p>The problem is, what is 0<sup>0</sup>? How do you multiply something with itself 0 times? The answer is: you can't. The INTEGER RULES aren't enough to tell us what the answer should be.</p>
+    <p>In that case, let's make up some more rules! For example, we could decide x<sup>y</sup> = 23842 for every case not covered by the INTEGER RULES. But it wouldn't be very satisfying if 2<sup>3</sup> = 8 but 2<sup>3.0001</sup> = 23842. Intuitively, if we're defining how x<sup>y</sup> should work when x and y are new types of numbers, mathematicians prefer if the new rules keep following the old patterns.</p>
+    <p>So let's look at the patterns that the INTEGER RULES follow, decide what patterns we want x<sup>y</sup> to follow, and then make up our own rules for 0<sup>0</sup>.</p>
+    <h3 id="pattern-1-multiplying-zero-with-itself-">Pattern 1: Multiplying Zero With Itself.</h3>
+    <p>0<sup>3</sup> = 0 * 0 * 0 = 0. 0<sup>2</sup> = 0 * 0 = 0. 0<sup>1</sup> = 0. In general, 0<sup>x</sup> = 0, if x is an integer. Therefore, we could follow this pattern into the non-integers and define EXPONENT PATTERN 1: 0<sup>x</sup> = 0, even if x isn't an integer.</p>
+    <h3 id="pattern-2-adding-exponents-">Pattern 2: Adding Exponents.</h3>
+    <p>4<sup>3</sup> * 4<sup>2</sup> = 4<sup>5</sup>. 7<sup>5</sup> * 7<sup>5</sup> = 7<sup>10</sup>. In general, x<sup>a</sup> * x<sup>b</sup> = x<sup>a+b</sup>.</p>
+    <p>Following this pattern tells us EXPONENT PATTERN 2: x<sup>0</sup> = 1. </p>
+    <p>Why? Because x<sup>a</sup> * x<sup>0</sup> = x<sup>a+0</sup>, meaning x<sup>a</sup> </em> x<sup>0</sup> = x<sup>a</sup>. There's only one number which you can multiply by x<sup>a</sup> and get x<sup>a</sup>: 1. So the only rule consistent with pattern 2, the adding-exponents pattern, is x<sup>0</sup> = 1.</p>
+
+    <p>So now we have two rules: one which says x<sup>0</sup> = 1, and another which says 0<sup>x</sup> = 0. Both rules are true when x is any integer greater than zero. If you agree to the INTEGER RULES, it seems reasonable to say that x<sup>0</sup> = 1 and 0<sup>x</sup> = 0 are good rules that could also work whenever x isn't an integer.</p>
+
+
+    <h3>What do those rules imply for x=0?</h3>
+
+    <p>But what if x=0? According to EXPONENT PATTERN 1, 0<sup>x</sup> = 0, so if you choose to apply this rule when x=0, 0<sup>0</sup> = 0. But if you apply EXPONENT PATTERN 2, x<sup>0</sup> = 1, then 0<sup>0</sup> = 1.</p>
+    <p>To define 0<sup>0</sup>, you'd have to choose whether to define 0<sup>0</sup> using EXPONENT PATTERN 1 or define using 0<sup>0</sup> EXPONENT PATTERN 2. But they both seem like valid rules! The patterns work for all numbers except zero, so why not continue the pattern!</p>
+    <p>That's why we say "0<sup>0</sup> is undefined". There's two perfectly valid definitions, and you can choose which definition you want to use depending on what math you're working with. If you're doing a lot of multiplying by zero, you might choose the definition 0<sup>0</sup> = 0. If you're doing a lot of work with polynomials like x<sup>2</sup> and x<sup>3</sup>, you might choose the definition x<sup>0</sup> = 1. </p>
+    <p>(Usually mathematicians work more with polynomials, so x<sup>0</sup> = 1 is more common. Sometimes mathematicians will use the term "formal power series", and when they do you should imagine a mathematician in a suit or dress promising that it's okay to use x<sup>0</sup> = 1 because they solemnly swear that this x is just a symbol and will never, ever, represent zero. Afterwards they usually put on sunglasses, backflip onto a horse, and start messing with infinitely long polynomials and dividing by we-promised-it-wasn't-zero.)</p>
+    <h2 id="bonus-stuff">bonus stuff</h2>
+    <p>In fact, those aren't the only rules for 0<sup>0</sup> you can choose. If you graph the function x<sup>y</sup>, you can see that at the center, where x = y = 0, there's a big spike. our two rules corresponded to approaching the origin along the line x=0 or along the line y=0. but you could also approach along the line x = y and slowly bring x and y closer to 0, and then you'd get a different rule for x<sup>y</sup> when x and y approach (0,0).</p>
+
+    </body>
+</html>
+

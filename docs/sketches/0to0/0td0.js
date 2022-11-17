@@ -1,4 +1,4 @@
-import "../resources/build/explanaria-bundle.js"; //loads EXP into global namespace
+import "../../resources/build/explanaria-bundle.js"; //loads EXP into global namespace
 
 await EXP.pageLoad();
 

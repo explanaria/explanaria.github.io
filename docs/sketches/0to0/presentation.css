@@ -1,0 +1,306 @@
+/* text */
+
+.slideTextItem{
+    opacity: 0;
+	transition: opacity 0.5s ease-in-out;
+
+    grid-row-start: 1;
+    grid-column-start: 1;
+
+    width:100%;
+    max-width: 800px;
+    line-height: 1.2; /* give room for equations */
+    margin: 0 auto;
+    font-family: "Poppins",Arial,Helvetica,sans-serif;
+    margin-bottom: 2.5em; /*dodge the next/back arrows */
+    padding: 0.5em 1.5em;
+}
+
+.slideTextItem br{
+    margin-bottom: 0.75em;
+}
+.slideTextItem aside{
+    display: inline;
+    font-size: 80%;
+    opacity: 0.8;
+}
+
+.nextChapterLink{
+    right:1em;
+}
+.prevChapterLink{
+    left:1em;
+}
+
+.nextChapterLink, .prevChapterLink{
+    position:absolute;
+    bottom:0.5em;
+    font-weight:bold;
+    text-decoration:underline;
+    background-color: rgba(255,255,255,0.5);
+    padding: 0.25em;
+}
+
+.exp-toptext{
+    will-change: opacity; /* hint to chrome that this should be composited in its own layer */
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url('../resources/fonts/Poppins-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: "Poppins";
+    src: url('../resources/fonts/Poppins-SemiBold.ttf') format('truetype');
+    font-weight: bold;
+}
+@font-face {
+    font-family: "Poppins";
+    src: url('../resources/fonts/Poppins-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Poppins";
+    src: url('../resources/fonts/Poppins-SemiBoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+.tunnell-container{
+  grid-template-columns: 1fr 1fr;
+}
+
+.tunnell-column{
+    padding-left: 5% !important;
+    padding-right: 5% !important;
+}
+
+.tunnell-linebelow{
+    border-bottom: 1px solid gray;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 1em;
+}
+
+.katexlabel{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    will-change: transform; /* hint to chrome that this should be composited in its own layer */
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    pointer-events: none;
+}
+
+.overlappingItemContainer{
+  display: grid;
+  grid-template-columns: 1fr;
+ width:100%;
+}
+
+.textContainer{
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.nextbtn{
+    pointer-events:all;
+    position:absolute;
+    bottom:0.5em;
+    right:0.5em;
+    font-weight:bold;
+    text-decoration:underline;
+}
+
+.crossedout{
+    text-decoration: line-through;
+    opacity: 50%;
+    font-size: 80%;
+}
+
+.rationalnumber{
+    color: rgb(0,128,0);
+}
+
+
+html{
+    overflow-y: hidden !important; /* hide weird second scrollbar on chrome */
+}
+
+.grid{
+    width: 100%;
+    height: 100%;
+    position:absolute;
+}
+
+
+
+.headerPart{
+    width: 100%;
+    /*height: 3%;*/
+    /*background-color: red;*/
+}
+
+.threeDPart{
+    height: 62%;
+    width: 100%;
+    /*background-color: green;*/
+    min-height: 2;
+    position:relative;
+    overflow: hidden; /* I'm not sure about this. disabling it does get rid of a scrollbar, but that scrollbar shouldn't be there in the first place.*/
+}
+
+.non3DFooterPart{
+    height: 35%;
+    width: 100%;
+    overflow-y: auto;
+    border-top: 1px solid #ccc;
+    line-height: 1.2;
+    will-change: transform; /* recommended by chrome to ensure scrolling is smooth */
+    font-size: 18px;
+}
+
+.canvasOverlay{
+    z-index: 2;
+    pointer-events: none;
+    opacity: 1.0;
+/* hack to position 2D canvas over 3D canvas*/
+    position: absolute;
+    top:0%;
+    left:0%;
+    right:100%;
+    bottom:0%;
+}   
+
+
+#textArea h1{
+    text-align: center;
+    font-family: "Computer Modern Serif";
+    font-size: 1.5em;
+}
+
+.coverBG{
+    background-color: rgba(255,255,255,0.9);
+    z-index: 1;
+}
+
+.threeDPartHeader h1{
+    font-size: 1.5em;
+    text-align: center;  
+    margin-bottom: 0.3em;
+}
+.threeDPartHeader aside{
+    font-size: 70%;
+}
+
+.willFadeInFromJS{
+    opacity:0; 
+    transition: opacity 0.75s ease-in-out;
+}
+.willFadeOutFromJS{
+    opacity:1; 
+    transition: opacity 0.75s ease-in-out;
+}
+
+
+.threeDPartHeader{
+    font-size: 1.3em;
+    pointer-events: none;
+    font-family: "Computer Modern Serif";
+    margin: 0;
+    padding: 1em;
+    line-height: 1;
+}
+
+ul {
+    list-style: disc;
+    padding-left: 1em;
+}
+
+a{
+    text-decoration: underline;
+}
+
+.emailbox, .emailbtn{
+    padding: 0.5em 0em;
+    color: #333;
+	text-align:center;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.emailbox{
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #bbb;
+    /* like a .examplelink*/
+    margin-bottom: 0.5em;
+}
+
+.emailbtn{
+    border: 1px solid #bbb;
+    background-color: #444;
+    color: #eee;
+    font-weight: bold;
+}
+.emailbtn:hover{
+    background-color: hsl(240, 90%, 70%);
+}
+
+@media screen and (max-height:600px) and (min-width:600px){
+    /*if there's space, put the text on the right*/
+
+    body{
+        font-size: 12px;
+    }
+
+    .threeDPart{
+        width: 60%;
+        height:100%;
+        float:left;
+    }
+
+    .non3DFooterPart{
+        width: calc(40% - 0.25em);
+        height: 100%;
+        float:right;
+        bottom:0%;
+        border-top: none;
+        border-left: 1px solid #ccc;
+    }
+   
+    .threeDPartHeader{
+        padding: 0.25em;
+        font-size: 16px;
+    }
+}
+
+@media (max-width:800px){
+    .katexlabel{
+        font-size: 16px;
+    }
+}
+@media (max-width:400px){
+    .katexlabel{
+        font-size: 14px;
+    }
+    .tunnell-column{
+        font-size: 0.6em;
+    }
+}
+@media (min-width:1000px){
+    .threeDPartHeader{
+        font-size: 20px;
+    }
+}
+
+
+#canvasContainer canvas{
+    width: 100%;
+    height: 100%;
+}
+

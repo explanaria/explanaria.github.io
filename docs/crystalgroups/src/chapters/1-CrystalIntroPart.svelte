@@ -145,45 +145,45 @@
                 </div>
             </div>
         </div>
-        <div class="">
+        <div class="hidewhenpresenting">
             <div class="frostedbg exp-slide">
                 I'm only showing a few thousand atoms here, but these patterns continue for hundreds of millions of atoms. It's quite pretty.
                 <br>
                 But, I want to ask: how would you describe <u>the way</u> these atoms repeat? How would you describe what makes kyanite's pattern of repeating atoms different from andalusite's pattern of repeating atoms?
             </div>
         </div>
-        <div class="">
+        <div class="hidewhenpresenting">
             <div class="frostedbg exp-slide">
                 <!-- labels: kyanite, andalusite -->
                 Drag to rotate the 3D model yourself and take a look. What can we use to describe how andalusite and kyanite repeat? It's not easy.
             </div>
         </div>
-        <div class="">
+        <div class="hidewhenpresenting">
             <div class="frostedbg exp-slide">
                 <!-- labels: kyanite, andalusite -->
                 The number of atoms won't help - both crystals have the same number (and ratio) of atoms, and there's billions of them.
                 <br>Looking at one atom at a time won't help - each atom behaves similarly to all others. For example, in both crystals, every <span style={"color: " + getAtomColor('O')}>oxygen</span> atom has three bonds, and every <span style={"color: " + getAtomColor('Si')}>silicon</span> atom always connects to four other atoms.
             </div>
         </div>
-        <div class="">
+        <div class="hidewhenpresenting">
             <div class="frostedbg exp-slide">
                 So do andalusite and kyanite repeat in the same way? Or a different way? <br>What would "repeating in a different way" even mean?
                 <br>
                 <br> 
             </div>
         </div>
-        <div class="">
+        <div class="hidewhenpresenting">
             <div class="frostedbg exp-slide">
                 So do andalusite and kyanite repeat in the same way? Or a different way? <br>What would "repeating in a different way" even mean?
                 <br>We don't really have the words to describe this in everyday language, so mathematicians invented their own: the language of <b>group theory</b>. 
             </div>
         </div>
-        <div class="">
+        <div class="hidewhenpresenting">
             <div class="frostedbg exp-slide">
                 Group theory is a powerful way to think about repetition, symmetry, and the way things can combine and undo. In this presentation, we'll try to figure out the difference between andalusite and kyanite, and along the way we'll learn about group theory visually using these colorful graphs.
             </div>
         </div>
-        <div class="">
+        <div class="hidewhenpresenting">
             <div class="frostedbg exp-slide">
                 When I first learned group theory, it was taught in a very self-contained way, and I had a hard time seeing why mathematicians want to use it everywhere. Sure, it was interesting to think about a way to define symmetry, but what kind of problems would lead someone to think about such specific actions?
                 <!-->

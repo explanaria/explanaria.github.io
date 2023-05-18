@@ -71,6 +71,24 @@
         pointer-events: none;
         z-index: 1;
     }
+
+    .exp-backbtn{
+        width: 2.5em;
+        height: 2.5em;
+    }
+    .homelink{
+        text-decoration:none;
+        color: hsla(240, 90%, 70%, 1);
+        position:absolute;
+        top:0.5em;
+        left:0.5em; 
+        display: grid; 
+        grid-template-columns: 2.5em 1fr;
+    }
+    .homelink:hover{
+	    transform: scale(1.1);
+    }
+
 </style>
 
 <div class="overlappingItemContainer exp-text fullscreen">
@@ -92,9 +110,15 @@
                     <p>A Multifaceted Intro to Group Theory</p>
 
                     <br>
-                    <aside>(Use the arrows to advance)</aside>
+                    <aside>(Use the right arrow to advance)</aside>
                 </div>
             </center>
+
+            <a href="https://explanaria.github.io" class="homelink yesclick exp-slide-1">
+                    <img src="img/BackButton.svg" class="exp-backbtn" alt="Back">
+                    <span style="font-size: 0.7em; margin: auto;padding-left:0.2em; padding-top: 0.5em;">More<br>Explanaria</span>
+            </a>
+
         </div>
         <div class="">
             <div class="exp-slide frostedbg">

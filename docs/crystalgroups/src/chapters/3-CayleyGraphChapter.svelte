@@ -43,6 +43,7 @@
     async function animate(){
 
         //EXP.setupThree() is required first, but it's called in sharedthreejscanvas.js
+        window.data = data;
         window.data2 = data2;
         data2.opacity = 0;
         data2.D3group.generators[0] = data2.D3group.getElemByName("rf");
@@ -144,7 +145,7 @@
         await presentation.nextSlide();
         presentation.TransitionInstantly(data2, {opacity: 0});
         presentation.TransitionInstantly(data3, {opacity: 1, showbuttons: true});
-
+2
         await waitForClear()
 
         await presentation.nextSlide();
@@ -189,6 +190,11 @@
     function allFound(event){
         if(resolveAllFound){
             resolveAllFound();
+
+            data.D3group.elements.forEach(element => data.isArrowVisibleMap[element.name] = [true,true,false]);
+            data.isElementVisible = data.isElementVisible.map(elem => true);
+            data.isArrowVisibleMap = data.isArrowVisibleMap;
+
             resolveAllFound = undefined;
             window.removeEventListener("keydown", keylistener);
             if(!alreadyEnding)window.setTimeout(() => presentation.handleForwardsPress(), 1); //advance to next slide automatically

@@ -84,6 +84,7 @@
         left:0.5em; 
         display: grid; 
         grid-template-columns: 2.5em 1fr;
+        transition: opacity 0.5s ease-in-out;
     }
     .homelink:hover{
 	    transform: scale(1.1);
@@ -116,7 +117,7 @@
 
             <a href="https://explanaria.github.io" class="homelink yesclick exp-slide-1">
                     <img src="img/BackButton.svg" class="exp-backbtn" alt="Back">
-                    <span style="font-size: 0.7em; margin: auto;padding-left:0.2em; padding-top: 0.5em;">More<br>Explanaria</span>
+                    <span style="font-size: 0.7em; margin: auto;padding-left:0.3em; padding-top: 0.5em;">More<br>Explanaria</span>
             </a>
 
         </div>

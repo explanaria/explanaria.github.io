@@ -204,8 +204,6 @@
         ctx.rotate(rotationAmount * Math.PI/180);
     }
 
-    window.data = data;
-
     $: orientationsFound = data.isElementVisible.reduce((prev, current) => current ? prev+1 : prev, 0);
     $: arrowsFound = D3group.elements.reduce((prev, groupElem) => {
                             let sum = prev;

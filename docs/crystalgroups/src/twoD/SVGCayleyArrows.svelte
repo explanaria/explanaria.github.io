@@ -1,6 +1,8 @@
 <script>
     //units of this SVG are in em
 
+    import EXP from "../../../resources/build/explanaria-bundle.js";
+
     export let group = {elements: []};
     export let positionsPerElementMap;
     import {generatorColors, drawGeneratorsWithOutlines, drawEyesOnArrows, specialGeneratorColors} from "../colors.js";
@@ -17,6 +19,14 @@
             return specialGeneratorColors[generator.name];
         }
         return generatorColors[i]
+    }
+
+    function chooseEyeColor(group, i){
+        let color = chooseGeneratorColor(group, i);
+        let threeColor = new EXP.THREE.Color(color);
+        threeColor.offsetHSL(0,0,-0.2); //slightly darken
+        
+        return "#" + threeColor.getHexString();
     }
 
     let defaultShowArray = {}; //elementTimesGenerators[elem] is [true, true] where the ith position controls whether or not to show or hide an arrow for that start, generator combo
@@ -67,13 +77,13 @@
       <polygon points="0 0, 4 2, 0 4" fill={chooseGeneratorColor(group, i)}/>
       {#if drawEyesOnArrows}
           <ellipse rx="1" ry="0.6"
-            cy="2.5" cx="1.5" fill="#fff" stroke="#000" stroke-width=0.1/>
+            cy="2.5" cx="1.5" fill="#fff" stroke={chooseEyeColor(group, i)} stroke-width=0.1/>
           <ellipse rx="1" ry="0.6"
-            cy="1.5" cx="1.5" fill="#fff" stroke="#000" stroke-width=0.1/>
+            cy="1.5" cx="1.5" fill="#fff" stroke={chooseEyeColor(group, i)} stroke-width=0.1/>
           <ellipse rx="0.6" ry="0.35"
-            cy="2.5" cx="1.85" fill="#000000"/>
+            cy="2.5" cx="1.85" fill={chooseEyeColor(group, i)}/>
           <ellipse rx="0.6" ry="0.35"
-            cy="1.5" cx="1.85" fill="#000000"/>
+            cy="1.5" cx="1.85" fill={chooseEyeColor(group, i)}/>
       {/if}
     </marker>
     {/each}

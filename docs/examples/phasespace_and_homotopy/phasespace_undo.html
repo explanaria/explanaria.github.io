@@ -4,10 +4,6 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../resources/favicon.ico"/>
   <title>Explanarian - Phase Space Manifolds</title>
-  
-  
-  
-  <script src="../../resources/build/explanaria-bundle.js"></script>
 
   <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
@@ -24,9 +20,11 @@
     </style>
 </head>
 <body>
-  <script>
+  <script type="module">
+    import * as EXP from "../../resources/build/explanaria-bundle.js";
+
 	var three = EXP.setupThree();
-	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
     controls.enableKeys = false;
     controls.enableRotate = false;
 
@@ -154,7 +152,7 @@
 //-------
 
 
-    plainPlane = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
+    let plainPlane = new EXP.Area({bounds: [[-5,5],[-5,5]],numItems: 16});
     let planeDefinition = plainPlane.add(new EXP.Transformation({'expr':(i,t,x,y)=>[x,y,0]}));
     planeDefinition.add(new EXP.SurfaceOutput({color: 0x0000ff}));
 
@@ -165,6 +163,8 @@
 	});
 
     var dir = new EXP.UndoCapableDirector();
+
+    let pendulum2, pendulum3;
 
 	async function animate(){
         await dir.begin();

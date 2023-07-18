@@ -1,3 +1,5 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+
 // things useful for elliptic curves
 export class Line{
 	constructor(p1,p2, color, numSamples){

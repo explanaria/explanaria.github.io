@@ -5,10 +5,6 @@
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Manifolds in 3D</title>
   
-  
-  
-  <script src="../../resources/build/explanaria-bundle.js"></script>
-  <script src="./lib/GLTFLoader.js"></script>
   <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
 
@@ -24,7 +20,9 @@ aside{
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
+    import * as EXP from "../../resources/build/explanaria-bundle.js";
+    import GLTFLoader from "./lib/GLTFLoader.js";
 	var three = EXP.setupThree(60,15);
 	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
     controls.enableKeys = false;

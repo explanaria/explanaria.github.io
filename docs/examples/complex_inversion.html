@@ -5,10 +5,6 @@
   <link rel="icon" href="../resources/favicon.ico" sizes="any">
   <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
   <title>Explanarian - 1/z</title>
-  
-  
-  
-  <script src="../resources/build/explanaria-bundle.js"></script>
 
   <link type="text/css" href="../resources/oldstyle.css" rel="stylesheet" />
 
@@ -19,6 +15,8 @@
 </head>
 <body>
   <script type="module">
+    import * as EXP from "../resources/build/explanaria-bundle.js";
+
 	var three = EXP.setupThree();
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 

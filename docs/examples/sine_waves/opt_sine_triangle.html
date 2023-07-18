@@ -4,17 +4,15 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Sine waves with triangle</title>
-  <script src="../../src/lib/three.js"></script>
-  <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../resources/build/explanaria-bundle.js"></script>
-  <script src="./commonClasses.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
+	import * as EXP from "../../resources/build/explanaria-bundle.js";
+    import {lightblue, orangered, yellow, lightgreen, twoPointLine, PlusSign, EqualsSign} from "./commonClasses.js";
 	var three = EXP.setupThree(60,15);
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 

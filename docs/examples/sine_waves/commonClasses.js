@@ -1,12 +1,13 @@
 
+    import * as EXP from "../../resources/build/explanaria-bundle.js";
 
-	let lightblue = 0x0070f0;
-	let orangered = 0xff7070;
-	let yellow = 0xffeb59;
-	let lightgreen = 0x70ff70;
+	export let lightblue = 0x0070f0;
+	export let orangered = 0xff7070;
+	export let yellow = 0xffeb59;
+	export let lightgreen = 0x70ff70;
 
 
-	class twoPointLine{
+	export class twoPointLine{
 		constructor(funcA,funcB, col){
 
 			let pt1 = funcA;
@@ -27,7 +28,7 @@
 		}	
 	}	
 
-	class PlusSign{
+	export class PlusSign{
 		constructor(centerPoint, width, color){
 			this.lineA = new twoPointLine((i,t,x)=>[centerPoint[0],centerPoint[1]+width],(i,t,x)=>[centerPoint[0],centerPoint[1]-width],color)
 			this.lineB = new twoPointLine((i,t,x)=>[centerPoint[0]+width,centerPoint[1]],(i,t,x)=>[centerPoint[0]-width,centerPoint[1]], color);
@@ -62,7 +63,7 @@
 		}
 	}
 
-	class EqualsSign{
+	export class EqualsSign{
 		constructor(centerPoint, width, color){
 			let height = width * 0.8; //oh sure it should be halved here... but I'm in a rush
 			this.lineA = new twoPointLine((i,t,x)=>[centerPoint[0]-width,centerPoint[1]+height],(i,t,x)=>[centerPoint[0]+width,centerPoint[1]+height], color);
@@ -79,7 +80,7 @@
 		}
 	}
 
-	class RightArrow{
+	export class RightArrow{
 		constructor(centerPoint, width, color){
 			let height = 0.8*width;
 			let arrowBack = 2*width/3;
@@ -123,7 +124,7 @@
 		}
 	}
 
-	class XSign extends PlusSign{
+	export class XSign extends PlusSign{
 		constructor(centerPoint, height, width, color){
 			super(centerPoint, height, color);
 			this.lineA = new twoPointLine((i,t,x)=>[centerPoint[0]+width,centerPoint[1]+height],(i,t,x)=>[centerPoint[0]-width,centerPoint[1]-height],color)
@@ -131,7 +132,7 @@
 		}
 	}
 
-	class Box{
+	export class Box{
 		constructor(bottomLeftCorner,topRightCorner, color){
 
 			this.lineA = new twoPointLine((i,t,x)=>[bottomLeftCorner[0], topRightCorner[1]],(i,t,x)=>[topRightCorner[0],topRightCorner[1]], color);

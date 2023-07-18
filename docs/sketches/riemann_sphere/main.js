@@ -1,3 +1,5 @@
+import * as EXP from "../../resources/build/explanaria-bundle.js";
+
 import {Dynamic3DText} from "./katex-labels-v2.js";
 
 var three = EXP.setupThree();

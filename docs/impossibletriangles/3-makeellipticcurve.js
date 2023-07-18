@@ -1,3 +1,4 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
 
 import {cardanoRealRoots} from "./3-cubicroots.js";
 import {ellipticCurveColor} from "./colors.js";

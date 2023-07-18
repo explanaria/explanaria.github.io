@@ -1,7 +1,7 @@
 <script>
     //units of this SVG are in em
 
-    import EXP from "../../../resources/build/explanaria-bundle.js";
+    import {THREE} from "../../../resources/build/explanaria-bundle.js";
 
     export let group = {elements: []};
     export let positionsPerElementMap;
@@ -23,7 +23,7 @@
 
     function chooseEyeColor(group, i){
         let color = chooseGeneratorColor(group, i);
-        let threeColor = new EXP.THREE.Color(color);
+        let threeColor = new THREE.Color(color);
         threeColor.offsetHSL(0,0,-0.2); //slightly darken
         
         return "#" + threeColor.getHexString();

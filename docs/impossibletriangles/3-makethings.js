@@ -1,3 +1,5 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+
 import {constructEXPEllipticCurve} from "./3-makeellipticcurve.js";
 import {AutoColoring3DText} from './2-addColorToHTMLMath.js';
 import {Dynamic3DText} from "./katex-labels.js";

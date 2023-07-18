@@ -6,7 +6,6 @@
 
   <title>Explanarian - Portals and Conservation of Energy</title>
 
-  <script src="../../resources/build/explanaria-bundle.js"></script>
   <link type="text/css" href="../../resources/oldstyle.css" rel="stylesheet" />
 
   <script data-goatcounter="https://explanaria.goatcounter.com/count"
@@ -43,7 +42,8 @@
 </head>
 <body>
 
-  <script>
+  <script type="module">
+    import * as EXP from "../../resources/build/explanaria-bundle.js";
 	var three = EXP.setupThree();
 
 	

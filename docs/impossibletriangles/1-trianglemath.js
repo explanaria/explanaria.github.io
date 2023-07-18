@@ -1,3 +1,4 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
 
 export function vecScale(vec1, scaleFactor){
     //move to EXP.Utils soon

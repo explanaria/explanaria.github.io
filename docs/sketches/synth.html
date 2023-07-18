@@ -8,7 +8,6 @@
   
   
   
-  <script src="../resources/build/explanaria-bundle.js"></script>
 
   <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
@@ -17,6 +16,8 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 
     <script>
+
+    //  Voices 3&4 of E.PIANO 1 from Yamaha DX7: max(1-0.5*t, 0) * sin(t * frequency * TWOPI + 0.8 * max(1-0.5*t, 0) * TWOPI * sin(t * frequency * TWOPI)); 
 
     const audioCtx = new AudioContext();
 
@@ -69,8 +70,12 @@
             customwave = wavefunction; //overwrite old one
         
         }catch(e){
-            console.warn(e);
+            //console.warn(e);
             elem.style.border = "1px solid red";
+
+            if(elem.innerText == ""){ //if there's no text, insert some spaces to give you something to click on
+                elem.innerHTML = "&nbsp;&nbsp;"
+            }
         }
     }
 
@@ -103,6 +108,8 @@
     window.TAU = Math.PI * 2;
     window.pow = Math.pow;
     window.square = (t) => (t % (Math.PI*2) > Math.PI ? 2/PI : -2/PI); //this square wave has period 2pi, like sin(). it's also scaled down to match the same average energy as sin()
+    window.min = Math.min;
+    window.max = Math.max;
 
 
     </script>
@@ -110,6 +117,7 @@
     <style>
     .editregion{
         background-color: rgba(255,255,170,0.8);
+        min-width: 10em;
     }
     .definedfunction{
         font-family: monospace;

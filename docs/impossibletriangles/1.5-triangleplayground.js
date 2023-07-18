@@ -1,3 +1,5 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+
 import {onThreejsMousedown, onThreejsMousemove, onThreejsMouseup} from "./1-mouseinteraction.js";
 import {areAllSideLengthsIntegers, computeTriangleArea} from "./1-computedTriangleProperties.js";
 import {Dynamic3DText} from "./katex-labels.js";

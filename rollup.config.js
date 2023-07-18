@@ -5,8 +5,7 @@ export default [{
   output: {
 	sourcemap: true,
     file: 'build/explanaria-bundle.js',
-    format: 'umd',
-	format_i_wish_i_could_use: 'es',
+	format: 'es',
     name: 'EXP',
   },
   plugins: [resolve(),  commonjs()]
@@ -16,8 +15,7 @@ export default [{
   output: {
 	sourcemap: true,
     file: 'docs/resources/build/explanaria-bundle.js',
-    format: 'umd',
-	format_i_wish_i_could_use: 'es',
+	format: 'es',
     name: 'EXP',
   },
   plugins: [resolve(),  commonjs()]

@@ -4,19 +4,17 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - 8-bit waveforms</title>
-  <script src="../../src/lib/three.js"></script>
-  <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../build/explanaria-bundle.js"></script>
-  <script src="./commonClasses.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
+	import * as EXP from "../../resources/build/explanaria-bundle.js";
+    import {lightblue, orangered, yellow, lightgreen, twoPointLine, PlusSign, EqualsSign} from "./commonClasses.js";
 	var three = EXP.setupThree(60,20);
-	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
 	three.camera.lookAt(new THREE.Vector3(0,0,0));
@@ -115,8 +113,8 @@
 		await EXP.delay(1000);
 		EXP.TransitionTo(totalWave.lineDefinition, {'expr': (i,t,x) => eightBitSine(t,x,0.5,5,256)},250);
 		await EXP.delay(1000);
-
 	}
+    window.totalWave = totalWave
 	window.onload = animate;
   </script>
 </body>

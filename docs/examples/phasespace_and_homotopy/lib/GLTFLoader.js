@@ -1,5 +1,7 @@
+    //converted to module form
+    import {THREE} from "../../../resources/build/explanaria-bundle.js";
 
-	class GLTFLoader extends THREE.Loader {
+	export default class GLTFLoader extends THREE.Loader {
 
 		constructor( manager ) {
 
@@ -4135,6 +4137,3 @@
 		return newGeometry;
 
 	}
-
-	THREE.GLTFLoader = GLTFLoader;
-

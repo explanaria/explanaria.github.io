@@ -1,3 +1,5 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+
 import {triangleLineColor, triangleNonGrabbableCornerColor, rColor, sColor, tColor} from "./colors.js"
 
 import {constructEXPEllipticCurve} from "./3-makeellipticcurve.js";

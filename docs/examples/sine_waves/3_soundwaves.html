@@ -4,26 +4,23 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="../../favicon.ico"/>
   <title>Explanarian - Sound waves</title>
-  <script src="../../src/lib/three.js"></script>
-  <script src="../../src/lib/OrbitControls.js"></script>
-  <script src="../../build/explanaria-bundle.js"></script>
 
   <link type="text/css" href="../../src/style.css" rel="stylesheet" />
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
-  <script>
+  <script type="module">
+    import * as EXP from "../../resources/build/explanaria-bundle.js";
+    import {lightblue, orangered, yellow, lightgreen, twoPointLine, PlusSign, EqualsSign} from "./commonClasses.js";
 	var three = EXP.setupThree(60,15);
-	var controls = new THREE.OrbitControls(three.camera,three.renderer.domElement);
+	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
 
 	three.camera.position.set(0,0,10);
 	three.camera.lookAt(new THREE.Vector3(0,0,0));
 
 	console.log("Loaded.");
 
-	let lightblue = 0x0070f0;
-	let orangered = 0xff7070;
 	let gray = 0x888888;
 
 	var params = {};
@@ -68,7 +65,7 @@
 	console.log("Making particles");
 
 	//air particles
-	pointPositions = [];
+	let pointPositions = [];
 	for(var i=-horizontalRange;i<=horizontalRange;i+=(three.IS_RECORDING ? 0.1 : 0.3)){
 
 		for(var j=0;j<3; j+=1){
@@ -95,8 +92,6 @@
 	three.on("update",function(time){
 		[soundwave, airParticles, airWave].map(i => i.activate(time.t));
 	});
-
-	console.log("Don't forget protal problem has a bug with the point ont appearing");
 
 	async function animate(){
 

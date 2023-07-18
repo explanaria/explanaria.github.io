@@ -1,3 +1,5 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+
 import {Dynamic3DText} from "./katex-labels.js";
 import {rColor, sColor, tColor, twoNColor, white, black, twoNTextColor} from "./colors.js";
 import {addColorToHTML, AutoColoring3DText} from './2-addColorToHTMLMath.js';

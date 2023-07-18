@@ -8,7 +8,6 @@
   
   
   
-  <script src="../resources/build/explanaria-bundle.js"></script>
 
   <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
@@ -20,6 +19,7 @@
 </head>
 <body>
   <script type="module">
+	import * as EXP from "../resources/build/explanaria-bundle.js";
 	var three = EXP.setupThree();
     window.three = three;
 	var controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);

@@ -1,5 +1,7 @@
     //setup variable 'three' beforehand using EXP.setupThree() please
 
+    import * as EXP from "../resources/build/explanaria-bundle.js";
+
     let canvasElemName = "maincanvas";
 
 

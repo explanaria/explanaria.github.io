@@ -1,3 +1,4 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
 
 import {elliptic_curve_add, LongLineThrough} from "./3-congruentutilities.js";
 import {gridColor, xColor, yColor, triangleVisArrowColor, reflectionLineColor, validIntegerColor, rColor, sColor, tColor} from "./colors.js";

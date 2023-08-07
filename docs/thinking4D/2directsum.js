@@ -1,3 +1,9 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+import {FrontViewPreferredOrbitControls} from "./FrontViewPreferredOrbitControls.js";
+import {blue, pointColor, pointColorCanvas, coordinateLine1Color, coordinateLine2Color, coordinateLine3Color} from "./colors.js";
+import {CircleSlider, RealNumberSlider} from "./sliders.js";
+
+
 let three, controls, objects, knotParams;
 
 let userPointParams = {x1:0,x2:0,factors:['linear','linear']};

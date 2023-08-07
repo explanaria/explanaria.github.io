@@ -1,6 +1,14 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+import {pointColor, pointColorCanvas, coordinateLine1Color, coordinateLine2Color, coordinateLine3Color} from "./colors.js";
+import {drawArrow, drawVerticalArrow, drawHorizontalArrow, drawCircle, drawLine} from "./sliders.js";
+
+export function format(x){
+    return Number(x).toFixed(2);
+}
+
 
 //represent
-class twoDCoordIntroScene{
+export class twoDCoordIntroScene{
     constructor(canvasID){
         this.canvas = document.getElementById(canvasID);
         this.context = this.canvas.getContext("2d");

@@ -1,3 +1,7 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+import {twoDCoordIntroScene, format} from "./1 twoDScene.js";
+import {pointColor, coordinateLine1Color, coordinateLine2Color, coordinateLine3Color} from "./colors.js";
+
 let three, controls, objects, knotParams;
 
 let pointCoords = [0,0,0];
@@ -14,6 +18,8 @@ let xAxis, yAxis, zAxis = null;
 let xAxisControl,yAxisControl,zAxisControl = null; //the 3 3D axes
 let manifoldPointOutput = null; //the 3 points on the R^3 = three Rs graph
 let manifoldPointPositions = null // the positions of those points
+
+let pointCoordinateArrows;
 
 function pointPath(i,t,x){
     //point in 3D space's path
@@ -183,11 +189,6 @@ function setup(){
     objects = [threeDPoint, twoDCanvasHandler, torus, threeDPoint, xAxis, yAxis, zAxis, pointCoordinateArrows, pointUpdater, multipleManifoldPoints];
 }
 
-function format(x){
-    return Number(x).toFixed(2);
-}
-
-
 async function animate(){
     twoDCanvasHandler.cartesianOpacity = 0;
     await presentation.begin();
@@ -220,7 +221,7 @@ async function animate(){
 
     //technically this is a string. the CSS animation handles the transition.
     let threeDCoords = document.getElementById("coords");
-    presentation.TransitionTo(threeDCoords.style, {'opacity':1}, 0);
+    presentation.TransitionInstantly(threeDCoords.style, {'opacity':1});
 
     await presentation.nextSlide();
 

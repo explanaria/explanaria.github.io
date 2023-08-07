@@ -1,3 +1,7 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+import {blue, green, pointColor, coordinateLine1Color, coordinateLine1ColorDarker, coordinateLine2Color, coordinateLine2ColorDarker, coordinateLine2ColorLighter, coordinateLine3Color, coordinateLine3ColorDarker, coordinateLine4Color, airplanePointColor} from "./colors.js";
+import {RealNumberSlider, CircleSlider, PlaneSlider, CirclePlaneSlider, drawCircleStroke} from "./sliders.js";
+
 let three, controls, objects, knotParams;
 
 let userPointParams = {x1:Math.PI/2,x2:0};
@@ -20,7 +24,7 @@ let twoDCanvasHandler = null;
 let northPoleChartSurface, southPoleChartSurface, middleChartSurface = null;
 
 
-let coord1 = coord2 = null;
+let coord1, coord2, staticActivateOnceObjects;
 
 
 //2D canvas class in the main canvas zone
@@ -312,7 +316,19 @@ Array.prototype.slice.call(document.getElementsByClassName("middleChartColor")).
     staticActivateOnceObjects.forEach((item) => item.activate(0));
 }
 
+let threeCanvasResizer = {activated: true};
+
+
 async function animate(){
+    //fix a bug where the three.js canvas wouldn't realize it was being resized
+    //by manually resizing it every frame during some animations
+    let threeCanvas = document.getElementById("threeDcanvas");
+    three.on("update", () => {
+        if(threeCanvasResizer.activated){
+            three.resizeCanvasIfNecessary();
+        }
+    });
+
 
     let canvasContainer = document.getElementById('canvasContainer');
 
@@ -329,8 +345,10 @@ async function animate(){
     */
 
     //Show the 2D canvas. Animation is done in CSS with a time of 1500 ms 
-    presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 1fr'}, 0);
+    presentation.TransitionInstantly(threeCanvasResizer,{activated:true});
+    presentation.TransitionInstantly(canvasContainer.style, {'grid-template-columns': '2fr 1fr'});
     await presentation.delay(1500);
+    presentation.TransitionInstantly(threeCanvasResizer,{activated:false});
 
 
     await presentation.nextSlide();
@@ -341,20 +359,20 @@ async function animate(){
 
 
     let coordSystem1 = document.getElementById("firstCoordSystem");
-    presentation.TransitionTo(coordSystem1.style, {'opacity':0, 'pointer-events': "none"}, 0);
+    presentation.TransitionInstantly(coordSystem1.style, {'opacity':0, 'pointer-events': "none"});
 
     let northPoleFlight = document.getElementById("northPoleFlight");
-    presentation.TransitionTo(northPoleFlight.style, {'opacity':1, 'pointer-events':"all"}, 0);
+    presentation.TransitionInstantly(northPoleFlight.style, {'opacity':1, 'pointer-events':"all"});
     presentation.TransitionTo(airplaneOutput, {opacity:1});
     presentation.TransitionTo(userPointOutput, {opacity:0});
 
     await presentation.nextSlide();
 
 
-    presentation.TransitionTo(northPoleFlight.style, {'opacity':0, 'pointer-events': "none"}, 0);
+    presentation.TransitionInstantly(northPoleFlight.style, {'opacity':0, 'pointer-events': "none"});
 
     let notInjective = document.getElementById("notInjective");
-    presentation.TransitionTo(notInjective.style, {'opacity':1, 'pointer-events':"all"}, 0);
+    presentation.TransitionInstantly(notInjective.style, {'opacity':1, 'pointer-events':"all"});
 
     presentation.TransitionTo(airplaneOutput, {opacity:0});
     presentation.TransitionTo(userPointOutput, {opacity:1});
@@ -365,7 +383,10 @@ async function animate(){
     // "But what if we use more than one coordinate system?
 
     await presentation.nextSlide();
-    presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'}, 0);
+
+
+    presentation.TransitionInstantly(threeCanvasResizer,{activated:true});
+    presentation.TransitionInstantly(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'});
 
     coord1.getDeepestChildren().forEach( (output) => {
         presentation.TransitionTo(output, {'opacity': 0});
@@ -375,9 +396,10 @@ async function animate(){
     });
 
     await presentation.delay(1000);
+    presentation.TransitionInstantly(threeCanvasResizer,{activated:false});
 
 
-    presentation.TransitionTo(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'}, 0);
+    presentation.TransitionInstantly(canvasContainer.style, {'grid-template-columns': '2fr 0fr', 'transition':'all 0.75s ease-in-out'});
 
 
     presentation.TransitionTo(sphereOutput, {'opacity':0.2}, 1000);
@@ -394,10 +416,10 @@ async function animate(){
 
 
    // let notInjective = document.getElementById("firstCoordSystem"); //defined above
-    presentation.TransitionTo(notInjective.style, {'opacity':0, 'pointer-events': "none"}, 0);
+    presentation.TransitionInstantly(notInjective.style, {'opacity':0, 'pointer-events': "none"});
 
     let coordSystem2 = document.getElementById("alternateCoordSystem");
-    presentation.TransitionTo(coordSystem2.style, {'opacity':1, 'pointer-events':"all"}, 0);
+    presentation.TransitionInstantly(coordSystem2.style, {'opacity':1, 'pointer-events':"all"});
 }
 
 /*

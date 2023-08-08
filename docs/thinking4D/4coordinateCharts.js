@@ -1,3 +1,10 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+let THREE = EXP.THREE;
+
+import {Atlas, PlaneSliderWithANewCanvas, CoordinateChart2D} from "./4atlas.js";
+import GLTFLoader from "./lib/GLTFLoader.js";
+
+
 let three, controls, objects=[];
 let atlas = null;
 
@@ -25,8 +32,9 @@ function setup() {
 	three.scene.add( light );
 
 
-    atlas = new Atlas(null); //will hold all the charts
+    atlas = new Atlas(null, three.scene); //will hold all the charts
     objects.push(atlas);
+    window.atlas = atlas; //needed so onclick() can get to it
 
 	loadMeshBeingCoveredInCharts();
 

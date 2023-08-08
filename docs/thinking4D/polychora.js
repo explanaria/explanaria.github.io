@@ -1,7 +1,8 @@
-
-class Polychoron{
+import * as EXP from "../resources/build/explanaria-bundle.js";
+import {fourDColorMap} from "./colors.js";
+export class Polychoron{
     //relies on global colorMap() defined in 7 visualizing4d.js 
-    constructor(points, lines, embeddingTransformation, preEmbeddingTransformations){
+    constructor(points, lines, embeddingTransformation, preEmbeddingTransformations, scene){
         this.points = points;
         this.lineData = lines;
         this.embeddingTransformation = embeddingTransformation;
@@ -15,7 +16,7 @@ class Polychoron{
         this.colorAttributes = []; //the attributes containing arrays for color. this is a giant hacky way of changing color for EXP.LineOutputs
 
         this.objectParent = new THREE.Object3D();
-        three.scene.add(this.objectParent);
+        scene.add(this.objectParent);
 
         this.makeEXPLines(lines);        
     }
@@ -57,7 +58,7 @@ class Polychoron{
 
 
             //calculate the appropriate 4D color and set it. Manually. this is terrible. todo: make this dynamic and Transformation-chainable
-            let ptA = this.points[this.lineData[i][0]];hypercubeControl
+            let ptA = this.points[this.lineData[i][0]];
             let ptB = this.points[this.lineData[i][1]];
 
             let ptA4DCoordinates = ptA;
@@ -68,10 +69,10 @@ class Polychoron{
                 ptB4DCoordinates = this.preEmbeddingTransformations[j].expr(i,t,...ptB4DCoordinates);
             }
 
-            let color1 = colorMap(ptA4DCoordinates[3]);
+            let color1 = fourDColorMap(ptA4DCoordinates[3]);
             lineOutput._setColorForVertexRGB(0, color1.r, color1.g, color1.b);
 
-            let color2 = colorMap(ptB4DCoordinates[3]);
+            let color2 = fourDColorMap(ptB4DCoordinates[3]);
             lineOutput._setColorForVertexRGB(1, color2.r, color2.g, color2.b);
 
 		    lineOutput._geometry.attributes.color.needsUpdate = true;
@@ -79,7 +80,7 @@ class Polychoron{
     }
 }
 
-function makeHypercube(R4Embedding, R4Rotation){
+export function makeHypercube(R4Embedding, R4Rotation, scene){
 
     let points = [];
     let lines = [];
@@ -109,10 +110,10 @@ function makeHypercube(R4Embedding, R4Rotation){
         }
     }
 
-    return new Polychoron(points, lines, R4Embedding, R4Rotation);
+    return new Polychoron(points, lines, R4Embedding, R4Rotation, scene);
 }
 
-function makeHypertetrahedron(R4Embedding, R4Rotation){ //Also known as a 5-cell
+export function makeHypertetrahedron(R4Embedding, R4Rotation, scene){ //Also known as a 5-cell
     let sq5 = Math.sqrt(5), sq29 = Math.sqrt(2/9), sq23 = Math.sqrt(2/3);
     let fivecell = new Polychoron(
         [//points
@@ -128,7 +129,7 @@ function makeHypertetrahedron(R4Embedding, R4Rotation){ //Also known as a 5-cell
             [2,3],[2,4],
             [3,4],
         ],
-    R4Embedding,R4Rotation);
+    R4Embedding,R4Rotation, scene);
 
     return fivecell;
 
@@ -146,7 +147,7 @@ function torus3Parametrization(theta1,theta2,theta3){
     ];
 }
 
-function makeTorus3(R4Embedding, R4Rotation){
+export function makeTorus3(R4Embedding, R4Rotation, scene){
 
     let points = [];
     let lines = [];
@@ -196,7 +197,7 @@ function makeTorus3(R4Embedding, R4Rotation){
         }
     }
 
-    return new Polychoron(points, lines, R4Embedding, R4Rotation);
+    return new Polychoron(points, lines, R4Embedding, R4Rotation, scene);
 }
 
 

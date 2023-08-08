@@ -1,5 +1,8 @@
-class Atlas{
-    constructor(meshBeingCoveredInCharts, pointColor){
+import {PlaneSlider} from "./sliders.js";
+import {DecalGeometry} from "./lib/DecalGeometry.js";
+
+export class Atlas{
+    constructor(meshBeingCoveredInCharts, scene){
         this.meshBeingCoveredInCharts = meshBeingCoveredInCharts;
 
         this.charts = [];
@@ -12,7 +15,10 @@ class Atlas{
         this.threeDPointRotationHelper = new THREE.Object3D(); //used when making new charts
 
         this.threeDPointMesh = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshBasicMaterial({color: 0xFFA500})); //the mesh representing the 3D point
-        three.scene.add(this.threeDPointMesh);
+
+        this.scene = scene;
+        this.scene.add(this.threeDPointMesh);
+
         this.decalMaterial = new THREE.MeshLambertMaterial({
 	        specular: 0x444444,
 	        shininess: 0.3,
@@ -37,8 +43,8 @@ class Atlas{
     }
 
     removeAllCharts(){
-        this.charts.forEach( function ( c ) {
-            three.scene.remove( c.mesh );
+        this.charts.forEach( ( c ) => {
+            this.scene.remove( c.mesh );
             let canvas = c.twoDslider.canvas;
             let canvasContainer = canvas.parentElement;
             canvasContainer.removeChild(canvas);
@@ -56,7 +62,7 @@ class Atlas{
 
     addChart(chart){
         this.charts.push(chart);
-        three.scene.add(chart.mesh);
+        this.scene.add(chart.mesh);
     }
     updateAllOtherCharts(nearestManifoldPoint, normalDirection){
         //after our 3D point is set, 
@@ -99,7 +105,7 @@ class Atlas{
 let planarApproximation = new THREE.Vector3();
 let planarApproximationInwardsNormal = new THREE.Vector3();
 
-class CoordinateChart2D{
+export class CoordinateChart2D{
     //a class to represent a coordinate chart.
     //it consists of BOTH a 3D mesh and a 2D canvas representing the coordinates.
     //
@@ -196,7 +202,7 @@ class CoordinateChart2D{
         let intersectionData = intersections[0];
         let manifoldPoint = intersectionData.point;
 	    let manifoldNormal = intersectionData.face.normal.clone();
-	    manifoldNormal.transformDirection( meshBeingCoveredInCharts.matrixWorld );
+	    manifoldNormal.transformDirection( this.parentAtlas.meshBeingCoveredInCharts.matrixWorld );
 
         this.parentAtlas.updateAllOtherCharts(manifoldPoint,manifoldNormal);
     }
@@ -219,7 +225,7 @@ class CoordinateChart2D{
 }
 
 
-class PlaneSliderWithANewCanvas extends PlaneSlider{
+export class PlaneSliderWithANewCanvas extends PlaneSlider{
     constructor(color, containerID, valueGetter, valueSetter){
         super(color, containerID, valueGetter, valueSetter);
 

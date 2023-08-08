@@ -1,4 +1,8 @@
 /* text */
+.exp-slide{
+    transition: opacity 0.5s ease-in-out;
+}
+
 .textContainer{
   display: grid;
   grid-template-columns: 1fr;
@@ -284,16 +288,17 @@ html{
 /* used in 4.5 3dcharts */
 
 .smolSymbolColumn{
-    display: block;
     flex-basis: 0;
     flex-grow: 0.25;
-    flex-shrink: 1;
     padding: 0.75rem;
+
+    display: flex;
+    align-items: center;
 
     text-align: center;
     font-size: 3em;
 
-    margin: -1.5em;
+    margin: 0em -0.25em;
 }
 .smolColumn{
     flex-grow: 0;
@@ -302,11 +307,27 @@ html{
     flex-grow: 0.5;
 }
 
+.threeDRow{
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
 .manifoldComparisonChart{
 	position:absolute;
     bottom:10%; 
 	text-align:center;
     font-size: 2em;
+    line-height: 1;
+    height: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+
+@media screen and (max-width:500px){
+    .manifoldComparisonChart{
+	    padding: 0;
+    }
 }
 
 .willFadeInFromJS{
@@ -393,6 +414,8 @@ ul {
         bottom:0%;
         border-top: none;
         border-left: 1px solid #ccc;
+
+        font-size: 16px;
     }
 
     .factors canvas{ /* shrink canvases a bit */

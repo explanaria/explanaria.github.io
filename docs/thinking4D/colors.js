@@ -67,3 +67,21 @@ coordinateLine4NegativeColor = 'hsl(280,  85%, 60%)'
 */
 
 export let disabledGray = "#f0f0f0";
+
+//choose what color to color a point based on its position in the 4th dimension.
+//takes in a coordinate w, and returns a blended between 3 colors for w=-1, w=0, w=1.
+const zeroWColor = new THREE.Color(coordinateLine4ZeroColor);
+const oneWColor = new THREE.Color(coordinateLine4Color);
+const negativeWColor = new THREE.Color(coordinateLine4NegativeColor);
+export function fourDColorMap(wCoordinate){
+ let fourDRampAmt = Math.min(1, wCoordinate) //ramp from 0-1 then hold steady at 1
+ let fourDAbsRampAmt = Math.min(1, Math.abs(wCoordinate)) //ramp from 0-1 then hold steady at 1
+
+ if(wCoordinate > 0){
+   //This should be coordinateline4color. w=+1
+   return zeroWColor.clone().lerp(oneWColor.clone(), fourDAbsRampAmt); 
+ }else{
+    //this is coordinateLine4NegativeColor. w=-1
+   return zeroWColor.clone().lerp(negativeWColor.clone(), fourDAbsRampAmt); 
+ }
+}

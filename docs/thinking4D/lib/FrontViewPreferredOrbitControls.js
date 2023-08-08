@@ -1,5 +1,6 @@
+import * as EXP from "../../resources/build/explanaria-bundle.js";
 
-class FrontViewPreferredOrbitControls extends EXP.OrbitControls{
+export class FrontViewPreferredOrbitControls extends EXP.OrbitControls{
     
         constructor(){
             super(...arguments);

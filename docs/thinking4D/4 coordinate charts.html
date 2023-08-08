@@ -5,16 +5,8 @@
   <link rel="icon" href="../resources/favicon.ico" sizes="any">
   <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
   <title>Explanarian - Coordinate Charts</title>
-  <script src="../src/lib/three.min.js"></script>
-  
-  <script src="../resources/build/explanaria-bundle.js"></script>
 
-  <script src="colors.js"></script>
-  <script src="sliders.js"></script>
-  <script src="DecalGeometry.js"></script>
-  <script src="GLTFLoader.js"></script>
-  <script src="4atlas.js"></script>
-  <script src="4coordinateCharts.js"></script>
+  <script type="module" src="4coordinateCharts.js"></script>
 
   <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
@@ -78,7 +70,7 @@
         </canvas>
       </div>
       <div id="textArea" class="non3DFooterPart">
-	    <button class="button" onclick="atlas.addChartCenteredAtCurrentPosition()"><span>Click to make a coordinate chart centered at the <span style="color:orange;">current point</span>.</span> </button>
+	    <button class="button" onclick="atlas.addChartCenteredAtCurrentPosition()" style="white-space: normal; height: unset; min-height:2.25em"><span>Click to make a coordinate chart centered at the <span style="color:orange;">current point</span>.</span> </button>
 
 	    <div>
             <div id="chartCanvases" class="column"> </div>

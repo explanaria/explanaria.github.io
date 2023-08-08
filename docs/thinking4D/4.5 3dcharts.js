@@ -1,4 +1,10 @@
-let three, controls, objects, knotParams;
+import * as EXP from "../resources/build/explanaria-bundle.js";
+
+import {PlaneSlider} from "./sliders.js";
+import GLTFLoader from "./lib/GLTFLoader.js";
+import {coordinateLine1ColorDarker, pointColor} from "./colors.js";
+
+let three, controls, objects = [], knotParams, presentation;
 
 let userPointParams = {x1:0,x2:0,x3:0};
 let rotateObjects = [];
@@ -115,7 +121,18 @@ async function animate(){
     await presentation.nextSlide();
     
     let threeDRow = document.getElementById("threeDRow");
+    if(threeDRow){
     presentation.TransitionTo(threeDRow.style, {'opacity':"1"}, 0);
+    }
+
+    let threeDRow2 = document.getElementsByClassName("threeDRow");
+    console.log(threeDRow2);
+    if(threeDRow2){
+        for(let i=0; i<threeDRow2.length;i++){
+            presentation.TransitionInstantly(threeDRow2[i].style, {'opacity':"1"});
+        }
+    }
+
 
 
     await presentation.nextSlide();

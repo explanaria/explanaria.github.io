@@ -1,5 +1,5 @@
-
-class Slider{
+import {pointColorCanvas, pointColorDragging, disabledGray} from "./colors.js";
+export class Slider{
     constructor(containerID, valueGetter, valueSetter){
 
         this.setupCanvas(containerID);
@@ -116,7 +116,7 @@ class Slider{
 
 
 
-class CircleSlider extends Slider{
+export class CircleSlider extends Slider{
     constructor(color, containerID, valueGetter, valueSetter){
         super(containerID, valueGetter, valueSetter);
     
@@ -200,7 +200,7 @@ class CircleSlider extends Slider{
 }
 
 
-class RealNumberSlider extends Slider{
+export class RealNumberSlider extends Slider{
     constructor(color, containerID, valueGetter, valueSetter){
         super(containerID, valueGetter, valueSetter);
     
@@ -229,7 +229,6 @@ class RealNumberSlider extends Slider{
         }else{
             this.width = 70 / 100 * this.canvas.height;
             this.lineWidth = 7/100 * this.canvas.height;
-
         }
     }
     draw(){
@@ -245,8 +244,8 @@ class RealNumberSlider extends Slider{
 
         //left arrow
 
-        let arrowHeight = 20;
-        let arrowWidth = 20;
+        let arrowHeight = 30/150 * this.canvas.width;
+        let arrowWidth = 30/150 * this.canvas.width;
 
         if(this.mode == 'horizontal'){
             drawHorizontalArrow(this.context, this.pos, this.width, arrowWidth, arrowHeight);
@@ -291,11 +290,7 @@ class RealNumberSlider extends Slider{
     }
 }
 
-function clamp(x,minX,maxX){
-    return Math.max(Math.min(x, maxX),minX);
-}
-
-class PlaneSlider extends Slider{
+export class PlaneSlider extends Slider{
     constructor(color, containerID, valueGetter, valueSetter){
         super(containerID, valueGetter, valueSetter);
     
@@ -428,7 +423,7 @@ class PlaneSlider extends Slider{
     }
 }
 
-function drawHorizontalArrow(context, pos, lineLength, arrowWidth, arrowHeight){
+export function drawHorizontalArrow(context, pos, lineLength, arrowWidth, arrowHeight){
 
 
         context.beginPath();
@@ -451,7 +446,7 @@ function drawHorizontalArrow(context, pos, lineLength, arrowWidth, arrowHeight){
         context.stroke();
 }
 
-function drawVerticalArrow(context, pos, lineLength, arrowWidth, arrowHeight){
+export function drawVerticalArrow(context, pos, lineLength, arrowWidth, arrowHeight){
 
         //up/down axis now. bottom arrow:
         let lineX = pos[0]// + values[0]*axisWidth/2;
@@ -474,14 +469,14 @@ function drawVerticalArrow(context, pos, lineLength, arrowWidth, arrowHeight){
 }
 
 //helper func
-function drawLine(context, x1,y1,x2,y2){
+export function drawLine(context, x1,y1,x2,y2){
     context.beginPath();
     context.moveTo(x1,y1);
     context.lineTo(x2,y2);
     context.stroke();
 }
 
-function drawArrow(context, x1,y1,x2,y2, arrowSize){
+export function drawArrow(context, x1,y1,x2,y2, arrowSize){
     drawLine(context, x1,y1,x2,y2)
 
   //pos1 is the back of the midline of the triangle, pos2 the tip
@@ -498,20 +493,20 @@ function drawArrow(context, x1,y1,x2,y2, arrowSize){
   context.stroke();
 
 }
-function drawCircleStroke(context, x,y,radius){
+export function drawCircleStroke(context, x,y,radius){
     context.beginPath();
     context.arc(x,y, radius, 0, 2 * Math.PI);
     context.stroke();
 }
-function drawCircle(context, x,y,radius){
+export function drawCircle(context, x,y,radius){
     context.beginPath();
     context.arc(x,y, radius, 0, 2 * Math.PI);
     context.fill();
 }
-function dist(a,b,c,d){
+export function dist(a,b,c,d){
     return Math.sqrt((b-d)*(b-d)+(c-a)*(c-a))
 }
-function clamp(val, min, max){
+export function clamp(val, min, max){
     return Math.min(Math.max(val, min),max);
 }
 
@@ -520,7 +515,7 @@ function clamp(val, min, max){
 
 
 
-class CirclePlaneSlider extends PlaneSlider{
+export class CirclePlaneSlider extends PlaneSlider{
     //a PlaneSlider but restricted to the interior of a disk.
     constructor(color, containerID, valueGetter, valueSetter){
         super(color, containerID, valueGetter, valueSetter);

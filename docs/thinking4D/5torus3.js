@@ -1,4 +1,8 @@
-let three, controls, objects, knotParams;
+import * as EXP from "../resources/build/explanaria-bundle.js";
+import {CircleSlider, PlaneSlider, drawCircle} from "./sliders.js";
+import {coordinateLine1Color, coordinateLine1ColorDarker, coordinateLine2Color, coordinateLine2ColorDarker, coordinateLine3Color, coordinateLine3ColorDarker, pointColor, blue} from "./colors.js";
+
+let three, controls, objects=[], knotParams;
 
 let userPointParams = {x1:0,x2:0,x3:0};
 let userPointParamController = null;
@@ -11,6 +15,8 @@ let coord1SliderC, coord2SliderC, coord3SliderC = null;
 
 let cube,cube2 = null;
 let userPoint1, userPoint2, coord1,coord2,coord3,torus = null;
+
+let torusCoord1, torusCoord2;
 
 function wrapToInterval(x,size){
     //move number into [-1, +1]
@@ -98,14 +104,6 @@ class CoordMover{
         userPointParams.x3 += dt * this.x3Speed;
     }
 
-}
-
-function wrapToInterval(x,size){
-    //move number into [-1, +1]
-    //x%1 would work, but -1%1 == 0 in JS
-    if(Math.abs(x) == size)return x;
-    let s2 = 2*size;
-    return (((x+size)%s2)+s2)%s2 -size; //javascript % is absolute-valued: -1 % 3 == -1, not 2. this is normally terrible but used here
 }
 
 function setup(){

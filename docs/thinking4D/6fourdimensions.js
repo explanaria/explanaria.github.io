@@ -1,4 +1,15 @@
-let three, controls, controlsToRotateAboutOrigin, objects=[], knotParams;
+import * as EXP from "../resources/build/explanaria-bundle.js";
+let THREE = EXP.THREE;
+
+import {coordinateLine1Color, coordinateLine1ColorDarker, coordinateLine2Color, coordinateLine2ColorDarker, coordinateLine3Color, coordinateLine3ColorDarker, coordinateLine4Color, pointColor, blue, orthographic4VecColor, planeOfRotationColor, fourDColorMap} from "./colors.js";
+import {setup4DEmbedding, setup3DAxes, setup4DAxis, xAxis, yAxis, zAxis, wAxis, xAxisControl, yAxisControl, zAxisControl, wAxisControl, R4Embedding, R4Rotation, grayProjectionVisualizingAxes, R4OrthoVector} from "./7 visualizing 4d.js";
+import {animate4D} from "./7 visualizing 4d.js";
+
+import {basicThreeSetup, three, controls, controlsToRotateAboutOrigin, objects, userParams} from "./7 visualizing 4d.js";
+
+
+window.objects = objects;
+let knotParams;
 
 let pointCoords = [0,0,0];
 
@@ -8,8 +19,6 @@ let manifoldPoint = null;//will be an EXP.Transformation
 
 let settings = {'updateControls':true};
 
-let xAxis, yAxis, zAxis, wAxis = null;
-let xAxisControl,yAxisControl,zAxisControl = null; //the 3 3D axes
 let manifoldPointOutput = null; //the 3 points on the R^3 = three Rs graph
 let manifoldPointPositions = null // the positions of those points
 let pointCoordinateArrows = null;
@@ -19,17 +28,15 @@ let wAxisCoordinateArrow = null,wAxisCoordinateArrowOutput=null;
 
 let manifold4PointOutput = null;
 
-function pointPath(i,t,x){
+let sq3 = Math.sqrt(3);
+
+function defaultPointPath(i,t,x){
     //point in 3D space's path
     return [Math.sin(t/3), Math.sin(t/5), Math.sin(t/7), Math.sin(t/2.5)]
 }
 
-
 function setupThree(){
-	three = EXP.setupThree(document.getElementById("canvas"));
-	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
-
-    controlsToRotateAboutOrigin = new RotateAboutCenterControls([],three.renderer.domElement);
+    basicThreeSetup();
     
 	three.camera.position.z = 3;
 	three.camera.position.y = 0.5;
@@ -61,13 +68,11 @@ function setup(){
     let axisSize = 1.5;
     
     var threeDPoint = new EXP.Array({data: [[0]]})
-    manifoldPoint = new EXP.Transformation({expr: (i,t,x) => pointPath(i,t,x)});
+    manifoldPoint = new EXP.Transformation({"expr": (i,t,x) => defaultPointPath(i,t,x)});
 
-    //threeDPoint's visual job is now taken by multipleManifoldPoints - multiple points which overlap, then separate.
-    // it's not needed to be displayed anymore. It still needs to exist to update the DOM though.
+    //manifoldPoint updates the DOM with its coordinates and handles the arrows.
     threeDPoint
     .add(manifoldPoint)
-    //.add(new EXP.PointOutput({width:0.2, color: pointColor}));
     
 
 
@@ -80,30 +85,27 @@ function setup(){
         }
     });
     */
-    manifoldPointPositions = new EXP.Transformation({expr: (i,t,x) => pointPath(i,t,x)});
+    manifoldPointPositions = new EXP.Transformation({expr: (i,t,x) => defaultPointPath(i,t,x)});
     manifoldPointOutput = new EXP.PointOutput({width:0.2, color: pointColor});
 
     multipleManifoldPoints
     .add(manifoldPointPositions)
     .add(manifoldPointOutput);
 
-    setup4DEmbedding(); //before 3DAxes
+    setup4DEmbedding(objects); //before 3DAxes
 
-    setup4DAxes();
+    setup3DAxes();
+    setup4DAxis();
+
+    
+    window.manifoldPointPositions = manifoldPointPositions;
+    window.manifoldPoint = manifoldPoint;
+    window.EXP = EXP;
 
     wAxis.getDeepestChildren().forEach((output) => {
         output.opacity = 0;
     });
     //the fourth dimension!
-
-    /*
-    wAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    wAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [(axisSize*x),-(1)*3/4,0]}))
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:0}));
-    wAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [-(axisSize*x),-(1)*3/4,0]}))
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:0}));*/
 
     //the 4th axis also needs a point + vector vector
     wAxisCoordinateArrow = new EXP.Transformation({expr: (i,t,x) => i==0 ? [0,-(1)*3/4,0,0]: [pointCoords[3],-(1)*3/4,0,0]});
@@ -119,7 +121,7 @@ function setup(){
     //THAT'S RIGHT IT'S HORRIBLE HACK TIME
     //SET THAT ZERO COLOR
     wAxis.activate(0);
-    let color1 = colorMap(0);
+    let color1 = fourDColorMap(0);
     wAxisCoordinateArrowOutput._setColorForVertexRGB(0, color1.r, color1.g, color1.b);
 
     //the point on the w axis
@@ -134,7 +136,7 @@ function setup(){
 
     //This sets the color of the point and the arrow
     fourthManifoldPoint.add(new EXP.Transformation({expr: (i,t,x,y,z,w) => {
-        let color = colorMap(pointCoords[3]);
+        let color = fourDColorMap(pointCoords[3]);
         manifold4PointOutput.color = color;
         wAxisCoordinateArrowOutput._setColorForVertexRGB(1, color.r, color.g, color.b);
         return []
@@ -191,62 +193,11 @@ function setup(){
     Array.prototype.slice.call(document.getElementsByClassName("planeOfRotationGraphicColor")).forEach( (elem) => { elem.style.color = planeOfRotationColor; } );
 
 	presentation = new EXP.UndoCapableDirector();
+    window.presentation = presentation;
 
     //make sure everything gets updated.
     //xAxis, yAxis, zAxis, and wAxis are already in objects
     [threeDPoint, fourthManifoldPoint, pointCoordinateArrows, pointUpdater, multipleManifoldPoints].forEach( (x) => objects.push(x));
-}
-
-function setup3DAxes(){
-    let axisSize = 1.5;
-
-    xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
-    xAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0,0]}))
-    .add(xAxisControl)
-    .add(R4Rotation.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
-    
-    xAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0,0]}))
-    .add(xAxisControl.makeLink())
-    .add(R4Rotation.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
-
-    yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    yAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
-    yAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0,0]}))
-    .add(yAxisControl)
-    .add(R4Rotation.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
-    yAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0,0]}))
-    .add(yAxisControl.makeLink())
-    .add(R4Rotation.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
-
-    zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0,0]});
-    zAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x,0]}))
-    .add(zAxisControl)
-    .add(R4Rotation.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
-    zAxis
-    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x,0]}))
-    .add(zAxisControl.makeLink())
-    .add(R4Rotation.makeLink())
-    .add(R4Embedding.makeLink())
-    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
-    
-    [xAxis, yAxis,zAxis].forEach((i) => objects.push(i));
 }
 
 function format(x){
@@ -270,7 +221,7 @@ async function animate(){
     //re-center camera
     presentation.TransitionTo(controls, {'autoRotateSpeed':0}, 250);
     await presentation.delay(300);
-    presentation.TransitionTo(controls, {'autoRotate':false}, 0);
+    presentation.TransitionInstantly(controls, {'autoRotate':false});
 
     presentation.TransitionTo(three.camera.position, {'x':0,'y':0,'z':3}, 1000);
     presentation.TransitionTo(three.camera.rotation,{'x':0,'y':0,'z':0},1000);
@@ -307,7 +258,7 @@ async function animate(){
 
     //move 3 points with them
     presentation.TransitionTo(manifoldPointPositions, {expr: (i,t,x) => {
-        let point3DPos = pointPath(i,t,x); 
+        let point3DPos = defaultPointPath(i,t,x); 
         let returnedPos = [point3DPos[i],(-i+2)*3/4,0];
         return returnedPos;
         }
@@ -319,7 +270,7 @@ async function animate(){
     await presentation.delay(250);
     //CSS animation
     let threeDCoords = document.getElementById("coord4Reveal");
-    presentation.TransitionTo(threeDCoords.style, {'fontSize':""}, 0);
+    presentation.TransitionInstantly(threeDCoords.style, {'fontSize':""});
 
     //show w axis
     wAxis.getDeepestChildren().forEach((output) => {
@@ -335,7 +286,7 @@ async function animate(){
     await presentation.nextSlide();
     //We'll sneakily teleport the 3D point to a specific location so we can demonstrate easier.
     
-    presentation.TransitionTo(window, {'pointPath':(i,t,x) => fourDDemonstrateAxisPoint},1000);
+
 
     await presentation.nextSlide();
 
@@ -398,10 +349,18 @@ async function animateBackTo3DEmbedding(){
         }, 1000);
     });
     //re-move points back to the single path
-    presentation.TransitionTo(manifoldPointPositions, {expr: (i,t,x) => pointPath(i,t,x)},1000);
+    presentation.TransitionTo(manifoldPointPositions, {"expr": (i,t,x) => defaultPointPath(i,t,x)},1000);
+    presentation.TransitionTo(manifoldPoint, {"expr": (i,t,x) => defaultPointPath(i,t,x)},1000);
 
     //for better viewing angle, change the ortho vector a little. TOTAL HACK ALERT
     presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3+0.2,1/sq3]}, 1000);
+
+
+    
+    presentation.TransitionTo(manifoldPointPositions, {'expr':(i,t,x) => fourDDemonstrateAxisPoint},1000);
+    presentation.TransitionTo(manifoldPoint, {'expr':(i,t,x) => fourDDemonstrateAxisPoint},1000);
+
+    //it's 4D time in the presentation!
 
     await presentation.nextSlide();
     //"Let's just choose a random direction, and put the fourth axis there."
@@ -413,8 +372,6 @@ async function animateBackTo3DEmbedding(){
 
     //the point of this slide is to put the W axis back with the other axes.
     //show w axis point
-    
-    presentation.TransitionTo(window, {'pointPath':(i,t,x) => fourDDemonstrateAxisPoint},1000);
 
     //OK - it's w-axis moving time.
     //put the w axis back together. First, move the w axis
@@ -456,7 +413,8 @@ async function animateBackTo3DEmbedding(){
     //finally, show off that for negative coordinates, we go to a -1 coordinate
     let fourDDemonstrateAxisNegativePoint = EXP.Math.clone(fourDDemonstrateAxisPoint);
     fourDDemonstrateAxisNegativePoint[3] *= -1;
-    presentation.TransitionTo(window, {'pointPath':(i,t,x) => fourDDemonstrateAxisNegativePoint},1000);
+    presentation.TransitionTo(manifoldPointPositions, {'expr': (i,t,x) => fourDDemonstrateAxisNegativePoint},1000);
+    presentation.TransitionTo(manifoldPoint, {'expr': (i,t,x) => fourDDemonstrateAxisNegativePoint},1000);
 
     //for good measure in case something messes up with undos
     presentation.TransitionTo(manifold4PointOutput, {'opacity':1},0);
@@ -464,9 +422,10 @@ async function animateBackTo3DEmbedding(){
     await presentation.nextSlide();
 
     //back to positive
-    let fourDDemonstrateAxisHalfPoint = EXP.Math.clone(fourDDemonstrateAxisPoint);
+    let fourDDemonstrateAxisHalfPoint = EXP.Math.clone(fourDDemonstrateAxisNegativePoint);
     fourDDemonstrateAxisHalfPoint[3] *= 1/2;
-    presentation.TransitionTo(window, {'pointPath':(i,t,x) => fourDDemonstrateAxisHalfPoint},1000);
+    presentation.TransitionTo(manifoldPointPositions, {'expr': (i,t,x) => fourDDemonstrateAxisHalfPoint},1000);
+    presentation.TransitionTo(manifoldPoint, {'expr': (i,t,x) => fourDDemonstrateAxisHalfPoint},1000);
 
     await presentation.nextSlide();
 
@@ -474,6 +433,7 @@ async function animateBackTo3DEmbedding(){
 }
 
 window.addEventListener("load",function(){
+    console.log("test");
     setup();
     animate();
     setColors("x",coordinateLine1ColorDarker);

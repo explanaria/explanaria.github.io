@@ -1,4 +1,4 @@
-class RotateAboutCenterControls{
+export class RotateAboutCenterControls{
 
     constructor(objects, canvasDomElement){
         this.objects = objects;

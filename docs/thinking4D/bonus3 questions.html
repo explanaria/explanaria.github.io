@@ -6,10 +6,11 @@
   <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
   <title>Explanarian - Different Coordinate Systems</title>
 
-  <script src="../src/lib/three.min.js"></script>
-  
-  
-  <script src="../resources/build/explanaria-bundle.js"></script>
+  <script type="module">
+    import * as EXP from "../resources/build/explanaria-bundle.js";
+    window.EXP = EXP;
+    window.THREE = EXP.THREE;
+  </script>
 
 
   <script src="colors.js"></script>

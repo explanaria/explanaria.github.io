@@ -1,4 +1,6 @@
-//This file edited to remove dependency on modules. this assumes three.js is available in the namespace as THREE.
+//This file edited to import THREE from EXP library.
+import {THREE} from "../../resources/build/explanaria-bundle.js";
+
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -332,9 +334,6 @@ class DecalGeometry extends THREE.BufferGeometry{
 
 };
 
-DecalGeometry.prototype = Object.create( THREE.BufferGeometry.prototype );
-DecalGeometry.prototype.constructor = DecalGeometry;
-
 // helper
 
 var DecalVertex = function ( position, normal ) {
@@ -350,4 +349,4 @@ DecalVertex.prototype.clone = function () {
 
 };
 
-//export { DecalGeometry, DecalVertex };
+export { DecalGeometry, DecalVertex };

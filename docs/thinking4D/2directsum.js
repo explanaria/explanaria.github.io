@@ -1,5 +1,5 @@
 import * as EXP from "../resources/build/explanaria-bundle.js";
-import {FrontViewPreferredOrbitControls} from "./FrontViewPreferredOrbitControls.js";
+import {FrontViewPreferredOrbitControls} from "./lib/FrontViewPreferredOrbitControls.js";
 import {blue, pointColor, pointColorCanvas, coordinateLine1Color, coordinateLine2Color, coordinateLine3Color} from "./colors.js";
 import {CircleSlider, RealNumberSlider} from "./sliders.js";
 

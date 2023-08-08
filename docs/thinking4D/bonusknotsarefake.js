@@ -1,3 +1,5 @@
+import {FrontViewPreferredOrbitControls} from "./lib/FrontViewPreferredOrbitControls.js";
+
 let three, controls, objects, knotParams;
 
 let userPointParams = {x1:Math.PI/2,x2:0,factors:['linear','linear']};

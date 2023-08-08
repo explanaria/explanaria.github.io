@@ -1,60 +1,50 @@
-let polychora = [];
+import * as EXP from "../resources/build/explanaria-bundle.js";
+import {fourDColorMap} from "./colors.js";
+import {coordinateLine1Color, coordinateLine1ColorDarker, coordinateLine2Color, coordinateLine2ColorDarker, coordinateLine3Color, coordinateLine3ColorDarker, coordinateLine4Color, coordinateLine4NegativeColor} from "./colors.js";
+import {lightgray, kindalightgray, verylightgray, planeOfRotationColor, orthographic4VecColor} from "./colors.js";
+import {RotateAboutCenterControls} from "./RotateAboutCenterControls.js";
 
+import {makeHypercube, makeTorus3, makeHypertetrahedron} from "./polychora.js";
+
+//call basicThreeSetup() so that three and controls get set up properly
+export let three, controls, controlsToRotateAboutOrigin, objects = [];
+export function basicThreeSetup(){
+	three = EXP.setupThree(document.getElementById("canvas"));
+	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
+
+    controlsToRotateAboutOrigin = new RotateAboutCenterControls([],three.renderer.domElement);
+}
+
+let polychora = [];
 let sq3 = Math.sqrt(3);
 
-if(userParams === undefined){
-    var userParams = {};
-}
+export let userParams = {};
 userParams.mode= "orthographic";
 userParams.orthographic4Vec=[1/sq3,1/sq3,1/sq3];
 
-let R4Embedding = null, R4Rotation = null;
+export let R4Embedding = null, R4Rotation = null, R4OrthoVector = null;
+export let xAxis, yAxis, zAxis, wAxis;
+export let xAxisControl, yAxisControl, zAxisControl, wAxisControl;
 
+export let axesParent = new THREE.Object3D(); //allows the XYZW axes to be moved around
 
-let axesParent = new THREE.Object3D(); //allows the XYZW axes to be moved around
-
-let projectionVisualizerParent = new THREE.Object3D(); //an object containing a visualization of the current embedding
-let grayProjectionVisualizingAxes = null, R3Rotation=null, inwardsLineControl = null;
+export let projectionVisualizerParent = new THREE.Object3D(); //an object containing a visualization of the current embedding
+export let grayProjectionVisualizingAxes = null, R3Rotation=null, inwardsLineControl = null;
 
 let shadowAxes = null, shadowAxesParent=new THREE.Object3D(); //axes to make understanding 4D motion a bit easier
-let shadowPlane = null;
+export let shadowPlane = null;
 
 let planeOfRotation = null, planeOfRotationGraphicTransformation=null;
 
-
-const zeroWColor = new THREE.Color(coordinateLine4ZeroColor);
-const oneWColor = new THREE.Color(coordinateLine4Color);
-const negativeWColor = new THREE.Color(coordinateLine4NegativeColor);
-
-function colorMap(wCoordinate){
- let fourDRampAmt = Math.min(1, wCoordinate) //ramp from 0-1 then hold steady at 1
- let fourDAbsRampAmt = Math.min(1, Math.abs(wCoordinate)) //ramp from 0-1 then hold steady at 1
- /*
-  //a color map that (A) goes from dark to light as you go from 0-1, and (B) cycles hue
- let lightness = Math.min(0.5, wCoordinate);
- return new THREE.Color().setHSL(wCoordinate, 0.5, fourDRampAmt/2);
- */
-
- if(wCoordinate > 0){
-   //This should be coordinateline4color. w=+1
-   return zeroWColor.clone().lerp(oneWColor.clone(), fourDAbsRampAmt); 
- }else{
-    //this is coordinateLine4NegativeColor. w=-1
-   return zeroWColor.clone().lerp(negativeWColor.clone(), fourDAbsRampAmt); 
- }
-}
-
-
-
-function perspectiveEmbedding(i,t,x,y,z,w){
+export function perspectiveEmbedding(i,t,x,y,z,w){
     return [0.5*x/(w+0.5), 0.5*y/(w+0.5), 0.5*z/(w+0.5)];
 }
-function orthographicEmbedding(i,t,x,y,z,w){
+export function orthographicEmbedding(i,t,x,y,z,w){
     let wProjection = EXP.Math.multiplyScalar(w,EXP.Math.clone(userParams.orthographic4Vec));
     return EXP.Math.vectorAdd([x,y,z],wProjection);
 }
 
-function rotation4DZW(offsetW=0){
+export function rotation4DZW(offsetW=0){
         //center of rotation is [0,0,0,offsetW]. use 0.0 when orthographic projecting, 0.5 when not
 
     return function(i,t,x,y,z,w){
@@ -66,7 +56,7 @@ function rotation4DZW(offsetW=0){
     }
 }
 
-function rotation3D(axis1,axis2){
+export function rotation3D(axis1,axis2){
     //if [axis1,axis2] = [0,1], this is a 2D rotation along the x and y axes.
     return function(i,t, ...coords){
 
@@ -82,7 +72,7 @@ function rotation3D(axis1,axis2){
     
 }
 
-function rotationAll3DAxesSequentially(){
+export function rotationAll3DAxesSequentially(){
     //cycle through rotation in the XY, YZ, and XZ plane
         //NOTE: this technically teleports from pi/2 rotation to 0 rotation. 
         //Everything I'm using this on is mirror-symmetric, so it doesn't show, but note that that's what's happening.
@@ -110,7 +100,7 @@ function rotationAll3DAxesSequentially(){
 
 
 //functions for the plane-of-rotation plane
-function showPlaneThatrotationAll3DAxesSequentiallyIsRotatingAbout(){
+export function showPlaneThatrotationAll3DAxesSequentiallyIsRotatingAbout(){
     return function(i,t, x,y){
         //NOTE: this technically teleports from pi/2 rotation to 0 rotation. 
         let numSecondsPerHalfRotation = 2;
@@ -125,7 +115,7 @@ function showPlaneThatrotationAll3DAxesSequentiallyIsRotatingAbout(){
         }
     }
 }
-function showZWPlane(){
+export function showZWPlane(){
     //z axis is in the direction of the z axis, w axis is in the direction of whatever userParams.orthographic4Vec is.
     //to make a clean plane, we orthonormalize these vectors! practical application of linear algebra: making diagrams clean.
     return function showZWPlane(i,t,x,y){
@@ -139,14 +129,14 @@ function showZWPlane(){
 
 
 
-function R4EmbeddingFunc(i,t,x,y,z,w){
+export function R4EmbeddingFunc(i,t,x,y,z,w){
     if(w == 0)w = 0.001;
     if(userParams.mode == "perspective") return perspectiveEmbedding(i,t,x,y,z,w);
     //else if(userParams.mode == "orthographic") 
     return orthographicEmbedding(i,t,x,y,z,w)
 }
 
-function setup4DEmbedding(){
+export function setup4DEmbedding(){
     R4Embedding = new EXP.Transformation({'expr': R4EmbeddingFunc});
     R4Rotation = new EXP.Transformation({'expr': (i,t,x,y,z,w) => [x,y,z,w]});
 
@@ -177,7 +167,7 @@ let THREECameraProxy = {
 
 
 
-async function changeCameraToRotateAllObjectsSimultaneously(){
+export function changeCameraToRotateAllObjectsSimultaneously(polychora, presentation){
     let objectsToRotate = polychora.map( (polychoron) => (polychoron.objectParent));
 
     objectsToRotate = objectsToRotate.concat([axesParent, projectionVisualizerParent, shadowAxesParent]);
@@ -203,14 +193,65 @@ async function changeCameraToRotateAllObjectsSimultaneously(){
 }
 
 
-let inwardsPerspectiveLines = [];
-function setup4DAxes(){
-    setup3DAxes();
+export function setup3DAxes(){
+    let axisSize = 1.5;
+
+    xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
+    xAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0,0]}))
+    .add(xAxisControl)
+    .add(R4Rotation.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
     
+    xAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0,0]}))
+    .add(xAxisControl.makeLink())
+    .add(R4Rotation.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
+
+    yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    yAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
+    yAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0,0]}))
+    .add(yAxisControl)
+    .add(R4Rotation.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
+    yAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0,0]}))
+    .add(yAxisControl.makeLink())
+    .add(R4Rotation.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
+
+    zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
+    zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0,0]});
+    zAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x,0]}))
+    .add(zAxisControl)
+    .add(R4Rotation.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
+    zAxis
+    .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x,0]}))
+    .add(zAxisControl.makeLink())
+    .add(R4Rotation.makeLink())
+    .add(R4Embedding.makeLink())
+    .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
+    
+    [xAxis, yAxis,zAxis].forEach((i) => objects.push(i));
+    return [xAxis, yAxis, zAxis];
+}
+
+let inwardsPerspectiveLines = [];
+export function setup4DAxis(){
 
     //the fourth dimension!
     wAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-    positiveWOutput = new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1});
+    let positiveWOutput = new EXP.VectorOutput({width:3, color: coordinateLine4Color, opacity:1});
     let negativeWOutput = new EXP.VectorOutput({width:3, color: coordinateLine4NegativeColor, opacity:1});
 
     wAxisControl = new EXP.Transformation({expr: (i,t,x,y,z,w) => [x,y,z,w]});
@@ -228,9 +269,9 @@ function setup4DAxes(){
     .add(R4Embedding.makeLink())
     .add(negativeWOutput);
     
-    let colorForW1 = colorMap(1);
-    let colorForW0 = colorMap(0);
-    let colorForWNeg1 = colorMap(-1);
+    let colorForW1 = fourDColorMap(1);
+    let colorForW0 = fourDColorMap(0);
+    let colorForWNeg1 = fourDColorMap(-1);
 
     //HORRIBLE HACK ALERT
     //when the first time activate() is called, it sets the colors and vertex arrays.
@@ -379,7 +420,7 @@ function setup4DAxes(){
     objects.push(grayProjectionVisualizingAxes);
 }
 
-async function animateTo4DPerspective(){
+export async function animateTo4DPerspective(presentation){
     //change the R4 embedding to perspective and visually show the 3D icon for perspective
 
     presentation.TransitionTo(R4Embedding, {'expr': perspectiveEmbedding}, 1000);
@@ -387,13 +428,13 @@ async function animateTo4DPerspective(){
     presentation.TransitionTo(inwardsLineControl,{'expr': (i,t,x,y,z) => [x,y,z]}, 750);
 
 }
-async function animateTo4DOrtho(){
+export async function animateTo4DOrtho(presentation){
     //change the R4 embedding to perspective and hide the 3D icon for perspective
     presentation.TransitionTo(R4Embedding, {'expr': orthographicEmbedding});
     presentation.TransitionTo(inwardsLineControl,{'expr': (i,t,x,y,z) => [x/Math.abs(x),y/Math.abs(y),z]});
 }
 
-async function animateTo4DIgnoreLastCoordinate(){
+export async function animateTo4DIgnoreLastCoordinate(presentation){
     //change the R4 embedding to ignore the fourth coordinate at all, [x,y,z,w] => [x,y,z]
     //used in standalone hypercube viewer
     presentation.TransitionTo(R4Embedding, {'expr': (i,t,x,y,z,w) => [x,y,z]});
@@ -402,10 +443,10 @@ async function animateTo4DIgnoreLastCoordinate(){
 
 let hypercubeControl = new EXP.Transformation({'expr':(i,t,x,y,z,w) => [0,0,0,0]});
 
-async function animate4D(){
+export async function animate4D(){
     //the main animation thread, if we're coming from #6.
 
-    let hypercube = makeHypercube(R4Embedding, [hypercubeControl, R4Rotation]);
+    let hypercube = makeHypercube(R4Embedding, [hypercubeControl, R4Rotation], three.scene);
     objects.push(hypercube);
     polychora.push(hypercube);
 
@@ -491,7 +532,7 @@ async function animate4D(){
 }
 
 
-async function animate4DEmbeddings(){
+export async function animate4DEmbeddings(){
     //called by #6 once we get to 4D.
 
     //flash the name "orthographic embedding"
@@ -518,7 +559,7 @@ async function animate4DEmbeddings(){
     presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
 }
 
-async function animate4DRotations(){
+export async function animate4DRotations(){
 
     //reset camera and stop rotating
     presentation.TransitionTo(controls, {'autoRotateSpeed':0, autoRotate: false}, 250);
@@ -568,11 +609,11 @@ async function animate4DRotations(){
     await presentation.nextSlide();
 }
 
-async function animateFiveCell(){
+export async function animateFiveCell(){
 
     let hypercube = polychora[0];
 
-    let fivecell = makeHypertetrahedron(R4Embedding, R4Rotation);
+    let fivecell = makeHypertetrahedron(R4Embedding, R4Rotation, three.scene);
 
     //fivecell.objectParent.scale.set(0.5,0.5,0.5);
     fivecell.objectParent.scale.set(0,0,0);
@@ -615,7 +656,7 @@ async function animateFiveCell(){
     presentation.TransitionTo(hypercube.objectParent.position, {x:6,y:1}, 1000);
     presentation.TransitionTo(fivecell.objectParent.position, {x:3,y:1}, 1000);
 
-    let torus3 = makeTorus3(R4Embedding, [R4Rotation]);
+    let torus3 = makeTorus3(R4Embedding, [R4Rotation], three.scene);
     objects.push(torus3);
     polychora.push(torus3);
     controlsToRotateAboutOrigin.objects = controlsToRotateAboutOrigin.objects.concat([torus3.objectParent]); //make mouse rotation rotate the torus3
@@ -625,7 +666,7 @@ async function animateFiveCell(){
 
 
 }
-async function animate4DStandalone(){
+export async function animate4DStandalone(){
     //no 3-> 4 animation
     if(!presentation.initialized){
         await presentation.begin();

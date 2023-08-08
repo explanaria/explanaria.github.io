@@ -1,5 +1,5 @@
     //converted to module form
-    import {THREE} from "../../../resources/build/explanaria-bundle.js";
+    import {THREE} from "../../resources/build/explanaria-bundle.js";
 
 	export default class GLTFLoader extends THREE.Loader {
 

@@ -1,18 +1,18 @@
 //contains all the code if you want to visit 7 fourdimensions alone
 
-let three, controls, controlsToRotateAboutOrigin, objects=[], presentation;
+import {RotateAroundCenterControls} from "./RotateAroundCenterControls";
+import {setup4DAxis, three, controls, controlsToRotateAboutOrigin, objects, userParams} from "./7 visualizing 4d";
+
+let objects=[], presentation;
 
 let axisRotation = null;
 
 
-let xAxis, yAxis,zAxis = null;
+export let xAxis, yAxis,zAxis = null;
 
 
 function setupThree(){
-	three = EXP.setupThree(document.getElementById("canvas"));
-	controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
-
-    controlsToRotateAboutOrigin = new RotateAboutCenterControls([],three.renderer.domElement);
+	basicThreeSetup();
     
 
 	three.camera.position.z = 6;
@@ -49,7 +49,8 @@ function setupThree(){
         .add(xAxisControl.makeLink())
         .add(R4Rotation.makeLink())
         .add(R4Embedding.makeLink())
-        .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
+        .add(new EXP.VectorOutput({width:3, color: coord
+inateLine1Color}));
 
         yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
         yAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
@@ -83,10 +84,10 @@ function setupThree(){
     }
 
 function setupAxes(){
-    setup4DAxes();
+    setup3DAxes()
+    setup4DAxis();
 
     [xAxis, yAxis, zAxis, wAxis].forEach((x) => objects.push(x));
-
 }
 
 

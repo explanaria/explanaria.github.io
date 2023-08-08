@@ -4,61 +4,39 @@
   <meta charset="utf-8">
   <link rel="icon" href="../resources/favicon.ico" sizes="any">
   <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
-  <title>Explanaria - 4D Hypercubes</title>
-
-  <script src="../src/lib/three.min.js"></script>
-  
-  
-  <script src="../resources/build/explanaria-bundle.js"></script>
-
-
-  <script src="colors.js"></script>
-  <script src="sliders.js"></script>
-  <script src="RotateAboutCenterControls.js"></script>
-  <script src="polychora.js"></script>
-
-  <script data-goatcounter="https://explanaria.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
-
+  <title>Explanaria - 4D Hypercube</title>
 
   <link type="text/css" href="../resources/style.css" rel="stylesheet" />
   <link type="text/css" href="./bulma.css" rel="stylesheet" />
   <link type="text/css" href="./presentation.css" rel="stylesheet" />
 
   <style>
-    #canvasContainer{
-
-    }
-    #textArea{
-
-    }
-
-    .grid{
-    }
-
     .column canvas{
         margin: 0 auto;
         display: block;
     }
-
   </style>
 
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 
-  <script>
-    let three, controls, controlsToRotateAboutOrigin, objects=[], presentation;
+  <script type="module">
+    import * as EXP from "../resources/build/explanaria-bundle.js";
+    import {setup4DEmbedding, setup3DAxes, setup4DAxis, xAxis, yAxis, zAxis, wAxis, xAxisControl, yAxisControl, zAxisControl, wAxisControl, R4Embedding, R4Rotation, grayProjectionVisualizingAxes, R4OrthoVector, axesParent, projectionVisualizerParent, changeCameraToRotateAllObjectsSimultaneously, animateTo4DPerspective, animateTo4DOrtho, animateTo4DIgnoreLastCoordinate, rotation4DZW} from "./7 visualizing 4d.js";
+    import {makeHypercube} from "./polychora.js";
 
-    let axisRotation = null;
+    import {basicThreeSetup, three, controls, controlsToRotateAboutOrigin, objects} from "./7 visualizing 4d.js";
 
-    let xAxis, yAxis,zAxis = null;
+    let presentation;
+    let polychora = [];
 
+    window.animateTo4DOrtho = animateTo4DOrtho;
+    window.animateTo4DPerspective = animateTo4DPerspective;
+    window.animateTo4DIgnoreLastCoordinate = animateTo4DIgnoreLastCoordinate;
+    window.R4Rotation = R4Rotation;
+    window.rotation4DZW = rotation4DZW;
 
     function setupThree(){
-	    three = EXP.setupThree(60,15,document.getElementById("canvas"));
-	    controls = new EXP.OrbitControls(three.camera,three.renderer.domElement);
-
-        controlsToRotateAboutOrigin = new RotateAboutCenterControls([],three.renderer.domElement);
-        
+	    basicThreeSetup();
 
 	    three.camera.position.z = 6;
 	    three.camera.position.y = 0.5;
@@ -75,70 +53,15 @@
         
 	    presentation = new EXP.UndoCapableDirector();
         console.log("Loaded.");
+        window.presentation = presentation;
 
     }
-
-    function setup3DAxes(){
-        let axisSize = 1.5;
-        xAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-        xAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
-        xAxis
-        .add(new EXP.Transformation({expr: (i,t,x) => [axisSize*x,0,0]}))
-        .add(xAxisControl)
-        .add(R4Rotation.makeLink())
-        .add(R4Embedding.makeLink())
-        .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
-        
-        xAxis
-        .add(new EXP.Transformation({expr: (i,t,x) => [-axisSize*x,0,0]}))
-        .add(xAxisControl.makeLink())
-        .add(R4Rotation.makeLink())
-        .add(R4Embedding.makeLink())
-        .add(new EXP.VectorOutput({width:3, color: coordinateLine1Color}));
-
-        yAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-        yAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
-        yAxis
-        .add(new EXP.Transformation({expr: (i,t,x) => [0,axisSize*x,0]}))
-        .add(yAxisControl)
-        .add(R4Rotation.makeLink())
-        .add(R4Embedding.makeLink())
-        .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
-        yAxis
-        .add(new EXP.Transformation({expr: (i,t,x) => [0,-axisSize*x,0]}))
-        .add(yAxisControl.makeLink())
-        .add(R4Rotation.makeLink())
-        .add(R4Embedding.makeLink())
-        .add(new EXP.VectorOutput({width:3, color: coordinateLine2Color}));
-
-        zAxis = new EXP.Area({bounds: [[0,1]], numItems: 2});
-        zAxisControl = new EXP.Transformation({expr: (i,t,x,y,z) => [x,y,z,0]});
-        zAxis
-        .add(new EXP.Transformation({expr: (i,t,x) => [0,0,axisSize*x]}))
-        .add(zAxisControl)
-        .add(R4Rotation.makeLink())
-        .add(R4Embedding.makeLink())
-        .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
-        zAxis
-        .add(new EXP.Transformation({expr: (i,t,x) => [0,0,-axisSize*x]}))
-        .add(zAxisControl.makeLink())
-        .add(R4Rotation.makeLink())
-        .add(R4Embedding.makeLink())
-        .add(new EXP.VectorOutput({width:3, color: coordinateLine3Color}));
-    }
-
-    function setupAxes(){
-        setup4DAxes();
-
-        [xAxis, yAxis, zAxis, wAxis].forEach((x) => objects.push(x));
-
-    }
-
 
     function setup4DPolychora(){
 
         polychora = [];
-        let hypercube = makeHypercube(R4Embedding, [R4Rotation]);
+
+        let hypercube = makeHypercube(R4Embedding, [R4Rotation], three.scene);
         hypercube.objectParent.position.x = 0;
 
         objects.push(hypercube);
@@ -155,35 +78,20 @@
             output.opacity=1;
         });
 
-        changeCameraToRotateAllObjectsSimultaneously();
+        changeCameraToRotateAllObjectsSimultaneously(polychora, presentation);
     }
 
     function setup(){
         setupThree();
         setup4DEmbedding();
         setup4DPolychora();
-        setupAxes();
 
+        setup3DAxes();
+        setup4DAxis();
 
-        //some planes under the objects
-        shadowPlane = new EXP.Area({bounds: [[-2,2],[-2,2]], numItems: 2});
-        shadowPlane.add(new EXP.SurfaceOutput({color: kindalightgray, showSolid: false, gridSquares: 8, opacity: 0.5}));
-        shadowPlane.add(new EXP.SurfaceOutput({color: verylightgray, showGrid: false, gridSquares: 8, opacity: 0.5}));
+        [xAxis, yAxis, zAxis, wAxis].forEach((x) => objects.push(x));
 
-        let flatPlaneMesh = shadowPlane.children[0].mesh;
-        flatPlaneMesh.position.y = -1;
-        flatPlaneMesh.rotation.x = Math.PI/2;
-
-        let flatPlaneMesh2 = shadowPlane.children[1].mesh;
-        flatPlaneMesh2.position.y = -1;
-        flatPlaneMesh2.rotation.x = Math.PI/2;
-        
-        shadowPlane.activate(0);
-        shadowAxesParent.add(flatPlaneMesh);
-        shadowAxesParent.add(flatPlaneMesh2);
-
-        three.scene.add(shadowAxesParent);
-
+        window.R4Rotation = R4Rotation; //updated in setup4DAxis, need this for a button to work
     }
 
     window.addEventListener("load",function(){
@@ -193,7 +101,6 @@
 
 
   </script>
-  <script src="7 visualizing 4d.js"></script>
 
 </head>
 <body>
@@ -206,16 +113,17 @@
       </div>
       <div id="textArea" class="non3DFooterPart">
         <div class="fourDVizOptions">
-            <div>It's a hypercube!</div>
+            <div>
+                It's a hypercube!
+            </div>
         </div>
-        <br>
         <div class="fourDVizOptions">
             <p class="fourDVizdescription">Visualization options</p>
             <p class="fourDVizOptiondescription">4D ➔ 3D Projection:</p>
             <div>
-                <button onclick="animateTo4DOrtho()" class="button"> Stereographic </button>
-                <button onclick="animateTo4DPerspective()" class="button"> Perspective </button>
-                <button onclick="animateTo4DIgnoreLastCoordinate()" class="button"> Forget Fourth Coordinate </button>
+                <button onclick="animateTo4DOrtho(presentation)" class="button"> Stereographic </button>
+                <button onclick="animateTo4DPerspective(presentation)" class="button"> Perspective </button>
+                <button onclick="animateTo4DIgnoreLastCoordinate(presentation)" class="button"> Forget Fourth Coordinate </button>
             </div>
             <p class="fourDVizOptiondescription">Rotation:</p>
             <div>
@@ -225,13 +133,15 @@
                 presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});" class="button"> 4D rotation: zw plane</button>
             </div>
         </div>
+
         <br>
-        <br><br>
+        <br>
         More 4D shapes: <a href="hypertetrahedron.html">Hypertetrahedron (5-cell)</a>, <a href="threetorus.html">3-torus</a>
         <br>
         <br>
 
         Want to know what you're looking at? Read the rest of <a href="https://explanaria.github.io/thinking4D">How Mathematicians Think about Four Dimensions</a>, an interactive <a href="https://explanaria.github.io">Explanarian</a>!
+
       </div>
   </div>
 </body>

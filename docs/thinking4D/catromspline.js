@@ -10,7 +10,7 @@
  * curve.type accepts centripetal(default), chordal
  */
 
-class CubicPoly{
+export class CubicPoly{
 	constructor(){}
 
 	/*
@@ -58,7 +58,7 @@ function distanceToSquared(a,b){
 var px = new CubicPoly(), py = new CubicPoly(), pz = new CubicPoly(), pw = new CubicPoly();
 
 
-function getCatRomSpline( t, points, isClosed=false, endTangentsAsIfClosed=false) {
+export function getCatRomSpline( t, points, isClosed=false, endTangentsAsIfClosed=false) {
     const curveType = "chordal";
 
 	var l = points.length;

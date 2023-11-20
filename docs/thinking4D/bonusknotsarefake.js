@@ -1,4 +1,7 @@
+import * as EXP from "../resources/build/explanaria-bundle.js";
+import {blue, green, pointColor, coordinateLine1Color, coordinateLine1ColorDarker, coordinateLine2Color, coordinateLine2ColorDarker, coordinateLine2ColorLighter, coordinateLine3Color, coordinateLine3ColorDarker, coordinateLine4Color, coordinateLine4ZeroColor, coordinateLine4NegativeColor} from "./colors.js";
 import {FrontViewPreferredOrbitControls} from "./lib/FrontViewPreferredOrbitControls.js";
+import {getCatRomSpline} from "./catromspline.js";
 
 let three, controls, objects, knotParams;
 

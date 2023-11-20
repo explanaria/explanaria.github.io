@@ -152,7 +152,7 @@ html{
     min-width: 0; /*key property to allow overlapping */
 }
 
-/* used in 3 circle */
+/* used in 3 circle and 1.5*/
 .overlappingItemContainer{
   display: grid;
   grid-template-columns: 1fr;

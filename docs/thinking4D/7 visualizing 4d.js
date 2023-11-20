@@ -450,7 +450,7 @@ export async function animate4D(){
     objects.push(hypercube);
     polychora.push(hypercube);
 
-    await changeCameraToRotateAllObjectsSimultaneously();
+    await changeCameraToRotateAllObjectsSimultaneously(polychora, presentation);
 
     //The fabled hypercube... begins to appear!
     //move axes and hypercube away from one another
@@ -551,11 +551,11 @@ export async function animate4DEmbeddings(){
     await presentation.nextSlide();
 
     //"but there's another way to do it: It's perspective!"
-    await animateTo4DPerspective();
+    await animateTo4DPerspective(presentation);
     await presentation.nextSlide();
 
     //back to ortho
-    await animateTo4DOrtho();
+    await animateTo4DOrtho(presentation);
     presentation.TransitionTo(R4OrthoVector,{expr: (i,t,x,y,z) => [1/sq3,1/sq3,1/sq3]}, 1000);
 }
 
@@ -582,7 +582,7 @@ export async function animate4DRotations(){
 
 
     presentation.TransitionTo(hypercubeControl, {'expr':(i,t,x,y,z,w) => [x,y,z,w]},1000);
-    await animateTo4DOrtho();
+    await animateTo4DOrtho(presentation);
     await presentation.nextSlide();
 
     //thing #1: ortho rotation!
@@ -594,7 +594,7 @@ export async function animate4DRotations(){
     //perspective OH NO EVERYTHING GOES WRONG because we animate through w=0
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0)});
     presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': (i,t,x,y)=>[0,0,0]}) //no rotation graphic shown
-    await animateTo4DPerspective();
+    await animateTo4DPerspective(presentation);
     await presentation.nextSlide();
 
     //if we add 1 to w, we're fine
@@ -628,7 +628,7 @@ export async function animateFiveCell(){
 
     //move hypercube out of the way
     presentation.TransitionTo(hypercube.objectParent.position, {x:3}, 1000);
-    await animateTo4DOrtho();
+    await animateTo4DOrtho(presentation);
     await presentation.delay(1500);
 
     
@@ -645,7 +645,7 @@ export async function animateFiveCell(){
     //perspective too, that's cool
     presentation.TransitionTo(R4Rotation, {'expr': rotation4DZW(0.5)});
     presentation.TransitionTo(planeOfRotationGraphicTransformation, {'expr': (i,t,x,y)=>[0,0,0]}) //no rotation graphic shown during perspective projection, it's just a line
-    await animateTo4DPerspective();
+    await animateTo4DPerspective(presentation);
 
     //LAST-MINUTE ADDITION: 3-torus
     await presentation.nextSlide();

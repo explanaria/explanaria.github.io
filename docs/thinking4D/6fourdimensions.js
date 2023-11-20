@@ -303,7 +303,7 @@ async function animate(){
         //and the DOM coords
         try{
             let threeDCoords = document.getElementById("coords");
-            presentation.TransitionTo(threeDCoords.style, {'opacity':0}, 0);
+            presentation.TransitionInstantly(threeDCoords.style, {'opacity':0});
         }catch(e){}
 
         //undo color shifting, too

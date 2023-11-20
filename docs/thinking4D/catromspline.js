@@ -1,4 +1,5 @@
 //Adaptde from THREE.CatmullRomCurve3 by zz85
+import * as EXP from "../resources/build/explanaria-bundle.js";
 
 /**
  * @author zz85 https://github.com/zz85

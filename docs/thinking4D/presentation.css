@@ -132,7 +132,6 @@ html{
     margin-bottom: 0;
 }
 
-
 .bigEquationSymbol, .timesSign{
     text-align: center;
     font-size: 3em;
@@ -152,7 +151,7 @@ html{
     min-width: 0; /*key property to allow overlapping */
 }
 
-/* used in 3 circle and 1.5*/
+/* used in 3 circle and 1.5 */
 .overlappingItemContainer{
   display: grid;
   grid-template-columns: 1fr;

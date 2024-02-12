@@ -1,0 +1,411 @@
+<!DOCTYPE html><html>
+<head><meta
+charset="utf-8"><meta
+name="viewport" content="width=device-width, initial-scale=1">
+&nbsp;&nbsp;<title>Building Twitch Plays Pokemon's Graphics with WebGL</title>
+    <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+&nbsp;&nbsp;<style type="text/css">
+        body{
+            font-family: "Poppins",Arial,Helvetica,sans-serif;
+            margin: 1em;
+            display: grid;
+            justify-items: center;
+        }
+        article{
+            max-width: 800px;
+            margin: auto;
+        }
+
+        summary:hover{
+            transform:scale(1.05);
+            color: #6e6ef7;
+        }
+        a:hover{
+            color: #6e6ef7;
+        }
+
+        h1,h2,h3{line-height:1.2;text-align: center;}
+        aside,figcaption{font-size:0.9em; color:#555;}
+        figure,figcaption,aside{ text-align: center; margin: 0;}
+        iframe{
+            margin:1em auto;
+        }
+        code{
+            font-size:14px;
+        }
+        img, figure{
+            max-width: 100%;
+        }
+
+
+
+    .emailbox, .emailbtn{
+        padding: 0.5em 0em;
+        color: #333;
+        text-align:center;
+        font-size: 1em;
+        border: none;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 300px;
+    }
+
+    .emailbox{
+        color: #333;
+        background-color: #fff;
+        border: 1px solid #bbb;
+        /* like a .examplelink*/
+        margin-bottom: 0.5em;
+    }
+
+    .emailbtn{
+        border: 1px solid #bbb;
+        background-color: #444;
+        color: #eee;
+        font-weight: bold;
+    }
+    .emailbtn:hover{
+        background-color: hsl(240, 90%, 70%);
+    }
+
+
+    .twocolumnsLeftBigger{
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+      width: 100%;
+    }
+    footer{
+        text-align: center;
+    }
+    .sociallogo{
+        height: 0.8em;
+        padding-left: 0.1em;
+        
+    }
+    .sociallogo:hover{
+        transform: scale(1.1);
+    }
+</style>
+</head>
+<body>
+
+<article>
+
+<header><h1>Building Twitch Plays Pokemon's Graphics with WebGL</h1>
+
+<h3>February 12, 2024</h3>
+</header>
+
+<p>As I write this, it's exactly 10 years since the first launch of <a href="https://twitch.tv/twitchplayspokemon">Twitch Plays Pokemon</a>. The stream has been running for over a decade now! As part of the team behind it, in 2016, I built this:</p>
+
+<iframe height="500" width="100%" src="bettingcylinder-final/index.html"></iframe>
+
+<p>You can see this in the background of Twitch Plays Pokemon during most of the year, when the stream pits its chat against itself in competitive matches of Pokemon Battle Revolution. In this article, I'll explain how I made this background, why I made it, and some context around what Twitch Plays Pokemon has done since 2014.</p>
+
+<h2>Setting the Stage</h2>
+
+<aside> Click <a href="#technical">here</a> to jump to the technical part of this article.</aside>
+
+<p>The year was 2015. Twitch Plays Pokemon had successfully completed not just one, but five games of Pokemon by harnessing the power of the internet. Thousands of people had all dedicated their time and effort to (mostly) working as hard as possible to becoming a Pokemon master.</p>
+
+<p>Eventually, the stream began to experiment with other forms of chat-controlled interaction. Pokemon Stadium, a game for the N64, was the first pokemon game to see pokemon battle it out in full 3D for the first time. Twitch Plays Pokemon created a chat-controlled version: two teams of 3 pokemon would be displayed, and users could choose to bet virtual money on whatever team they wanted (denoted, of course, in the official Pokemon currency of <a href="https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Dollar">pokedollars</a>). Then, the AI-controlled players would battle each other with random moves, and the winner would get their bet back. </p>
+
+<p>Playing Pokemon Stadium proved to be incredibly popular with the TPP community, and many fondly remember those days of betting as some of the most fun matches.</p>
+
+<!-- <b>CONTINUE HERE</b> -->
+
+<h2> Project Revolution </h2>
+
+<p>Pokemon Stadium was a lot of fun to play, but it only included the 251 Pokemon from the first two generations of games. Slowly, people began to wonder if it was possible to play the next Stadium-type game in the Pokemon series: Pokemon Battle Revolution. PBR, as we called it, not only included the updated battle mechanics introduced in generations III and IV, but also a grand total of 493 Pokemon (and not to mention <a href="https://www.youtube.com/watch?v=HFS-dw3qGTM">some</a> <a href="https://www.youtube.com/watch?v=133qzK43IAQ">amazing</a> of <a href="https://www.youtube.com/watch?v=YOZV4iX4ZQU">music</a>). Playing it was sure to be fun!</p>
+
+<p>But because the Wii was a much more advanced console than the N64, there were many problems that stood in the way of making Pokemon Battle Revolution into something the chat could play. The stream overlay, for example, needed to be able to read the game's RAM in order to detect whether a 'mon had fainted or not (in order to allow users to vote which pokemon to send out next), and no RAM-editing functionality existed in Wii emulators. Selecting all pokemon meant it needed a save file with all pokemon ready-to-choose - but PBR's save file format wasn't known. Emulating Wii games was also processor-heavy, and the existing TPP computer hardware wasn't quite up to it. </p>
+
+<aside> Even the very concept of randomness itself posed a problem: PBR used a pseudorandom number generator to decide everything from whether a move landed to paralysis. As it turned out, because the game was loaded from a savestate before battles started, the random number generator was generating the same pattern of randomness every game. Savvy players eventually realized this and began to exploit it: using an one-hit KO move on the second turn, which normally had a 30% accuracy, would result in a guaranteed KO!</aside>
+
+<p>Streamer publicly stated that if someone was willing to make a system to play Pokemon Battle Revolution, he'd be willing to use it. From there, it was only a matter of time. Eventually, a team of fans, including one by the name of EliteAinax17, assembled under the name of Project Revolution to create just that. After several months, EliteAinax began streaming test matches  on a newly-created Twitch account named ProjectRevoTPP (which he later adopted for personal use), and once the software was judged stable enough, the game was handed over to Streamer. On December 1st, 2014, Pokemon Battle Revolution <a href="https://www.youtube.com/watch?v=WIDJYOw9FsU">made its Twitch Plays Pokemon debut.</a> PBR still continues to be played today in between mainstream pokemon games.</p>
+
+<aside> TPP eventually got a <a href="https://dolphin-emu.org/blog/2015/10/01/dolphin-progress-report-september-2015/">shoutout in Dolphin's progress reports</a> for helping to find some memorable bugs in Dolphin. Sometimes textures wouldn't load properly, resulting in Pokemon using attacks made up of floating words: <div style="padding:20px"><img height='300' src='assets/suicunewordscrop.png'></img></div>
+<br>
+For more, see <a href="assets/words.png">this compilation image</a>, made from <a href="https://imgur.com/a/ZHvED">frumpy4's album of glitchy screenshots</a>. Or, see these videos: 
+<a href="https://www.youtube.com/watch?v=I2wsJfK0uZo&feature=youtu.be&t=7m46s">1</a>,<a href="https://www.youtube.com/watch?v=t7OQsDcTfN8&feature=youtu.be&t=2m20s">2</a>,<a href="https://www.youtube.com/watch?v=tBdt2jq4spw&feature=youtu.be&t=6m8s">3</a>. It's better in motion!</aside>
+
+<p>But as far as asthetics went, PBR was rather plain: Pokemon teams in the center, bettors on the left and right, and a small footer. 
+</p>
+
+<figure style="padding:20px"><img height='300' src='assets/pbr1.png'></img><figcaption>PBR 1.0. Effective but plain, but sometimes that's all it needs to be</figcaption></figure>
+
+<p>That black background wouldn't last long.</p>
+
+<a name="technical"></a><h2> PBR2.0: The Technical Part Of This Article </h2>
+
+<p>I first joined the stream as an one-person music team, adding new entries to the list of playable songs. I eventually wrote the code that handles playing music and selecting songs, optimized the advanced AI built for Anniversary Crystal romhack from 30 seconds down to fast enough that we could afford to add another layer to the search tree, helped contribute to the stream interface, made the music selection go haywire for april fools' day, and managed to use <a href="https://en.wikipedia.org/wiki/Revenue_equivalence">a tool from economics</a> in a technical setting to help simplify code.</p> <!-- thank you economists <3 -->
+
+<p>Sometime after the release of PBR, Streamer began to float the idea of remaking the interface. In addition to lots of balancing changes, and a complete code rewrite, Streamer suggested in the private developer chatroom that it would be nice to have some sort of background to replace the static black; perhaps something based on Pokemon Battle Revolution's own menu background but incorporating user avatars. I decided to give it a try.</p>
+
+Pokemon Battle Revolution's background looked like this:
+
+<div style="padding:20px"><img src="assets/sourceBG.png"></img></div>
+
+<!--And here's a video of it in motion:
+
+<video src=""></video> use save.mp4 -->
+
+<p>I began by breaking down what I liked about it, to figure out how it worked (and to see it without the pesky text boxes in the way). Dolphin offered a handy free-camera feature, so I loaded up Battle Revolution on my own and attempted to observe what the game's programmers had done. The circles, as it turned out, are in fact not 2D circles, but hemispheres curved away from the camera (perhaps to achieve the 'shiny' look through reflection calculations?). While they appear to drift from the bottom left to the top right, this movement is not as complicated as it looks: from what I could tell, the circles were moving around the surface of a cylinder, and it seemed the <i>camera</i> was tilted. Culling seemed to happen in groups: two side-by-side circles would disappear at the same time once they got outside the camera, and reappear barely offscreen to the left.</p>
+
+<p>I began by creating the orbiting circles. I knew from the beginning that I'd do this in webGL and Three.js, so it was simple enough to make an object to represent one circle, and create enough of them in a cylindrical pattern. I had some convenient pokeball textures lying around from a different project, so I used them to texture each circle:</p>
+
+<iframe height="500" width="100%" src="bettingcylinder-circles/1.html"></iframe>
+
+<p>Then, to match PBR's diagonal slant, I rotated and repositioned the camera until the circles looked like they were arranged diagonally. Doing that was simple enough: I pasted in some keyboard-and-mouse controls so I could interactively move the camera with my keyboard and mouse, flew around the scene until I found a good camera orientation, then logged the camera settings so I could just set them directly at the start of my code.</p>
+
+<figure><iframe height="500" width="100%" src="bettingcylinder-circles/2.html"></iframe><figcaption>Instead of making circles move diagonally, the camera is rotated to give the illusion of complex movement. To better show what's going on, this camera alternates between the proper rotation and no rotation.</figcaption></figure>
+
+<p>The circles looked good to me, so I figured it was time to work on the next stage of the background: what came behind the circles.</p>
+
+<h2>The Most Painful Way Of Specifying Colors</h2>
+
+<p>Behind all the circles, PBR's background has a pretty gradient that appears to be refracting light in a variety of weird, triangular ways. It shimmers over time, too, making for a scintillating display that I'm actually rather disappointed is hidden behind text boxes all the time. How could I get similarly nice gradients that could blend together colors nicely in webGL?</p>
+
+<p>Well, I was working with 3D models. And 3D models can have these nice things called "vertex colors". This, I decided, was the proper way to go.</p>
+
+<figure><iframe height="300" width="300" src="bettingcylinder-circles/vertexcolors.html"></iframe><figcaption>A cube with random vertex colors.</figcaption></figure>
+
+<p>All one needs to do is specify the color you want each vertex to be in a triangle, and the GPU will do all the blending by linearly interpolating each color together. Great!</p>
+
+<p>However, vertex colors don't come without caveats. As you can see in the above animation, vertex colors do not necessarily have to agree when they meet at a vertex. In fact, the name "vertex" colors is a bit of a misnomer: Because GPUs are designed to operate on triangles, not vertices, one actually must specify one color per "vertex in a triangle". Want your favorite vertex to avoid those ugly lines and show up as only one color? Specify that color once per triangle, and make sure all the colors for that vertex are consistent on every triangle. Normally mesh editing tools will automatically take care of this alignment for you, so you don't need to worry about ugly banding - and normally you'd be texturing a mesh, so you wouldn't even need vertex colors in the first place.</p>
+
+<p>For my first attempt at creating a gradient background, I decided that the best way I could think of was to make a giant cube, then color the corners of that cube different colors by manually entering vertex colors into the triangles that made up the cube. Not the best idea, in retrospect.</p>
+
+<div style="padding:20px; text-align: left;font-size:14px; background-color:#eee;"><code>
+&nbsp;&nbsp;//right face<br>
+&nbsp;&nbsp;geometry.faces[1].vertexColors = [new THREE.Color(0xafcdd0), new THREE.Color(0xd6f0ff), new THREE.Color(0xe1c1b0)]<br>
+
+&nbsp;&nbsp;//top left face<br>
+&nbsp;&nbsp;geometry.faces[10].vertexColors = [new THREE.Color(0xe1c1b0), new THREE.Color(0xd6f0ff), new THREE.Color(0x7a8f91)]<br>
+
+&nbsp;&nbsp;//bottom triangle face<br>
+&nbsp;&nbsp;geometry.faces[11].vertexColors = [new THREE.Color(0xd6f0ff), new THREE.Color(0xd6f0ff), new THREE.Color(0x7a8f91)]<br>
+</code></div><aside>And by "manually entered", I mean manually.</aside>
+
+<p>That produced a background that looked like this:</p>
+
+<figure><iframe height="500" width="100%" src="bettingcylinder-circles/3.html"></iframe><figcaption>My first attempt at a background with vertex colors</figcaption></figure> <!-- commit 6421229 -->
+
+<p>It wasn't bad! But then I took another look at PBR's background:</p>
+
+<div style="padding:20px"><img src="assets/sourceBG.png"></img></div>
+
+<p>Behind those circles, the background isn't just a static gradient. There's a hexagon of colors shimmering in a regular pattern. Each hexagon is made of many triangles, and over time colors would slowly flow out of the center of one triangle to the inside of its neighbors. I wanted to try and replicate that color changing in my design.</p>
+
+<h2>Scintillating Shaders</h2>
+
+<p>I got to work. I constructed a plane in code, and marked every other vertex with a blue vertex color. That looked like this:</p>
+
+<div style="padding:20px"><img src="assets/firstplane.png"></img></div>
+
+<p>Next, I needed to make vertex colors change over time. That meant making a formula that dictated a vertex's color for a given input value, and if I wanted to do that for many vertex colors all at once, I'd probably need to start thinking about shaders.</p>
+
+<p>As opposed to most programs which run on a computer's CPU, shaders are programs designed to run many times in parallel using a GPU. In my case, using webGL to render graphics, there are two types of shaders: vertex shaders, which run a formula once per vertex to compute colors or change vertex positions, and fragment shaders, which run once per pixel to decide how to color that pixel. The vertex shader can pass values to the fragment shader, including vertex colors, but those vertex colors will be blended: a point halfway between a green vertex and blue vertex will automatically get a vertex color of 0.5*green + 0.5*blue. Fragment shaders do that blending automatically!</p>
+
+<p>To get some pulsing, I wrote a function which interpolated between two different colors, made it repeat by having the interpolation factor move back and forth in a sine-wave pattern, and then used the blue color as a signal for some vertices to be slightly ahead of other vertices. I'd need to pass in a number representing the current time, but that was simple enough using shader uniforms. Here was my first attempt at coding this via shaders:</p>
+
+<div style="padding:20px; text-align: left;font-size:14px; background-color:#eee;"><code><br>
+var vShader = [<br>
+&nbsp;&nbsp;"varying vec3 vNormal;",<br>
+&nbsp;&nbsp;"varying vec3 vPosition;",<br>
+&nbsp;&nbsp;"varying vec2 vuv;",<br>
+&nbsp;&nbsp;"varying vec3 vcolor;",<br>
+&nbsp;&nbsp;"uniform float time;",<br>
+&nbsp;&nbsp;"vec3 getcolor(float time){",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"float lerpfrac = clamp(sin(time),0.0,1.0);",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"return vec3(0.68,0.80,0.81) * lerpfrac + vec3(0.88,0.75,0.69) * (1.0-lerpfrac);",<br>
+&nbsp;&nbsp;"}",<br>
+<br>
+&nbsp;&nbsp;"void main() {",<br>
+        "vcolor = getcolor(time + color.r);",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"vPosition = position.xyz;",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"vNormal = normal.xyz;",<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;"gl_Position = projectionMatrix *",<br>
+                "modelViewMatrix *",<br>
+                "vec4(position,1.0);",<br>
+&nbsp;&nbsp;"}"].join("\n")<br>
+<br>
+&nbsp;&nbsp;var fShader = [<br>
+&nbsp;&nbsp;"varying vec3 vNormal;",<br>
+&nbsp;&nbsp;"varying vec3 vPosition;",<br>
+&nbsp;&nbsp;"varying vec2 vuv;",<br>
+&nbsp;&nbsp;"varying vec3 vcolor;",<br>
+&nbsp;&nbsp;"uniform float time;",<br>
+&nbsp;&nbsp;"void main(){",<br>
+&nbsp;&nbsp;"  gl_FragColor = vec4(vcolor.rgb, 1.0);", <br>
+&nbsp;&nbsp;"}"].join("\n")<br>
+<br>
+&nbsp;&nbsp;var uniforms = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;time: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: 'f',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value: 0,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;var colorfulbox =  new THREE.Mesh(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;geometry,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new THREE.ShaderMaterial({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;side: THREE.BackSide,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertexShader: vShader, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fragmentShader: fShader,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertexColors: THREE.VertexColors,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uniforms: uniforms,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;colorfulbox.uniforms = uniforms;
+</code></div>
+
+<aside>Yes, in three.js it's easiest to write shaders as line by line quoted strings. It's a little silly.</aside>
+
+<p>That effect looked like this:</p>
+
+<figure><iframe height="500" width="100%" src="bettingcylinder-shaders/firstattempt.html"></iframe><figcaption>My first attempt at an animated color-changing effect, slowly changing between a peach color and light blue color.</figcaption></figure> <!-- commit 6421229 -->
+
+<p>Hm. Not the best. There are times when the full screen is the same color, and it's not very hexagonal. </p>
+
+<h2>Version 2: Triangle Time</h2>
+
+<p>To improve on that, I constructed a 3D model in the software blender to help me with this. I painted the vertex colors blue if the colors should flow outwards in that triangle and black if they should flow inwards. </p>
+
+<div style="padding:20px"><img src="assets/bluemodel.png"></img></div>
+
+Then, I painted a vertex red so it could know that it was in the center of a triangle or not:</p>
+
+<div style="padding:20px"><img src="assets/redmodel.png"></img></div>
+
+<p>Notice the vertex in the center of the big triangle - those big triangles are actually made of 3 smaller triangles!</p>
+
+<p>Finally, I can combine the blue and red values into the final model, which looks like this:</p>
+
+<div style="padding:20px"><img src="assets/finalvcolors.png"></img></div>
+
+<p>This cylinder is what you're looking at in the final version - but shaders reinterpret those colors as inputs.</p>
+
+<p>Next, I selected six colors by color-picking the original background from PBR: 
+
+<figure>
+<span style="display:inline-block; width:30px;height:30px; background-color: rgb(165.75,178.5,181.04999999999998)"></span><span style="display:inline-block; width:30px;height:30px; background-color: rgb(142.8,150.45,163.20000000000002)"></span><span style="display:inline-block; width:30px;height:30px; background-color: rgb(150.45,140.25,163.20000000000002)"></span><span style="display:inline-block; width:30px;height:30px; background-color: rgb(130.05,160.65,163.20000000000002)"></span><span style="display:inline-block; width:30px;height:30px; background-color: rgb(132.6,155.54999999999998,153.0)"></span><span style="display:inline-block; width:30px;height:30px; background-color: rgb(165.75,181.04999999999998,165.75)"></span>
+</figure>
+
+They're all very muted, which is fine for a background. I created a color choosing function: it takes a number (increasing over time), where a number from 0 to 1 returns the first color, 1 to 2 returns the second color, 2 to 3 the third, and so on - and using mod(), the cycle of colors repeats once it gets to 6.</p>
+
+
+<div style="padding:20px; text-align: left;font-size:14px; background-color:#eee;"><code>
+vec3 getcolor(float time){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float colorindex = mod(floor(time + 0.5),6.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if(colorindex < 1.0){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return vec3(0.65, 0.70, 0.71);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}else if(colorindex < 2.0){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return vec3(0.56, 0.59, 0.64);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}else if(colorindex < 3.0){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return vec3(0.59, 0.55, 0.64);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}else if(colorindex < 4.0){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return vec3(0.51, 0.63, 0.64);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}else if(colorindex < 5.0){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return vec3(0.52, 0.61, 0.60); //colorpicked, may in fact be just a transition of surrounding two and not an actual color<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}else if(colorindex < 6.0){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return vec3(0.65, 0.71, 0.65);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//return a default color to satisfy chrome<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return vec3(0.71, 0.60, 0.58);<br>
+&nbsp;&nbsp;}<br>
+</div></code>
+
+
+
+<p>Then, using the red vertex colors from the model, I adjust the input to that function - a red vertex color is slightly ahead in time, and a blue and red vertex color means it's slightly behind in time. The final result: bands of color! For the final touch, the cylinder rotates slowly.</p>
+
+<div style="padding:20px; text-align: left;font-size:14px; background-color:#eee;"><code><br>
+&nbsp;&nbsp;//helper function whose graph is supposed to look like:<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;_/<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;//Used to help smooth out the transition between outward and inward triangles<br>
+&nbsp;&nbsp;float rampwaitramp(float x, float waitsize){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return step(0.0,x-waitsize)*(x-waitsize) + step(0.0,-x-waitsize)*(x+waitsize);<br>
+&nbsp;&nbsp;}<br>
+
+&nbsp;&nbsp;void main(){<br>
+&nbsp;&nbsp;    float isOutwardstri = (vcolor.b*2.0-1.0); //1.0 if the triangle is going outwards, lerps to -1.0 if not, 0.0 at edges<br>
+&nbsp;&nbsp;    gl_FragColor = vec4(getcolor(rampwaitramp(vcolor.r * isOutwardstri * 2.0,-0.1) + time/2.0),1.0);<br>
+&nbsp;&nbsp;}<br>
+</div></code>
+
+<figure><iframe height="500" width="100%" src="bettingcylinder-shaders/finalbg.html"></iframe><figcaption>The final background</figcaption></figure> <!-- commit 6421229 -->
+
+<p>Finally, I added a transparent rectangle in front of the background to add a slight color gradient from one corner to another. In the end, it looks like this:</p>
+
+<figure><iframe height="500" width="100%" src="bettingcylinder-final/index.html"></iframe><figcaption>The final product, all put together.</figcaption></figure>
+
+<p>That background is what made it into the stream, and is still used today whenever Twitch Plays Pokemon plays Pokemon Battle Revolution, although there's a gray tint over it for better text contrast. It's shiny and serves no purpose other than to look cool, and I'm very happy with it.</p>
+
+
+<p>There's one more special touch: Twitch has an API to see all users in chat - so instead of just displaying circles with pokeballs, on-stream the circles display the avatars of users currently in chat. Felk (another dev) wrote some code to read the list of people in chat and pull those avatars via twitch API, which are then fed to this background.</p>
+
+<p>I experimented with putting nametags below each circle to show the user's username, but that ended up being too slow! I needed to render each piece of text individually, and my strategy of rendering to a canvas and then downloading that canvas as a texture was too slow. I tried pre-creating those canvases so I could render multiple simultaneously, but those still took up too much time. In the end I abandoned the nametags and just left the circular avatars.</p>
+
+<figure><img src="assets/inplace.png"></img><figcaption>The final product, visible onstream!</figcaption></figure>
+
+
+<p>Looking back, my background doesn't quite look exactly like my inspiration. PBR didn't have concentric triangles - instead, their animated effect involved some crazy refractions in a more hexagonal grid as opposed to my triangular one. It's interesting to see the differences after coming back to this after a few years.</p>
+
+<p>This was the only part of the PBR2.0 overlay I was involved with. In retrospect, the overlay itself has a few flaws - it's very visually cluttered, the bottom bar takes up lots of screen real estate, the text is unreadable on mobile, overflowing text shrinks horizontally instead of overflowing... but none of that was my problem!</p>
+
+<h2>And Time Marched On</h2>
+
+<p>TPP kept going, playing romhacks and new games as they came out, although with only a few hundred viewers nowadays. The original streamer (still anonymous and going by "Streamer") after some egregious behavior was convinced to retire around 2017 and gave the stream hardware to m4_used_rollout, who now runs the stream. I retired from the Twitch Plays Pokemon development team in 2018. Pokemon Omega Ruby / Alpha Sapphire added some paintings of Omanyte and referenced a helix fossil in the French translation. </p>
+
+<p>It's been a long decade, and I'd like to think ideas from Twitch Plays Pokemon have diffused into broader gaming culture. Some twitch streamers like Dougdoug code new "twitch plays" gimmicks regularly. Blaseball made chaotically affecting a game as part of a large crowd a core mechanic (and then smoldered and died a slow boring death). Maybe TPP helped popularize the idea of watching a video game via livestream, so developers began thinking about how to make games that are great spectator sports, which eventually led to the popularity of Fortnite and Among Us. </p>
+
+<p>At the same time, not all effects are good. TPP was full of users being contrarian and hurting progress because they thought it was funny. I see echoes of that in gamergate's harassment mobs and today's incel culture and white supremacists. Twitch's PogChamp emote was replaced after the original actor became a conspiracy nut, vaccine denialist, and U.S. Capitol insurrection supporter.  A pandemic which hasn't ended forced us all to connect and find communities online, and by that time being a member of a livestream chat was almost normal.</p>
+
+<p>And eventually, I took the webGL skills I developed working for TPP and began making interactive math explanations, which you can see on <a href="https://explanaria.github.io">this very site</a>.</p>
+
+<p>Thanks for reading! If you want to share any Twitch Plays Pokemon memories or get notified about new articles, contact me at explanaria<span id="emailPart1">@</span>ail.com.
+<script>window.setTimeout(function(){document.getElementById("emailPart1").innerHTML+="gm"},1)</script> </p>
+
+</article>
+
+<footer class="twocolumnsLeftBigger" style="gap: 1em;">
+    <div class="column">
+        More Explanaria
+        <br><br>
+        <aside>
+            <div class="twocolumns">
+                <a href="https://explanaria.github.io/crystalgroups" data-goatcounter-click="tpp-to-crystalgroups">Clear Crystal Conundrums: A Multifaceted Intro to Group Theory</a>
+                <br />
+                <a href="https://explanaria.github.io/impossibletriangles/1" data-goatcounter-click="tpp-to-impossibletriangles">The Case of the Impossible Triangles</a>
+                <br />
+                <a href="https://explanaria.github.io/thinking4D/1%20R3.html" data-goatcounter-click="tpp-to-4D">How Mathematicians Think About Four Dimensions</a>
+            </div>
+            <br><a href="https://explanaria.github.io/" data-goatcounter-click="tpp-to-home">All Articles</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+            <a href="https://mathstodon.xyz/@explanaria">@explanaria@mathstodon.xyz</a>
+            <a href="https://patreon.com/explanaria" data-goatcounter-click="crystalgroups-to-patreon">
+                <img src="img/Digital-Patreon-Logo_Black.png" class="sociallogo" alt="Patreon" />
+            </a>
+        </aside>
+    </div>
+    <div class="column" style="text-align: center">
+        <aside>
+            <form action="https://tinyletter.com/explanaria" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/explanaria', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
+                <label for="tlemail">
+                    Get notified about new interactive math explanations as soon as they release!</label>
+                <br>
+                
+                <p><input type="text" class="emailbox" name="email" id="tlemail" placeholder="Your email address" /></p><input type="hidden" value="1" name="embed"/>
+                <input type="submit" class="emailbtn" value="Subscribe" />
+            </form>
+
+        </aside>
+    </div>
+</footer>
+
+</body></html>

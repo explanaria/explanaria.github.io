@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>WIP betting animation</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<style>
+		body {
+			background-color: #000000;
+			margin: 0px;
+			overflow: hidden;
+			width:100%;
+			height:100%;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="canvasContainer">
+			<canvas id="bettingCanvas"></canvas>
+		</div>
+		<script src="lib/threeplusobjloader.min.js"></script>
+
+		<script>
+
+		function CubeScene(canvas_elem){
+			this.clock = new THREE.Clock();
+
+			//threejs constructs
+			this.scene = new THREE.Scene();
+			this.scene.add( new THREE.AmbientLight( 0xaaaaaa) );
+
+			//an aspect ratio of 3.5 or above will show things that shouldn't be shown
+			this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1,10);
+			this.camera.position.set(0,0,1);
+
+			this.scene.add(this.camera);
+
+			//add some light
+			this.light =  new THREE.DirectionalLight( 0xffffff, this.startingLightIntensity) 
+			this.light.position.set(0,0,3);
+			this.scene.add( this.light );
+
+			//add the background gradient
+			var geometry = new THREE.CubeGeometry(0.5,0.5,0.5);
+
+			for(var i=0;i<geometry.faces.length;i++){
+
+			//right face
+	
+			geometry.faces[i].vertexColors = [new THREE.Color(Math.random()*0xffffff), new THREE.Color(0xd6f0ff), new THREE.Color(0xe1c1b0)]
+			}
+
+
+			this.colorfulbox =  new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({shading: THREE.FlatShading,vertexColors: THREE.VertexColors}));
+				this.scene.add( this.colorfulbox );                        
+		// Renderer
+		var clear_color = clear_color || 0x000000;
+
+		this.renderer = new THREE.WebGLRenderer({ antialias : true, canvas: canvas_elem, alpha: true});
+		this.renderer.setSize( window.innerWidth, window.innerHeight);
+		this.renderer.setClearColor( clear_color, 0);
+
+		this.timer = 0;
+
+		}
+	CubeScene.prototype.update = function(t){
+		this.renderer.render( this.scene, this.camera);
+		this.colorfulbox.rotation.set(t/2000,t/2000,0);
+		window.requestAnimationFrame(this.update.bind(this));
+	}
+
+document.body.onload = function(){
+	var canvas_elem = document.getElementById("bettingCanvas");
+		var cube = new CubeScene(canvas_elem);
+	cube.update(0);
+}
+
+
+
+		</script>
+	</body>
+</html>

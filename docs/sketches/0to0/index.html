@@ -185,15 +185,14 @@ text-align: center
             </div>
             <div class="column" style="text-align: center">
                 <aside>
-                    <form action="https://tinyletter.com/explanaria" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/explanaria', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
+                    <form action="https://exp-newsletter.azurewebsites.net/api/collectemail" method="get" target="popupwindow">
                         <label for="tlemail">
                             Get notified about new interactive math explanations as soon as they release!</label>
                         <br>
                         
-                        <p><input type="text" class="emailbox" name="email" id="tlemail" placeholder="Your email address" /></p><input type="hidden" value="1" name="embed"/>
+                        <p><input type="text" class="emailbox" name="email" id="tlemail" placeholder="Your email address" /></p>
                         <input type="submit" class="emailbtn" value="Subscribe" />
                     </form>
-
                 </aside>
             </div>
         </footer>

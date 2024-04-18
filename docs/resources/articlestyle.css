@@ -1,0 +1,80 @@
+body{
+    font-family: "Poppins",Arial,Helvetica,sans-serif;
+    margin: 1em;
+    display: grid;
+    justify-items: center;
+}
+article{
+    max-width: 800px;
+    margin: auto;
+}
+
+summary:hover{
+    transform:scale(1.05);
+    color: #6e6ef7;
+}
+a:hover{
+    color: #6e6ef7;
+}
+
+h1,h2,h3{line-height:1.2;text-align: center;}
+aside,figcaption{font-size:0.9em; color:#555;}
+figure,figcaption,aside{ text-align: center; margin: 0;}
+iframe{
+    margin:1em auto;
+}
+code{
+    font-size:14px;
+}
+img, figure{
+    max-width: 100%;
+}
+
+
+
+.emailbox, .emailbtn{
+    padding: 0.5em 0em;
+    color: #333;
+    text-align:center;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 300px;
+}
+
+.emailbox{
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #bbb;
+    /* like a .examplelink*/
+    margin-bottom: 0.5em;
+}
+
+.emailbtn{
+    border: 1px solid #bbb;
+    background-color: #444;
+    color: #eee;
+    font-weight: bold;
+}
+.emailbtn:hover{
+    background-color: hsl(240, 90%, 70%);
+}
+
+
+.twocolumnsLeftBigger{
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+  width: 100%;
+}
+footer{
+    text-align: center;
+}
+.sociallogo{
+    height: 0.8em;
+    padding-left: 0.1em;
+    
+}
+.sociallogo:hover{
+    transform: scale(1.1);
+}

@@ -6,7 +6,7 @@ It sounds like a simple question, but when I tried to understand how we measure 
 
 Our modern star brightness scale is called "apparent magnitude", and it's based on a vibes-based system from Ancient Greece that's two thousand years old. Ptolemy's Almagest, the ancient smash hit physics book that convinced the world the sun went around the earth for a thousand years or so, had a star catalog that sorted stars into six categories: "first magnitude" stars were the brightest, and "sixth magnitude" stars were the dimmest. While some stars were described as "above" or "below", to the Almagest magnitude meant one of several discrete categories and not a continuous scale.
 
-<aside>(Fun fact: The Almagest catalog mistook Uranus for a star, and the mistake stuck around [for thousands of years!](https://sci-hub.se/https://journals.sagepub.com/doi/10.1177/002182861304400401))</aside> 
+<aside>(Fun fact: The Almagest catalog mistook Uranus for a star, and the mistake stuck around [for thousands of years!](https://journals.sagepub.com/doi/10.1177/002182861304400401))</aside> 
 
 Thanks to the Greeks, lower magnitude means brighter, and we've been stuck with that ever since. This led to some silly consequences in the modern scale - for example, what do you do if a star is brighter than magnitude 1? Use numbers lower than 1. In the modern "apparent magnitude" system, Sirius, the brighest star in the sky, is around magnitude -1.5, and a full moon is around magnitude -12.7.
 
@@ -35,13 +35,16 @@ Pogson's scale technically only defines magnitude differences between two stars.
 
 According to the Wikipedia page for "apparent magnitude", Pogson decided the star Polaris, visible from the entire northern hemisphere, would be the reference point for magnitude 2! And all was well in the world.
 
+<img src="./wrongwiki.png" alt="A screenshot of Wikipedia, showing the sentence 'The zero point of Pogson's scale was originally defined by assigning Polaris a magnitude of exactly 2'"></img>
+
+
 **🚨BREAKING NEWS🚨**
 
 What?
 
 ...Ahem. We regret to inform you that actually, Pogson didn't use Polaris to calibrate his scale. Wikipedia is wrong, and [has been wrong for over 22 years](https://en.wikipedia.org/w/index.php?title=Apparent_magnitude&diff=prev&oldid=235741).
 
-How did Pogson calibrate his scale? I tracked down [Pogson's original 1857 paper, Magnitudes of Thirty-six of the Minor Planets for the First Day of each Month of the Year](https://sci-hub.se/https://doi.org/10.1093/mnras/17.1.12). Pogson says he based his work on magnitudes "taken from the Radcliffe Observations, from the zones of Argelander and Bessel, and from the [star] catalogues of Piazzi, Lalande, and Groombridge". No Polaris. Later, that paper makes a formula for the faintest magnitude you can see through a given aperture, and calculates that the dimmest star a human eye (with an 0.23in pupil) can see should be magnitude 6.0 on Argelander's scale. Then, he uses Argelander's magnitude 6.0 and the familiar ratio +5 magnitude = 1/100 brightness to define what he called "standard magnitudes":
+How did Pogson calibrate his scale? I tracked down [Pogson's original 1857 paper, Magnitudes of Thirty-six of the Minor Planets for the First Day of each Month of the Year](https://doi.org/10.1093/mnras/17.1.12). Pogson says he based his work on magnitudes "taken from the Radcliffe Observations, from the zones of Argelander and Bessel, and from the star catalogues of Piazzi, Lalande, and Groombridge". No Polaris. Later, that paper makes a formula for the faintest magnitude you can see through a given aperture, and calculates that the dimmest star a human eye (with an 0.23" pupil) can see should be magnitude 6.0 on Argelander's scale. Then, he uses Argelander's magnitude 6.0 and the familiar ratio +5 magnitude = 1/100 brightness to define what he called "standard magnitudes":
 
 <img src="./pogsontable.png"></img>
 
@@ -75,7 +78,11 @@ font-size: 90%;
 }
 </style>
 
-...Ahem. We regret to inform you that the Vega normalized system isn't normalized to Vega. In Johnson's UVB system, which is called Vega normalized, Vega's magnitude isn't 0 in both U,B, and V. Vega has magnitude 0.03. What?! Astronomers, why<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y</sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm>
+...Ahem. We regret to inform you that the Vega normalized system isn't normalized to Vega. In Johnson's UVB system, which is called Vega normalized, Vega's magnitude isn't 0 in both U,B, and V. As the SIMBAD star database shows, Vega has magnitude [0.03](https://simbad.cds.unistra.fr/simbad/sim-basic?Ident=vega&submit=SIMBAD+search):
+
+<img src="./vegasimbad.png" alt="A picture of astronomy database SIMBAD, showing Vega with magnitude 0.03 in V"></img>
+
+What?! Astronomers, why<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y</sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm>
 
 Turns out, wikipedia was wrong again. I tracked down Johnson's [original 1953 paper](https://ui.adsabs.harvard.edu/abs/1953ApJ...117..313J/abstract), and Johnson didn't choose "however bright Vega is" to be zero magnitude, he chose "the average brightness of Vega and five other stars similar to Vega". Here, look at the original paper (α Lyr is another name for Vega):
 
@@ -93,18 +100,19 @@ What?
 
 ...Ahem. We regret to inform you that modern measurements show Vega changes brightness by 1-2% in a 21-year cycle. It's really cool that we can detect that, but we probably shouldn't use Vega as a standard to compare all other stars to.
 
-# Make up a guy: The Cousins system
+# The Cousins system
 
 As technology evolved, we started trying to measure brightness in other wavelengths of light, including infrared. Our eyes can't see infrared light, but our skin feels it as heat. Infrared light is hard to measure because anything in room temperature glows with infrared light - similar to how red-hot metal glows red, anything at room temperature glows infrared. However, infrared measurements are very valuable to astronomers because space dust and dim stars glow strongly in infrared light - and so do faraway galaxies whose light has been redshifted.
 
-Eventually Johnson extended his UBV system to include two more wavelengths and filters, named R (red) and I (infrared), but his RI measurements weren't very precise. Once better detectors were invented a few years later, Alan Cousins installed slightly different R and I filters in an observatory in South Africa along with a more sensitive detector, and published incredibly precise measurements of star magnitudes. Nowadays the "Johnson-Cousins system" or UVBRI system usually means Johnson's U,V,B filters and Cousins' tweaked R and I filters.
+Eventually Johnson extended his UBV system to include two more wavelengths and filters, named R (red) and I (infrared), but his RI measurements weren't very precise. Once better Gallium Arsenide detectors were invented a few years later, Alan Cousins installed slightly different R and I filters in an observatory in South Africa along with a more sensitive detector, and published incredibly precise measurements of star magnitudes. Nowadays the "Johnson-Cousins system" or UVBRI system usually means Johnson's U,V,B filters and Cousins' tweaked R and I filters.
 
-But where to set the zero points for R and I? [As Cousins says,](https://articles.adsabs.harvard.edu/pdf/1976MmRAS..81...25C), he decided to follow Johnson's lead and set the zeroes so that the two color indices (V-R) and (R-I) are zero for a star of the same spectral type as Vega (A0 V). Makes sense. We know a lot about Vega. ["Vega is the archetypical normal star"](https://articles.adsabs.harvard.edu/pdf/1979SAOSR.387.....K), wrote scientists.
+But where to set the zero points for R and I? [As Cousins says](https://articles.adsabs.harvard.edu/pdf/1976MmRAS..81...25C), he decided to follow Johnson's lead and set the zeroes so that the two color indices (V-R) and (R-I) are zero for a star of the same spectral type as Vega (A0 V). Makes sense. We know a lot about Vega. ["Vega is the archetypical normal star"](https://articles.adsabs.harvard.edu/pdf/1979SAOSR.387.....K), wrote scientists.
 
 **🚨BREAKING NEWS🚨**
+
 ...What?
 
-...Ahem. We regret to inform you that Vega [has an unusual disk of cool dust around it that gives off extra infrared light](https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A), making it seem brighter in mid-infrared wavelengths than it actually is - in 100μm infrared light, the dust is 16 times brighter than Vega. Oops. We probably shouldn't have used Vega to calibrate our R and I magnitude systems.
+...Ahem. We regret to inform you that Vega [has an abnormal disk of cold dust around it that gives off extra infrared light](https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A), making it seem brighter in mid-infrared wavelengths than it actually is. In 100μm infrared light, the dust is 16 times brighter than Vega. Oops. We probably shouldn't have used Vega to calibrate our R and I magnitude systems.
 
 # Every Filter Has Its Own Magnitude System
 
@@ -128,11 +136,11 @@ Sadly, J.B.Oke died in 2004. R.E. Schild nowadays [runs a blog where he complain
 
 </details>
 
-There's only one problem: an AB magnitude is a theoretical ideal that's subtly impossible to measure. An AB magnitude is supposed to measure energy from exactly one wavelength of light. [https://browse.arxiv.org/pdf/2206.00989.pdf](This paper) notes that in reality, it's impossible for a filter to block out all but one wavelength of light - for example, even on the most cutting edge space telescope we have, JWST's ultra-narrow F164N filter, designed to measure light at 1.644 µm, allows light anywhere from 1.654 µm to 1.634µm. Any filter will let through a range of wavelengths, and different wavelengths carry different amounts of energy. Replacing a filter with one that lets through a narrower range will give you a better AB magnitude estimate, but it'll also mean blocking more light, so the detector will detect less total energy - which could make you think the star is dimmer.
+There's only one problem: an AB magnitude is a theoretical ideal that's subtly impossible to measure. An AB magnitude is supposed to measure energy from exactly one wavelength of light. [This paper](https://browse.arxiv.org/pdf/2206.00989.pdf) notes that in reality, it's impossible for a filter to block out all but one wavelength of light - for example, even on the most cutting edge space telescope we have, JWST's ultra-narrow F164N filter, designed to measure light at 1.644 µm, allows light anywhere from 1.654 µm to 1.634µm. Any filter will let through a range of wavelengths, and different wavelengths carry different amounts of energy. Replacing a filter with one that lets through a narrower range will give you a better AB magnitude estimate, but it'll also mean blocking more light, so the detector will detect less total energy - which could make you think the star is dimmer.
 
 Even worse, different wavelengths having different energies means the type of detector a telescope uses matters. Some types of telescope sensors add up the total energy from those different-energy photons, while other sensors use the photoelectric effect to count the number of photons from space, unable to measure each one's exact wavelength. To compute the AB magnitude, which relies on energy, photon-counting detectors must then multiply the number of photons they got by the energy per photon they were expecting - but that means assuming every photon carries the same energy, when they don't. Different detectors will give slightly different AB magnitude measurements even if observing the same star using the exact same filter. Annoying! 
 
-
+<br />
 
 So that's how we measure brightness. Finally, I can go outside and look for some bright, low-magnitude objects in the sky.
 
@@ -157,34 +165,35 @@ And that's how we measure brightness. It's very hard and light is complicated. T
 <details>
 <summary>Bibliography</summary>
 
-Norman Pogson and the Definition of Stellar Magnitude. https://adsabs.harvard.edu/full/1968ASPL...10..145J, 
+Norman Pogson and the Definition of Stellar Magnitude. [https://adsabs.harvard.edu/full/1968ASPL...10..145J](https://adsabs.harvard.edu/full/1968ASPL...10..145J)
 
-https://skyandtelescope.org/astronomy-resources/the-stellar-magnitude-system/
+Alan MacRobert. The Stellar Magnitude System, 2006, [https://skyandtelescope.org/astronomy-resources/the-stellar-magnitude-system/](https://skyandtelescope.org/astronomy-resources/the-stellar-magnitude-system/)
 
-Pogson, Norman. Magnitudes of Thirty-six of the Minor Planets for the First Day of each Month of the Year (1857) https://sci-hub.se/https://doi.org/10.1093/mnras/17.1.12 (Defines Pogson's +5 mag = 1/100 brightness ratio)
+Pogson, Norman. Magnitudes of Thirty-six of the Minor Planets for the First Day of each Month of the Year, 1857, [https://doi.org/10.1093/mnras/17.1.12](https://doi.org/10.1093/mnras/17.1.12) (Defines Pogson's +5 mag = 1/100 brightness ratio)
 
-The Pan-STARRS1 Photometric System 2012. https://arxiv.org/pdf/1203.0297
+The Pan-STARRS1 Photometric System, 2012, [https://arxiv.org/pdf/1203.0297](https://arxiv.org/pdf/1203.0297)
 
-Johnson & Morgan 1953, Fundamental stellar photometry for standards of spectral type on the Revised System of the Yerkes Spectral Atlas. https://ui.adsabs.harvard.edu/abs/1953ApJ...117..313J/abstract . Defines the UBV system
+Johnson & Morgan. Fundamental stellar photometry for standards of spectral type on the Revised System of the Yerkes Spectral Atlas, 1953 [https://ui.adsabs.harvard.edu/abs/1953ApJ...117..313J/abstract](https://ui.adsabs.harvard.edu/abs/1953ApJ...117..313J/abstract). (Defines the UBV system)
 
-J.B.Oke and J.E.Gunn 1983, [SECONDARY STANDARD STARS FOR ABSOLUTE SPECTROPHOTOMETRY](https://ui.adsabs.harvard.edu/abs/1983ApJ...266..713O/abstract) . ()Defines the AB system)
+J.B.Oke and J.E.Gunn. Secondary Standard Stars For Absolute Spectrophotometry, 1983, [https://ui.adsabs.harvard.edu/abs/1983ApJ...266..713O/abstract](https://ui.adsabs.harvard.edu/abs/1983ApJ...266..713O/abstract) . (Defines the AB system)
 
-The long-term variability of Vega https://doi.org/10.1002/asna.201111587
+The long-term variability of Vega [https://doi.org/10.1002/asna.201111587](https://doi.org/10.1002/asna.201111587)
 
-https://www.annualreviews.org/doi/full/10.1146/annurev.astro.41.082801.100251
+Michael S. Bessel. Standard Photometric Systems, 2005, [https://www.annualreviews.org/doi/full/10.1146/annurev.astro.41.082801.100251](https://www.annualreviews.org/doi/full/10.1146/annurev.astro.41.082801.100251)
 
-https://www.sciencedirect.com/science/article/abs/pii/S0039368109000934
+Michael S. Evans, Achieving continuity: a story of stellar magnitude, 2009, [https://www.sciencedirect.com/science/article/abs/pii/S0039368109000934](https://www.sciencedirect.com/science/article/abs/pii/S0039368109000934) (Very fun article about stories we tell in science about continuity with the past)
 
-The Measurement of Starlight: Two Centures of Astronomical Photometry by J.B.Hearnshaw
+J.B.Hearnshaw, The Measurement of Starlight: Two Centures of Astronomical Photometry (Incredibly detailed book. Amazing resource)
 
-VRI Photometry at the S. A. A. O. https://ui.adsabs.harvard.edu/abs/1975MNSSA..34R..68C/abstract 
+ Cousins, A. W. J. VRI Photometry at the S. A. A. O. [https://ui.adsabs.harvard.edu/abs/1975MNSSA..34R..68C/abstract](https://ui.adsabs.harvard.edu/abs/1975MNSSA..34R..68C/abstract )
 
-Bessell, M. S. UBVRI photometry II: the Cousins VRI system, its temperature and absolute flux calibration, and relevance for two-dimensional photometry. https://ui.adsabs.harvard.edu/abs/1979PASP...91..589B/abstract (proposed Cousins VRI system)
+Bessell, M. S. UBVRI photometry II: the Cousins VRI system, its temperature and absolute flux calibration, and relevance for two-dimensional photometry. [https://ui.adsabs.harvard.edu/abs/1979PASP...91..589B/abstract](https://ui.adsabs.harvard.edu/abs/1979PASP...91..589B/abstract) (proposed Cousins VRI system)
 
-Stebbins J and Whitford A.E. astrophys.J. 98, 20 (1943)  Six-color photometry of stars. I. The law of space reddening from the colors of O and B stars
+Stebbins J and Whitford. 1943, A.E. astrophys.J. 98, 20, Six-color photometry of stars. I. The law of space reddening from the colors of O and B stars
 
-DISCOVERY OF A SHELL AROUND ALPHA LYRAE (1984) https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A
+H. H. Aumann, F. C. Gillett, C. A. Beichman, T. de Jong, J. R. Houck, F. J. Low,
+G. Neugebauer, R. G. Walker, and P. R. Wesselius. Discovery of a Shell around Alpha Lyrae, 1984, [https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A](https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A)
 
-Frank J. Low, G.H. Rieke, and R.D. Gehrz. The Beginning of Modern Infrared Astronomy https://www.annualreviews.org/content/journals/10.1146/annurev.astro.44.051905.092505
+Frank J. Low, G.H. Rieke, and R.D. Gehrz. The Beginning of Modern Infrared Astronomy [https://www.annualreviews.org/content/journals/10.1146/annurev.astro.44.051905.092505](https://www.annualreviews.org/content/journals/10.1146/annurev.astro.44.051905.092505)
 
 </details>

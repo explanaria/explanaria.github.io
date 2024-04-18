@@ -30,6 +30,10 @@ img, figure{
     max-width: 100%;
 }
 
+details{
+    padding-left: 1em;
+}
+
 
 
 .emailbox, .emailbtn{
@@ -77,4 +81,14 @@ footer{
 }
 .sociallogo:hover{
     transform: scale(1.1);
+}
+
+
+.exp-backbtn{
+    max-width: 2em;
+    max-height: 2em;
+    position:absolute; top:1em; left: 1em;
+}
+.exp-backbtn:hover{
+    transform: scale(1.1)
 }

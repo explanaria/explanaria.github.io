@@ -78,7 +78,7 @@ font-size: 90%;
 }
 </style>
 
-...Ahem. We regret to inform you that the Vega normalized system isn't normalized to Vega. In Johnson's UVB system, which is called Vega normalized, Vega's magnitude isn't 0 in both U,B, and V. As the SIMBAD star database shows, Vega has magnitude [0.03](https://simbad.cds.unistra.fr/simbad/sim-basic?Ident=vega&submit=SIMBAD+search):
+...Ahem. We regret to inform you that the Vega normalized system isn't normalized to Vega. In Johnson's UVB system, Vega's magnitude isn't 0 in U, or B, or V. As the SIMBAD star database shows, Vega has magnitude [0.03](https://simbad.cds.unistra.fr/simbad/sim-basic?Ident=vega&submit=SIMBAD+search):
 
 <img src="./vegasimbad.png" alt="A picture of astronomy database SIMBAD, showing Vega with magnitude 0.03 in V"></img>
 
@@ -86,7 +86,7 @@ What?! Astronomers, why<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<s
 
 Turns out, wikipedia was wrong again. I tracked down Johnson's [original 1953 paper](https://ui.adsabs.harvard.edu/abs/1953ApJ...117..313J/abstract), and Johnson didn't choose "however bright Vega is" to be zero magnitude, he chose "the average brightness of Vega and five other stars similar to Vega". Here, look at the original paper (α Lyr is another name for Vega):
 
-<img src="./johnsonzero.png"></img>
+<img src="./johnsonzero.png" alt="A screenshot from Johnson's 1953 paper defining the UVB system. It reads: The zero point of the present color systems has been set by the mean values for six stars of class A0 V on the MK system; the stars are: alpha Lyr, gamma UMa, 109 Vir, alpha CrB, gamma Oph, and HR 3314. For the mean of these stars, U - B = B - V = 0."></img>
 
 Why the confusion? I have a theory. Different stars are hotter or cooler, which can tell us how old a star is, so astronomers like measuring star temperatures. Like red-hot flames versus blue-hot flames, stars at different temperatures give off different colors of light. One common way to estimate a star's temperature by measuring a star's B and V magnitudes and subtracting them, to get a number called "B-V", or the "color index". [(We knew this technique as far back as 1916!)](https://www.pnas.org/doi/10.1073/pnas.3.1.29) Vega and the other 5 stars were probably all chosen because they're the same type of star, with the same spectrum, so they have the same color index. Therefore, the Johnson system defines Vega to have zero color index, not zero magnitude. Maybe somewhere along the way the two ideas got confused.
 
@@ -112,13 +112,14 @@ But where to set the zero points for R and I? [As Cousins says](https://articles
 
 ...What?
 
-...Ahem. We regret to inform you that Vega [has an abnormal disk of cold dust around it that gives off extra infrared light](https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A), making it seem brighter in mid-infrared wavelengths than it actually is. In 100μm infrared light, the dust is 16 times brighter than Vega. Oops. We probably shouldn't have used Vega to calibrate our R and I magnitude systems.
+...Ahem. We regret to inform you that Vega [has a non-archetypical and abnormal disk of cold dust around it that gives off extra infrared light](https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A), making it seem brighter in mid-infrared wavelengths than it actually is. In 100μm infrared light, the dust is 16 times brighter than Vega. Oops. We probably shouldn't have used Vega to calibrate our R and I magnitude systems.
 
 # Every Filter Has Its Own Magnitude System
 
-Eventually, astronomers invented even more filters to capture different types of light. More filters meant more types of magnitudes! Some historical systems that didn't catch on but make fun acronyms include Jan Borgman's RQPNMLK, the Walraven WULBV, and Vytautas Straižys's Vilnius system UPXYZVS. For infrared in particular, there are many types of infrared light - so when new filters were needed to capture specific types of infrared light, since Johnson already used the letter I for a filter, astronomers decided to use the letters after I. Nowadays we've standardized on an alphabet soup of filters named UBVRIJHKLMN, each letter referring to a different filter - and H doesn't even come after J! Some telescopes have their own filters named rgb after red, green, and blue. Z and Y are filters, but W and X aren't. 
+Eventually, astronomers invented even more filters to capture different types of light. More filters meant more types of magnitudes! Some historical systems that didn't catch on but make fun acronyms include Jan Borgman's RQPNMLK, the Walraven WULBV, and Vytautas Straižys's Vilnius system UPXYZVS. For infrared in particular, there are many types of infrared light - and since Johnson already used the letter I for a filter, when new filters were needed to capture different types of infrared light, astronomers decided to use the letters after I. Nowadays we've standardized on an alphabet soup of filters named UBVRIJHKLMN, each letter referring to a different filter - and H doesn't even come after J! Some telescopes have their own filters named rgb after red, green, and blue. The lowercase is mandatory. Z and Y are filters, but W and X aren't. Each of those filters needs its own reference point for magnitude zero.
 
 The Hubble telescope and JWST have filters named with a different pattern - F230M is a "M"edium-width Filter centered around light with a wavelength of 230 nanometers. Thank you, NASA, for freeing us from the tyranny of single-letter filter names.
+
 
 # Just Measure Energy: The AB system
 
@@ -136,7 +137,7 @@ Sadly, J.B.Oke died in 2004. R.E. Schild nowadays [runs a blog where he complain
 
 </details>
 
-There's only one problem: an AB magnitude is a theoretical ideal that's subtly impossible to measure. An AB magnitude is supposed to measure energy from exactly one wavelength of light. [This paper](https://browse.arxiv.org/pdf/2206.00989.pdf) notes that in reality, it's impossible for a filter to block out all but one wavelength of light - for example, even on the most cutting edge space telescope we have, JWST's ultra-narrow F164N filter, designed to measure light at 1.644 µm, allows light anywhere from 1.654 µm to 1.634µm. Any filter will let through a range of wavelengths, and different wavelengths carry different amounts of energy. Replacing a filter with one that lets through a narrower range will give you a better AB magnitude estimate, but it'll also mean blocking more light, so the detector will detect less total energy - which could make you think the star is dimmer.
+There's a slight problem: an AB magnitude is a theoretical ideal that's subtly impossible to measure. An AB magnitude is supposed to measure energy from exactly one wavelength of light. [This paper](https://browse.arxiv.org/pdf/2206.00989.pdf) notes that in reality, it's impossible for a filter to block out all but one wavelength of light because of how waves work. Even on the most cutting edge space telescope we have, the ultra-narrow F164N filter on JWST, designed to measure light at 1.644 µm, allows light anywhere from 1.654 µm to 1.634µm. Any filter will let through a range of wavelengths, and different wavelengths carry different amounts of energy. Replacing a filter with one that lets through a narrower range will give you a better AB magnitude estimate, but it'll also mean blocking more light, so the detector will detect less total energy - which could make you think the star is dimmer.
 
 Even worse, different wavelengths having different energies means the type of detector a telescope uses matters. Some types of telescope sensors add up the total energy from those different-energy photons, while other sensors use the photoelectric effect to count the number of photons from space, unable to measure each one's exact wavelength. To compute the AB magnitude, which relies on energy, photon-counting detectors must then multiply the number of photons they got by the energy per photon they were expecting - but that means assuming every photon carries the same energy, when they don't. Different detectors will give slightly different AB magnitude measurements even if observing the same star using the exact same filter. Annoying! 
 
@@ -160,7 +161,13 @@ Also, the quest for a reference star which would be a constant brightness was do
 
 However, magnitudes are still useful for (1) taking photos of many many stars at once, and (2) comparing brightness between stars. In fact, brightness comparisons are exactly what we want when studying exoplanets, where we don't care about absolute brightness, just how much the brightness drops when a planet blocks some of the starlight. Magnitudes are also great shorthand for talking about brightness imprecisely, since saying "only 50 Janskys" doesn't exactly tell you how faint something is.
 
+<br />
+
 And that's how we measure brightness. It's very hard and light is complicated. The numbers may be just simple logarithms, but we should appreciate just how much effort goes into calibrating the scales, understanding the subtle nuances of definitions, knowing what a measurement doesn't capture, and fighting the messiness of the universe.
+
+Thanks, astronomers, for fighting the good fight. Whatever crazy-advanced detectors we come up with in the future, I'll rest easy knowing future generations will spend years double and triple-checking their measurements to ensure their Vega-calibrated systems will calibrate Vega to precisely magnitude zero... point zero three.
+
+<br />
 
 <details>
 <summary>Bibliography</summary>

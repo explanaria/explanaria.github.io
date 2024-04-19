@@ -163,7 +163,7 @@ However, magnitudes are still useful for (1) taking photos of many many stars at
 
 <br />
 
-And that's how we measure brightness. It's very hard and light is complicated. The numbers may be just simple logarithms, but we should appreciate just how much effort goes into calibrating the scales, understanding the subtle nuances of definitions, knowing what a measurement doesn't capture, and fighting the messiness of the universe.
+And that's how we measure brightness. Apparent magnitude isn't applicable everywhere, but it has accomplished an impressive goal: two thousand year old observations are still compatible with the modern magnitude system. All the ideas and terms we invented along the way, from apparent magnitude to absolute magnitude to radiant flux to luminous flux to wavelengths to Janskys, were needed because measuring is hard and light is complicated. The numbers may be just simple logarithms, but we should appreciate just how much effort goes into calibrating the scales, understanding the subtle nuances of definitions, knowing what a measurement doesn't capture, and fighting the messiness of the universe. That connection to the past, deliberately making sure our old observations fit into newly created measuring scales, is something sweet and worth celebrating.
 
 Thanks, astronomers, for fighting the good fight. Whatever crazy-advanced detectors we come up with in the future, I'll rest easy knowing future generations will spend years double and triple-checking their measurements to ensure their Vega-calibrated systems will calibrate Vega to precisely magnitude zero... point zero three.
 

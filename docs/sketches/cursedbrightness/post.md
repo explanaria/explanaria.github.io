@@ -118,7 +118,7 @@ But where to set the zero points for R and I? [As Cousins says](https://articles
 
 Eventually, astronomers invented even more filters to capture different types of light. More filters meant more types of magnitudes! Some historical systems that didn't catch on but make fun acronyms include Jan Borgman's RQPNMLK, the Walraven WULBV, and Vytautas Straižys's Vilnius system UPXYZVS. For infrared in particular, there are many types of infrared light - and since Johnson already used the letter I for a filter, when new filters were needed to capture different types of infrared light, astronomers decided to use the letters after I. Nowadays we've standardized on an alphabet soup of filters named UBVRIJHKLMN, each letter referring to a different filter - and H doesn't even come after J! Some telescopes have their own filters named rgb after red, green, and blue. The lowercase is mandatory. Z and Y are filters, but W and X aren't. Each of those filters needs its own reference point for magnitude zero.
 
-The Hubble telescope and JWST have filters named with a different pattern - F230M is a "M"edium-width Filter centered around light with a wavelength of 230 microns. Thank you, NASA, for freeing us from the tyranny of single-letter filter names.
+The Hubble telescope and JWST have filters named with a different pattern - F230M is a "M"edium-width Filter centered around light with a wavelength of 2.30 microns. Thank you, NASA, for freeing us from the tyranny of single-letter filter names.
 
 
 # Just Measure Energy: The AB system

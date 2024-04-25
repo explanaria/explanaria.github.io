@@ -148,7 +148,7 @@ body{
 }
 
 .examplelink article{
-    font-size: 1.5em;
+    font-size: 1.2em;
 
     display: grid;
     justify-content: center;
@@ -190,6 +190,10 @@ body{
 .examplepic{
     grid-row-start: 1;
     grid-column-start: 1;
+
+    display: grid; /*center the image */
+    justify-content: center;
+    padding: 0.25em;
 }
 .examplepic img{
     max-height: 200px;
@@ -204,13 +208,11 @@ body{
 .newexample::before{
     content: "New!";
     border: 1px solid #ccc;
-
     border-style: none solid solid none;
     border-bottom-right-radius: 8px;
     border-top-left-radius: 8px;
     background-color: #fff;
     text-align: left;
-
     position:absolute;
     left:0;
     padding: 0.5em;
@@ -228,6 +230,7 @@ body{
   }
   .examplelink {
     flex: 20%;
+    max-width:33%; /* stops one article from taking up a full row on the bottom */
   }
     .mainheader h1{
         font-size: 6em;

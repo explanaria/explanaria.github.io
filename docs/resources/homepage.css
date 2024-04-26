@@ -230,7 +230,7 @@ body{
   }
   .examplelink {
     flex: 20%;
-    max-width:33%; /* stops one article from taking up a full row on the bottom */
+    max-width:28%; /* stops one article from taking up a full row on the bottom */
   }
     .mainheader h1{
         font-size: 6em;

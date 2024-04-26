@@ -6,9 +6,9 @@ It sounds like a simple question, but when I tried to understand how we measure 
 
 Our modern star brightness scale is called <i>apparent magnitude</i>, and it's based on a vibes-based system from Ancient Greece that's two thousand years old. Ptolemy's <i>Almagest</i>, the ancient smash hit physics book that convinced the world the sun went around the earth for a thousand years or so, had a star catalog that sorted stars into six categories: "first magnitude" stars were the brightest, and "sixth magnitude" stars were the dimmest. While some stars were described as "above" or "below", to the <i>Almagest</i> magnitude meant one of several discrete categories and not a continuous scale.
 
-<aside>(Fun fact: The <i>Almagest</i> catalog mistook Uranus for a star, and the mistake stuck around [for thousands of years!](https://journals.sagepub.com/doi/10.1177/002182861304400401))</aside> 
+<aside>(Fun fact: The <i>Almagest</i> catalog mistook Uranus for a star, and the mistake stuck around [for thousands of years!](https://journals.sagepub.com/doi/10.1177/002182861304400401) Even more fun fact - Ptolemy [probably](https://www.universetoday.com/159885/the-historic-discussion-of-ptolemys-star-catalog/) copied most of his star tables from Hipparchus! Calculating when Uranus would be in that "star"'s position suggests that the catalog was compiled around 127 BCE, two hundred years before Ptolemy was born.)</aside> 
 
-Thanks to the Greeks, lower magnitude means brighter, and we've been stuck with that ever since. This led to some silly consequences in the modern scale - for example, what do you do if a star is brighter than magnitude 1? Use numbers lower than 1. In the modern apparent magnitude system, Sirius, the brighest star in the sky, is around magnitude -1.5, and a full moon is around magnitude -12.7.
+Thanks to the Greeks, lower magnitude means brighter, and we've been stuck with that ever since. This led to some silly consequences in the modern scale - for example, what do you do if a star is brighter than magnitude 1? Use numbers lower than 1. In the modern apparent magnitude system, Sirius, the brighest star in the sky, is around magnitude -1.5, and a full moon around magnitude -12.7.
 
 For over a thousand years, many star catalogs copied the <i>Almagest</i>'s magnitudes. One star catalog that didn't was written by 10th century Persian astronomer Al-Sūfī, who used his own observations and deserves credit for attention to detail and cross-checking stars with the same magnitude. Then, in the 1600s, a new invention called the telescope revealed new stars too faint to see by eye. While I suppose telescopes deserve a bit of credit for changing our understanding of the cosmos forever, they also made measuring brightness more complicated. 
 
@@ -24,8 +24,7 @@ Pogson's relative magnitude scale was popularized by the 1884 <i>Harvard Photome
 
 Using this scale, a magnitude 6 star is exactly 1/100 the brightness of a magnitude 1 star, and 100 times as bright as a magnitude 11 star. Magnitudes weren't just a finite list of categories anymore, but instead continuous numbers.
 
-How bright is a magnitude 2 star, compared to a magnitude 1 star, on this scale? If a +1 magnitude difference means dividing a magnitude 1 star's brightness by x, then a +1+1+1+1+1=+5 magnitude difference means multiplying by x\*x\*x\*x\*x. Since a difference of +5 magnitudes means dividing brightness by 100, we can solve x<sup>5</sup> = 100 to get x = 100<sup>1/5</sup> ≈ 2.51. So a magnitude 1 star is around 2.51 times brighter than a magnitude 2 star, and 2.51 * 2.51 times as bright as a magnitude 3 star.
-
+How bright is a magnitude 2 star, compared to a magnitude 1 star, on this scale? If a +1 magnitude difference means dividing a magnitude 1 star's brightness by x, then a +1+1+1+1+1=+5 magnitude difference means dividing by x\*x\*x\*x\*x. Since a difference of +5 magnitudes means dividing brightness by 100, we can solve x<sup>5</sup> = 100 to get x = 100<sup>1/5</sup> ≈ 2.51. So a magnitude 1 star is around 2.51 times brighter than a magnitude 2 star, and 2.51 * 2.51 times as bright as a magnitude 3 star.
 
 ## Pogson's reference point
 
@@ -38,7 +37,7 @@ According to the Wikipedia page for <i>Apparent Magnitude</i>, Pogson decided th
 <img src="./wrongwiki.png" alt="A screenshot of Wikipedia, showing the sentence 'The zero point of Pogson's scale was originally defined by assigning Polaris a magnitude of exactly 2'"></img>
 
 
-**🚨BREAKING NEWS🚨**
+**🚨 BREAKING NEWS 🚨**
 
 What?
 
@@ -46,7 +45,7 @@ What?
 
 How did Pogson calibrate his scale? I tracked down [Pogson's original 1857 paper, <i>Magnitudes of Thirty-six of the Minor Planets for the First Day of each Month of the Year</i>](https://doi.org/10.1093/mnras/17.1.12). There, Pogson says he based his work on magnitudes "taken from the Radcliffe Observations, from the zones of Argelander and Bessel, and from the star catalogues of Piazzi, Lalande, and Groombridge". No Polaris. Later, that paper makes a formula for the faintest magnitude you can see through a given aperture, and calculates that the dimmest star a human eye (with an 0.23" pupil) can see should be magnitude 6.0 on Argelander's scale. Then, he uses Argelander's magnitude 6.0 and the familiar ratio +5 magnitude = 1/100 brightness to define what he called "standard magnitudes":
 
-<img src="./pogsontable.png"></img>
+<img src="./pogsontable.png" alt="A screenshot from Pogson's paper showing a comparison table of his magnitude system versus Struve, Bond, Herschel, and Smyth. All five columns agree on magnitude 6.0, but diverge for fainter magnitudes. This shows Pogson defined his scale's reference point by assuming the faintest stars the human eye can see are magnitude 6.0, and not by using Polaris."></img>
 
 So Pogson never defined his scale using Polaris. In reality, Pogson actually calibrated his scale using the idea that magnitude 6.0 is around the faintest the naked eye can see, which many star catalogs agreed on at the time.
 
@@ -56,19 +55,19 @@ Where did this anonymous Wikipedia editor get the false idea that Pogson defined
 
 Then, in J.B. Hearnshaw's book <i>The Measurement of Starlight</i>, I saw something. Remember how the <i>Harvard Photometry</i> star catalog popularized Pogson's scale? That star catalog did use "Polaris = Magnitude 2.0" in the early years! But even if we give the credit for that choice to the director of the Harvard Observatory, Edward Charles Pickering, he's not Pogson. In fact, within a year the <i>Harvard Photometry</i> catalog switched to "Polaris = Magnitude 2.15" to better agree with Argelander, then eventually "Polaris = 2.12". In practice, the Harvard catalogers used 100 stars around fifth magnitude close to Polaris to define a zero point. Pogson never used "Polaris = Magnitude 2.0", and Wikipedia is still wrong.
 
-**🚨BREAKING NEWS🚨**
+**🚨 BREAKING NEWS 🚨**
 
 What?
 
 ...Ahem. We regret to inform you that modern measurements show Polaris is actually 3 stars in a trenchcoat, and the biggest one changes brightness in a 4-day cycle. The Harvard folks hadn't realized Polaris was a variable star. Good thing we don't use Polaris as a standard.
 
-## The Johnson UBV system (1953)
+## The Johnson UBV system
 
 After Polaris, according to Wikipedia, we decided the star Vega will be the reference point! In 1953, Harold Johnson and William Morgan published a paper defining a new system called <i>UBV</i> for measuring magnitude in 3 ways, using filters that let through only ultraviolet (U), blue (B), or visible (V) wavelengths of light. 
 
 The idea of multiple types of magnitudes for different types of light wasn't new - in fact, Johnson even cites <a href="https://articles.adsabs.harvard.edu/pdf/1943ApJ....98...20S">Joel Stebbins and A.E. Whitford</a> who introduced the first UBV system in 1943 - but Johnson's system is still in use today. More importantly: stars emit different light in different wavelengths, so each magnitude type uses a different zero point. Each filter's zero point, according to Wikipedia, is simply however bright Vega is in that filter. And so this magnitude system is called <i>Vega normalized</i> to this day, and all was well in the world.
 
-**🚨BREAKING NEWS🚨**
+**🚨 BREAKING NEWS 🚨**
 
 What? 
 
@@ -80,7 +79,7 @@ font-size: 90%;
 
 ...Ahem. We regret to inform you that the Vega normalized system isn't normalized to Vega. In Johnson's UVB system, Vega's magnitude isn't 0 in U, or B, or V. As the SIMBAD star database [shows](https://simbad.cds.unistra.fr/simbad/sim-basic?Ident=vega&submit=SIMBAD+search), Vega has magnitude 0.03:
 
-<img src="./vegasimbad.png" alt="A picture of astronomy database SIMBAD, showing Vega with magnitude 0.03 in V"></img>
+<img src="./vegasimbad.png" alt="A picture of astronomy database SIMBAD, showing Vega with magnitude 0.03 in the V filter. Not 0."></img>
 
 What?! Astronomers, why<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y<sm>y</sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm></sm>
 
@@ -94,7 +93,7 @@ So Vega is magnitude 0.03 in V because it just so happens to be 0.03 magnitudes 
 
 And that's how we measure brightness, and all was well in the world.
 
-**🚨BREAKING NEWS🚨**
+**🚨 BREAKING NEWS 🚨**
 
 What?
 
@@ -108,11 +107,11 @@ Eventually Johnson extended his UBV system to include two more wavelengths and f
 
 But where to set the zero points for R and I? [As Cousins says](https://articles.adsabs.harvard.edu/pdf/1976MmRAS..81...25C), he decided to follow Johnson's lead and set the zeroes so that the two color indices (V-R) and (R-I) are zero for a star of the same spectral type as Vega (which is A0 V). Makes sense. We know a lot about Vega. ["Vega is the archetypical normal star"](https://articles.adsabs.harvard.edu/pdf/1979SAOSR.387.....K), wrote one paper.
 
-**🚨BREAKING NEWS🚨**
+**🚨 BREAKING NEWS 🚨**
 
 ...What?
 
-...Ahem. We regret to inform you that Vega [has a non-archetypical and abnormal disk of cold dust around it that gives off extra infrared light](https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A), making it seem brighter in mid-infrared wavelengths than it actually is. In 100μm infrared light, the dust is 16 times brighter than Vega. Oops. We probably shouldn't have used Vega to calibrate our R and I magnitude systems.
+...Ahem. We regret to inform you that Vega [has a non-archetypical and abnormal disk of cold dust around it that gives off extra infrared light](https://articles.adsabs.harvard.edu/pdf/1984ApJ...278L..23A), making it seem brighter in mid-infrared wavelengths than it actually is. In 100μm infrared light, the dust is 16 times brighter than Vega. Oops. We probably shouldn't have used Vega to calibrate our magnitude systems.
 
 # Every Filter Has Its Own Magnitude System
 
@@ -120,8 +119,7 @@ Eventually, astronomers invented even more filters to capture different types of
 
 The Hubble telescope and JWST have filters named with a different pattern - F230M is a "M"edium-width Filter centered around light with a wavelength of 2.30 microns. Thank you, NASA, for freeing us from the tyranny of single-letter filter names.
 
-
-# Just Measure Energy: The AB system
+# Just Measure Energy: The AB System
 
 At this point, the stars are too imprecise for us to measure the stars with.
 
@@ -131,21 +129,24 @@ So we decided math will be the reference point! It's 1983. [New system: the <i>A
 
 I really hope AB doesn't stand for ABsolute. It would be pretty confusing if an AB magnitude meant <i>apparent absolute magnitude</i> when <i>absolute magnitude</i> already means something.
 
-Let me check the paper... hmmm... it... doesn't actually say what AB stands for. [The 1983 paper defining the AB system](https://articles.adsabs.harvard.edu/pdf/1983ApJ...266..713O) calls their Vega measurements "AB79" and cites AB69. I think AB69 means measurements from a 1970 paper by J.B.Oke and R.E. Schild titled <i>The absolute spectral energy distribution of alpha lyrae</i> where they describe how in 1969 the astronomers heated up pure platinum and copper until it melted so they could compare the red-hot glow to Vega's light, and reported Vega's spectrum. Badass... but the 1970 paper doesn't actually use the acronym AB anywhere. The world will never know what AB stands for.
+Let me check... hmmm... it... doesn't actually say what AB stands for. [The 1983 paper defining the AB system](https://articles.adsabs.harvard.edu/pdf/1983ApJ...266..713O) calls their Vega measurements "AB79" and cites AB69. I think AB69 means measurements from a 1970 paper by J.B.Oke and R.E. Schild titled <i>The absolute spectral energy distribution of alpha lyrae</i> where they describe how in 1969 the astronomers heated up pure platinum and copper until it melted so they could compare the red-hot glow to Vega's light, and reported Vega's spectrum. Badass... but the 1970 paper doesn't actually use the acronym AB anywhere. The world will never know what AB stands for.
 
 Sadly, J.B.Oke died in 2004. R.E. Schild nowadays [runs a blog where he complains black holes aren't real](https://thejournalofcosmology.com/indexVol25CONTENTS.htm).
 
 </details>
 
-There's a slight problem: an AB magnitude is a theoretical ideal that's subtly impossible to measure. An AB magnitude is supposed to measure energy from exactly one wavelength of light. [This paper](https://browse.arxiv.org/pdf/2206.00989.pdf) notes that in reality, it's impossible for a filter to block out all but one wavelength of light because of how waves work. Even filters on the most cutting edge space telescope we have, such as the ultra-narrow F164N filter on JWST, is designed to measure light at 1.644 µm but allows light anywhere from 1.654 µm to 1.634µm. Any filter will let through a range of wavelengths, and different wavelengths carry different amounts of energy. Replacing a filter with one that lets through a narrower range will give you a better AB magnitude estimate, but it'll also mean blocking more light, so the detector will detect less total energy - which could make you think the star is dimmer.
+Nowadays, many astronomers directly measure energy. Radio and X-ray astronomers usually report data in units of ergs or Janskys, both of which measure energy with slightly silly sounding names. These can be directly converted into AB magnitudes using the familiar +5 mag = 1/100 energy ratio and the chosen zero point.
 
-Even worse, different wavelengths having different energies means the type of detector a telescope uses matters. Some types of telescope sensors add up the total energy from those different-energy photons, while other sensors use the photoelectric effect to count the number of photons from space, unable to measure each one's exact wavelength. To compute the AB magnitude, which relies on energy, photon-counting detectors must then multiply the number of photons they got by the energy per photon they were expecting - but that means assuming every photon carries the same energy, when they don't. Different detectors will give slightly different AB magnitude measurements even if observing the same star using the exact same filter. Annoying! 
+There's a slight problem: an AB magnitude is a theoretical ideal that's subtly impossible to measure. An AB magnitude is supposed to measure energy from exactly one wavelength of light. [This paper](https://browse.arxiv.org/pdf/2206.00989.pdf) notes that in reality, it's impossible for a filter to block out all but one wavelength of light because of how waves work. Even an ultra-narrow filter on the most cutting edge space telescope we have, such as the F164N filter on JWST designed to measure light at 1.644 µm, allows light anywhere from 1.654 µm to 1.634µm. Any filter will let through a range of wavelengths, and different wavelengths carry different amounts of energy. 
+Sometimes astronomers assume that every wavelength in the range was detected the same amount, even if that might not be true thanks to absorption lines or space dust or a star's spectrum. Replacing a filter with one that lets through a narrower wavelength range will give a better AB magnitude estimate, but it will also mean blocking more light, so the detector will detect less total energy - which could mean a more noisy measurement or make it harder to measure faint things.
+
+Even worse, different wavelengths having different energies means the type of detector a telescope uses matters. Some types of telescope sensors add up the total energy from those different-energy photons, but many sensors use the photoelectric effect to count the number of photons from space, unable to measure each one's exact wavelength or energy. To compute the AB magnitude, which relies on energy, photon-counting detectors must then multiply the number of photons they got by the energy per photon they were expecting - but that means assuming every photon carries the same energy, when they don't. Different detectors will give slightly different energy measurements even if observing the same star using the exact same filter. Annoying! 
 
 <br />
 
 So that's how we measure brightness. Finally, I can go outside and look for some bright, low-magnitude objects in the sky.
 
-**🚨BREAKING NEWS🚨**
+**🚨 BREAKING NEWS 🚨**
 
 ...What?
 

@@ -30,10 +30,11 @@
       osc.connect(audioCtx.destination);
 
 
+    let noteFrequency = 400;
 
     function play(){
 
-        let customwavebuffer = createCustomWaveBuffer(440);
+        let customwavebuffer = createCustomWaveBuffer(noteFrequency);
 
         let playbackRate = 1; //1x speed
         const sampleSource = new AudioBufferSourceNode(audioCtx, {
@@ -44,13 +45,21 @@
         sampleSource.start(time);
         //no need to stop, will automatically start
 
+        funcgrapher.startPlayback(noteFrequency);
+
     }
 
     function customwave(t, frequency){
         return Math.sin(t * (frequency + t * 50 + Math.sin(t * 30)) * Math.PI * 2);
     }
 
-    function compilecode(){
+    function setFunc(funcText){
+        let elem = document.getElementById("wavecode");
+        elem.innerText = funcText;
+        compileCode();
+    }
+
+    function compileCode(){
         let elem = document.getElementById("wavecode");
         elem.style.border = "";
 
@@ -68,6 +77,7 @@
                 throw new Error("This function needs to output a number!");
             }
             customwave = wavefunction; //overwrite old one
+            funcgrapher.renderNewWave();
         
         }catch(e){
             //console.warn(e);
@@ -77,6 +87,7 @@
                 elem.innerHTML = "&nbsp;&nbsp;"
             }
         }
+        
     }
 
     function createCustomWaveBuffer(frequency){
@@ -107,9 +118,124 @@
     window.TWOPI = Math.PI * 2;
     window.TAU = Math.PI * 2;
     window.pow = Math.pow;
-    window.square = (t) => (t % (Math.PI*2) > Math.PI ? 2/PI : -2/PI); //this square wave has period 2pi, like sin(). it's also scaled down to match the same average energy as sin()
+
+    let square_vol_factor = 0.5/(2*PI); //integrating sin^2 from 0 to 2pi is probably 1. integrating 1^2 is 2pi. Todo: check this
+
+    window.square = (t) => (t % (Math.PI) > Math.PI ? square_vol_factor : -square_vol_factor); //this square wave has period 2pi, like sin(). it's also scaled down to match the same average energy as sin()
     window.min = Math.min;
     window.max = Math.max;
+    window.floor = Math.floor;
+    window.ceil = Math.ceil;
+
+    class WaveVisualizationCanvas{
+        constructor(){
+            window.addEventListener("load", this.init.bind(this));
+            if(document.readyState == "complete")this.init();
+        }
+        init(){
+            this.canvas = document.getElementById("funcgrapher");
+            this.ctx = this.canvas.getContext('2d');
+
+
+            this.waveAmplitude = 1;
+            this.waveDisplayAmplitude = Math.min(100, this.canvas.height/2); //pixels
+
+            this.width = 800; //in pixels
+            this.durationOfVisualizedWave = 2; //2 seconds
+            this.XScale = this.width / this.durationOfVisualizedWave;
+
+            this.canvas.width = this.width;
+            this.centerHeight = this.canvas.height/2;
+
+
+            this.currentTimeS = 0;
+            this.timeOfLastPlay = 0;
+            this.visualizationFrequency = this.chooseVisualizationFrequency(440);
+
+            this.isPlaying = false;
+
+            //do one start render
+            this.canvas.width = this.canvas.width; //clear canvas
+            this.renderFromWave(this.visualizationFrequency);
+
+            this.update(0); //begin animation loop
+        }
+        drawSample(currentTime, sample){
+            this.ctx.moveTo(currentTime * this.XScale, this.centerHeight);
+
+            //In a canvas, +y is down, but to match math I want bigger numbers to go upwards. the negative sign before sample makes bigger numbers go up
+            this.ctx.lineTo(currentTime * this.XScale, this.centerHeight - sample / this.waveAmplitude *this.waveDisplayAmplitude);
+
+        
+        }
+        renderFromWave(frequency){
+
+           let sampleRate = this.canvas.width * 3;
+           let duration = this.durationOfVisualizedWave;
+           let numSamples = parseInt(sampleRate * duration);
+
+
+           this.ctx.strokeStyle = "blue";
+           this.ctx.beginPath();
+           for(let i=0; i<numSamples; i++){
+                let currentTime = i / sampleRate;
+                //sample our function!
+                let sample = customwave(currentTime, frequency);
+                this.drawSample(currentTime, sample);
+           }
+           this.ctx.stroke();
+        }
+
+        renderNewWave(){
+            this.canvas.width = this.canvas.width; //clear canvas
+            this.renderFromWave(this.visualizationFrequency);
+        }
+
+        update(t){
+
+           this.currentTimeS = t;
+
+           if(this.isPlaying){
+
+                //currently: renders every frame when an animation is playing.
+                //todo: render only once, when the user changes the function, then save as an image and display that
+                this.canvas.width = this.canvas.width; //clear canvas
+                this.renderNewWave();
+        
+                //draw red vertical line for playback
+                let timeSinceLastPlay = (t - this.timeOfLastPlay)/1000;
+
+                this.ctx.strokeStyle = "red";
+                this.ctx.lineWidth = 5;
+                this.ctx.beginPath();
+
+                this.ctx.moveTo(timeSinceLastPlay * this.XScale, this.centerHeight - this.waveDisplayAmplitude);
+                this.ctx.lineTo(timeSinceLastPlay * this.XScale, this.centerHeight + this.waveDisplayAmplitude);
+                this.ctx.stroke();
+
+                if(timeSinceLastPlay > this.durationOfVisualizedWave + 0.1){ //extra time so we don't freeze with a red arrow on screen
+                    this.isPlaying = false;
+                }
+            }
+            window.requestAnimationFrame(this.update.bind(this));
+        }
+        startPlayback(noteFrequency){
+            this.timeOfLastPlay = this.currentTimeS;
+            this.visualizationFrequency = this.chooseVisualizationFrequency(noteFrequency);
+            this.isPlaying = true; //start the sideways red play bar animation
+        }
+        chooseVisualizationFrequency(playedFrequency){
+            let iterations = 0;
+            while(playedFrequency > this.canvas.width/100 && iterations < 5){
+                playedFrequency /= 2;
+                iterations += 1;
+            }
+            return playedFrequency;
+        }
+    }
+
+    let funcgrapher = new WaveVisualizationCanvas();
+    window.funcgrapher = funcgrapher;
 
 
     </script>
@@ -134,17 +260,29 @@
 <div class="definedfunction">
     function customwave(t, frequency){<br>
         return 
-    <span id="wavecode" class="editregion" contenteditable="true" oninput="compilecode()"> 
+    <span id="wavecode" class="editregion" contenteditable="true" oninput="compileCode()"> 
     sin(t * (frequency + t * 50 + Math.sin(t * 30)) * PI * 2);
     </span><br>
     }
 </div>
+
+<canvas id="funcgrapher" style="width: 80vw;"></canvas>
 
 <aside>
 You can edit <span class="editregion">this code</span>! Click play to hear the sound of the mathematical function you generated. <br>
 
 You can also use these pre-made functions: sin(), cos(), square(), PI = 3.14159..., TWOPI = TAU = 6.28..., pow(a,b) = a^b <br>
 The minimum needed to hear a sound is <span class="definedfunction">sin(t * frequency * TWOPI)</span>. Try messing around with frequency!
+
+<br>
+
+Presets:
+</br>
+
+<button onclick="setFunc('sin(t * frequency * PI * 2);')">Sine</button>
+<button onclick="setFunc('(t * frequency) % 1')">Sawtooth</button>
+<button onclick="setFunc('square(t * frequency* PI * 2)')">Square</button>
+<button onclick="setFunc('sin(t * (frequency + t * 50 + Math.sin(t * 30)) * PI * 2);')">Spooky Ghost Noise</button>
 </aside>
 
 </body>

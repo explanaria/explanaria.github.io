@@ -8,6 +8,7 @@
 
 
 
+    <link type="text/css" rel="stylesheet" href="../resources/articlestyle.css" />
 
     <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
@@ -17,6 +18,13 @@
 
 
     <style>
+
+    button{
+        font-size: 1em;
+        padding: 1em;
+        border-radius: 2em;
+    }
+
     .editregion{
         background-color: rgba(255,255,170,0.8);
         min-width: 10em;
@@ -317,16 +325,21 @@
 
 <canvas id="funcgrapher" style="width: 80vw;"></canvas>
 
+
 <aside>
 You can edit <span class="editregion">this code</span>! Click play to hear the sound of the mathematical function you generated. <br>
 
+<br>Or, use your keyboard (or click the keys) to play your wave:<br>
+<div class="piano-container" id="piano-container">
+    <div class="octave" id="octave-1"></div>
+    <div class="octave" id="octave-2"></div>
+</div>
+
 You can also use these pre-made functions: sin(), cos(), square(), PI = 3.14159..., TWOPI = TAU = 6.28..., pow(a,b) = a^b <br>
-The minimum needed to hear a sound is <span class="definedfunction">sin(t * frequency * TWOPI)</span>. Try messing around with frequency!
+The minimum needed to hear a sound is <span class="definedfunction">sin(t * frequency * TWOPI)</span>. Try messing around with frequency that changes over time!
 
-<br>
 
-Presets:
-</br>
+<h5>Presets:</h5>
 
 <button onclick="setFunc('sin(t * frequency * PI * 2);')">Sine</button>
 <button onclick="setFunc('(t * frequency) % 1')">Sawtooth</button>
@@ -335,11 +348,6 @@ Presets:
 <button onclick="setFunc('max(1-0.5*t, 0) * sin(t * frequency * TWOPI + 0.8 * max(1-0.5*t, 0) * TWOPI * sin(t * frequency * TWOPI))')">FM Synthesis Piano</button>
 
 </aside>
-<br>You can also use your keyboard (or click the keys) to play your wave:<br>
-    <div class="piano-container" id="piano-container">
-        <div class="octave" id="octave-1"></div>
-        <div class="octave" id="octave-2"></div>
-    </div>
 
     <script>
 

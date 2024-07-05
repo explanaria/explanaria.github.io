@@ -1,19 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <link rel="icon" href="../resources/favicon.ico" sizes="any">
-  <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
-  <title>Explanarian - Synth Creator</title>
-  
-  
-  
+    <meta charset="utf-8">
+    <link rel="icon" href="../resources/favicon.ico" sizes="any">
+    <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
+    <title>Explanarian - Synth Creator</title>
 
-  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+
+
+
+    <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
 
 
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+
+    <style>
+    .editregion{
+        background-color: rgba(255,255,170,0.8);
+        min-width: 10em;
+    }
+    .definedfunction{
+        font-family: monospace;
+        padding: 1em;
+        font-size: 1.3em;
+    }
+
+
+    .piano-container{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .octave{
+        display: grid;
+        grid-auto-flow: column;
+        justify-content: center;
+        
+    }
+    .key{
+        width: 2em;
+        height:4em;
+        border: 1px solid black;
+        display:grid;
+        justify-items: center;
+    }
+    .key:hover{
+       transform: scale(1.1);
+    }
+    .black{
+        background-color: black;
+        color:white;
+        height: 3em;
+        width: 1.2em;
+    }
+    .white{
+        background-color: white;
+        color:black;
+    }
+    .pressedkey{
+        background-color: hsla(240, 90%, 70%);
+        color:black;
+    }
+    .white .pressedkey{
+        background-color: hsla(240, 90%, 70%);
+        color:white;
+    }
+
+    </style>
 
     <script>
 
@@ -24,15 +80,15 @@
 
     let time = 0;
       const osc = new OscillatorNode(audioCtx, {
-        frequency: 380,
+        frequency: 440,
         type: "sine",
       });
       osc.connect(audioCtx.destination);
 
 
-    let noteFrequency = 400;
+    let noteFrequency = 440;
 
-    function play(){
+    function play(noteFrequency){
 
         let customwavebuffer = createCustomWaveBuffer(noteFrequency);
 
@@ -100,13 +156,15 @@
 
 
         let buff = audioCtx.createBuffer(1, numSamples, sampleRate);
+
+        const volumeReduceConstant = 1/5; // if playing multiple notes at once, they add. If that added wave goes beyond |wave|=1, it causes peaking and sounds bad. Scaling them means it takes five notes to reach a max amplitude of 1
         
         for (let channelNum = 0; channelNum < buff.numberOfChannels; channelNum++) {
             const channel = buff.getChannelData(channelNum);
 
             for(let i=0; i<numSamples; i++){
                 //sample our function!
-                channel[i] = customwave(i / sampleRate, frequency);
+                channel[i] = volumeReduceConstant * customwave(i / sampleRate, frequency);
             }
         }
         return buff;
@@ -119,9 +177,9 @@
     window.TAU = Math.PI * 2;
     window.pow = Math.pow;
 
-    let square_vol_factor = 0.5/(2*PI); //integrating sin^2 from 0 to 2pi is probably 1. integrating 1^2 is 2pi. Todo: check this
+    let square_vol_factor = PI/(2*PI); //integrating sin^2 from 0 to 2pi is pi. integrating 1^2 is 2pi. Todo: check this
 
-    window.square = (t) => (t % (Math.PI) > Math.PI ? square_vol_factor : -square_vol_factor); //this square wave has period 2pi, like sin(). it's also scaled down to match the same average energy as sin()
+    window.square = (t) => (t % (2*Math.PI) > Math.PI ? square_vol_factor : -square_vol_factor); //this square wave has period 2pi, like sin(). it's also scaled down to match the same average energy as sin()
     window.min = Math.min;
     window.max = Math.max;
     window.floor = Math.floor;
@@ -175,7 +233,7 @@
            let numSamples = parseInt(sampleRate * duration);
 
 
-           this.ctx.strokeStyle = "blue";
+           this.ctx.strokeStyle = "hsl(240, 90%, 70%)";
            this.ctx.beginPath();
            for(let i=0; i<numSamples; i++){
                 let currentTime = i / sampleRate;
@@ -225,8 +283,10 @@
             this.isPlaying = true; //start the sideways red play bar animation
         }
         chooseVisualizationFrequency(playedFrequency){
+
+            playedFrequency /= 100; //take 440 to 22
             let iterations = 0;
-            while(playedFrequency > this.canvas.width/100 && iterations < 5){
+            while(playedFrequency > this.canvas.width/50 && iterations < 4){
                 playedFrequency /= 2;
                 iterations += 1;
             }
@@ -240,22 +300,11 @@
 
     </script>
 
-    <style>
-    .editregion{
-        background-color: rgba(255,255,170,0.8);
-        min-width: 10em;
-    }
-    .definedfunction{
-        font-family: monospace;
-        padding: 1em;
-        font-size: 1.3em;
-    }
-    </style>
 </head>
 
 <body>
 
-<button onclick="play()">Play!</button>
+<button onclick="play(440)">Play!</button>
 
 <div class="definedfunction">
     function customwave(t, frequency){<br>
@@ -283,7 +332,68 @@ Presets:
 <button onclick="setFunc('(t * frequency) % 1')">Sawtooth</button>
 <button onclick="setFunc('square(t * frequency* PI * 2)')">Square</button>
 <button onclick="setFunc('sin(t * (frequency + t * 50 + Math.sin(t * 30)) * PI * 2);')">Spooky Ghost Noise</button>
+<button onclick="setFunc('max(1-0.5*t, 0) * sin(t * frequency * TWOPI + 0.8 * max(1-0.5*t, 0) * TWOPI * sin(t * frequency * TWOPI))')">FM Synthesis Piano</button>
+
 </aside>
+<br>You can also use your keyboard (or click the keys) to play your wave:<br>
+    <div class="piano-container" id="piano-container">
+        <div class="octave" id="octave-1"></div>
+        <div class="octave" id="octave-2"></div>
+    </div>
+
+    <script>
+
+    function makePiano(){
+        let container = document.getElementById("piano-container");
+
+        let letters = 'q2w3er5t6y7u' + 'zsxdcvgbhnjm';
+        let isBlack = [false, true, false, true, false, false, true, false, true, false, true, false];
+
+
+        let octave1 = document.getElementById("octave-1");
+        let octave2 = document.getElementById("octave-2");
+        for(let i=0;i<24;i++){
+            let container = i >= 12 ? octave2 : octave1;
+
+            let noteFreq = 440/2 * Math.pow(2, 1 + i/12);
+
+            let keyboardButton = letters[i];
+
+            let key = document.createElement("span");
+            key.innerHTML = keyboardButton;
+            if(isBlack[i % 12]){
+                key.className = "key black";
+            }else{
+                key.className = "key white";
+            }
+            container.appendChild(key);
+
+            key.addEventListener("mousedown", (event) => {
+                play(noteFreq)
+                pressKeyAnimation(key)
+            });
+            key.addEventListener("touchstart", (event) => {
+                play(noteFreq)
+                pressKeyAnimation(key)
+            });
+            window.addEventListener("keydown", (event) => {
+                if(event.key == keyboardButton){
+                    play(noteFreq);
+                    pressKeyAnimation(key);
+                }
+            });
+        }
+    }
+
+    window.addEventListener("load", makePiano);
+    if(document.readyState == "complete")makePiano();
+
+    function pressKeyAnimation(key){
+        key.classList.add("pressedkey");
+        window.clearTimeout(key.letGoTimeout);
+        key.letGoTimeout = window.setTimeout(() => key.classList.remove("pressedkey"), 100);
+    }
+    </script>
 
 </body>
 

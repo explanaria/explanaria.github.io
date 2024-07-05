@@ -6,12 +6,10 @@
     <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
     <title>Explanarian - Synth Creator</title>
 
-
-
-    <link type="text/css" rel="stylesheet" href="../resources/articlestyle.css" />
-
     <script data-goatcounter="https://explanaria.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+    <link type="text/css" rel="stylesheet" href="../resources/articlestyle.css" />
 
 
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -33,6 +31,11 @@
         font-family: monospace;
         padding: 1em;
         font-size: 1.3em;
+    }
+    @media screen and (max-width: 600px){
+        .definedfunction{
+            font-size: 1em;
+        }
     }
 
 
@@ -114,7 +117,7 @@
     }
 
     function customwave(t, frequency){
-        return Math.sin(t * (frequency + t * 50 + Math.sin(t * 30)) * Math.PI * 2);
+        return sin(t * (frequency + t * 50 + sin(t * 30)) * Math.PI * 2);
     }
 
     function setFunc(funcText){
@@ -312,42 +315,45 @@
 
 <body>
 
-<button onclick="play(440)">Play!</button>
 
-<div class="definedfunction">
-    function customwave(t, frequency){<br>
-        return 
-    <span id="wavecode" class="editregion" contenteditable="true" oninput="compileCode()"> 
-    sin(t * (frequency + t * 50 + Math.sin(t * 30)) * PI * 2);
-    </span><br>
-    }
-</div>
+    <a href="../index.html" role="button"><img src="../examples/BackButton.svg" class="exp-backbtn" alt="Back"></img></a>
 
-<canvas id="funcgrapher" style="width: 80vw;"></canvas>
+    <button onclick="play(440)">Play!</button>
 
+    <div class="definedfunction">
+        function customwave(t, frequency){<br>
+            return 
+        <span id="wavecode" class="editregion" contenteditable="true" oninput="compileCode()"> 
+        sin(t * (frequency + t * 50 + sin(t * 30)) * PI * 2);
+        </span><br>
+        }
+    </div>
 
-<aside>
-You can edit <span class="editregion">this code</span>! Click play to hear the sound of the mathematical function you generated. <br>
-
-<br>Or, use your keyboard (or click the keys) to play your wave:<br>
-<div class="piano-container" id="piano-container">
-    <div class="octave" id="octave-1"></div>
-    <div class="octave" id="octave-2"></div>
-</div>
-
-You can also use these pre-made functions: sin(), cos(), square(), PI = 3.14159..., TWOPI = TAU = 6.28..., pow(a,b) = a^b <br>
-The minimum needed to hear a sound is <span class="definedfunction">sin(t * frequency * TWOPI)</span>. Try messing around with frequency that changes over time!
+    <canvas id="funcgrapher" style="width: 80vw;"></canvas>
 
 
-<h5>Presets:</h5>
+    <aside>
+    You can edit <span class="editregion">this code</span>! Click play to hear the sound of the mathematical function you generated. <br>
 
-<button onclick="setFunc('sin(t * frequency * PI * 2);')">Sine</button>
-<button onclick="setFunc('(t * frequency) % 1')">Sawtooth</button>
-<button onclick="setFunc('square(t * frequency* PI * 2)')">Square</button>
-<button onclick="setFunc('sin(t * (frequency + t * 50 + Math.sin(t * 30)) * PI * 2);')">Spooky Ghost Noise</button>
-<button onclick="setFunc('max(1-0.5*t, 0) * sin(t * frequency * TWOPI + 0.8 * max(1-0.5*t, 0) * TWOPI * sin(t * frequency * TWOPI))')">FM Synthesis Piano</button>
+    <br>Or, use your keyboard (or click the keys) to play your wave:<br>
+    <div class="piano-container" id="piano-container">
+        <div class="octave" id="octave-1"></div>
+        <div class="octave" id="octave-2"></div>
+    </div>
 
-</aside>
+    You can also use these pre-made functions: sin(), cos(), square(), PI = 3.14159..., TWOPI = TAU = 6.28..., pow(a,b) = a^b <br>
+    The minimum needed to hear a sound is <span class="definedfunction">sin(t * frequency * TWOPI)</span>. Try messing around with frequency that changes over time!
+
+
+    <h5>Presets:</h5>
+
+    <button onclick="setFunc('sin(t * frequency * PI * 2);')">Sine</button>
+    <button onclick="setFunc('(t * frequency) % 1')">Sawtooth</button>
+    <button onclick="setFunc('square(t * frequency* PI * 2)')">Square</button>
+    <button onclick="setFunc('sin(t * (frequency + t * 50 + sin(t * 30)) * PI * 2);')">Spooky Ghost Noise</button>
+    <button onclick="setFunc('max(1-0.5*t, 0) * sin(t * frequency * TWOPI + 0.8 * max(1-0.5*t, 0) * TWOPI * sin(t * frequency * TWOPI))')">FM Synthesis Piano</button>
+
+    </aside>
 
     <script>
 

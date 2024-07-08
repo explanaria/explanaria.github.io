@@ -168,7 +168,7 @@
 
         let buff = audioCtx.createBuffer(1, numSamples, sampleRate);
 
-        const volumeReduceConstant = 1/5; // if playing multiple notes at once, they add. If that added wave goes beyond |wave|=1, it causes peaking and sounds bad. Scaling them means it takes five notes to reach a max amplitude of 1
+        const volumeReduceConstant = 1/10; // if playing multiple notes at once, they add. If that added wave goes beyond |wave|=1, it causes peaking and sounds bad. Scaling them means it takes five notes to reach a max amplitude of 1
         
         for (let channelNum = 0; channelNum < buff.numberOfChannels; channelNum++) {
             const channel = buff.getChannelData(channelNum);
@@ -186,6 +186,8 @@
     window.PI = Math.PI;
     window.TWOPI = Math.PI * 2;
     window.TAU = Math.PI * 2;
+    window.π = Math.PI;
+    window.τ = Math.PI * 2;
     window.pow = Math.pow;
 
     let square_vol_factor = PI/(2*PI); //integrating sin^2 from 0 to 2pi is pi. integrating 1^2 is 2pi. Todo: check this
@@ -195,6 +197,7 @@
     window.max = Math.max;
     window.floor = Math.floor;
     window.ceil = Math.ceil;
+    window.sqrt = Math.sqrt;
 
     class WaveVisualizationCanvas{
         constructor(){
@@ -341,8 +344,8 @@
         <div class="octave" id="octave-2"></div>
     </div>
 
-    You can also use these pre-made functions: sin(), cos(), square(), PI = 3.14159..., TWOPI = TAU = 6.28..., pow(a,b) = a^b <br>
-    The minimum needed to hear a sound is <span class="definedfunction">sin(t * frequency * TWOPI)</span>. Try messing around with frequency that changes over time!
+    You can also use these pre-made functions: sin(), cos(), square(), , TWOPI = TAU = 6.28..., pow(a,b) = a^b, min(), max(), ceil(), floor(), sqrt(). π = PI = 3.14159... and τ = TWOPI = TAU = 6.28... are constants.
+    The minimum needed to hear a sound is <span class="definedfunction">sin(t * frequency * TWOPI)</span>. Try messing around with frequency that changes over time, or multiplying by a decreasing function so the sound fades out over time!
 
 
     <h5>Presets:</h5>

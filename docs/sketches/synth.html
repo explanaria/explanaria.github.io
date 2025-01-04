@@ -124,6 +124,19 @@
         let elem = document.getElementById("wavecode");
         elem.innerText = funcText;
         compileCode();
+
+    }
+
+    function setHash(wavefunction){
+        location.hash = wavefunction;
+    }
+    function applyHash(){
+        //take hash from location.hash and insert into code
+        let elem = document.getElementById("wavecode");
+
+        let string = location.hash.substring(1);
+        string = string.replaceAll("%20"," ");
+        elem.innerText = string;
     }
 
     function compileCode(){
@@ -145,6 +158,7 @@
             }
             customwave = wavefunction; //overwrite old one
             funcgrapher.renderNewWave();
+            setHash(elem.innerText)
         
         }catch(e){
             //console.warn(e);
@@ -402,8 +416,13 @@
         }
     }
 
-    window.addEventListener("load", makePiano);
-    if(document.readyState == "complete")makePiano();
+    function init(){
+        makePiano();
+        if(location.hash)applyHash();
+    }
+
+    window.addEventListener("load", init);
+    if(document.readyState == "complete")init();
 
     function pressKeyAnimation(key){
         key.classList.add("pressedkey");

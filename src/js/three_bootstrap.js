@@ -288,7 +288,7 @@ class ThreeasyRecorder extends ThreeasyEnvironment{
 		if(this.frames_rendered < this.frameCount){
 
 	        //	let current_frame = document.querySelector('canvas').toDataURL();
-            this.capturer.capture( document.querySelector('canvas') );
+            this.capturer.capture( this.renderer.domElement);
 
             this.frames_rendered++;
 

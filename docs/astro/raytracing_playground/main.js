@@ -1,0 +1,103 @@
+import "../../resources/build/explanaria-bundle.js";
+import { OrbitControls } from "../../../src/lib/OrbitControls.js";
+
+
+import {RayTracingScene, ParabolicMirror, ParallelLightSource, ConicSectionMirror} from "./raytracing.js";
+
+
+export default class RayTracer{
+    constructor(threeDCanvasDOMID){
+        this.threeDCanvasDOMID = threeDCanvasDOMID;
+        this.objects = [];
+        this.permanentObjects = [];
+        window.addEventListener("load",this.setup.bind(this));
+    }
+
+    traceRays(){
+        for(let x of this.objects){
+            x.getDeepestChildren().forEach(output => {
+                    output.mesh.geometry.dispose();
+                    output.mesh.material.dispose();
+                    three.scene.remove(output.mesh);
+            })
+        }
+
+        this.objects = [];
+
+        this.raytracing.clear();
+        this.raytracing.trace();
+        this.raytracing.rays.forEach(ray => {
+
+            let raySource = new EXP.Array({data: [
+                    ray.origin,
+                    EXP.Math.vectorAdd(ray.origin, EXP.Math.vectorScale(ray.direction, ray.visualizationLength))
+                ]
+            })
+            raySource.add(new EXP.VectorOutput());
+            this.objects.push(raySource);
+        })
+
+    }
+
+    setup(){
+        this.canvas = document.getElementById(this.threeDCanvasDOMID);
+        three = EXP.setupThree(60,15, this.canvas);
+        //EXP.setThreeEnvironment(three);
+
+	    this.controls = new OrbitControls(three.camera,three.renderer.domElement);
+        this.controls.enableKeys = false;
+
+	    three.camera.position.z = 5;
+
+        let func = new EXP.Area({bounds: [[-5,5],[-5,5]]});
+        func.add(new EXP.PointOutput({color: "orange", width: 0.2}));
+        this.permanentObjects.push(func);
+
+
+
+        this.raytracing = new RayTracingScene();
+        this.raytracing.add(new ParabolicMirror(3, 5));
+        this.raytracing.add(new ParabolicMirror(-3, 2));
+        this.raytracing.add(new ParallelLightSource([-2,0], [1,0], 3, 5));
+
+
+
+        this.raytracing.glassElements.forEach(glass => {
+
+            if(glass instanceof ConicSectionMirror){
+                let mirrorLine = new EXP.Area({bounds: [[-glass.aperture/2, glass.aperture/2]]});
+                mirrorLine.add(new EXP.Transformation({expr: (i,t,y) => [glass.xCurveCoord(y),y]}))
+                .add(new EXP.LineOutput({color: "gray"}));
+                this.permanentObjects.push(mirrorLine)
+            }
+
+        });
+
+        this.traceRays();
+
+        /*
+        this.resultData = this.raytracing.rays.map(ray => [
+            ray.origin,
+            EXP.Math.vectorAdd(ray.origin, ray.direction)
+        ]);
+        let raySource = new EXP.Array({data: this.resultData
+        })
+        raySource.add(new EXP.VectorOutput());
+        raySource.add(new EXP.PointOutput());
+        this.objects.push(raySource)*/
+
+
+        three.on("update",this.update.bind(this));
+    }
+    update(time){
+            //time.dt
+		    this.controls.update();
+
+            this.raytracing.raySources[0].normal = [Math.cos(time.t/6 * Math.PI), Math.sin(time.t/6 * Math.PI)];
+            this.traceRays();
+
+            this.objects.forEach(obj => obj.activate());
+            this.permanentObjects.forEach(obj => obj.activate());
+
+    }
+}

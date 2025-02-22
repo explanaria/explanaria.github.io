@@ -1,0 +1,357 @@
+/*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */
+html, body, p, ol, ul, li, dl, dt, dd, blockquote, figure, fieldset, legend, textarea, pre, iframe, hr, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+ul {
+  list-style: none;
+}
+
+button,
+input,
+select {
+  margin: 0;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+img,
+video {
+  height: auto;
+  max-width: 100%;
+}
+
+iframe {
+  border: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+td,
+th {
+  padding: 0;
+}
+
+/* end minireset.css */
+
+h1{
+  font-size: 120%;
+  font-weight: bold;
+}
+h2{
+  font-weight: bold;
+}
+
+
+
+body{
+    margin: 0;
+    font-size: 14px;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+ul{
+    list-style: disc;
+    padding-left: 1em;
+}
+
+a{
+    text-decoration: underline;
+}
+
+aside{
+    display: inline;
+    font-size: 80%;
+    opacity: 0.8;
+}
+
+
+.fullscreen{
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+.frostedbg{
+    background-color: rgba(255,255,255, 0.9);
+    border-radius: 3em;
+    padding: 1em;
+}
+
+
+.threecanvascontainer{
+    width:100%;
+    height:100%;
+    /*
+    border-left: 1px solid gray; 
+    border-right: 1px solid gray; removed*/
+}
+
+.threecanvas{
+        min-width: 3em;
+        width:100%;
+        height:28.125em;
+        max-width: 100vw;
+        max-height: 100vh;
+        max-height: 100dvh;
+}
+
+.maincontainer{
+    font-family: Arial,Helvetica,sans-serif;
+    line-height: 1.25;
+
+    aspect-ratio: 16 / 9;
+    max-height: 100vh;
+    
+    max-height: 100dvh;
+    margin: auto;
+    text-align: center;
+    transition: 0.5s opacity ease-in-out;
+}
+
+/* layout */
+
+.overlappingItemContainer{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* https://stackoverflow.com/questions/52785750/prevent-grid-area-from-expanding-causing-whole-page-to-scroll */
+  width:100%;
+  height:100%;
+}
+.overlappingItemContainer > *{
+     grid-row-start: 1;
+     grid-column-start: 1;
+     width:100%;
+}
+.alignBottom{
+    align-items: flex-end;
+}
+.twocolumns{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  width: 100%;
+}
+.threecolumns{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  width: 100%;
+  gap: 1em;
+}
+
+.tworows{
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  height: 100%;
+}
+
+.twocolumnsLeftBigger{
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+  width: 100%;
+}
+
+.interactivepart{
+
+}
+
+.textpart{
+    /*
+    margin: 0 10vw; /* avoids exp arrows
+    width: 80vw;*/
+}
+
+.topThing{
+    height: 19em;
+}
+.bottomThing{
+    margin-bottom: 2em;
+}
+
+
+.groupcontainer{
+    width: 100%;
+    position: relative;
+}
+
+
+.cayleymainlayout{
+    display: grid;
+    grid-template-rows: 19em 4em;
+}
+.cayleytextpart{
+    height: 4em;
+}
+.groupaxiom{
+    padding: 0.25em;
+}
+
+.groupaxiom:nth-child(2n+1){
+    background-color: hsla(240, 90%, 70%, 0.1);
+}
+.groupaxiom:nth-child(2n){
+    background-color: hsla(240, 90%, 70%, 0.2);
+}
+
+.newchaptercard{
+	transition: opacity 0.5s ease-in-out;
+    width: 30%;
+    margin: 0 auto;
+}
+
+
+@keyframes show {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+} 
+.fadeInImmediately{
+    animation: show 0.5s ease;
+}
+
+/* ending */
+
+.noclick{
+    pointer-events: none;
+}
+.yesclick{
+    pointer-events: all;
+}
+
+.emailbox, .emailbtn{
+    padding: 0.5em 0em;
+    color: #333;
+	text-align:center;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 300px;
+}
+
+.emailbox{
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #bbb;
+    /* like a .examplelink*/
+    margin-bottom: 0.5em;
+}
+
+.emailbtn{
+    border: 1px solid #bbb;
+    background-color: #444;
+    color: #eee;
+    font-weight: bold;
+}
+.emailbtn:hover{
+    background-color: hsl(240, 90%, 70%);
+}
+
+
+
+
+
+
+
+
+/* explanaria specific css */
+.exp-arrow{
+	z-index: 1;
+	bottom: 2%;
+	position: absolute;
+	width: 10vw;
+	max-width: 5em;
+	transition: opacity 0.5s ease-in-out;
+}
+.exp-arrow-right{
+	right: 2%;
+}
+.exp-arrow-left{
+	left: 2%;
+    transform: scale(-1, 1);
+}
+.exp-arrow-right:hover{
+	transform: scale(1.1);
+}
+.exp-arrow-left:hover{
+	transform: scale(-1.1, 1.1);
+}
+.exp-slide{
+	transition: opacity 0.5s ease-in-out;
+	margin: 0 5% 0;
+	width: 90%;
+    pointer-events: all;
+}
+
+
+/* These next two rules help create a font size which fits the 16 / 9 box of .maincontainer, no matter the true size of the viewport */
+.maincontainer{
+    font-size: 2.25vw; /* Aspect ratio smaller than 16/9. So to fit a 16/9 rectangle as big as possible, we're limited by width */ 
+}
+
+@media (min-aspect-ratio: 16 / 9){
+    /* This is the intended viewing experience, width bigger than height. */
+    .maincontainer{
+        font-size: calc(16 / 9 * 2.25vh); /* wider than 16/9. so to fit, we letterbox sideways. that means it's limited by height */ 
+        font-size: calc(16 / 9 * 2.25dvh); /* if you support dvh, do it */
+    }
+}
+@media (orientation:portrait) and (max-aspect-ratio: 9 / 16){
+    .maincontainer{
+        font-size: calc(16 / 9 * 2.25vw); /*you're holding your phone in portrait. i want to encourage you to switch to landscape, and i've artificially rotated the site sideways. calc font size using width instead of height */
+    }
+}
+
+
+
+
+.rotatesign{
+    display: none;
+    font-size: 0.2em;
+    
+    text-align: center;
+
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+@media only screen and (orientation:portrait) and (max-aspect-ratio: 9/12){
+  /* if you're on a phone and holding in portrait, rotate site to encourage you to switch to landscape */
+  body{
+    transform: rotate(90deg);
+  }
+  .maincontainer{
+    height: 100vw;
+    width: 100vh;
+    width: 100dvh;
+  }
+  .rotatesign{
+        transform: translate(-50%, -50%) rotate(-90deg) translate(-50%, 50%);
+        display: block;
+        align-content: center;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        z-index: 4;
+        font-size: 2dvh;
+        background-color: rgba(240,240,255, 0.8)
+   }
+    .rotatesign h1{
+        padding:0 1.5em;
+    }
+}

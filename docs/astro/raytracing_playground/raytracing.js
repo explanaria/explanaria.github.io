@@ -238,10 +238,14 @@ export class ConicSectionMirror extends GlassElement{ //glassElement copied from
 
         //compute ray.direction projected onto N, = (V . N / N . N)N
         let NdotN = normalVector[0] * normalVector[0] + normalVector[1] * normalVector[1];
-        let scaleFactor = (normalVector[0] * ray.direction[0] + normalVector[0] * ray.direction[1]) / NdotN
+        let scaleFactor = (normalVector[0] * ray.direction[0] + normalVector[1] * ray.direction[1]) / NdotN
         let outgoingRayDirection = [ray.direction[0] - 2 *scaleFactor * normalVector[0], ray.direction[1] - 2 *scaleFactor * normalVector[1]]
 
         outgoingRay = new Ray(intersectPoint, outgoingRayDirection);
+
+        //stop the ray from bumping into this exact same mirror
+        //move it along its direction a bit
+        outgoingRay.origin = EXP.Math.vectorAdd(outgoingRay.origin, EXP.Math.vectorScale(outgoingRay.direction, 0.01));
 
         return new RayIntersection(intersectPoint, ray, outgoingRay);
     }
@@ -301,7 +305,7 @@ export class RayTracingScene{
         for(let i=0;i<intersections.length;i++){
             let int = intersections[i]
             let distSquared = distanceSquared(int.incomingRay.origin, int.intersectionPoint);
-            if(distSquared < prevClosestDistSquared){
+            if(distSquared < prevClosestDistSquared && distSquared != 0){
                 closestIntersection = int;
                 prevClosestDistSquared = distSquared;
             }
@@ -331,7 +335,7 @@ export class RayTracingScene{
                 let rayLength = distance(ray.origin, closestIntersection.intersectionPoint);
                 ray.visualizationLength = rayLength;//Math.min(4, rayLength);
             }else{
-                ray.visualizationLength = 4;
+                ray.visualizationLength = 5;
             }
 
             this.rays.push(ray); //processed!

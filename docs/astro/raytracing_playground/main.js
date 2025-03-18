@@ -57,8 +57,8 @@ export default class RayTracer{
 
         this.raytracing = new RayTracingScene();
         this.raytracing.add(new ParabolicMirror(3, 5));
-        this.raytracing.add(new ParabolicMirror(-3, 2));
-        this.raytracing.add(new ParallelLightSource([-2,0], [1,0], 3, 5));
+        //this.raytracing.add(new ParabolicMirror(-3, 2));
+        this.raytracing.add(new ParallelLightSource([-2,0], [1,0], 6, 15));
 
 
 
@@ -93,11 +93,31 @@ export default class RayTracer{
             //time.dt
 		    this.controls.update();
 
-            this.raytracing.raySources[0].normal = [Math.cos(time.t/6 * Math.PI), Math.sin(time.t/6 * Math.PI)];
-            this.traceRays();
+            //let angle = time.t/6 * Math.PI;
+
+            let angle = Math.sin(time.t*2)/10;
+
+            this.raytracing.glassElements[0].eccentricity = 0;
+            if(time.t > 4){
+                    this.raytracing.glassElements[0].eccentricity = 1;
+                if(time.t < 5){
+                    this.raytracing.glassElements[0].eccentricity = time.t-4;
+                }
+            
+            }else{
+            }
+
+
+            this.raytracing.raySources[0].normal = [Math.cos(angle), Math.sin(angle)];
+            //if(!window.doneOnce){
+                this.traceRays();
+            //}
+            window.doneOnce = true;
 
             this.objects.forEach(obj => obj.activate());
             this.permanentObjects.forEach(obj => obj.activate());
+
+            
 
     }
 }

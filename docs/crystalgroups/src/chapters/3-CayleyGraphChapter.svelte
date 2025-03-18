@@ -394,7 +394,7 @@
         </div>
         {:else}
         <div class="exp-slide">
-           So now that we more about groups, we can use our knowledge of groups to finally tell apart those annoyingly similar crystals!
+           So now that we know more about groups, we can use our knowledge of groups to finally tell apart those annoyingly similar crystals!
         </div>
         {/if}
     </div>

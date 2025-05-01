@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="../favicon.ico"/>
+  <title>Explanarian - Telescopes</title>
+
+  <script src="../../../src/lib/three.min.js"></script>
+
+ <link rel='stylesheet' href='../../resources/style.css'>
+ <link rel='stylesheet' href='./style.css'>
+
+
+  <script type="module">
+    import RayTracingSim from './sphericalvsparabolic.js';
+
+    window.game = new RayTracingSim("threeDCanvas");
+    window.three = game.three;
+  </script>
+
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./style.css" rel="stylesheet" />
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div id="canvasContainer" class="overlappingItemContainer"> 
+    <canvas class="overlappingItem" id="twoDCanvas">
+
+    </canvas>
+    <canvas class="overlappingItem" id="threeDCanvas">
+
+    </canvas>
+  </div>
+</body>
+</html>

@@ -76,6 +76,14 @@ export class RayIntersection{
         }
 }
 
+function dot(a,b){
+    let sum=0;
+    for(let i=0;i<a.length;i++){
+        sum += a[i] * b[i]
+    }
+    return sum;
+}
+
 
 export class FlatMirror extends GlassElement{
     //mirror that is a line segment from startPt to endPt
@@ -84,28 +92,44 @@ export class FlatMirror extends GlassElement{
         this.startPt = start;
         this.endPt = end;
 
-        this.normal = perpendicular(this.startPt - this.endPt);
+        this.normal = getPerpendicularVector(EXP.Math.vectorSub(this.startPt, this.endPt));
     }
-    intersects(ray){
+    intersect(ray){
         let rayOrigin = ray.origin;
         let rayDirection = ray.direction;
 
 
         // from https://stackoverflow.com/questions/14307158/how-do-you-check-for-intersection-between-a-line-segment-and-a-line-ray-emanatin
-        var v1 = rayOrigin - this.startPt;
-        var v2 = this.endPt - this.startPt;
-        var v3 = new Vector(-rayDirection.Y, rayDirection.X);
+        var v1 = EXP.Math.vectorSub(rayOrigin, this.startPt);
+        var v2 = EXP.Math.vectorSub(this.endPt, this.startPt);
+        var v3 = getPerpendicularVector(rayDirection);
 
 
-        var dot = dot(v2, v3);
-        if (Math.abs(dot) < 0.000001)
+        var dotV2V3 = dot(v2, v3);
+        if (Math.abs(dotV2V3) < 0.000001)
             return null;
 
-        var t1 = Vector.CrossProduct(v2, v1) / dot;
-        var t2 = (v1 * v3) / dot;
+        let crossMagnitude = v1[0]*v2[1] - v1[1]*v2[0]  //|v2 X v1|
 
-        if (t1 >= 0.0 && (t2 >= 0.0 && t2 <= 1.0))
-            return t1;
+        var t1 = crossMagnitude / dotV2V3;
+        var t2 = dot(v1, v3) / dotV2V3;
+
+        if (t1 >= 0.0 && (t2 >= 0.0 && t2 <= 1.0)){
+
+            //intersection!
+            let intersectPoint = EXP.Math.vectorAdd(this.startPt, EXP.Math.vectorScale(v2, t2));
+
+            //compute ray.direction projected onto N, = (V . N / N . N)N
+            let NdotN = this.normal[0] * this.normal[0] + this.normal[1] * this.normal[1];
+            let scaleFactor = (this.normal[0] * ray.direction[0] + this.normal[1] * ray.direction[1]) / NdotN
+            let outgoingRayDirection = [ray.direction[0] - 2 *scaleFactor * this.normal[0], ray.direction[1] - 2 *scaleFactor * this.normal[1]]
+
+            let outgoingRay = new Ray(intersectPoint, outgoingRayDirection);
+            //move the outgoing ray a little bit
+            outgoingRay.origin = EXP.Math.vectorAdd(outgoingRay.origin, EXP.Math.vectorScale(outgoingRay.direction, 0.01));
+            return new RayIntersection(intersectPoint, ray, outgoingRay);
+
+        }
 
         return null;
     }
@@ -322,7 +346,7 @@ export class RayTracingScene{
         for(let source of this.raySources){
             this.unprocessedRays = this.unprocessedRays.concat(source.spawnRays());
         }
-        console.log("Now we have" + this.unprocessedRays.length + "rays");
+        //console.log("Now we have" + this.unprocessedRays.length + "rays");
 
         let maxIterations = 100;
         for(let i=0;i<maxIterations;i++){
@@ -352,8 +376,8 @@ export class RayTracingScene{
         if(this.unprocessedRays.length > 0){
             console.warn("Over " + maxIterations + "rays were created when tracing!")
         }
-        console.log("After we're done, we have" + this.rays.length + "rays");
-        console.log(this.rays);
+        //console.log("After we're done, we have" + this.rays.length + "rays");
+        //console.log(this.rays);
     }
 }
 

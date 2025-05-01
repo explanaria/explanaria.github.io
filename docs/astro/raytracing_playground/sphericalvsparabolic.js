@@ -1,10 +1,10 @@
 import "../../resources/build/explanaria-bundle.js";
 
 
-import {RayTracingScene, FlatMirror, ParabolicMirror, ParallelLightSource, ConicSectionMirror} from "./raytracing.js";
+import {RayTracingScene, ParabolicMirror, ParallelLightSource, ConicSectionMirror} from "./raytracing.js";
 
 
-export default class RayTracer{
+export default class RayTracingSim{
     constructor(threeDCanvasDOMID){
         this.threeDCanvasDOMID = threeDCanvasDOMID;
         this.objects = [];
@@ -18,6 +18,11 @@ export default class RayTracer{
                     output.mesh.geometry.dispose();
                     output.mesh.material.dispose();
                     three.scene.remove(output.mesh);
+                    output.arrowheads.forEach(head => {
+                        head.geometry.dispose();
+                        head.material.dispose();
+                        output.mesh.remove(head);
+                    })
             })
         }
 
@@ -56,7 +61,7 @@ export default class RayTracer{
 
         this.raytracing = new RayTracingScene();
         this.raytracing.add(new ParabolicMirror(3, 5));
-        this.raytracing.add(new FlatMirror([-3+1,0+1], [-3-1,0-1]));
+        //this.raytracing.add(new ParabolicMirror(-3, 2));
         this.raytracing.add(new ParallelLightSource([-2,0], [1,0], 6, 15));
 
 
@@ -66,12 +71,6 @@ export default class RayTracer{
             if(glass instanceof ConicSectionMirror){
                 let mirrorLine = new EXP.Area({bounds: [[-glass.aperture/2, glass.aperture/2]]});
                 mirrorLine.add(new EXP.Transformation({expr: (i,t,y) => [glass.xCurveCoord(y),y]}))
-                .add(new EXP.LineOutput({color: "gray"}));
-                this.permanentObjects.push(mirrorLine)
-            }
-            if(glass instanceof FlatMirror){
-                let mirrorLine = new EXP.Area({bounds: [[0,1]]});
-                mirrorLine.add(new EXP.Transformation({expr: (i,t,y) => EXP.Math.lerpVectors(y, glass.startPt, glass.endPt)}))
                 .add(new EXP.LineOutput({color: "gray"}));
                 this.permanentObjects.push(mirrorLine)
             }
@@ -98,11 +97,11 @@ export default class RayTracer{
             //time.dt
 		    this.controls.update();
 
-            let angle = time.t/6 * Math.PI;
+            //let angle = time.t/6 * Math.PI;
 
-            /*
             let angle = Math.sin(time.t*2)/10;
 
+            /*
             this.raytracing.glassElements[0].eccentricity = 0;
             if(time.t > 4){
                     this.raytracing.glassElements[0].eccentricity = 1;
@@ -122,8 +121,15 @@ export default class RayTracer{
 
             this.objects.forEach(obj => obj.activate());
             this.permanentObjects.forEach(obj => obj.activate());
-
-            
-
     }
 }
+
+
+window.game = new RayTracingSim("threeDCanvas");
+window.three = game.three;
+
+let presentation = new EXP.UndoCapableDirector();
+window.presentation = presentation;
+await presentation.begin();
+await presentation.nextSlide();
+presentation.TransitionTo(window.game.raytracing.glassElements[0], {eccentricity: 1});

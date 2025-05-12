@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="../resources/favicon.ico" sizes="any">
+  <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
+  <title>Explanarian - Introducing Direct Sums</title>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+
+  <link type="text/css" href="../resources/oldstyle.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <style>
+    #canvasContainer{
+
+    }
+    #textArea{
+
+    }
+
+    .grid{
+    }
+
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<script type="module">
+import * as EXP from "../resources/build/explanaria-bundle.js";
+function setup(){}
+let presentation = new EXP.UndoCapableDirector();
+
+async function animate(){
+    await presentation.begin();
+
+    for(let i=0;i<11;i++){
+    await presentation.nextSlide();
+    }
+}
+
+window.addEventListener("load",function(){
+    setup();
+    animate();
+});
+</script>
+
+<style>
+.many-images{
+width: 100%;
+height:100%;
+justify-items: center;
+
+}
+.many-images img{
+object-fit: scale-down;
+height:90%;
+width: auto;
+}
+</style>
+
+</head>
+<body>
+    <div class="grid" style="">
+            <div class="overlappingItemContainer many-images"> 
+                <img class="overlappingItem exp-slide-1 exp-slide" src="1.5images/1.png" />
+                <img class="overlappingItem exp-slide-2 exp-slide" src="1.5images/2.png" />
+                <img class="overlappingItem exp-slide-3 exp-slide" src="1.5images/3.png" />
+                <img class="overlappingItem exp-slide-4 exp-slide" src="1.5images/4.png" />
+                <img class="overlappingItem exp-slide-5 exp-slide" src="1.5images/5.png" />
+                <img class="overlappingItem exp-slide-6 exp-slide" src="1.5images/6.png" />
+                <img class="overlappingItem exp-slide-7 exp-slide" src="1.5images/7.png" />
+                <img class="overlappingItem exp-slide-8 exp-slide" src="1.5images/8.png" />
+                <img class="overlappingItem exp-slide-9 exp-slide" src="1.5images/9.png" />
+                <img class="overlappingItem exp-slide-10 exp-slide" src="1.5images/10.png" />
+                <img class="overlappingItem exp-slide-11 exp-slide" src="1.5images/11.png" />
+                <img class="overlappingItem exp-slide-12 exp-slide" src="1.5images/12.png" />
+            </div>
+        </div>
+    </div>
+    <a class="nextbtn exp-slide-12" href="2 directsum_as_coordinates.html">Next</a>
+</body>
+</html>

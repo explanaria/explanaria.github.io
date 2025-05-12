@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="../resources/favicon.ico" sizes="any">
+  <link rel="icon" href="../resources/favicon.svg" type="image/svg+xml">
+  <title>Explanarian - Introducing Direct Sums</title>
+
+  <script data-goatcounter="https://explanaria.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> <!-- analytics -->
+
+
+  <script src="1.5 directproduct-explained.js" type="module"></script>
+
+
+  <link type="text/css" href="../resources/oldstyle.css" rel="stylesheet" />
+  <link type="text/css" href="./bulma.css" rel="stylesheet" />
+  <link type="text/css" href="./presentation.css" rel="stylesheet" />
+
+  <style>
+    #canvasContainer{
+
+    }
+    #textArea{
+
+    }
+
+    .grid{
+    }
+
+    .column canvas{
+        margin: 0 auto;
+        display: block;
+    }
+
+.many-images{
+width: 100%;
+height:100%;
+justify-items: center;
+
+}
+.many-images img{
+object-fit: scale-down;
+height:90%;
+width: auto;
+transition: opacity 0.5s ease-in-out;
+}
+
+  </style>
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+  <div class="grid">
+      <div id="header" class="headerPart"></div>
+      <div id="canvasContainer" class="threeDPart"> 
+        <canvas id="canvas">
+
+        </canvas>
+        <div id="twoDcanvasOverlay" class="canvasOverlay overlappingItemContainer many-images">
+            <img class="overlappingItem exp-slide-1 " src="1.5images/1.png" />
+            <img class="overlappingItem exp-slide-2" src="1.5images/2.png" />
+            <img class="overlappingItem exp-slide-3" src="1.5images/3.png" />
+            <img class="overlappingItem exp-slide-4" src="1.5images/4.png" />
+            <img class="overlappingItem exp-slide-5" src="1.5images/5.png" />
+            <img class="overlappingItem exp-slide-6" src="1.5images/6.png" />
+            <img class="overlappingItem exp-slide-7" src="1.5images/7.png" />
+            <img class="overlappingItem exp-slide-8" src="1.5images/8.png" />
+            <img class="overlappingItem exp-slide-9" src="1.5images/9.png" />
+            <img class="overlappingItem exp-slide-10" src="1.5images/10.png" />
+            <img class="overlappingItem exp-slide-11" src="1.5images/11.png" />
+            <img class="overlappingItem exp-slide-12" src="1.5images/12.png" />
+
+        </div>
+      </div>
+      <div id="textArea" class="non3DFooterPart">
+	    <div id="coords" class="is-mobile willFadeInFromJS" style="display:none">
+            <span id="" class="">
+                [
+            </span>
+            <span id="coord1" class="coord1"></span>
+            <span id="" class="">,
+            </span>
+            <span id="coord2" class="coord2"></span>
+            <span id="" class="">
+                ,
+            </span>
+            <span id="coord3" class="coord3"></span>
+            <span id="" class="">
+                ]
+            </span>
+	    </div>
+
+         <!-- <div class=" fullscreenText fullscreenPopup modal is-active exp-slide" style="opacity:1">
+            <div>
+                    <h1>How Mathematicians Think About Four Dimensions, And Beyond</h1>
+                <br><br>
+                    <h2 style="text-align: center">Zachary Steinberg</h2>
+            </div>
+          </div> -->
+
+        <div class="textContainer"> <!-- these are for the benefit of web audiences, not talk --> 
+	        <div class="exp-slide slideTextItem">If XY coordinate systems represent points as lists of points on number lines, could "points on circles" make sense? First, let's think more about XY coordinate systems, before we extend the analogy into something called a "direct product".</div>
+	        <div class="exp-slide slideTextItem">
+                In an X-Y coordinate system, every  <span class="orange">point in the 2D plane</span> in the 2D plane is equivalent to a pair of two numbers, such as <span class="coord2">5</span> and <span class="coord2">3</span>.
+
+            </div>
+	        <div class="exp-slide slideTextItem">
+                But 5 and 3 aren't just numbers - we can also think of <span class="coord1">5</span> as a point on <span class="coord1">a number line</span>, and 3 as a point on <span class="coord2">a number line</span>. With that in mind, we can think about this system as <b>creating</b> a big shape (a plane) out of points, where each point is equivalent to a pair of a <span class="coord1">point on line 1</span> and <span class="coord2">a point on line 2</span>.
+
+            That's the idea we'll use: constructing a bigger shape, where each point represents pairs of a <span class="coord1">point on shape 1</span> and <span class="coord2">a point on shape 2</span>.
+            
+            <!-- we want this shape to be smooth; points with close coordinates will be close in the big shape? -->
+        
+            <br />
+
+
+            </div>
+	        <div class="exp-slide slideTextItem">
+                So: what could a shape with one <span class="coord1">circle</span> coordinate and one <span class="coord1">line</span> coordinate be?
+            </div>
+	        <div class="exp-slide slideTextItem">
+                If we generalize from the same idea as last before, this coordinate system should send every pair of <span class="">a point</span> on a <span class="coord1">circle</span> and a point on a <span class="coord2">line</span> to exactly one point in the resulting shape.
+            </div>
+
+	        <div class="exp-slide slideTextItem">
+                I'll also insist that if we look at all pairs with different first coordinate on the circle, the resulting points should trace out a circle.
+
+                <!-- at right angles? -->
+            </div>
+	        <div class="exp-slide slideTextItem">
+                Similarly, if we keep the point from the first circle the same and vary the second point...
+            </div>
+	        <div class="exp-slide slideTextItem">
+                Similarly, if we keep the point from the first circle the same and vary the second point...
+                <br />
+                it should trace out a line.
+            </div>
+	        <div class="exp-slide slideTextItem">
+                Starting from our first point pair in the resulting shape, varying each coordinate creates a line and a circle on the resulting shape that intersect at our first point.
+            </div>
+	        <div class="exp-slide slideTextItem">
+                If we repeat for many different points, we can slowly visualize the shape that this coordinate system describes...
+            </div>
+	        <div class="exp-slide slideTextItem">
+                If we repeat for many different points, we can slowly visualize the shape that this coordinate system describes... and it's a <b>cylinder</b>! 
+            </div>
+	        <div class="exp-slide slideTextItem">
+                Mathematicians would say that a 2D plane is the "direct product" of <span class="coord1">one line</span> and <span class="coord2">another line</span>. To build the "direct product" of shape A and shape B, build a space where every point in the direct product is equivalent to a pair of one point on shape 1 and one point of shape 2.
+                <a class="nextbtn" href="2 directsum_as_coordinates.html">Next</a>
+            </div>
+        </div>
+      </div>
+  </div>
+</body>
+</html>

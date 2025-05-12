@@ -1,0 +1,108 @@
+<rss version="2.0">
+    <channel>
+        <title>Explanaria</title>
+        <link>https://explanaria.github.io/</link>
+        <description>Recent content on Explanaria</description>
+        <language>en</language>
+        <managingEditor>explanaria@gmail.com (explanaria)</managingEditor>
+        <webMaster>explanaria@gmail.com (explanaria)</webMaster>
+        <lastBuildDate>Mon, 12 May 2025 00:00:00 EST</lastBuildDate>
+        <atom:link href="https://explanaria.github.io/index.xml" rel="self" type="application/rss+xml"/>
+        <item>
+            <title>The Cursed History of Star Brightness</title>
+            <link>https://explanaria.github.io/sketches/cursedbrightness/index.html</link>
+            <pubDate>Fri, 12 April 2024 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/sketches/cursedbrightness/index.html</guid>
+            <description>    
+                Point at a star. How bright does that star look?
+
+                It sounds like a simple question, but when I tried to understand how we measure star brightness, I discovered a story of decades-old misinformation, rabbit holes of sexism, and at least two standards whose names have stories of their own.
+            </description>
+        </item>
+        <item>
+            <title>Building Twitch Plays Pokemon's Graphics with WebGL</title>
+            <link>https://explanaria.github.io/tppbg/index.html</link>
+            <pubDate>Mon, 12 February 2024 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/tppbg/index.html</guid>
+            <description>
+                How I built a piece of generative art for Twitch Plays Pokemon, as it turns ten years old
+            </description>
+        </item>
+        <item>
+            <title>There's Zero 0^0s (Unless We Choose One)</title>
+            <link>https://explanaria.github.io/sketches/0to0/index.html</link>
+            <pubDate>Thu, 17 November 2022 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/sketches/0to0/index.html</guid>
+            <description>
+                What is 0^0, and why do people keep saying it's "undefined"?
+
+                Isn't math all about definitions? Are the mathematicians hiding their secrets from us laypeople again? Math can't define this basic three-character symbol? Clearly it's just zero! Or maybe one! It should have some simple answer!
+            </description>
+        </item>
+        <item>
+            <title>Clear Crystal Conundrums</title>
+            <link>https://explanaria.github.io/crystalgroups/index.html</link>
+            <pubDate>Wed, 17 August 2022 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/crystalgroups/index.html</guid>
+            <description>
+            A multifaceted intro to group theory
+            </description>
+        </item>
+        <item>
+            <title>The Case of the Impossible Triangles: The Congruent Number Problem and Elliptic Curves</title>
+            <link>https://explanaria.github.io/impossibletriangles/1.html</link>
+            <pubDate>Sat, 21 August 2021 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/impossibletriangles/1.html</guid>
+            <description>
+            Can you find a right triangle with area 30 whose side lengths are all rational numbers?
+This problem is called the "congruent number problem". Sounds simple, right? But as it turns out, solving this problem leads to some very interesting areas of math. In particular, the congruent number problem has tons of interesting connections to number theory and these things called elliptic curves, which are one of applied math's biggest success stories. 
+            </description>
+        </item>
+        <item>
+            <title>How Mathematicians Think About Four Dimensions</title>
+            <link>https://explanaria.github.io/thinking4D/index.html</link>
+            <pubDate>Wed, 17 November 2019 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/thinking4D/index.html</guid>
+            <description>
+            The fourth dimension.
+Even if you barely touch math, you've probably heard the phrase before. Maybe you've heard it's space? Or time? Perhaps you've heard a radio show about how apparently some phycisist theorizes the world is actually secretly an 18.5-dimensional spiderweb. Fourth dimensions pop up all the time in science fiction, sometimes under the guise of "alternate dimensions", or even "parallel dimensions". But what does it mean? How do you work with it? 
+            </description>
+        </item>
+        <item>
+            <title>Aiming Wrecking Balls with Manifolds </title>
+            <link>https://explanaria.github.io/examples/phasespace_and_homotopy/phasespace.html</link>
+            <pubDate>Wed, 17 November 2019 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/examples/phasespace_and_homotopy/phasespace.html</guid>
+            <description>
+            Manifolds, Part 1: Hamiltonian Mechanics. A curious connection between geometry and physics lets us slice surfaces to help aim wrecking balls. 
+            </description>
+        </item>
+        <item>
+            <title>Defining Bagelnesss With Ants</title>
+            <link>https://explanaria.github.io/examples/phasespace_and_homotopy/homotopy.html</link>
+            <pubDate>Wed, 17 November 2018 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/examples/phasespace_and_homotopy/homotopy.html</guid>
+            <description>
+            Manifolds, Part 2: Homotopy. Defining bagel-ness with the help of some ants.
+            </description>
+        </item>
+        <item>
+            <title>Sine Waves Done Visually</title>
+            <link>https://explanaria.github.io/examples/explained_sine_definition.html</link>
+            <pubDate>Wed, 17 November 2018 00:00:00 EST</pubDate>
+            <author>explanaria@gmail.com (explanaria)</author>
+            <guid>https://explanaria.github.io/examples/explained_sine_definition.html</guid>
+            <description>
+            Sine waves underly all sorts of interesting mathematics, but they're actually very simple. This interactive presentation lets you understand where they come from.
+            </description>
+        </item>
+    </channel>
+</rss>
